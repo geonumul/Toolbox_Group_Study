@@ -1,0 +1,2851 @@
+{
+ "week": "3",
+ "title": "3주차. 2강 친환경 재료",
+ "units": [
+  {
+   "id": "w3-1",
+   "title": "집은 제3의 피부",
+   "goal": "건축재료가 왜 중요한지, 친환경 재료가 필요한 이유 두 가지와 재료에 요구되는 기능 두 가지를 말할 수 있어요.",
+   "terms": [
+    {
+     "ko": "생태시스템",
+     "en": "Ecosystem",
+     "say": "물, 공기, 토양, 생물, 재생산이 안 되는 자연 재료를 한데 부르는 말",
+     "more": "건축 재료를 만들고, 건물을 짓고, 건물을 쓰는 동안 이것들이 소모돼요. 되돌릴 수 없게 훼손되거나 쓰레기로 나오기도 해요."
+    },
+    {
+     "ko": "제3의 피부",
+     "en": "Third Skin",
+     "say": "우리 몸을 감싸는 세 번째 껍질, 곧 집",
+     "more": "첫째 피부는 몸의 피부, 제2의 피부는 옷(의복), 제3의 피부는 집이에요. 그래서 집 재료가 건강에 크게 영향을 줘요."
+    },
+    {
+     "ko": "보호 기능",
+     "en": "Protective Function",
+     "say": "화학, 기계, 열의 영향을 막아 주는 건축재료의 기능"
+    },
+    {
+     "ko": "환기 기능",
+     "en": "Ventilation Function",
+     "say": "신선한 공기는 들이고 오염된 공기는 내보내는 건축재료의 기능",
+     "more": "통기가 전혀 안 되는 재료를 쓰면 실내공기가 나빠져요."
+    },
+    {
+     "ko": "자원의 순환활용",
+     "en": "Resource Circulation",
+     "say": "공급량에 한계가 있는 자원을 버리지 않고 다시 돌려 쓰는 것"
+    }
+   ],
+   "slides": [
+    {
+     "kind": "title",
+     "big": "집은 제3의 피부",
+     "sub": "**제3의 피부(Third Skin)**, **보호 기능(Protective Function)**, **환기 기능(Ventilation Function)**"
+    },
+    {
+     "kind": "goal",
+     "items": [
+      "2강 친환경 재료가 어떤 순서로 흘러가는지 알아요.",
+      "친환경 재료의 필요성 ① 건강: **제3의 피부(Third Skin)** 와 80-90% 를 말해요.",
+      "건축재료의 두 기능 **보호 기능(Protective Function)**, **환기 기능(Ventilation Function)** 을 구별해요.",
+      "필요성 ② 자원: **자원의 순환활용(Resource Circulation)** 이 왜 필요한지 말해요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "2강은 세 덩어리예요 (목차)",
+     "items": [
+      "1. 친환경 건축과 재료: 필요성, 유사개념, 선정기준과 평가, 재료별 특성.",
+      "2. 천연 건축재료: 목재(특성, 목구조 목재), 흙(특성, 공법, 국외 사례), 스트로베일(짚).",
+      "3. 친환경 건축재료: 단열재, 도료(천연, 친환경), 기타(창호, 접착제, 마감재).",
+      "쉽게: 왜 필요한가 → 자연 그대로의 재료 → 가공한 친환경 재료 순서예요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "1강과 잇기",
+     "items": [
+      "1강 다섯 순환 중 '재료 순환' 기억나죠? 흙, 나무처럼 자연으로 돌아가는 재료였어요.",
+      "지역적, 자연적 재료와 재활용 자재를 먼저 쓰라고 했어요.",
+      "2강은 그 재료 순환을 자세히 파고드는 강의예요.",
+      "주문도 그대로예요. **자연에서 빌려 쓰고, 돌려주며 순환시켜요.**"
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "재료는 자연을 쓰며 만들어져요",
+     "items": [
+      "**생태시스템(Ecosystem)** 은 물, 공기, 토양, 생물, 재생산이 불가능한 자연 재료 등을 말해요.",
+      "**생태시스템(Ecosystem)** 은 재료 생산, 건물 시공, 건물 사용 과정에서 소모돼요.",
+      "자연으로 되돌리기 불가능한 상태까지 훼손되기도 해요.",
+      "쓰레기와 같은 형태로 배출되기도 해요."
+     ]
+    },
+    {
+     "kind": "analogy",
+     "head": "몸, 옷, 집: 세 겹의 피부",
+     "scene": "우리 몸은 피부로 싸여 있고, 그 위에 옷을 입고, 다시 집 안에 들어가 살아요. 셋 다 몸을 감싸는 껍질이에요.",
+     "map": [
+      [
+       "몸의 피부",
+       "첫 번째 껍질"
+      ],
+      [
+       "옷(의복)",
+       "제2의 피부"
+      ],
+      [
+       "집",
+       "**제3의 피부(Third Skin)**"
+      ],
+      [
+       "땀구멍으로 숨 쉬는 피부",
+       "공기가 드나드는 재료 (**환기 기능(Ventilation Function)**)"
+      ]
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "필요성 ①: 우리는 거의 건물 안에서 살아요",
+     "items": [
+      "생애 80-90% 가까운 시간을 건물 안에서 보내요.",
+      "그래서 제2의 피부는 의복, **제3의 피부(Third Skin)** 는 집이라고 불러요.",
+      "건축재료는 거주자의 건강 상태에 크게 기여해요.",
+      "다시 말하면 **제3의 피부(Third Skin)** 가 나쁘면 몸도 나빠져요."
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "세 겹의 피부와 **환기 기능(Ventilation Function)**",
+     "svg": "<svg viewBox=\"0 0 480 270\" xmlns=\"http://www.w3.org/2000/svg\"><rect x=\"14\" y=\"16\" width=\"312\" height=\"240\" rx=\"2\" class=\"box b3\"/><text x=\"170\" y=\"40\" font-size=\"16\" text-anchor=\"middle\" class=\"tb b3\">제3의 피부: 집</text><rect x=\"64\" y=\"56\" width=\"212\" height=\"184\" rx=\"2\" class=\"box2 b2\"/><text x=\"170\" y=\"80\" font-size=\"15\" text-anchor=\"middle\" class=\"tb b2\">제2의 피부: 옷(의복)</text><circle cx=\"170\" cy=\"160\" r=\"46\" class=\"n2 b1\"/><text x=\"170\" y=\"165\" font-size=\"15\" text-anchor=\"middle\" class=\"tl b1\">몸의 피부</text><line x1=\"470\" y1=\"96\" x2=\"343\" y2=\"96\" class=\"e2 b4\"/><polygon points=\"334,96 343,91 343,101\" class=\"arrow b4\"/><text x=\"402\" y=\"84\" font-size=\"13\" text-anchor=\"middle\" class=\"t b4\">신선한 공기 들이기</text><line x1=\"334\" y1=\"196\" x2=\"461\" y2=\"196\" class=\"e2 b4\"/><polygon points=\"470,196 461,201 461,191\" class=\"arrow b4\"/><text x=\"402\" y=\"222\" font-size=\"13\" text-anchor=\"middle\" class=\"t b4\">오염된 공기 내보내기</text></svg>",
+     "caption": "몸의 피부, 옷, 집 순서로 감싸요. 집 재료는 신선한 공기를 들이고 오염된 공기를 내보내야 해요.",
+     "builds": 4
+    },
+    {
+     "kind": "compare",
+     "head": "건축재료에 요구되는 기능 두 가지",
+     "cols": [
+      "기능",
+      "하는 일"
+     ],
+     "rows": [
+      [
+       "1) **보호 기능(Protective Function)**",
+       "화학적 영향이나 기계, 열의 영향을 막아 줘요."
+      ],
+      [
+       "2) **환기 기능(Ventilation Function)**",
+       "신선한 공기는 들여오고, 오염된 공기는 배출시켜요."
+      ]
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "숨 못 쉬는 재료는 왜 나쁠까",
+     "items": [
+      "통기가 전혀 안 되는 재료를 쓰면 실내공기가 악화돼요.",
+      "슬라이드 작은 글씨: (합성수지-면 옷과 비슷).",
+      "합성수지 재료를 바람 안 통하는 옷, 숨 쉬는 재료를 면 옷에 빗댄 말로 보여요.",
+      "그래서 재료에는 **보호 기능(Protective Function)** 와 함께 **환기 기능(Ventilation Function)** 이 있어야 해요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "필요성 ②: 자원은 끝이 있어요",
+     "items": [
+      "건축 자재는 자연 자원의 공급에 매우 의존적이에요.",
+      "그런데 자원의 공급량에는 한계가 있어요.",
+      "그래서 '**자원의 순환활용(Resource Circulation)**' 이 더욱 요구돼요.",
+      "1강 주문과 같은 말이에요. **자연에서 빌려 쓰고, 돌려주며 순환시켜요.**"
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "Third Skin(제3의 피부) 은 무엇을 가리킬까요?",
+     "choices": [
+      "몸의 피부",
+      "옷(의복)",
+      "집",
+      "외단열재"
+     ],
+     "a": 2,
+     "why": "제2의 피부는 의복, **제3의 피부(Third Skin)** 는 집이에요. 그래서 집 재료가 건강에 크게 기여해요."
+    },
+    {
+     "kind": "check",
+     "q": "건축재료에 요구되는 기능으로 슬라이드에 나온 두 가지는?",
+     "choices": [
+      "보호 기능과 환기 기능",
+      "장식 기능과 구조 기능",
+      "방수 기능과 방음 기능",
+      "조명 기능과 난방 기능"
+     ],
+     "a": 0,
+     "why": "1) 화학, 기계, 열의 영향을 막는 **보호 기능(Protective Function)**, 2) 신선한 공기는 들이고 오염된 공기는 내보내는 **환기 기능(Ventilation Function)** 이에요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "제2의 피부는 의복, **제3의 피부(Third Skin)** 는 집이에요. 순서를 바꾸면 틀려요.",
+      "숫자는 생애 80-90% 예요. 하루 몇 시간이 아니라 '생애' 시간의 비율이에요.",
+      "필요성 ① 은 건강(거주자), 필요성 ② 는 자원(**자원의 순환활용(Resource Circulation)**)이에요."
+     ]
+    },
+    {
+     "kind": "recap",
+     "items": [
+      "**생태시스템(Ecosystem)** 은 재료 생산, 시공, 사용 과정에서 소모되고 훼손되며 쓰레기로도 나와요.",
+      "필요성 ①: 생애 80-90% 를 건물 안에서 보내요. 의복은 제2의 피부, 집은 **제3의 피부(Third Skin)**.",
+      "재료에 요구되는 기능: **보호 기능(Protective Function)**(화학, 기계, 열 막기), **환기 기능(Ventilation Function)**(신선한 공기 들이고 오염된 공기 내보내기).",
+      "필요성 ②: 자원 공급량에 한계가 있어 **자원의 순환활용(Resource Circulation)** 이 요구돼요. 주문: **자연에서 빌려 쓰고, 돌려주며 순환시켜요.**",
+      "오늘의 용어: Ecosystem(생태시스템), Third Skin(제3의 피부), Protective Function(보호 기능), Ventilation Function(환기 기능), Resource Circulation(자원의 순환활용)"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "w3-2",
+   "title": "재료를 고르는 다섯 기준",
+   "goal": "건축자재를 고를 때 따지는 다섯 가지 고려사항을 순서대로 말하고, 각각의 예를 들 수 있어요.",
+   "terms": [
+    {
+     "ko": "표면처리",
+     "en": "Surface Treatment",
+     "say": "재료 겉면에 칠하거나 코팅하는 마무리 작업",
+     "more": "유해한 물질이 발산되거나 마모가 일어나지 않아야 해요. 무해한 목재도 표면처리를 잘못하면 자연 특성을 잃어요."
+    },
+    {
+     "ko": "새집증후군",
+     "en": "Sick House Syndrome",
+     "say": "새로 지은 집의 재료에서 나온 유해 물질 때문에 몸이 불편해지는 증상",
+     "more": "슬라이드는 목재의 잘못된 표면처리가 새집증후군의 원인을 제공할 수 있다고 들었어요."
+    },
+    {
+     "ko": "지역 생산 재료",
+     "en": "Local Material",
+     "say": "가까운 지역에서 만들어 쓰는 재료. 목재, 흙, 석재가 대표예요",
+     "more": "재료를 멀리 나르지 않아서 수송에서 쓰는 에너지를 줄여요."
+    },
+    {
+     "ko": "수송 에너지",
+     "en": "Transport Energy",
+     "say": "재료를 나르는 데 드는 에너지",
+     "more": "대규모 생산, 대량 판매 재료는 여러 번 운송해서 교통량, 도로 이용, 탄소배출이 늘어요."
+    },
+    {
+     "ko": "분산적 생산",
+     "en": "Decentralized Production",
+     "say": "자원을 여러 곳에서 나누어 생산한 뒤 그 지역 안에서 쓰는 방식",
+     "more": "슬라이드는 이 방안이 효과적이라고 정리했어요."
+    },
+    {
+     "ko": "재생가능 재료",
+     "en": "Renewable Material",
+     "say": "식물, 동물처럼 다시 자라나는 원료로 만든 재료",
+     "more": "이런 원료를 쓰면 자연계로의 물질순환이 거의 완벽하게 이루어져요."
+    },
+    {
+     "ko": "외피",
+     "en": "Building Envelope",
+     "say": "건물의 바깥 껍질. 사람으로 치면 피부",
+     "more": "실내외 환경을 조절해요. 일사열과 자연광, 실내외 열류, 틈새바람을 조절해요."
+    }
+   ],
+   "slides": [
+    {
+     "kind": "title",
+     "big": "재료를 고르는 다섯 기준",
+     "sub": "**표면처리(Surface Treatment)**, **지역 생산 재료(Local Material)**, **외피(Building Envelope)**"
+    },
+    {
+     "kind": "goal",
+     "items": [
+      "건축자재 선정 시 고려사항 5가지를 번호대로 외워요.",
+      "**지역 생산 재료(Local Material)** 가 왜 **수송 에너지(Transport Energy)** 를 줄이는지 말해요.",
+      "알루미늄, 합성수지의 에너지 소모가 목재의 몇 배인지 기억해요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "앞 단원과 잇기",
+     "items": [
+      "앞에서 집은 **제3의 피부(Third Skin)** 라고 했죠?",
+      "재료는 **보호 기능(Protective Function)** 과 **환기 기능(Ventilation Function)** 이 있어야 했어요.",
+      "그럼 실제로 재료를 고를 때는 무엇을 따질까요? 다섯 가지예요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "건축자재 선정 시 고려사항 (5가지)",
+     "items": [
+      "1) 거주자의 쾌적성과 건강에 유해한 성분을 방출하지 않는 재료",
+      "2) 생산, 운송, 사용 과정에서 적은 에너지를 쓰고 유해물질을 방출하지 않는 재료",
+      "3) 재생가능하고 재활용이 가능한 재료",
+      "4) 이용목적에 적합한 재료",
+      "5) **외피(Building Envelope)** 재료로서 외부환경과 조화되는 재료"
+     ]
+    },
+    {
+     "kind": "analogy",
+     "head": "장보기와 같아요",
+     "scene": "좋은 장보기는 몸에 해롭지 않고, 동네에서 난 것이고, 다시 자라는 것이고, 딱 필요한 만큼이고, 계절에 맞는 것을 골라요.",
+     "map": [
+      [
+       "몸에 해롭지 않은 음식",
+       "1) 유해 성분 없는 재료"
+      ],
+      [
+       "동네 시장 채소",
+       "2) **지역 생산 재료(Local Material)**"
+      ],
+      [
+       "다시 자라는 채소",
+       "3) **재생가능 재료(Renewable Material)**"
+      ],
+      [
+       "필요한 만큼, 계절에 맞게",
+       "4) 이용목적 적합, 5) 외부환경과 조화"
+      ]
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "1) 몸에 해롭지 않은 재료",
+     "items": [
+      "화학, 물리, 열 영향을 막는 기능과 환기 기능을 갖춰야 해요.",
+      "가급적 자연적이고 가공되지 않은 상태의 것이 좋아요.",
+      "**표면처리(Surface Treatment)** 는 유해한 물질의 발산이나 마모가 일어나지 않아야 해요.",
+      "무해한 목재도 **표면처리(Surface Treatment)** 를 잘못하면 자연 특성을 잃어요(ex. **새집증후군(Sick House Syndrome)** 원인 제공)."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "2) 적은 에너지, 유해물질 없는 유통",
+     "items": [
+      "에너지 비용: 금속이나 합성재료 > 자연재료.",
+      "목재, 흙, 석재 등은 지역적 생산이 가능해요. 이것이 **지역 생산 재료(Local Material)** 예요.",
+      "**지역 생산 재료(Local Material)** 를 쓰면 재료 수송에서 생기는 **수송 에너지(Transport Energy)** 사용이 줄어요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "대규모 생산, 대량 판매 재료의 문제",
+     "items": [
+      "생산 중 유해물질 ↑",
+      "운송 중 교통량 ↑ (여러 번 운송)",
+      "도로 이용 ↑, 탄소배출 ↑. 곧 **수송 에너지(Transport Energy)** 가 커져요.",
+      "▶ 결론: 자원을 **분산적 생산(Decentralized Production)** 한 뒤 지역 안에서 쓰는 방안이 효과적이에요."
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "재료마다 이동 거리가 달라요",
+     "svg": "<svg viewBox=\"0 0 480 270\" xmlns=\"http://www.w3.org/2000/svg\"><text x=\"240\" y=\"22\" font-size=\"15\" text-anchor=\"middle\" class=\"tb\">원료 수송을 포함한 건축재료 수송 거리</text><line x1=\"110\" y1=\"226\" x2=\"460\" y2=\"226\" class=\"e\"/><text x=\"110\" y=\"246\" font-size=\"13\" text-anchor=\"middle\" class=\"tm\">0</text><text x=\"180\" y=\"246\" font-size=\"13\" text-anchor=\"middle\" class=\"tm\">1000</text><text x=\"250\" y=\"246\" font-size=\"13\" text-anchor=\"middle\" class=\"tm\">2000</text><text x=\"320\" y=\"246\" font-size=\"13\" text-anchor=\"middle\" class=\"tm\">3000</text><text x=\"390\" y=\"246\" font-size=\"13\" text-anchor=\"middle\" class=\"tm\">4000</text><text x=\"456\" y=\"246\" font-size=\"13\" text-anchor=\"middle\" class=\"tm\">5000</text><text x=\"100\" y=\"70\" font-size=\"15\" text-anchor=\"end\" class=\"tb b1\">목재</text><rect x=\"110\" y=\"44\" width=\"14\" height=\"10\" rx=\"2\" class=\"n3 b1\"/><rect x=\"110\" y=\"58\" width=\"22\" height=\"10\" rx=\"2\" class=\"n3 b1\"/><rect x=\"110\" y=\"72\" width=\"40\" height=\"10\" rx=\"2\" class=\"n3 b1\"/><rect x=\"110\" y=\"86\" width=\"60\" height=\"10\" rx=\"2\" class=\"n3 b1\"/><text x=\"100\" y=\"150\" font-size=\"15\" text-anchor=\"end\" class=\"tb b2\">합성재료</text><rect x=\"110\" y=\"140\" width=\"335\" height=\"14\" rx=\"2\" class=\"n4 b2\"/><text x=\"100\" y=\"190\" font-size=\"15\" text-anchor=\"end\" class=\"tb b2\">금속재</text><rect x=\"110\" y=\"180\" width=\"350\" height=\"14\" rx=\"2\" class=\"n4 b2\"/><text x=\"290\" y=\"118\" font-size=\"13\" text-anchor=\"middle\" class=\"tm b3\">목재는 짧고, 합성재료와 금속재는 아주 길어요</text></svg>",
+     "caption": "슬라이드 아래 그래프를 단순하게 옮겼어요. 목재 막대는 짧고, 합성재료와 금속재 막대는 끝까지 가요. 눈금 단위는 슬라이드에 없어요.",
+     "builds": 3
+    },
+    {
+     "kind": "points",
+     "head": "3) 재생가능하고 재활용이 가능한 재료",
+     "items": [
+      "재생가능한 식물, 동물성 원료(**재생가능 재료(Renewable Material)**)는 자연계로 물질순환이 거의 완벽하게 이루어져요.",
+      "유해물질이 없고, 주변의 유해물질을 흡수하는 기능도 가능해요.",
+      "덧칠이나 코팅을 하지 않고 원상태의 자재를 쓰면 재활용이 쉬워요.",
+      "다시 말하면 **표면처리(Surface Treatment)** 를 덜 할수록 되돌리기 쉬워요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "4) 이용목적에 적합한 재료",
+     "items": [
+      "고품질 건축자재(알루미늄, 합성수지 등)는 적합한 사용인지 평가가 필요해요.",
+      "알루미늄, 합성수지의 에너지 소모는 목재의 100배예요.",
+      "그래서 불필요한 사용이 없었는지 판단해야 해요."
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "100배를 숫자로 느껴 봐요",
+     "given": "목재 창틀 하나 만드는 에너지를 1 이라고 가정해요.",
+     "steps": [
+      "알루미늄 창틀 하나: 1 × 100 = 100",
+      "창틀 3개를 목재로: 1 × 3 = 3",
+      "창틀 3개를 알루미늄으로: 100 × 3 = 300",
+      "차이: 300 - 3 = 297. 꼭 필요한 곳에만 써야 하는 이유예요."
+     ],
+     "answer": "알루미늄, 합성수지 = 목재의 100배 에너지"
+    },
+    {
+     "kind": "points",
+     "head": "5) **외피(Building Envelope)** 재료로서 외부환경과 조화되는 재료",
+     "items": [
+      "**외피(Building Envelope)** 의 기능은 실내외 환경 조절이에요.",
+      "일사열 및 자연광 조절, 실내외 열류 조절, 틈새바람 조절.",
+      "그래서 **외피(Building Envelope)** 재료는 이 기능들을 고려해야 해요.",
+      "예: 단열재, 벽체의 색채, 창과 개구부, 차양 등."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "▶ 다섯 가지를 한 문장으로",
+     "items": [
+      "인간에게 무해하고 쾌적한 실내 환경을 제공해야 해요.",
+      "재료의 제조 및 운송 과정의 에너지 사용과 비용을 고려해요.",
+      "재료의 기술적 적합성, 재활용 특성 등을 고려해서 선택해요."
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "건축자재 선정 시 고려사항 5가지에 들어가지 않는 것은?",
+     "choices": [
+      "유해한 성분을 방출하지 않는 재료",
+      "재생가능하고 재활용이 가능한 재료",
+      "가장 값이 싼 수입 재료",
+      "외피재료로서 외부환경과 조화되는 재료"
+     ],
+     "a": 2,
+     "why": "다섯 가지는 유해성분 없음, 적은 에너지와 유해물질 없는 유통, 재생과 재활용, 이용목적 적합, 외부환경과 조화예요. 수입 재료는 오히려 **수송 에너지(Transport Energy)** 가 커요."
+    },
+    {
+     "kind": "check",
+     "q": "알루미늄, 합성수지의 에너지 소모는 목재의 몇 배라고 했나요?",
+     "choices": [
+      "10배",
+      "50배",
+      "100배",
+      "1000배"
+     ],
+     "a": 2,
+     "why": "슬라이드 4) 이용목적에 적합한 재료에서 '목재의 100배' 라고 했어요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "에너지 비용은 '금속이나 합성재료 > 자연재료' 예요. 부등호 방향을 뒤집으면 틀려요.",
+      "대량 생산이 아니라 **분산적 생산(Decentralized Production)** 후 지역 내 활용이 효과적이라고 했어요.",
+      "**표면처리(Surface Treatment)** 는 무해한 목재도 망칠 수 있어요. 목재라서 무조건 안전한 것은 아니에요."
+     ]
+    },
+    {
+     "kind": "recap",
+     "items": [
+      "1) 유해 성분 없음: 자연적, 가공 안 된 상태, **표면처리(Surface Treatment)** 주의(**새집증후군(Sick House Syndrome)**).",
+      "2) 적은 에너지: 금속, 합성재료 > 자연재료. **지역 생산 재료(Local Material)** 로 **수송 에너지(Transport Energy)** 절감, **분산적 생산(Decentralized Production)** 후 지역 활용.",
+      "3) **재생가능 재료(Renewable Material)** 는 물질순환이 거의 완벽. 4) 알루미늄, 합성수지는 목재의 100배 에너지.",
+      "5) **외피(Building Envelope)** 는 일사열, 자연광, 열류, 틈새바람 조절. 주문: **자연에서 빌려 쓰고, 돌려주며 순환시켜요.**",
+      "오늘의 용어: Surface Treatment(표면처리), Sick House Syndrome(새집증후군), Local Material(지역 생산 재료), Transport Energy(수송 에너지), Decentralized Production(분산적 생산), Renewable Material(재생가능 재료), Building Envelope(외피)"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "w3-3",
+   "title": "이름이 비슷한 네 재료",
+   "goal": "친환경건축재료의 유사개념 4가지를 뜻과 예로 구별할 수 있어요.",
+   "terms": [
+    {
+     "ko": "천연건축재료",
+     "en": "Natural Material",
+     "say": "흙, 나무, 돌을 캐서 자르거나 갈기만 한 순수 자연 재료",
+     "more": "생산, 가공, 사용 과정에 화학적 성분이 전혀 들어가지 않아요. 예: 황토, 목재, 석재, 짚."
+    },
+    {
+     "ko": "친환경재료",
+     "en": "Environmental Material",
+     "say": "천연은 아니지만 나라별 환경 기준치에 맞춰 만든 몸에 해롭지 않은 재료",
+     "more": "자연소재를 섞거나 천연소재와 인공재료를 합성해요. 예: 자연소재 혼합단열재, 분해성 플라스틱, 친환경 페인트."
+    },
+    {
+     "ko": "지속가능한 재료",
+     "en": "Sustainable Material",
+     "say": "훼손되지 않고 영구적으로 쓸 수 있는 재료. 금속재가 대표",
+     "more": "재활용, 폐기 때는 환경부하가 적지만 생산 때는 에너지를 많이 쓰고 오염을 일으켜요. 예: 스틸, 동판, 알루미늄, 강철."
+    },
+    {
+     "ko": "재활용재료",
+     "en": "Recycling Material",
+     "say": "폐자재를 다시 원료로 써서 만든 재료",
+     "more": "폐콘크리트, 폐목재, 폐지, 폐플라스틱 등으로 만들어요. 예: 재생섬유 흡음재, 재활용 섬유판재, 재활용골재."
+    },
+    {
+     "ko": "한국공기청정협회",
+     "en": "",
+     "say": "국내에서 친환경재료(건축자재)의 품질을 인증하는 곳"
+    },
+    {
+     "ko": "재활용골재",
+     "en": "Recycled Aggregate",
+     "say": "폐콘크리트 같은 폐자재를 부숴 다시 만든 자갈, 모래 같은 재료",
+     "more": "슬라이드 사진은 콘크리트용, 도로공사용, 아스팔트콘크리트용 순환골재예요."
+    }
+   ],
+   "slides": [
+    {
+     "kind": "title",
+     "big": "이름이 비슷한 네 재료",
+     "sub": "천연, 친환경, 지속가능, 재활용"
+    },
+    {
+     "kind": "goal",
+     "items": [
+      "유사개념 4가지 이름과 영어 이름을 외워요.",
+      "네 가지를 뜻과 예로 구별해요.",
+      "**지속가능한 재료(Sustainable Material)** 가 생산 때는 환경부하가 크다는 함정을 기억해요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "앞 단원과 잇기",
+     "items": [
+      "앞 단원 기준 3) 은 재생가능하고 재활용이 가능한 재료였어요.",
+      "기준 2) 에서 금속, 합성재료는 에너지 비용이 크다고 했죠. 이것이 **지속가능한 재료(Sustainable Material)** 이야기와 이어져요.",
+      "이번에는 '친환경스러운' 재료 이름 네 가지를 정리해요."
+     ]
+    },
+    {
+     "kind": "analogy",
+     "head": "먹을거리로 보는 네 재료",
+     "scene": "텃밭에서 막 딴 채소, 기준에 맞춘 무첨가 가공식품, 평생 쓰는 스테인리스 도시락통, 헌 옷으로 만든 가방을 떠올려요.",
+     "map": [
+      [
+       "텃밭에서 딴 채소 그대로",
+       "**천연건축재료(Natural Material)**"
+      ],
+      [
+       "기준에 맞춘 무첨가 가공식품",
+       "**친환경재료(Environmental Material)**"
+      ],
+      [
+       "만들 때 힘들지만 평생 쓰는 도시락통",
+       "**지속가능한 재료(Sustainable Material)**"
+      ],
+      [
+       "헌 옷으로 만든 가방",
+       "**재활용재료(Recycling Material)**"
+      ]
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "1) **천연건축재료(Natural Material)**",
+     "items": [
+      "흙, 나무, 돌 등의 원재료를 채취해서 절단 또는 연마한 건축재료예요.",
+      "생산, 가공, 사용 과정에서 화학적 성분이 전혀 들어가지 않아요.",
+      "순수하게 자연에서 얻어진 재료로 만든 것을 뜻해요.",
+      "ex) 황토, 목재, 석재, 짚 등. 사진은 나무, 돌, 흙벽돌이에요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "2) **친환경재료(Environmental Material)**",
+     "items": [
+      "천연으로 만든 것은 아니지만, 각 나라의 환경 기준치에 맞춰 가공, 생산된 재료예요.",
+      "물품제조 과정에서 환경부하를 최소화하고 사용자의 건강을 해치지 않아요.",
+      "자연소재를 혼합하거나 천연소재 + 인공재료를 합성해서 유독물질이 나오지 않게 해요.",
+      "국내에서는 **한국공기청정협회** 에서 건축자재의 품질을 인증해요.",
+      "ex) 자연소재 혼합단열재, 분해성 플라스틱, 친환경 페인트 등."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "3) **지속가능한 재료(Sustainable Material)**",
+     "items": [
+      "재료가 훼손되지 않고 영구적으로 사용할 수 있는 재료예요.",
+      "재활용, 폐기 시: 환경부하가 적어요.",
+      "생산 시: 많은 에너지 소비와 환경오염을 부르고, 마감방식에 유독성 물질을 써서 환경부하가 커요.",
+      "ex) 스틸, 동판, 알루미늄, 강철 등 금속재. 사진은 금속 관과 금속판을 두른 집이에요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "4) **재활용재료(Recycling Material)**",
+     "items": [
+      "폐자재 중에서 새롭게 원료로 이용해서 생산된 재료예요.",
+      "폐콘크리트, 폐목재, 폐지, 폐플라스틱 등으로 만들어요.",
+      "ex) 재생섬유 흡음재, 재활용 섬유판재, **재활용골재(Recycled Aggregate)**."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "사진 속 **재활용골재(Recycled Aggregate)** (작은 글씨)",
+     "items": [
+      "콘크리트용(25), 도로공사용(40), 아스팔트콘크리트용(19) 세 가지 사진이 있어요.",
+      "안내문: 폐기물관리법 기준과 한국산업규격(KS)에 맞게 생산된다고 해요.",
+      "입형이 부드럽고 강도 저하가 없는 고품질 순환골재라고 소개해요.",
+      "즉 **재활용재료(Recycling Material)** 도 품질을 갖출 수 있다는 예시예요."
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "네 재료 한눈에",
+     "svg": "<svg viewBox=\"0 0 480 270\" xmlns=\"http://www.w3.org/2000/svg\"><rect x=\"12\" y=\"14\" width=\"222\" height=\"34\" rx=\"2\" class=\"box2 b1\"/><text x=\"123.0\" y=\"36.25\" font-size=\"15\" text-anchor=\"middle\" class=\"tb b1\">1) 천연건축재료</text><text x=\"123\" y=\"72\" font-size=\"14\" text-anchor=\"middle\" class=\"t b1\">캐서 자르고 갈기만</text><text x=\"123\" y=\"94\" font-size=\"14\" text-anchor=\"middle\" class=\"t b1\">화학 성분 전혀 없음</text><text x=\"123\" y=\"118\" font-size=\"13\" text-anchor=\"middle\" class=\"tm b1\">황토, 목재, 석재, 짚</text><rect x=\"246\" y=\"14\" width=\"222\" height=\"34\" rx=\"2\" class=\"box2 b2\"/><text x=\"357.0\" y=\"36.25\" font-size=\"15\" text-anchor=\"middle\" class=\"tb b2\">2) 친환경재료</text><text x=\"357\" y=\"72\" font-size=\"14\" text-anchor=\"middle\" class=\"t b2\">환경 기준치에 맞춰 가공</text><text x=\"357\" y=\"94\" font-size=\"14\" text-anchor=\"middle\" class=\"t b2\">섞거나 합성, 무독성</text><text x=\"357\" y=\"118\" font-size=\"13\" text-anchor=\"middle\" class=\"tm b2\">혼합단열재, 친환경 페인트</text><rect x=\"12\" y=\"140\" width=\"222\" height=\"34\" rx=\"2\" class=\"box2 b3\"/><text x=\"123.0\" y=\"162.25\" font-size=\"15\" text-anchor=\"middle\" class=\"tb b3\">3) 지속가능한 재료</text><text x=\"123\" y=\"198\" font-size=\"14\" text-anchor=\"middle\" class=\"t b3\">영구 사용, 폐기 때 부하 적음</text><text x=\"123\" y=\"220\" font-size=\"14\" text-anchor=\"middle\" class=\"t b3\">생산 때 부하 큼</text><text x=\"123\" y=\"244\" font-size=\"13\" text-anchor=\"middle\" class=\"tm b3\">스틸, 동판, 알루미늄, 강철</text><rect x=\"246\" y=\"140\" width=\"222\" height=\"34\" rx=\"2\" class=\"box2 b4\"/><text x=\"357.0\" y=\"162.25\" font-size=\"15\" text-anchor=\"middle\" class=\"tb b4\">4) 재활용재료</text><text x=\"357\" y=\"198\" font-size=\"14\" text-anchor=\"middle\" class=\"t b4\">폐자재를 새 원료로</text><text x=\"357\" y=\"220\" font-size=\"14\" text-anchor=\"middle\" class=\"t b4\">폐콘크리트, 폐목재, 폐지</text><text x=\"357\" y=\"244\" font-size=\"13\" text-anchor=\"middle\" class=\"tm b4\">흡음재, 섬유판재, 재활용골재</text></svg>",
+     "caption": "번호 순서대로 나타나요. 둘째 줄은 뜻, 셋째 줄은 예예요.",
+     "builds": 4
+    },
+    {
+     "kind": "compare",
+     "head": "네 재료 비교표",
+     "cols": [
+      "이름",
+      "핵심",
+      "예"
+     ],
+     "rows": [
+      [
+       "천연건축재료(Natural Material)",
+       "화학 성분 전혀 없음",
+       "황토, 목재, 석재, 짚"
+      ],
+      [
+       "친환경재료(Environmental Material)",
+       "환경 기준치에 맞춰 가공, 무독성",
+       "혼합단열재, 분해성 플라스틱, 친환경 페인트"
+      ],
+      [
+       "지속가능한 재료(Sustainable Material)",
+       "영구 사용, 생산 때 부하 큼",
+       "스틸, 동판, 알루미늄, 강철"
+      ],
+      [
+       "재활용재료(Recycling Material)",
+       "폐자재를 새 원료로",
+       "재생섬유 흡음재, 재활용 섬유판재, 재활용골재"
+      ]
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "Sustainable Material(지속가능한 재료) 에 대한 설명으로 옳은 것은?",
+     "choices": [
+      "생산할 때 환경부하가 매우 적다",
+      "폐기, 재활용할 때 환경부하가 적다",
+      "화학 성분이 전혀 들어가지 않는다",
+      "한국공기청정협회가 품질을 인증한다"
+     ],
+     "a": 1,
+     "why": "**지속가능한 재료(Sustainable Material)** 는 영구적으로 쓰고 재활용, 폐기 때 부하가 적지만, 생산 때는 에너지와 오염이 커요."
+    },
+    {
+     "kind": "check",
+     "q": "'자연소재 혼합단열재, 분해성 플라스틱, 친환경 페인트' 는 어느 재료의 예일까요?",
+     "choices": [
+      "천연건축재료",
+      "친환경재료",
+      "지속가능한 재료",
+      "재활용재료"
+     ],
+     "a": 1,
+     "why": "천연은 아니지만 환경 기준치에 맞춰 만든 **친환경재료(Environmental Material)** 의 예예요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "**친환경재료(Environmental Material)** 는 '천연' 이 아니에요. 천연소재와 인공재료를 합성하기도 해요.",
+      "**지속가능한 재료(Sustainable Material)** = 금속재. 이름은 좋아 보여도 생산 때 환경부하가 커요.",
+      "슬라이드 1) 의 '자료를 의미' 는 '재료' 의 오타로 보여요. 골재 사진 크기도 단위가 m 로 적혀 있어요."
+     ]
+    },
+    {
+     "kind": "recap",
+     "items": [
+      "**천연건축재료(Natural Material)**: 캐서 자르고 갈기만, 화학 성분 전혀 없음 (황토, 목재, 석재, 짚).",
+      "**친환경재료(Environmental Material)**: 환경 기준치에 맞춰 가공, 무독성, **한국공기청정협회** 인증.",
+      "**지속가능한 재료(Sustainable Material)**: 영구 사용, 폐기 때 부하 적고 생산 때 부하 큼 (금속재).",
+      "**재활용재료(Recycling Material)**: 폐자재를 새 원료로 (**재활용골재(Recycled Aggregate)** 등). 주문: **자연에서 빌려 쓰고, 돌려주며 순환시켜요.**",
+      "오늘의 용어: Natural Material(천연건축재료), Environmental Material(친환경재료), Sustainable Material(지속가능한 재료), Recycling Material(재활용재료), 한국공기청정협회, Recycled Aggregate(재활용골재)"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "w3-4",
+   "title": "재료 성적표 10항목",
+   "goal": "환경적 관점의 선정기준 4개 분야, 6개 항목(중복 포함 10개)과 네 재료의 전과정 평가 결과를 말할 수 있어요.",
+   "terms": [
+    {
+     "ko": "인체유해성",
+     "en": "Human",
+     "say": "재료가 사람 몸에 얼마나 해로운지 보는 평가 분야",
+     "more": "H1 은 채취, 생산, 가공, 사용 중 인체에 미치는 유해성의 정도, H2 는 실내 환경을 조절하거나 건강을 좋게 하는 효과의 정도예요."
+    },
+    {
+     "ko": "에너지소비",
+     "en": "Energy",
+     "say": "재료를 만들고 나르고 버리는 데 드는 에너지를 보는 평가 분야",
+     "more": "채취, 생산, 가공 / 운송, 이용 / 폐기 세 과정의 에너지소비 정도를 모두 E 로 표시해요."
+    },
+    {
+     "ko": "환경부하",
+     "en": "Environmental Impact",
+     "say": "재료가 자연에 주는 부담을 보는 평가 분야",
+     "more": "E.I1 은 환경외손이나 자원고갈로 인한 부하, E.I2 는 독성, 가스, 미세먼지의 발생 정도예요."
+    },
+    {
+     "ko": "재생 또는 재활용",
+     "en": "Recycling or Reuse",
+     "say": "폐기 뒤 다시 쓸 수 있는지 보는 평가 분야. 기호 R1"
+    },
+    {
+     "ko": "전과정",
+     "en": "Life Cycle",
+     "say": "재료가 만들어지고, 쓰이고, 버려지거나 다시 쓰이기까지의 모든 과정",
+     "more": "슬라이드 표는 제조, 생산 / 사용 / 폐기, 활용 세 과정으로 나눠 평가해요."
+    },
+    {
+     "ko": "점토벽돌",
+     "en": "Clay Brick",
+     "say": "점토를 구워 만든 벽돌. 벽과 지붕(기와)에 써요",
+     "more": "점토 제품이라 에너지 투입이 매우 많고, 채굴 때 자연을 훼손하며 유한 자원을 소모해요."
+    }
+   ],
+   "slides": [
+    {
+     "kind": "title",
+     "big": "재료 성적표 10항목",
+     "sub": "**인체유해성(Human)**, **에너지소비(Energy)**, **환경부하(Environmental Impact)**, **재생 또는 재활용(Recycling or Reuse)**"
+    },
+    {
+     "kind": "goal",
+     "items": [
+      "선정기준 4개 분야를 외워요.",
+      "6개 항목이 어떻게 10개 항목이 되는지 설명해요.",
+      "**전과정(Life Cycle)** 평가표에서 네 재료의 +, - 모양을 말해요.",
+      "목재와 **점토벽돌(Clay Brick)** 의 장단점을 비교해요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "앞 단원과 잇기",
+     "items": [
+      "앞에서 **천연건축재료(Natural Material)**, **지속가능한 재료(Sustainable Material)** 등 네 재료를 봤어요.",
+      "그럼 어느 재료가 얼마나 친환경적일까요?",
+      "이번 단원은 재료마다 성적표를 매기는 방법이에요."
+     ]
+    },
+    {
+     "kind": "analogy",
+     "head": "학교 성적표처럼",
+     "scene": "성적표에는 과목이 있고, 과목마다 세부 평가가 있어요. 1학기, 2학기처럼 시기별로도 매겨요.",
+     "map": [
+      [
+       "과목 4개",
+       "분야 4개: **인체유해성(Human)**, **에너지소비(Energy)**, **환경부하(Environmental Impact)**, **재생 또는 재활용(Recycling or Reuse)**"
+      ],
+      [
+       "세부 평가 6가지",
+       "항목 6개: H1, H2, E, E.I1, E.I2, R1"
+      ],
+      [
+       "학기별 성적",
+       "**전과정(Life Cycle)**: 제조, 생산 / 사용 / 폐기, 활용"
+      ]
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "선정기준 4개 분야",
+     "items": [
+      "**인체유해성(Human)**",
+      "**에너지소비(Energy)**",
+      "**환경부하(Environmental Impact)**",
+      "**재생 또는 재활용(Recycling or Reuse)**",
+      "6개 항목 / 중복 검토되는 항목을 포함해 총 10개 항목에서 평가해요."
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "분야별 세부 항목 (기호)",
+     "cols": [
+      "분야",
+      "세부 항목",
+      "기호"
+     ],
+     "rows": [
+      [
+       "인체유해성(Human)",
+       "채취, 생산, 가공과정이나 사용 중 인체에 미치는 유해성의 정도",
+       "H1"
+      ],
+      [
+       "인체유해성(Human)",
+       "실내 환경의 조정이나 건강을 증진시키는 효과의 정도",
+       "H2"
+      ],
+      [
+       "에너지소비(Energy)",
+       "채취, 생산, 가공 / 운송, 이용 / 이용 후 폐기 과정의 에너지소비 정도",
+       "E (세 번)"
+      ],
+      [
+       "환경부하(Environmental Impact)",
+       "환경외손이나 자원고갈로 인한 환경부하 정도",
+       "E.I1"
+      ],
+      [
+       "환경부하(Environmental Impact)",
+       "독성, 가스, 미세먼지의 발생 정도",
+       "E.I2"
+      ],
+      [
+       "재생 또는 재활용(Recycling or Reuse)",
+       "폐기 후 재생 또는 재활용의 가능성 여부",
+       "R1"
+      ]
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "6개 항목이 어떻게 10개가 될까",
+     "given": "기호는 H1, H2, E, E.I1, E.I2, R1 여섯 개예요.",
+     "steps": [
+      "제조, 생산 과정: H1, E, E.I1, E.I2 → 4개",
+      "사용 과정: H2, E, E.I2 → 3개",
+      "폐기, 활용 과정: E, E.I2, R1 → 3개",
+      "합계: 4 + 3 + 3 = 10개. E 는 세 번, E.I2 도 세 번 겹쳐요."
+     ],
+     "answer": "6개 항목, 중복 포함 총 10개 항목"
+    },
+    {
+     "kind": "figure",
+     "head": "재료의 **전과정(Life Cycle)** 친환경성 평가표",
+     "svg": "<svg viewBox=\"0 0 480 270\" xmlns=\"http://www.w3.org/2000/svg\"><text x=\"54\" y=\"30\" font-size=\"14\" text-anchor=\"middle\" class=\"tb b1\">과정</text><text x=\"54\" y=\"62\" font-size=\"14\" text-anchor=\"middle\" class=\"tb b1\">평가기준</text><rect x=\"108\" y=\"12\" width=\"144\" height=\"28\" rx=\"2\" class=\"box b1\"/><text x=\"180.0\" y=\"30.9\" font-size=\"14\" text-anchor=\"middle\" class=\"tb b1\">제조, 생산</text><rect x=\"252\" y=\"12\" width=\"108\" height=\"28\" rx=\"2\" class=\"box b1\"/><text x=\"306.0\" y=\"30.9\" font-size=\"14\" text-anchor=\"middle\" class=\"tb b1\">사용</text><rect x=\"360\" y=\"12\" width=\"108\" height=\"28\" rx=\"2\" class=\"box b1\"/><text x=\"414.0\" y=\"30.9\" font-size=\"14\" text-anchor=\"middle\" class=\"tb b1\">폐기, 활용</text><rect x=\"108\" y=\"44\" width=\"36\" height=\"28\" rx=\"2\" class=\"box2 b1\"/><text x=\"126.0\" y=\"63\" font-size=\"12\" text-anchor=\"middle\" class=\"tb b1\">H1</text><rect x=\"144\" y=\"44\" width=\"36\" height=\"28\" rx=\"2\" class=\"box2 b1\"/><text x=\"162.0\" y=\"63\" font-size=\"12\" text-anchor=\"middle\" class=\"tb b1\">E</text><rect x=\"180\" y=\"44\" width=\"36\" height=\"28\" rx=\"2\" class=\"box2 b1\"/><text x=\"198.0\" y=\"63\" font-size=\"12\" text-anchor=\"middle\" class=\"tb b1\">E.I1</text><rect x=\"216\" y=\"44\" width=\"36\" height=\"28\" rx=\"2\" class=\"box2 b1\"/><text x=\"234.0\" y=\"63\" font-size=\"12\" text-anchor=\"middle\" class=\"tb b1\">E.I2</text><rect x=\"252\" y=\"44\" width=\"36\" height=\"28\" rx=\"2\" class=\"box2 b1\"/><text x=\"270.0\" y=\"63\" font-size=\"12\" text-anchor=\"middle\" class=\"tb b1\">H2</text><rect x=\"288\" y=\"44\" width=\"36\" height=\"28\" rx=\"2\" class=\"box2 b1\"/><text x=\"306.0\" y=\"63\" font-size=\"12\" text-anchor=\"middle\" class=\"tb b1\">E</text><rect x=\"324\" y=\"44\" width=\"36\" height=\"28\" rx=\"2\" class=\"box2 b1\"/><text x=\"342.0\" y=\"63\" font-size=\"12\" text-anchor=\"middle\" class=\"tb b1\">E.I2</text><rect x=\"360\" y=\"44\" width=\"36\" height=\"28\" rx=\"2\" class=\"box2 b1\"/><text x=\"378.0\" y=\"63\" font-size=\"12\" text-anchor=\"middle\" class=\"tb b1\">E</text><rect x=\"396\" y=\"44\" width=\"36\" height=\"28\" rx=\"2\" class=\"box2 b1\"/><text x=\"414.0\" y=\"63\" font-size=\"12\" text-anchor=\"middle\" class=\"tb b1\">E.I2</text><rect x=\"432\" y=\"44\" width=\"36\" height=\"28\" rx=\"2\" class=\"box2 b1\"/><text x=\"450.0\" y=\"63\" font-size=\"12\" text-anchor=\"middle\" class=\"tb b1\">R1</text><text x=\"54\" y=\"98\" font-size=\"14\" text-anchor=\"middle\" class=\"tb b2\">천연재료</text><text x=\"126.0\" y=\"99\" font-size=\"18\" text-anchor=\"middle\" class=\"tb b2\">+</text><text x=\"162.0\" y=\"99\" font-size=\"18\" text-anchor=\"middle\" class=\"tb b2\">+</text><text x=\"198.0\" y=\"99\" font-size=\"18\" text-anchor=\"middle\" class=\"tb b2\">+</text><text x=\"234.0\" y=\"99\" font-size=\"18\" text-anchor=\"middle\" class=\"tb b2\">+</text><text x=\"270.0\" y=\"99\" font-size=\"18\" text-anchor=\"middle\" class=\"tb b2\">+</text><text x=\"306.0\" y=\"99\" font-size=\"18\" text-anchor=\"middle\" class=\"tb b2\">+</text><text x=\"342.0\" y=\"99\" font-size=\"18\" text-anchor=\"middle\" class=\"tb b2\">+</text><text x=\"378.0\" y=\"99\" font-size=\"18\" text-anchor=\"middle\" class=\"tb b2\">+</text><text x=\"414.0\" y=\"99\" font-size=\"18\" text-anchor=\"middle\" class=\"tb b2\">+</text><text x=\"450.0\" y=\"99\" font-size=\"18\" text-anchor=\"middle\" class=\"tb b2\">+</text><text x=\"54\" y=\"132\" font-size=\"14\" text-anchor=\"middle\" class=\"tb b3\">친환경재료</text><text x=\"126.0\" y=\"133\" font-size=\"18\" text-anchor=\"middle\" class=\"tm b3\">-</text><text x=\"162.0\" y=\"133\" font-size=\"18\" text-anchor=\"middle\" class=\"tb b3\">+</text><text x=\"198.0\" y=\"133\" font-size=\"18\" text-anchor=\"middle\" class=\"tb b3\">+</text><text x=\"234.0\" y=\"133\" font-size=\"18\" text-anchor=\"middle\" class=\"tb b3\">+</text><text x=\"270.0\" y=\"133\" font-size=\"18\" text-anchor=\"middle\" class=\"tb b3\">+</text><text x=\"306.0\" y=\"133\" font-size=\"18\" text-anchor=\"middle\" class=\"tb b3\">+</text><text x=\"342.0\" y=\"133\" font-size=\"18\" text-anchor=\"middle\" class=\"tb b3\">+</text><text x=\"378.0\" y=\"133\" font-size=\"18\" text-anchor=\"middle\" class=\"tm b3\">-</text><text x=\"414.0\" y=\"133\" font-size=\"18\" text-anchor=\"middle\" class=\"tb b3\">+</text><text x=\"450.0\" y=\"133\" font-size=\"18\" text-anchor=\"middle\" class=\"tb b3\">+</text><text x=\"54\" y=\"166\" font-size=\"14\" text-anchor=\"middle\" class=\"tb b4\">지속가능</text><text x=\"126.0\" y=\"167\" font-size=\"18\" text-anchor=\"middle\" class=\"tm b4\">-</text><text x=\"162.0\" y=\"167\" font-size=\"18\" text-anchor=\"middle\" class=\"tm b4\">-</text><text x=\"198.0\" y=\"167\" font-size=\"18\" text-anchor=\"middle\" class=\"tm b4\">-</text><text x=\"234.0\" y=\"167\" font-size=\"18\" text-anchor=\"middle\" class=\"tm b4\">-</text><text x=\"270.0\" y=\"167\" font-size=\"18\" text-anchor=\"middle\" class=\"tm b4\">-</text><text x=\"306.0\" y=\"167\" font-size=\"18\" text-anchor=\"middle\" class=\"tm b4\">-</text><text x=\"342.0\" y=\"167\" font-size=\"18\" text-anchor=\"middle\" class=\"tm b4\">-</text><text x=\"378.0\" y=\"167\" font-size=\"18\" text-anchor=\"middle\" class=\"tb b4\">+</text><text x=\"414.0\" y=\"167\" font-size=\"18\" text-anchor=\"middle\" class=\"tb b4\">+</text><text x=\"450.0\" y=\"167\" font-size=\"18\" text-anchor=\"middle\" class=\"tb b4\">+</text><text x=\"54\" y=\"200\" font-size=\"14\" text-anchor=\"middle\" class=\"tb b5\">재활용재료</text><text x=\"162.0\" y=\"201\" font-size=\"18\" text-anchor=\"middle\" class=\"tb b5\">+</text><text x=\"198.0\" y=\"201\" font-size=\"18\" text-anchor=\"middle\" class=\"tb b5\">+</text><text x=\"234.0\" y=\"201\" font-size=\"18\" text-anchor=\"middle\" class=\"tb b5\">+</text><text x=\"378.0\" y=\"201\" font-size=\"18\" text-anchor=\"middle\" class=\"tb b5\">+</text><text x=\"414.0\" y=\"201\" font-size=\"18\" text-anchor=\"middle\" class=\"tm b5\">-</text><text x=\"450.0\" y=\"201\" font-size=\"18\" text-anchor=\"middle\" class=\"tm b5\">-</text><line x1=\"252\" y1=\"12\" x2=\"252\" y2=\"212\" class=\"e b1\"/><line x1=\"360\" y1=\"12\" x2=\"360\" y2=\"212\" class=\"e b1\"/><text x=\"240\" y=\"240\" font-size=\"13\" text-anchor=\"middle\" class=\"tm b5\">+ 긍정효과, - 부정효과, 빈칸은 평가가 달라져 공란</text></svg>",
+     "caption": "한 줄씩 나타나요. 천연재료는 모두 +, 지속가능한 재료는 폐기, 활용 칸만 +예요.",
+     "builds": 5
+    },
+    {
+     "kind": "points",
+     "head": "평가표 읽기",
+     "items": [
+      "천연재료: 10개 항목 모두 긍정적인 효과예요.",
+      "친환경재료: 제조과정에서 **인체유해성(Human)** 판단이 불분명해요. 대체로 제조, 생산, 시공 과정은 긍정적이에요.",
+      "지속가능한 재료: 폐기, 재활용 과정을 빼고는 모든 항목에서 부정적 영향이에요.",
+      "재활용재료: 어떤 원재료를 재활용했느냐에 따라 평가가 달라져 공란이 많아요. 지속가능한 재료보다 제조, 생산 과정은 긍정적이에요."
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "+ 개수 세기",
+     "given": "평가표의 + 를 재료마다 세어 봐요 (10칸).",
+     "steps": [
+      "천연재료: + 10개, - 0개",
+      "친환경재료: + 8개, - 2개 (H1, 폐기 과정 E)",
+      "지속가능한 재료: + 3개(폐기, 활용 칸), - 7개",
+      "재활용재료: + 4개, - 2개, 빈칸 4개"
+     ],
+     "answer": "+ 가 많은 순서: 천연 10 > 친환경 8 > 재활용 4 > 지속가능 3"
+    },
+    {
+     "kind": "points",
+     "head": "주요 건축재료별 특성",
+     "items": [
+      "구조체를 이루는 일반적인 건축재료: 목재, 점토벽돌 및 기와, 콘크리트, 점토 등.",
+      "재료별로 건축물 용도, 생산방법, 생산과정의 에너지 소비 정도, 장단점을 봐요.",
+      "슬라이드 표에는 목재와 **점토벽돌(Clay Brick)**(점토) 두 줄이 나와요."
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "목재와 **점토벽돌(Clay Brick)**",
+     "cols": [
+      "항목",
+      "목재",
+      "점토벽돌, 점토"
+     ],
+     "rows": [
+      [
+       "용도",
+       "건물 외장, 실내, 외장재",
+       "벽 / 지붕"
+      ],
+      [
+       "생산",
+       "산림",
+       "점토 제품으로 에너지 투입이 매우 많음"
+      ],
+      [
+       "장점",
+       "다양한 부분에 사용, 기술 사양 우수(열저장력, 통기성, 단열, 습도조절), 환경성 검증, CO2 배출 없음",
+       "천연 자재, 지하 건축물에 벽돌 활용 가능"
+      ],
+      [
+       "장점 더",
+       "환경부하 적고 지속 생산 가능, 약한 목재도 목조에 사용, 대상 지역에서 생산, 재활용과 폐기 문제 없음, 원자재에 유해물질 없음",
+       "(표에 더 없음)"
+      ],
+      [
+       "단점",
+       "쓰는 부분에 따라 습기 방지 대책 필요, 지속적으로 생산하지 않으면 친환경적이지 못함",
+       "채굴 때 자연 훼손, 유한 자원 소모, 추가 단열재 필요, 기와 활용은 제한적"
+      ]
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "선정기준 4개 분야가 아닌 것은?",
+     "choices": [
+      "인체유해성(Human)",
+      "에너지소비(Energy)",
+      "경제성(Cost)",
+      "재생 또는 재활용(Recycling or Reuse)"
+     ],
+     "a": 2,
+     "why": "4개 분야는 **인체유해성(Human)**, **에너지소비(Energy)**, **환경부하(Environmental Impact)**, **재생 또는 재활용(Recycling or Reuse)** 예요. 경제성은 없어요."
+    },
+    {
+     "kind": "check",
+     "q": "평가표에서 '폐기, 재활용 과정을 제외하고는 모든 항목에서 부정적' 인 재료는?",
+     "choices": [
+      "천연재료",
+      "친환경재료",
+      "지속가능한 재료",
+      "재활용재료"
+     ],
+     "a": 2,
+     "why": "지속가능한 재료(금속재)는 폐기, 활용 칸 3개만 + 예요. 생산 때 부하가 크다는 앞 단원 내용과 같아요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "'6개 항목' 과 '총 10개 항목' 을 같이 기억해요. 10개는 중복 검토 항목을 포함한 수예요.",
+      "재활용재료 칸의 공란은 '나쁨' 이 아니라 원재료에 따라 평가가 달라진다는 뜻이에요.",
+      "목재 장점 표에 '대상 지역에서 생산이 가능함' 이 두 번 적혀 있어요(슬라이드 중복)."
+     ]
+    },
+    {
+     "kind": "recap",
+     "items": [
+      "분야 4개: **인체유해성(Human)**, **에너지소비(Energy)**, **환경부하(Environmental Impact)**, **재생 또는 재활용(Recycling or Reuse)**.",
+      "항목 6개(H1, H2, E, E.I1, E.I2, R1), 과정별로 4 + 3 + 3 = 중복 포함 10개.",
+      "**전과정(Life Cycle)** 평가: 천연 모두 +, 친환경 H1 불분명, 지속가능 폐기 빼고 -, 재활용 공란 많음.",
+      "목재는 장점이 많고, **점토벽돌(Clay Brick)** 는 에너지 투입이 매우 많아요. 주문: **자연에서 빌려 쓰고, 돌려주며 순환시켜요.**",
+      "오늘의 용어: Human(인체유해성), Energy(에너지소비), Environmental Impact(환경부하), Recycling or Reuse(재생 또는 재활용), Life Cycle(전과정), Clay Brick(점토벽돌)"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "w3-5",
+   "title": "나무의 장점과 약점",
+   "goal": "목재의 특성 8가지와 단점 3가지를 숫자(100년, 95%)와 함께 말할 수 있어요.",
+   "terms": [
+    {
+     "ko": "목재",
+     "en": "Wood",
+     "say": "나무를 잘라 만든 건축재료. 재생될 수 있는 재료 중 가장 많이 쓰여요",
+     "more": "건축 수명 100년 이상, 모든 건축재료의 95%까지 대체할 수 있어요. 대신 부패, 벌레, 버섯, 화재에 약해요."
+    },
+    {
+     "ko": "통기성",
+     "en": "Breathability",
+     "say": "공기와 습기가 재료를 통해 드나드는 성질",
+     "more": "목재는 미세기공 덕분에 통기성과 흡수 능력이 높아요."
+    },
+    {
+     "ko": "미세기공",
+     "en": "Micropore",
+     "say": "재료 속의 아주 작은 구멍. 나무의 숨구멍 같은 것"
+    },
+    {
+     "ko": "방부제",
+     "en": "Preservative",
+     "say": "썩지 않게 하려고 넣는 약품",
+     "more": "유독성 방부제를 쓰면 목재를 자연으로 순환시키기 어려워서 쓰면 안 된다고 했어요."
+    },
+    {
+     "ko": "포르말린",
+     "en": "Formalin",
+     "say": "산업용 목재 가공 때 유독성 접합제로 들어갈 수 있는 물질",
+     "more": "슬라이드는 페놀 또는 포르말린이 첨가되면 인체에 해로울 가능성이 있다고 했어요."
+    },
+    {
+     "ko": "페놀",
+     "en": "Phenol",
+     "say": "산업용 목재 가공 때 유독성 접합제로 들어갈 수 있는 물질"
+    }
+   ],
+   "slides": [
+    {
+     "kind": "title",
+     "big": "나무의 장점과 약점",
+     "sub": "**목재(Wood)**, **통기성(Breathability)**, **미세기공(Micropore)**"
+    },
+    {
+     "kind": "goal",
+     "items": [
+      "**목재(Wood)** 의 특성 8가지를 외워요.",
+      "숫자 두 개, 수명 100년 이상과 95% 대체를 기억해요.",
+      "단점 3가지와 **페놀(Phenol)**, **포르말린(Formalin)** 이야기를 말해요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "앞 단원과 잇기",
+     "items": [
+      "성적표에서 천연재료는 10개 항목 모두 + 였어요.",
+      "주요 재료 표에서도 **목재(Wood)** 는 장점이 아주 많았죠.",
+      "이제 2장 천연 건축재료로 들어가요. 첫 번째가 목재예요."
+     ]
+    },
+    {
+     "kind": "analogy",
+     "head": "나무는 숨 쉬는 피부",
+     "scene": "사람 피부에는 땀구멍이 있어서 숨을 쉬고 땀을 내요. 나무에도 아주 작은 구멍이 있어서 공기와 습기가 드나들어요.",
+     "map": [
+      [
+       "피부의 땀구멍",
+       "**미세기공(Micropore)**"
+      ],
+      [
+       "피부가 숨 쉬는 것",
+       "**통기성(Breathability)**"
+      ],
+      [
+       "땀을 머금는 속옷",
+       "습기를 흡수하는 목재"
+      ],
+      [
+       "피부에 바르는 독한 화장품",
+       "유독성 **방부제(Preservative)**, 접합제"
+      ]
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "**목재(Wood)** 의 특성 1~4",
+     "items": [
+      "1) 재생될 수 있는 건축재료 중에서 가장 비중 있는 재료예요(많이 쓰임).",
+      "2) 사람에게 쾌적함을 줘요: 자연성, 친근한 색채, 고유의 향(실험).",
+      "3) 높은 **통기성(Breathability)** 및 흡수 능력: **미세기공(Micropore)** 덕분이에요.",
+      "4) 가변성과 응용성이 뛰어나 부분 교체, 전면 개조가 쉬워요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "**목재(Wood)** 의 특성 5~8",
+     "items": [
+      "5) 건축 수명 100년 이상 가능해요.",
+      "6) 생산현장이 널리 분포해서 에너지 절약적이에요.",
+      "7) 적용 범위가 넓어요: 모든 건축재료의 95%까지 대체 가능(구조재~장식).",
+      "8) 직접 재활용, 자연으로 순환이 쉬워요. 단, 유독성 **방부제(Preservative)** 와 접합제를 쓰면 안 돼요."
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "숨 쉬는 **목재(Wood)**",
+     "svg": "<svg viewBox=\"0 0 480 270\" xmlns=\"http://www.w3.org/2000/svg\"><rect x=\"20\" y=\"60\" width=\"200\" height=\"130\" rx=\"2\" class=\"n3 b1\"/><circle cx=\"60\" cy=\"95\" r=\"5\" class=\"n b1\"/><circle cx=\"95\" cy=\"120\" r=\"5\" class=\"n b1\"/><circle cx=\"140\" cy=\"90\" r=\"5\" class=\"n b1\"/><circle cx=\"180\" cy=\"130\" r=\"5\" class=\"n b1\"/><circle cx=\"70\" cy=\"160\" r=\"5\" class=\"n b1\"/><circle cx=\"125\" cy=\"165\" r=\"5\" class=\"n b1\"/><circle cx=\"185\" cy=\"85\" r=\"5\" class=\"n b1\"/><circle cx=\"160\" cy=\"160\" r=\"5\" class=\"n b1\"/><text x=\"120\" y=\"50\" font-size=\"15\" text-anchor=\"middle\" class=\"tb b1\">목재 속 미세기공</text><line x1=\"40\" y1=\"230\" x2=\"83\" y2=\"201\" class=\"e2 b2\"/><polygon points=\"90,196 85,205 80,197\" class=\"arrow b2\"/><line x1=\"150\" y1=\"196\" x2=\"193\" y2=\"225\" class=\"e2 b2\"/><polygon points=\"200,230 190,229 195,221\" class=\"arrow b2\"/><text x=\"120\" y=\"252\" font-size=\"14\" text-anchor=\"middle\" class=\"t b2\">습기, 공기가 드나들어요</text><rect x=\"250\" y=\"40\" width=\"220\" height=\"40\" rx=\"2\" class=\"box2 b3\"/><text x=\"360.0\" y=\"65.25\" font-size=\"15\" text-anchor=\"middle\" class=\"tb b3\">건축 수명 100년 이상</text><rect x=\"250\" y=\"95\" width=\"220\" height=\"40\" rx=\"2\" class=\"box2 b3\"/><text x=\"360.0\" y=\"120.25\" font-size=\"15\" text-anchor=\"middle\" class=\"tb b3\">건축재료 95%까지 대체</text><rect x=\"250\" y=\"150\" width=\"220\" height=\"40\" rx=\"2\" class=\"box2 b3\"/><text x=\"360.0\" y=\"175.25\" font-size=\"15\" text-anchor=\"middle\" class=\"tb b3\">직접 재활용, 자연 순환</text><rect x=\"250\" y=\"205\" width=\"220\" height=\"40\" rx=\"2\" class=\"box b4\"/><text x=\"360.0\" y=\"230.25\" font-size=\"15\" text-anchor=\"middle\" class=\"tb b4\">약점: 부패, 벌레, 불</text></svg>",
+     "caption": "**미세기공(Micropore)** 로 습기와 공기가 드나들어요. 오른쪽은 외울 숫자와 약점이에요.",
+     "builds": 4
+    },
+    {
+     "kind": "points",
+     "head": "**목재(Wood)** 의 단점 3가지",
+     "items": [
+      "1) 산업용 가공 때 유독성 접합제(**페놀(Phenol)** or **포르말린(Formalin)**)가 첨가되면 인체에 해로울 수 있어요.",
+      "2) 부적합하게 가공하면 목재의 질이 떨어지고 목재 자체에서 유해 성분이 나올 수 있어요.",
+      "3) 부패되기 쉽고, 벌레나 버섯, 화재에 취약해요."
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "장점과 단점 짝짓기",
+     "cols": [
+      "장점",
+      "그 반대편 단점"
+     ],
+     "rows": [
+      [
+       "**통기성(Breathability)**, 흡수 능력",
+       "습기에 부패되기 쉬움"
+      ],
+      [
+       "자연으로 순환 쉬움",
+       "유독성 **방부제(Preservative)**, 접합제를 쓰면 순환이 어려움"
+      ],
+      [
+       "사람에게 쾌적함",
+       "가공 때 **페놀(Phenol)**, **포르말린(Formalin)** 은 인체에 해로울 수 있음"
+      ],
+      [
+       "적용 범위 넓음(95%)",
+       "벌레, 버섯, 화재에 취약"
+      ]
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "결국 문제는 '가공' 이에요",
+     "items": [
+      "**목재(Wood)** 자체는 좋은 재료예요.",
+      "문제는 산업용 가공, 부적합 가공, 잘못된 표면처리예요.",
+      "앞 단원에서 본 새집증후군 이야기와 같은 줄기예요.",
+      "주문: **자연에서 빌려 쓰고, 돌려주며 순환시켜요.** 가공을 덜 해야 돌려주기 쉬워요."
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "Micropore(미세기공) 덕분에 목재가 갖는 특성은?",
+     "choices": [
+      "높은 통기성 및 흡수 능력",
+      "불에 강함",
+      "벌레에 강함",
+      "가공 때 접합제가 필요 없음"
+     ],
+     "a": 0,
+     "why": "슬라이드 3) 높은 **통기성(Breathability)** 및 흡수 능력: **미세기공(Micropore)** 예요."
+    },
+    {
+     "kind": "check",
+     "q": "목재 특성에 나온 숫자로 옳은 것은?",
+     "choices": [
+      "건축 수명 50년, 건축재료의 50% 대체",
+      "건축 수명 100년 이상, 건축재료의 95%까지 대체",
+      "건축 수명 30년, 건축재료의 100% 대체",
+      "건축 수명 100년 이상, 건축재료의 59%까지 대체"
+     ],
+     "a": 1,
+     "why": "5) 건축 수명 100년 이상 가능, 7) 모든 건축재료의 95%까지 대체 가능이에요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "유독성 접합제는 **페놀(Phenol)** 또는 **포르말린(Formalin)** 이에요. 단점 1) 은 '산업용 가공 시' 라는 조건이 붙어요.",
+      "95% 는 '적용 범위'(대체 가능 비율), 100년 은 '건축 수명' 이에요.",
+      "**목재(Wood)** 는 불, 벌레, 버섯, 부패에 약해요. 튼튼하다고 불에 강한 것은 아니에요."
+     ]
+    },
+    {
+     "kind": "recap",
+     "items": [
+      "**목재(Wood)** 는 재생될 수 있는 재료 중 가장 많이 쓰이고, 쾌적함(자연성, 색채, 향)을 줘요.",
+      "**미세기공(Micropore)** 로 높은 **통기성(Breathability)**, 흡수 능력. 부분 교체, 개조 쉬움.",
+      "수명 100년 이상, 생산현장이 널리 있어 에너지 절약, 95%까지 대체, 직접 재활용.",
+      "단점: 가공 때 **페놀(Phenol)**, **포르말린(Formalin)** 접합제, 부적합 가공, 부패와 벌레, 버섯, 화재. 주문: **자연에서 빌려 쓰고, 돌려주며 순환시켜요.**",
+      "오늘의 용어: Wood(목재), Breathability(통기성), Micropore(미세기공), Preservative(방부제), Formalin(포르말린), Phenol(페놀)"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "w3-6",
+   "title": "목구조에 쓰는 목재 다섯",
+   "goal": "구조용 판넬, 글루램, LVL, I-Joist, 방부목의 만드는 법과 쓰는 곳을 분류표와 함께 말할 수 있어요.",
+   "terms": [
+    {
+     "ko": "구조용 판넬",
+     "en": "Structural Panel",
+     "say": "합판, OSB 판넬, 집성판넬처럼 넓은 판으로 된 구조용 목재",
+     "more": "강도와 내구성이 우수하고 바닥, 벽, 천정, 거푸집, 가구, I-Joist 웹 부분 등 다양하게 써요."
+    },
+    {
+     "ko": "합판",
+     "en": "Plywood",
+     "say": "얇은 목재 단판을 결 방향이 서로 교차되게 쌓아 붙인 판",
+     "more": "결을 엇갈려 쌓아서 강도가 높아져요."
+    },
+    {
+     "ko": "OSB 판넬",
+     "en": "Oriented Strand Board",
+     "say": "나무 조각들을 접착제로 붙여 만든 판"
+    },
+    {
+     "ko": "글루램",
+     "en": "Glue Laminated Timbers",
+     "say": "두께 5cm 미만의 각재를 접착해 만든 목재(집성재)",
+     "more": "끝을 이어 긴 판재를 만들고 적층, 접착해서 직선, 곡선 모양으로 만들어요. 강도와 내구성이 좋아 구조용으로 적절해요."
+    },
+    {
+     "ko": "집성재",
+     "en": "",
+     "say": "작은 목재를 접착제로 붙여 크게 만든 접착가공목재. 글루램이 대표"
+    },
+    {
+     "ko": "LVL",
+     "en": "Laminated Veneer Lumber",
+     "say": "얇은 단판을 나뭇결이 길이 방향으로 나란하게 쌓아 만든 목재",
+     "more": "큰 장작 모양으로 만든 뒤 제품 크기로 잘라요. 보, 서까래, I-Joist 플랜지 부분 등에 써요."
+    },
+    {
+     "ko": "아이조이스트",
+     "en": "I-Joist",
+     "say": "알파벳 I 모양의 목재 보. 웹은 합판이나 OSB, 플랜지는 LVL",
+     "more": "시공이 간단하고 가볍고 긴 제품을 만들 수 있어요. 바닥 또는 지붕 구조용 자재로 써요."
+    },
+    {
+     "ko": "방부목",
+     "en": "Preservative-treated Wood",
+     "say": "습기에 썩지 않게 약품을 처리한 목재",
+     "more": "발코니, 담장, 옥외 조경물 등에 써요."
+    }
+   ],
+   "slides": [
+    {
+     "kind": "title",
+     "big": "목구조에 쓰는 목재 다섯",
+     "sub": "구조용 판넬, 글루램, LVL, I-Joist, 방부목"
+    },
+    {
+     "kind": "goal",
+     "items": [
+      "목구조에 사용되는 목재 5가지 이름을 외워요.",
+      "**합판(Plywood)** 와 **LVL(Laminated Veneer Lumber)** 의 결 방향 차이를 말해요.",
+      "분류표에서 어느 목재를 어느 부위에 쓰는지 읽어요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "앞 단원과 잇기",
+     "items": [
+      "앞 단원 **목재(Wood)** 는 적용 범위가 넓어 95%까지 대체할 수 있었죠.",
+      "그 넓은 쓰임을 가능하게 하는 것이 가공한 목재들이에요.",
+      "단, 앞에서 본 접합제 조심은 여기에도 똑같이 적용돼요."
+     ]
+    },
+    {
+     "kind": "analogy",
+     "head": "나무로 만든 블록 장난감",
+     "scene": "작은 나무 조각을 겹겹이 붙이면 길고 크고 휘어진 모양도 만들 수 있어요. 붙이는 방향에 따라 튼튼함도 달라져요.",
+     "map": [
+      [
+       "얇은 종이를 엇갈려 붙인 두꺼운 종이",
+       "**합판(Plywood)**"
+      ],
+      [
+       "작은 막대를 붙여 만든 긴 막대",
+       "**글루램(Glue Laminated Timbers)**, **집성재**"
+      ],
+      [
+       "결을 한 방향으로 모은 막대",
+       "**LVL(Laminated Veneer Lumber)**"
+      ],
+      [
+       "알파벳 I 모양 블록",
+       "**I-Joist(아이조이스트)**"
+      ]
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "목구조에 사용되는 목재의 분류",
+     "svg": "<svg viewBox=\"0 0 480 270\" xmlns=\"http://www.w3.org/2000/svg\"><rect x=\"84\" y=\"6\" width=\"76\" height=\"26\" rx=\"2\" class=\"box2 b1\"/><text x=\"122.0\" y=\"23.2\" font-size=\"12\" text-anchor=\"middle\" class=\"tb b1\">구조용 판넬</text><circle cx=\"122\" cy=\"49\" r=\"8\" class=\"n2 b1\"/><circle cx=\"122\" cy=\"80\" r=\"8\" class=\"n2 b1\"/><circle cx=\"122\" cy=\"111\" r=\"8\" class=\"n2 b1\"/><circle cx=\"122\" cy=\"142\" r=\"8\" class=\"n2 b1\"/><circle cx=\"122\" cy=\"173\" r=\"8\" class=\"n2 b1\"/><circle cx=\"122\" cy=\"204\" r=\"8\" class=\"n2 b1\"/><circle cx=\"122\" cy=\"235\" r=\"8\" class=\"n2 b1\"/><rect x=\"162\" y=\"6\" width=\"76\" height=\"26\" rx=\"2\" class=\"box2 b2\"/><text x=\"200.0\" y=\"23.2\" font-size=\"12\" text-anchor=\"middle\" class=\"tb b2\">글루램</text><circle cx=\"200\" cy=\"49\" r=\"8\" class=\"n2 b2\"/><circle cx=\"200\" cy=\"173\" r=\"8\" class=\"n2 b2\"/><rect x=\"240\" y=\"6\" width=\"76\" height=\"26\" rx=\"2\" class=\"box2 b3\"/><text x=\"278.0\" y=\"23.2\" font-size=\"12\" text-anchor=\"middle\" class=\"tb b3\">LVL</text><circle cx=\"278\" cy=\"49\" r=\"8\" class=\"n2 b3\"/><circle cx=\"278\" cy=\"80\" r=\"8\" class=\"n2 b3\"/><circle cx=\"278\" cy=\"111\" r=\"8\" class=\"n2 b3\"/><circle cx=\"278\" cy=\"173\" r=\"8\" class=\"n2 b3\"/><circle cx=\"278\" cy=\"235\" r=\"8\" class=\"n2 b3\"/><rect x=\"318\" y=\"6\" width=\"76\" height=\"26\" rx=\"2\" class=\"box2 b4\"/><text x=\"356.0\" y=\"23.2\" font-size=\"12\" text-anchor=\"middle\" class=\"tb b4\">I-Joist</text><circle cx=\"356\" cy=\"49\" r=\"8\" class=\"n2 b4\"/><circle cx=\"356\" cy=\"80\" r=\"8\" class=\"n2 b4\"/><circle cx=\"356\" cy=\"173\" r=\"8\" class=\"n2 b4\"/><rect x=\"396\" y=\"6\" width=\"76\" height=\"26\" rx=\"2\" class=\"box2 b5\"/><text x=\"434.0\" y=\"23.2\" font-size=\"12\" text-anchor=\"middle\" class=\"tb b5\">방부목</text><circle cx=\"434\" cy=\"49\" r=\"8\" class=\"n2 b5\"/><circle cx=\"434\" cy=\"142\" r=\"8\" class=\"n2 b5\"/><circle cx=\"434\" cy=\"204\" r=\"8\" class=\"n2 b5\"/><text x=\"40\" y=\"54\" font-size=\"14\" text-anchor=\"middle\" class=\"tb\">바닥</text><line x1=\"10\" y1=\"34\" x2=\"474\" y2=\"34\" class=\"e\"/><text x=\"40\" y=\"85\" font-size=\"14\" text-anchor=\"middle\" class=\"tb\">벽</text><line x1=\"10\" y1=\"65\" x2=\"474\" y2=\"65\" class=\"e\"/><text x=\"40\" y=\"116\" font-size=\"14\" text-anchor=\"middle\" class=\"tb\">천정</text><line x1=\"10\" y1=\"96\" x2=\"474\" y2=\"96\" class=\"e\"/><text x=\"40\" y=\"147\" font-size=\"14\" text-anchor=\"middle\" class=\"tb\">데크</text><line x1=\"10\" y1=\"127\" x2=\"474\" y2=\"127\" class=\"e\"/><text x=\"40\" y=\"178\" font-size=\"14\" text-anchor=\"middle\" class=\"tb\">지붕</text><line x1=\"10\" y1=\"158\" x2=\"474\" y2=\"158\" class=\"e\"/><text x=\"40\" y=\"209\" font-size=\"14\" text-anchor=\"middle\" class=\"tb\">사이딩</text><line x1=\"10\" y1=\"189\" x2=\"474\" y2=\"189\" class=\"e\"/><text x=\"40\" y=\"240\" font-size=\"14\" text-anchor=\"middle\" class=\"tb\">거푸집</text><line x1=\"10\" y1=\"220\" x2=\"474\" y2=\"220\" class=\"e\"/></svg>",
+     "caption": "열이 하나씩 나타나요. O 가 가장 많은 것은 **구조용 판넬(Structural Panel)**(7곳), 가장 적은 것은 **글루램(Glue Laminated Timbers)**(2곳)예요.",
+     "builds": 5
+    },
+    {
+     "kind": "compare",
+     "head": "분류표 글로 읽기",
+     "cols": [
+      "목재",
+      "쓰는 부위 (표의 O)"
+     ],
+     "rows": [
+      [
+       "구조용 판넬(Structural Panel)",
+       "바닥, 벽, 천정, 데크, 지붕, 사이딩, 거푸집 (7곳 모두)"
+      ],
+      [
+       "글루램(Glue Laminated Timbers)",
+       "바닥, 지붕"
+      ],
+      [
+       "LVL(Laminated Veneer Lumber)",
+       "바닥, 벽, 천정, 지붕, 거푸집"
+      ],
+      [
+       "I-Joist(아이조이스트)",
+       "바닥, 벽, 지붕"
+      ],
+      [
+       "방부목(Preservative-treated Wood)",
+       "바닥, 데크, 사이딩"
+      ]
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "1) **구조용 판넬(Structural Panel)**",
+     "items": [
+      "**합판(Plywood)**, **OSB 판넬(Oriented Strand Board)**, 집성판넬 등이에요.",
+      "강도와 내구성이 우수해요: 휨, 처짐, 부서짐이 거의 없고 충격에 강해요.",
+      "다양하게 써요: 바닥, 벽, 천정, 거푸집용, 가구, **I-Joist(아이조이스트)** 웹 부분 등.",
+      "**합판(Plywood)**: 얇은 목재 단판을 결 방향이 서로 교차되도록 적층(강도 ↑).",
+      "**OSB 판넬(Oriented Strand Board)**: 접착제를 써서 나무 조각들로 패널을 만들어요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "2) **글루램(Glue Laminated Timbers)**",
+     "items": [
+      "두께 5cm 미만의 각재를 접착해서 만든 목재예요(**집성재**: 접착가공목재).",
+      "끝부분을 서로 이어 긴 판재를 만든 뒤, 접착제로 적층 또는 접착해요.",
+      "그래서 직선, 곡선 모양으로 다양하게 생산해요. 사진의 아치와 물결 지붕이 그 예예요.",
+      "우수한 강도 및 내구성: 구조용으로 적절해요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "3) **LVL(Laminated Veneer Lumber)**",
+     "items": [
+      "얇은 목재 단판을 나뭇결이 길이 방향에 평행하도록 적층해요.",
+      "큰 장작 형태로 만든 뒤 최종 제품 크기로 잘라요.",
+      "보, 서까래, **I-Joist(아이조이스트)** 플랜지 부분 등에 써요.",
+      "그림: 단판(Veneer)을 쌓아 **LVL(Laminated Veneer Lumber)** 을 만들고, 세로(Vertical)나 가로(Horizontal) 방향으로 잘라 써요."
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "**합판(Plywood)** 와 **LVL(Laminated Veneer Lumber)** 의 결 방향",
+     "svg": "<svg viewBox=\"0 0 480 270\" xmlns=\"http://www.w3.org/2000/svg\"><text x=\"120\" y=\"24\" font-size=\"15\" text-anchor=\"middle\" class=\"tb b1\">합판: 결을 교차해서</text><text x=\"360\" y=\"24\" font-size=\"15\" text-anchor=\"middle\" class=\"tb b2\">LVL: 결을 나란하게</text><rect x=\"30\" y=\"50\" width=\"180\" height=\"30\" rx=\"2\" class=\"n3 b1\"/><line x1=\"40\" y1=\"60\" x2=\"200\" y2=\"60\" class=\"e b1\"/><line x1=\"40\" y1=\"65\" x2=\"200\" y2=\"65\" class=\"e b1\"/><line x1=\"40\" y1=\"70\" x2=\"200\" y2=\"70\" class=\"e b1\"/><rect x=\"270\" y=\"50\" width=\"180\" height=\"30\" rx=\"2\" class=\"n3 b2\"/><line x1=\"280\" y1=\"60\" x2=\"440\" y2=\"60\" class=\"e b2\"/><line x1=\"280\" y1=\"65\" x2=\"440\" y2=\"65\" class=\"e b2\"/><line x1=\"280\" y1=\"70\" x2=\"440\" y2=\"70\" class=\"e b2\"/><rect x=\"30\" y=\"90\" width=\"180\" height=\"30\" rx=\"2\" class=\"n3 b1\"/><line x1=\"50\" y1=\"94\" x2=\"50\" y2=\"116\" class=\"e b1\"/><line x1=\"75\" y1=\"94\" x2=\"75\" y2=\"116\" class=\"e b1\"/><line x1=\"100\" y1=\"94\" x2=\"100\" y2=\"116\" class=\"e b1\"/><line x1=\"125\" y1=\"94\" x2=\"125\" y2=\"116\" class=\"e b1\"/><line x1=\"150\" y1=\"94\" x2=\"150\" y2=\"116\" class=\"e b1\"/><line x1=\"175\" y1=\"94\" x2=\"175\" y2=\"116\" class=\"e b1\"/><line x1=\"200\" y1=\"94\" x2=\"200\" y2=\"116\" class=\"e b1\"/><rect x=\"270\" y=\"90\" width=\"180\" height=\"30\" rx=\"2\" class=\"n3 b2\"/><line x1=\"280\" y1=\"100\" x2=\"440\" y2=\"100\" class=\"e b2\"/><line x1=\"280\" y1=\"105\" x2=\"440\" y2=\"105\" class=\"e b2\"/><line x1=\"280\" y1=\"110\" x2=\"440\" y2=\"110\" class=\"e b2\"/><rect x=\"30\" y=\"130\" width=\"180\" height=\"30\" rx=\"2\" class=\"n3 b1\"/><line x1=\"40\" y1=\"140\" x2=\"200\" y2=\"140\" class=\"e b1\"/><line x1=\"40\" y1=\"145\" x2=\"200\" y2=\"145\" class=\"e b1\"/><line x1=\"40\" y1=\"150\" x2=\"200\" y2=\"150\" class=\"e b1\"/><rect x=\"270\" y=\"130\" width=\"180\" height=\"30\" rx=\"2\" class=\"n3 b2\"/><line x1=\"280\" y1=\"140\" x2=\"440\" y2=\"140\" class=\"e b2\"/><line x1=\"280\" y1=\"145\" x2=\"440\" y2=\"145\" class=\"e b2\"/><line x1=\"280\" y1=\"150\" x2=\"440\" y2=\"150\" class=\"e b2\"/><rect x=\"30\" y=\"170\" width=\"180\" height=\"30\" rx=\"2\" class=\"n3 b1\"/><line x1=\"50\" y1=\"174\" x2=\"50\" y2=\"196\" class=\"e b1\"/><line x1=\"75\" y1=\"174\" x2=\"75\" y2=\"196\" class=\"e b1\"/><line x1=\"100\" y1=\"174\" x2=\"100\" y2=\"196\" class=\"e b1\"/><line x1=\"125\" y1=\"174\" x2=\"125\" y2=\"196\" class=\"e b1\"/><line x1=\"150\" y1=\"174\" x2=\"150\" y2=\"196\" class=\"e b1\"/><line x1=\"175\" y1=\"174\" x2=\"175\" y2=\"196\" class=\"e b1\"/><line x1=\"200\" y1=\"174\" x2=\"200\" y2=\"196\" class=\"e b1\"/><rect x=\"270\" y=\"170\" width=\"180\" height=\"30\" rx=\"2\" class=\"n3 b2\"/><line x1=\"280\" y1=\"180\" x2=\"440\" y2=\"180\" class=\"e b2\"/><line x1=\"280\" y1=\"185\" x2=\"440\" y2=\"185\" class=\"e b2\"/><line x1=\"280\" y1=\"190\" x2=\"440\" y2=\"190\" class=\"e b2\"/><text x=\"120\" y=\"232\" font-size=\"14\" text-anchor=\"middle\" class=\"tm b1\">구조용 판넬 (강도 높임)</text><text x=\"360\" y=\"232\" font-size=\"14\" text-anchor=\"middle\" class=\"tm b2\">보, 서까래, 플랜지</text><line x1=\"270\" y1=\"256\" x2=\"441\" y2=\"256\" class=\"e2 b2\"/><polygon points=\"450,256 441,261 441,251\" class=\"arrow b2\"/><text x=\"360\" y=\"250\" font-size=\"13\" text-anchor=\"middle\" class=\"tm b2\">길이 방향</text></svg>",
+     "caption": "**합판(Plywood)** 는 층마다 결이 엇갈리고, **LVL(Laminated Veneer Lumber)** 은 모든 층의 결이 길이 방향으로 나란해요.",
+     "builds": 2
+    },
+    {
+     "kind": "points",
+     "head": "4) **I-Joist(아이조이스트)**",
+     "items": [
+      "웹: **합판(Plywood)** 나 **OSB 판넬(Oriented Strand Board)** 예요.",
+      "플랜지: **LVL(Laminated Veneer Lumber)** 을 써서 만들어요.",
+      "시공이 간단하고, 가볍고, 긴 길이의 제품 생산이 가능해요.",
+      "바닥 또는 지붕 구조용 자재로 써요."
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "**I-Joist(아이조이스트)** 는 재료 두 가지의 합작",
+     "svg": "<svg viewBox=\"0 0 480 270\" xmlns=\"http://www.w3.org/2000/svg\"><text x=\"240\" y=\"22\" font-size=\"16\" text-anchor=\"middle\" class=\"tb\">I-Joist(아이조이스트) 단면</text><rect x=\"150\" y=\"40\" width=\"180\" height=\"34\" rx=\"2\" class=\"n2 b1\"/><text x=\"420\" y=\"62\" font-size=\"15\" text-anchor=\"middle\" class=\"tb b1\">플랜지: LVL</text><rect x=\"150\" y=\"206\" width=\"180\" height=\"34\" rx=\"2\" class=\"n2 b1\"/><rect x=\"226\" y=\"74\" width=\"28\" height=\"132\" rx=\"2\" class=\"n3 b2\"/><text x=\"400\" y=\"145\" font-size=\"15\" text-anchor=\"middle\" class=\"tb b2\">웹: 합판, OSB</text><line x1=\"340\" y1=\"57\" x2=\"341\" y2=\"57\" class=\"e2 b1\"/><polygon points=\"332,57 341,52 341,62\" class=\"arrow b1\"/><line x1=\"350\" y1=\"140\" x2=\"267\" y2=\"140\" class=\"e2 b2\"/><polygon points=\"258,140 267,135 267,145\" class=\"arrow b2\"/><text x=\"90\" y=\"140\" font-size=\"15\" text-anchor=\"middle\" class=\"t b3\">가볍고 길게</text><text x=\"90\" y=\"162\" font-size=\"15\" text-anchor=\"middle\" class=\"t b3\">바닥, 지붕 구조</text></svg>",
+     "caption": "위아래 플랜지는 **LVL(Laminated Veneer Lumber)**, 가운데 세로판 웹은 **합판(Plywood)** 나 **OSB 판넬(Oriented Strand Board)** 예요.",
+     "builds": 3
+    },
+    {
+     "kind": "points",
+     "head": "5) **방부목(Preservative-treated Wood)**",
+     "items": [
+      "습기에 의한 부패를 막으려고 인공적으로 약품을 처리한 목재예요.",
+      "발코니, 담장, 옥외 조경물 등에 써요.",
+      "앞 단원 목재 단점 '부패되기 쉬움' 을 보완한 것이에요.",
+      "그래서 표에서도 바깥 부위인 데크, 사이딩에 **방부목(Preservative-treated Wood)** 이 있어요."
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "'얇은 목재 단판을 나뭇결이 길이 방향에 평행하도록 적층' 한 목재는?",
+     "choices": [
+      "합판",
+      "OSB 판넬",
+      "LVL",
+      "방부목"
+     ],
+     "a": 2,
+     "why": "**LVL(Laminated Veneer Lumber)** 은 결을 나란하게, **합판(Plywood)** 는 결을 교차해서 쌓아요."
+    },
+    {
+     "kind": "check",
+     "q": "분류표에서 7개 부위(바닥, 벽, 천정, 데크, 지붕, 사이딩, 거푸집)에 모두 O 가 있는 목재는?",
+     "choices": [
+      "구조용 판넬",
+      "글루램",
+      "I-Joist",
+      "방부목"
+     ],
+     "a": 0,
+     "why": "**구조용 판넬(Structural Panel)** 만 7곳 모두 O 예요. **글루램(Glue Laminated Timbers)** 는 바닥, 지붕 두 곳뿐이에요."
+    },
+    {
+     "kind": "check",
+     "q": "I-Joist(아이조이스트) 의 플랜지에 쓰는 재료는?",
+     "choices": [
+      "LVL",
+      "합판",
+      "OSB 판넬",
+      "방부목"
+     ],
+     "a": 0,
+     "why": "웹은 **합판(Plywood)** 나 **OSB 판넬(Oriented Strand Board)**, 플랜지는 **LVL(Laminated Veneer Lumber)** 이에요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "**합판(Plywood)** = 결 교차, **LVL(Laminated Veneer Lumber)** = 결 평행. **글루램(Glue Laminated Timbers)** = 5cm 미만 각재를 접착한 **집성재**.",
+      "**I-Joist(아이조이스트)** 설명 글에는 '바닥 또는 지붕 구조용' 이라 했지만 분류표에는 벽에도 O 가 있어요. 표 문제면 표대로 답해요.",
+      "슬라이드는 '천정' 이라고 적었어요(흔히 천장). 표기는 슬라이드를 따라요."
+     ]
+    },
+    {
+     "kind": "recap",
+     "items": [
+      "**구조용 판넬(Structural Panel)**: **합판(Plywood)**(결 교차), **OSB 판넬(Oriented Strand Board)**(나무 조각 + 접착제), 집성판넬. 7곳 모두 사용.",
+      "**글루램(Glue Laminated Timbers)**: 5cm 미만 각재 접착, **집성재**, 직선과 곡선, 구조용. 바닥, 지붕.",
+      "**LVL(Laminated Veneer Lumber)**: 결을 길이 방향으로 평행하게 적층, 보, 서까래, **I-Joist(아이조이스트)** 플랜지.",
+      "**I-Joist(아이조이스트)**: 웹 합판/OSB + 플랜지 LVL, 가볍고 길게. **방부목(Preservative-treated Wood)**: 약품 처리, 발코니, 담장, 조경물.",
+      "오늘의 용어: Structural Panel(구조용 판넬), Plywood(합판), Oriented Strand Board(OSB 판넬), Glue Laminated Timbers(글루램), 집성재, Laminated Veneer Lumber(LVL), I-Joist(아이조이스트), Preservative-treated Wood(방부목)"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "w3-7",
+   "title": "흙의 힘과 약점",
+   "goal": "흙의 특성 5가지, 단점 2가지, 구조재료와 실내 마감재료로 쓸 때 필요한 성능을 말할 수 있어요.",
+   "terms": [
+    {
+     "ko": "흙건축",
+     "en": "Earth Architecture",
+     "say": "흙을 주재료로 짓는 건축",
+     "more": "흙은 습도 조절, 단열과 축열, 공기 정화, 항균과 방충, 폐기물 없음이 장점이고, 수분에 약하고 갈라질 수 있어요."
+    },
+    {
+     "ko": "습도 조절",
+     "en": "Humidity Control",
+     "say": "실내 습도를 알맞게 유지해 주는 기능. 흙의 첫 번째 특성"
+    },
+    {
+     "ko": "축열",
+     "en": "Heat Storage",
+     "say": "열을 머금었다가 천천히 내놓는 것. 기초 다지기의 뚝배기 이야기",
+     "more": "흙집은 여름 최고기온이 실외보다 3~10도 정도 낮고, 겨울 최저기온이 실외보다 5~7도 정도 높아요."
+    },
+    {
+     "ko": "압축강도",
+     "en": "Compressive Strength",
+     "say": "누르는 힘을 물체가 어느 정도 견디는지",
+     "more": "흙을 구조재료(기둥, 내력벽)나 실외 마감재료로 쓸 때 필요해요."
+    },
+    {
+     "ko": "부착강도",
+     "en": "Bond Strength",
+     "say": "재료가 견고하게 잘 붙어 있는지",
+     "more": "흙을 실내 마감재료(미장, 벽돌, 패널)로 쓸 때 필요해요."
+    },
+    {
+     "ko": "동해저항",
+     "en": "Frost Resistance",
+     "say": "추위로 얼어서 망가지지 않는 성능"
+    },
+    {
+     "ko": "비수축성",
+     "en": "Non-shrinkage",
+     "say": "마르면서 줄어들지 않는 성질. 흙을 어디에 쓰든 필요해요"
+    },
+    {
+     "ko": "불연성",
+     "en": "Incombustibility",
+     "say": "불에 타지 않는 성질"
+    }
+   ],
+   "slides": [
+    {
+     "kind": "title",
+     "big": "흙의 힘과 약점",
+     "sub": "**흙건축(Earth Architecture)**, **습도 조절(Humidity Control)**, **축열(Heat Storage)**"
+    },
+    {
+     "kind": "goal",
+     "items": [
+      "**흙건축(Earth Architecture)** 에 쓰는 흙의 특성 5가지와 숫자(3~10도, 5~7도)를 외워요.",
+      "흙의 단점 2가지를 말해요.",
+      "구조재료는 **압축강도(Compressive Strength)**, 실내 마감재료는 **부착강도(Bond Strength)** 를 짝지어요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "앞 단원과 잇기",
+     "items": [
+      "나무는 **통기성(Breathability)** 이 높았지만 습기에 썩기 쉬웠죠.",
+      "흙도 숨 쉬는 재료예요. 대신 약점은 물이에요.",
+      "천연 건축재료 두 번째, 흙으로 가요."
+     ]
+    },
+    {
+     "kind": "analogy",
+     "head": "흙벽은 뚝배기",
+     "scene": "뚝배기는 늦게 데워지고 늦게 식어요. 흙벽도 낮의 열을 머금었다가 천천히 내놓아요. 그리고 숨 쉬는 스펀지처럼 습기를 먹었다 내놓아요.",
+     "map": [
+      [
+       "늦게 데워지고 늦게 식는 뚝배기",
+       "**축열(Heat Storage)**"
+      ],
+      [
+       "물기를 먹었다 내놓는 스펀지",
+       "**습도 조절(Humidity Control)**"
+      ],
+      [
+       "흙 알갱이 사이 틈",
+       "공극 → 공기 정화"
+      ],
+      [
+       "비 맞으면 풀어지는 흙덩이",
+       "수분에 취약"
+      ]
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "흙의 특성 1~3",
+     "items": [
+      "1) 천연의 **습도 조절(Humidity Control)** 기능: 실내 습도를 쾌적하게 유지해요.",
+      "2) 단열과 **축열(Heat Storage)** 기능: 여름 최고기온은 실외보다 3~10도 정도 낮아요.",
+      "겨울 최저기온은 실외보다 5~7도 정도 높게 유지해요.",
+      "3) 공기 정화 기능: 흙 미립자에 공극이 많아 공기 교환이 쉽고 오염물질 제거 효과가 있어요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "흙의 특성 4~5",
+     "items": [
+      "4) 항균, 방충 효과: 토양 미생물과 효소 작용 덕분이에요.",
+      "5) 폐기물 발생 없음: 건축물을 폐기하면 자연으로 환원돼요.",
+      "5) 가 바로 1강 재료 순환이에요. **흙건축(Earth Architecture)** 은 다 쓰면 흙으로 돌아가요.",
+      "주문: **자연에서 빌려 쓰고, 돌려주며 순환시켜요.**"
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "흙집 안 온도 예상하기",
+     "given": "예시 날씨: 여름 바깥 최고 33℃, 겨울 바깥 최저 -5℃ (숫자는 연습용 가정).",
+     "steps": [
+      "여름: 33 - 10 = 23, 33 - 3 = 30",
+      "그래서 흙집 안 최고기온은 약 23~30℃",
+      "겨울: -5 + 5 = 0, -5 + 7 = 2",
+      "그래서 흙집 안 최저기온은 약 0~2℃"
+     ],
+     "answer": "여름은 3~10도 낮게, 겨울은 5~7도 높게"
+    },
+    {
+     "kind": "viz",
+     "viz": "eco.lag",
+     "head": "움직여 보기: 흙벽은 뚝배기",
+     "caption": "기초 다지기 wb-3 의 열용량 그림이에요. 바깥 기온과 곡선은 단순한 가정 모형이고, 흙집의 3~10도, 5~7도는 슬라이드 숫자예요. 열용량 막대를 올려 봐요.",
+     "vp": "eco-lag-w37"
+    },
+    {
+     "kind": "check",
+     "q": "흙벽처럼 열용량이 큰 벽이 있는 집의 실내 온도는?",
+     "choices": [
+      "바깥보다 작게 흔들리고 늦게 변해요",
+      "바깥보다 크게 흔들려요",
+      "바깥과 똑같이 변해요"
+     ],
+     "a": 0,
+     "why": "흙은 **축열(Heat Storage)** 기능이 있어 늦게 데워지고 늦게 식어요. 그래서 여름 최고기온은 3~10도 정도 낮고, 겨울 최저기온은 5~7도 정도 높아요.",
+     "vp": "eco-lag-w37"
+    },
+    {
+     "kind": "figure",
+     "head": "**축열(Heat Storage)** 가 만든 온도 차이",
+     "svg": "<svg viewBox=\"0 0 480 270\" xmlns=\"http://www.w3.org/2000/svg\"><text x=\"120\" y=\"24\" font-size=\"16\" text-anchor=\"middle\" class=\"tb b1\">여름 (최고기온)</text><text x=\"360\" y=\"24\" font-size=\"16\" text-anchor=\"middle\" class=\"tb b2\">겨울 (최저기온)</text><line x1=\"20\" y1=\"230\" x2=\"460\" y2=\"230\" class=\"e\"/><rect x=\"50\" y=\"60\" width=\"60\" height=\"170\" rx=\"2\" class=\"n4 b1\"/><text x=\"80\" y=\"52\" font-size=\"14\" text-anchor=\"middle\" class=\"tb b1\">바깥 33℃</text><rect x=\"130\" y=\"97\" width=\"60\" height=\"133\" rx=\"2\" class=\"n3 b1\"/><text x=\"160\" y=\"89\" font-size=\"14\" text-anchor=\"middle\" class=\"tb b1\">흙집 23~30℃</text><text x=\"120\" y=\"252\" font-size=\"15\" text-anchor=\"middle\" class=\"t b1\">3~10도 낮게</text><rect x=\"290\" y=\"200\" width=\"60\" height=\"30\" rx=\"2\" class=\"n b2\"/><text x=\"320\" y=\"192\" font-size=\"14\" text-anchor=\"middle\" class=\"tb b2\">바깥 -5℃</text><rect x=\"370\" y=\"170\" width=\"60\" height=\"60\" rx=\"2\" class=\"n3 b2\"/><text x=\"400\" y=\"162\" font-size=\"14\" text-anchor=\"middle\" class=\"tb b2\">흙집 0~2℃</text><text x=\"360\" y=\"252\" font-size=\"15\" text-anchor=\"middle\" class=\"t b2\">5~7도 높게</text></svg>",
+     "caption": "여름은 바깥보다 3~10도 낮고, 겨울은 5~7도 높아요. 바깥 온도 33℃, -5℃ 는 연습용 가정이에요.",
+     "builds": 2
+    },
+    {
+     "kind": "points",
+     "head": "흙의 단점 2가지",
+     "items": [
+      "1) 수분에 취약해요: 재료를 쓰는 위치나 방법을 면밀히 검토해야 해요.",
+      "2) 갈라짐 현상: 배합비율과 건조 때 주의가 필요해요.",
+      "▶ 건축재료로 쓸 때는 건축부위별로 요구되는 성능과 물성을 확인해야 해요."
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "흙 건축부위별 요구 성능 (글)",
+     "cols": [
+      "쓰임",
+      "필요한 성능"
+     ],
+     "rows": [
+      [
+       "구조재료로 사용",
+       "**압축강도(Compressive Strength)**(어느 정도 견디는지), **동해저항(Frost Resistance)**(추위로 얼지 않음), **비수축성(Non-shrinkage)**, 항곰팡이, **불연성(Incombustibility)**"
+      ],
+      [
+       "실내 마감재료로 사용",
+       "**부착강도(Bond Strength)**(견고하게 잘 붙어 있는지), **비수축성(Non-shrinkage)**, 항곰팡이, **불연성(Incombustibility)**, 비유독가스 성능"
+      ]
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "표로 보는 부위별 요구 성능",
+     "cols": [
+      "건축부위",
+      "역학적",
+      "물리적",
+      "내구적",
+      "화재"
+     ],
+     "rows": [
+      [
+       "구조재료(기둥, 내력벽)",
+       "압축강도",
+       "비수축성",
+       "동해저항, 항곰팡이",
+       "불연성"
+      ],
+      [
+       "실내마감재료(미장, 벽돌, 패널)",
+       "부착강도",
+       "비수축성",
+       "항곰팡이",
+       "불연성, 비유독 가스"
+      ],
+      [
+       "실외 마감재료(벽돌, 패널)",
+       "압축강도",
+       "비수축성",
+       "동해저항, 항곰팡이",
+       "불연성"
+      ],
+      [
+       "조경재료(산책로, 바닥)",
+       "압축 휨강도",
+       "비수축성",
+       "동해저항",
+       "-"
+      ]
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "표의 오른쪽 두 칸 (작은 글씨)",
+     "items": [
+      "감각적 성능: 색채, 촉감, 질감, 디자인 (네 부위 공통).",
+      "생산성능: 시공성, 성형성, 가공성 (네 부위 공통).",
+      "**비수축성(Non-shrinkage)** 는 네 부위 모두에 들어가요."
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "흙을 실내 마감재료로 사용할 때 역학적 성능으로 필요한 것은?",
+     "choices": [
+      "압축강도",
+      "부착강도",
+      "동해저항",
+      "휨강도만"
+     ],
+     "a": 1,
+     "why": "실내 마감재료는 **부착강도(Bond Strength)**(잘 붙어 있는지), 구조재료와 실외 마감재료는 **압축강도(Compressive Strength)** 예요."
+    },
+    {
+     "kind": "check",
+     "q": "흙의 단열과 축열 기능에 대한 설명으로 옳은 것은?",
+     "choices": [
+      "여름 최고기온이 실외보다 5~7도 낮다",
+      "여름 최고기온이 실외보다 3~10도 정도 낮다",
+      "겨울 최저기온이 실외보다 3~10도 낮다",
+      "겨울과 여름 모두 실외와 같다"
+     ],
+     "a": 1,
+     "why": "여름은 3~10도 정도 낮고, 겨울 최저기온은 5~7도 정도 높아요. 숫자 짝을 바꾸면 틀려요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "여름 3~10도 낮게, 겨울 5~7도 높게. 두 숫자를 바꿔 내기 좋아요.",
+      "비유독가스 성능은 실내 마감재료에만 붙어요. **동해저항(Frost Resistance)** 은 실내 마감재료에는 없어요.",
+      "공기 정화는 '공극', 항균과 방충은 '토양 미생물과 효소' 덕분이에요."
+     ]
+    },
+    {
+     "kind": "recap",
+     "items": [
+      "흙의 특성: **습도 조절(Humidity Control)**, 단열과 **축열(Heat Storage)**(여름 3~10도 낮게, 겨울 5~7도 높게), 공기 정화, 항균/방충, 폐기물 없음.",
+      "단점: 수분에 취약, 갈라짐(배합비율, 건조 주의). 부위별 성능 확인 필요.",
+      "구조재료: **압축강도(Compressive Strength)**, **동해저항(Frost Resistance)**, **비수축성(Non-shrinkage)**, 항곰팡이, **불연성(Incombustibility)**.",
+      "실내 마감재료: **부착강도(Bond Strength)**, **비수축성(Non-shrinkage)**, 항곰팡이, **불연성(Incombustibility)**, 비유독가스. 주문: **자연에서 빌려 쓰고, 돌려주며 순환시켜요.**",
+      "오늘의 용어: Earth Architecture(흙건축), Humidity Control(습도 조절), Heat Storage(축열), Compressive Strength(압축강도), Bond Strength(부착강도), Frost Resistance(동해저항), Non-shrinkage(비수축성), Incombustibility(불연성)"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "w3-8",
+   "title": "흙으로 짓는 방법",
+   "goal": "부위별로 쓸 수 있는 흙건축 재료와 담틀 공법, 흙짚, 심벽, 흙벽돌의 방법과 숫자를 말할 수 있어요.",
+   "terms": [
+    {
+     "ko": "내력벽",
+     "en": "Load-bearing Wall",
+     "say": "지붕과 건물의 무게를 받치는 벽",
+     "more": "흙으로 내력벽을 만들 때는 일정 강도를 유지하도록 흙을 가공해서 써요."
+    },
+    {
+     "ko": "비내력벽",
+     "en": "Non-load-bearing Wall",
+     "say": "무게는 받치지 않고 공간만 나누는 벽",
+     "more": "비내력벽, 천정, 지붕에는 다양한 흙건축 재료를 쓸 수 있어요."
+    },
+    {
+     "ko": "담틀 공법",
+     "en": "Rammed Earth",
+     "say": "거푸집에 흙을 채워 다져서 벽을 쌓는 방법",
+     "more": "흙벽 자체가 내력벽이 되고, 밀도 1700~2200kg/m³ 로 흙건축 형태 중 밀도가 가장 높아요."
+    },
+    {
+     "ko": "흙짚",
+     "en": "Clay Straw",
+     "say": "물에 갠 점토에 짚을 담갔다가 거푸집에 채워 다지는 방식",
+     "more": "북유럽에서 발전했고 단열효과가 뛰어나요. 완전히 마르면 밀도 1200~1700kg/m³ 예요."
+    },
+    {
+     "ko": "심벽",
+     "en": "",
+     "say": "목구조 사이에 대나무, 나뭇가지, 수숫깡으로 심을 얽고 흙을 안팎으로 바르는 벽"
+    },
+    {
+     "ko": "아도브",
+     "en": "Adobe",
+     "say": "틀 속에 흙을 채워 만드는 흙벽돌 방식",
+     "more": "현장 기계로 찍는 흙벽돌(15톤 하중 정도), 공장 기계압 벽돌(35톤 하중 정도), 압축 흙벽돌이 있어요."
+    },
+    {
+     "ko": "압축 흙벽돌",
+     "en": "Bloc Terre Comprimé",
+     "say": "흙을 틀에 넣고 높은 압력을 가해 강도를 높인 벽돌"
+    },
+    {
+     "ko": "플라스터",
+     "en": "Plaster",
+     "say": "벽에 바르는 흙이나 석회 반죽. 슬라이드는 회반죽(도장 등에 사용)이라고 풀었어요"
+    }
+   ],
+   "slides": [
+    {
+     "kind": "title",
+     "big": "흙으로 짓는 방법",
+     "sub": "**담틀 공법(Rammed Earth)**, **흙짚(Clay Straw)**, **심벽**, **아도브(Adobe)**"
+    },
+    {
+     "kind": "goal",
+     "items": [
+      "**내력벽(Load-bearing Wall)** 와 **비내력벽(Non-load-bearing Wall)** 에 쓰는 흙 재료가 어떻게 다른지 말해요.",
+      "**담틀 공법(Rammed Earth)**, **흙짚(Clay Straw)**, **심벽**, 흙벽돌의 방법을 구별해요.",
+      "밀도 숫자 1700~2200, 1200~1700 과 15톤, 35톤을 기억해요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "앞 단원과 잇기",
+     "items": [
+      "앞에서 흙을 구조재료로 쓰려면 **압축강도(Compressive Strength)** 가 필요했어요.",
+      "실내 마감재료는 **부착강도(Bond Strength)** 가 필요했죠.",
+      "이제 실제로 흙을 어떤 모양으로 만들어 쓰는지 봐요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "흙건축 재료 고르기의 원칙",
+     "items": [
+      "건축구조에 따라 적용 가능한 다양한 흙건축 재료를 숙지해야 해요.",
+      "**내력벽(Load-bearing Wall)** 의 경우: 일정 강도를 유지하도록 흙을 가공해서 써요.",
+      "**비내력벽(Non-load-bearing Wall)**, 천정, 지붕 등: 다양한 흙건축 재료를 쓸 수 있어요."
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "부위별로 쓸 수 있는 흙 재료 (표의 O)",
+     "cols": [
+      "부위",
+      "쓸 수 있는 재료"
+     ],
+     "rows": [
+      [
+       "바닥(Floor)",
+       "담틀 공법, Loam filling"
+      ],
+      [
+       "내력벽(Wall loadbearing)",
+       "담틀 공법, 진흙, 흙몰탈, 흙벽돌"
+      ],
+      [
+       "비내력벽(wall-freestanding)",
+       "담틀 공법, 진흙, 흙짚, 경량흙, 흙몰탈, 흙벽돌, 흙판넬"
+      ],
+      [
+       "천정/지붕(Ceiling/Roof)",
+       "흙짚, 경량흙, Loam filling, 흙벽돌, 흙판넬"
+      ],
+      [
+       "건식공법(Dry construction)",
+       "흙벽돌, 흙판넬"
+      ],
+      [
+       "플라스터(Plaster)",
+       "흙짚, 경량흙, 흙몰탈"
+      ]
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "표에서 눈에 띄는 것",
+     "items": [
+      "**비내력벽(Non-load-bearing Wall)** 는 Loam filling 을 뺀 7가지 모두 O 예요. 그래서 '다양한 재료 사용 가능' 이에요.",
+      "**내력벽(Load-bearing Wall)** 는 담틀 공법, 진흙, 흙몰탈, 흙벽돌 4가지뿐이에요.",
+      "건식공법은 흙벽돌, 흙판넬처럼 미리 만든 것만 돼요.",
+      "**플라스터(Plaster)** 는 회반죽(도장 등에 사용)이라고 풀어 적혀 있어요."
+     ]
+    },
+    {
+     "kind": "analogy",
+     "head": "흙으로 벽 만드는 네 가지 방법",
+     "scene": "모래성 만들 때를 떠올려요. 양동이에 꾹꾹 눌러 담거나, 짚을 섞어 붙이거나, 막대 뼈대에 바르거나, 벽돌 틀로 찍어요.",
+     "map": [
+      [
+       "양동이에 꾹꾹 눌러 담기",
+       "**담틀 공법(Rammed Earth)**"
+      ],
+      [
+       "짚 섞은 진흙 채우기",
+       "**흙짚(Clay Straw)**"
+      ],
+      [
+       "막대 뼈대에 진흙 바르기",
+       "**심벽**"
+      ],
+      [
+       "틀로 벽돌 찍기",
+       "**아도브(Adobe)**"
+      ]
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "**담틀 공법(Rammed Earth)**",
+     "items": [
+      "목재나 철제 거푸집에 흙을 채워 넣고 다져서 벽을 쌓는 방법이에요.",
+      "물을 함수율에 맞게 배합하고 다져서 벽체 강도를 견고하게 만들어요.",
+      "흙벽 자체가 **내력벽(Load-bearing Wall)** 이 되어 지붕 하중을 지지해요.",
+      "밀도 1700~2200kg/m³ 로 흙건축 형태에서 가장 밀도가 높아요."
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "**담틀 공법(Rammed Earth)** 순서",
+     "svg": "<svg viewBox=\"0 0 480 270\" xmlns=\"http://www.w3.org/2000/svg\"><text x=\"240\" y=\"22\" font-size=\"15\" text-anchor=\"middle\" class=\"tb\">담틀 공법: 거푸집에 흙을 넣고 다지기</text><rect x=\"120\" y=\"40\" width=\"18\" height=\"200\" rx=\"2\" class=\"n b1\"/><rect x=\"342\" y=\"40\" width=\"18\" height=\"200\" rx=\"2\" class=\"n b1\"/><text x=\"84\" y=\"140\" font-size=\"15\" text-anchor=\"middle\" class=\"tb b1\">거푸집</text><rect x=\"138\" y=\"200\" width=\"204\" height=\"40\" rx=\"2\" class=\"n3 b2\"/><rect x=\"138\" y=\"160\" width=\"204\" height=\"40\" rx=\"2\" class=\"n3 b2\"/><text x=\"240\" y=\"185\" font-size=\"14\" text-anchor=\"middle\" class=\"tl b2\">흙 한 켜</text><rect x=\"138\" y=\"120\" width=\"204\" height=\"40\" rx=\"2\" class=\"n3 b3\"/><line x1=\"240\" y1=\"60\" x2=\"240\" y2=\"103\" class=\"e2 b3\"/><polygon points=\"240,112 235,103 245,103\" class=\"arrow b3\"/><text x=\"290\" y=\"90\" font-size=\"15\" text-anchor=\"middle\" class=\"tb b3\">다지기</text><text x=\"420\" y=\"150\" font-size=\"14\" text-anchor=\"middle\" class=\"t b4\">벽이</text><text x=\"420\" y=\"170\" font-size=\"14\" text-anchor=\"middle\" class=\"tb b4\">내력벽</text><text x=\"240\" y=\"262\" font-size=\"14\" text-anchor=\"middle\" class=\"t b4\">밀도 1700~2200kg/m³, 흙건축 중 가장 높아요</text></svg>",
+     "caption": "거푸집을 세우고, 흙을 한 켜씩 넣고, 다져요. 다 된 흙벽은 **내력벽(Load-bearing Wall)** 이 돼요.",
+     "builds": 4
+    },
+    {
+     "kind": "points",
+     "head": "**흙짚(Clay Straw)** 방식",
+     "items": [
+      "북유럽에서 발전했어요. 유기섬유질 짚을 점토 갠 물에 하루 정도 담가요.",
+      "그다음 거푸집 속에 채워 다져 나가요.",
+      "벽체 안팎을 다시 흙으로 미장해서 단열효과가 뛰어나요.",
+      "완전히 건조하면 밀도는 1200~1700kg/m³ 예요.",
+      "젖어 있을 때 유동성이 있어 리노베이션, 목구조 충진재로 쓰고, 벽돌이나 판넬로도 만들어요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "**심벽**",
+     "items": [
+      "목구조 사이에 대나무, 나뭇가지, 수숫깡 등으로 심을 얽어요.",
+      "여기에 진흙에 물과 짚을 넣어 이긴 흙을 안팎으로 발라요.",
+      "순서: 구덩이 파고 돌 넣고 흙 고르기(기초공사) → 주추 놓기 → 기둥 세우기 → 서까래 올리기 → 벽체에 흙 치기."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "흙벽돌",
+     "items": [
+      "**아도브(Adobe)**: 틀 속에 흙을 채워 만드는 방식이에요.",
+      "현장에서 중소형 기계로 찍는 흙벽돌: 15톤 하중 정도. 공장 기계압 벽돌: 35톤 하중 정도.",
+      "**압축 흙벽돌(Bloc Terre Comprimé)**: 흙을 틀에 넣고 높은 압력을 가해 강도를 높여요.",
+      "진흙을 물로 반죽해 틀에 넣고 햇볕에 말려 쌓아요. 내력벽 구실을 해요.",
+      "짚, 풀잎, 동물 털을 섞어 수축과 균열을 막기도 해요. 불에 구우면 흙의 성질을 잃어서 굽지 않아요."
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "밀도로 벽 무게 어림하기",
+     "given": "벽 크기: 길이 5m, 높이 2.5m, 두께 0.3m (연습용 가정).",
+     "steps": [
+      "부피 = 5 × 2.5 × 0.3 = 3.75 m³",
+      "담틀 벽: 1700 × 3.75 = 6375kg, 2200 × 3.75 = 8250kg",
+      "흙짚 벽: 1200 × 3.75 = 4500kg, 1700 × 3.75 = 6375kg",
+      "흙벽돌 하중: 35 ÷ 15 ≈ 2.33, 공장 벽돌이 약 2.3배"
+     ],
+     "answer": "담틀이 가장 무겁고 단단, 흙짚은 가볍고 단열이 좋아요"
+    },
+    {
+     "kind": "check",
+     "q": "'흙벽 자체가 내력벽으로 지붕 하중을 지지하고, 밀도가 1700~2200kg/m³ 로 가장 높은' 방식은?",
+     "choices": [
+      "담틀 공법",
+      "흙짚 방식",
+      "심벽",
+      "Loam filling"
+     ],
+     "a": 0,
+     "why": "**담틀 공법(Rammed Earth)** 이에요. **흙짚(Clay Straw)** 은 1200~1700kg/m³ 이고 단열효과가 뛰어나요."
+    },
+    {
+     "kind": "check",
+     "q": "흙벽돌을 불에 굽지 않는 이유는?",
+     "choices": [
+      "굽는 데 시간이 오래 걸려서",
+      "불에 구우면 흙의 성질을 대부분 잃어서",
+      "구우면 색이 어두워져서",
+      "법으로 금지되어서"
+     ],
+     "a": 1,
+     "why": "슬라이드: 흙벽돌은 불에 굽게 되면 대부분 흙의 성질을 잃게 되므로 굽지 않은 벽돌을 쓰도록 해요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "밀도: **담틀 공법(Rammed Earth)** 1700~2200, **흙짚(Clay Straw)** 1200~1700 (단위 kg/m³). 1700 이 두 범위의 경계예요.",
+      "하중: 현장 중소형 기계 15톤, 공장 기계압 35톤. 슬라이드 표기 'Bloc Terre Comprim' 은 흔히 Comprimé 로 써요.",
+      "**아도브(Adobe)** 와 다음 단원의 '어도비' 벽돌은 같은 Adobe 를 다르게 옮긴 말이에요."
+     ]
+    },
+    {
+     "kind": "recap",
+     "items": [
+      "**내력벽(Load-bearing Wall)** 는 일정 강도로 가공한 흙, **비내력벽(Non-load-bearing Wall)**, 천정, 지붕은 다양한 흙 재료.",
+      "**담틀 공법(Rammed Earth)**: 거푸집에 다져 쌓음, 내력벽, 1700~2200kg/m³ 로 가장 높음.",
+      "**흙짚(Clay Straw)**: 북유럽, 점토물에 짚, 단열 우수, 1200~1700kg/m³. **심벽**: 대나무, 나뭇가지 심에 흙 바르기.",
+      "흙벽돌: **아도브(Adobe)**, 15톤과 35톤, **압축 흙벽돌(Bloc Terre Comprimé)**, 굽지 않음. 주문: **자연에서 빌려 쓰고, 돌려주며 순환시켜요.**",
+      "오늘의 용어: Load-bearing Wall(내력벽), Non-load-bearing Wall(비내력벽), Rammed Earth(담틀 공법), Clay Straw(흙짚), 심벽, Adobe(아도브), Bloc Terre Comprimé(압축 흙벽돌), Plaster(플라스터)"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "w3-9",
+   "title": "밍케하우스와 스트로베일",
+   "goal": "흙 국외 적용사례 밍케하우스의 특징 6가지와 스트로베일의 특성, 두 공법의 층수 차이를 말할 수 있어요.",
+   "terms": [
+    {
+     "ko": "밍케하우스",
+     "en": "Minke House",
+     "say": "독일 카셀 생태단지 안의 돔형 흙집. 흙 국외 적용사례",
+     "more": "목구조와 흙벽돌로 짓고, 지붕은 모두 잔디로 덮었어요. 벽체, 지붕, 바닥 대부분에 어도비 벽돌을 썼어요."
+    },
+    {
+     "ko": "어도비 벽돌",
+     "en": "Adobe Brick",
+     "say": "굽지 않은 흙벽돌. 밍케하우스 건물 대부분에 쓰였어요",
+     "more": "내부 디자인 효과와 습도 조절 기능을 줘요."
+    },
+    {
+     "ko": "지붕 녹화",
+     "en": "Green Roof",
+     "say": "지붕을 흙과 풀로 덮어 푸르게 만드는 것",
+     "more": "밍케하우스에서는 단열효과를 주고 열손실이 거의 없는 구조를 만들었어요. 빗물도 스며들게 해요."
+    },
+    {
+     "ko": "잔디지붕",
+     "en": "",
+     "say": "흙과 잔디로 덮은 지붕. 밍케하우스는 처마 끝에 통나무를 대 흙이 흘러내리지 않게 했어요"
+    },
+    {
+     "ko": "스트로베일",
+     "en": "Straw Bale",
+     "say": "건초(짚)를 네모나게 묶은 블록. 벽돌처럼 쌓아 벽을 만들어요",
+     "more": "자연에서 재생산되는 지속가능한 자연재료로, 습도조절, 탈취, 방음, 단열성능이 우수하고 값이 싸요."
+    },
+    {
+     "ko": "골조방식",
+     "en": "",
+     "say": "가구식 구조(뼈대)를 먼저 세우고 건초블록을 쌓아 벽을 만드는 스트로베일 공법. 5층 이상 가능",
+     "more": "슬라이드는 현재는 7층 이상도 가능하다고 했어요."
+    },
+    {
+     "ko": "무골조방식",
+     "en": "",
+     "say": "건초블록 자체가 내력벽이 되는 스트로베일 공법. 2층까지 시공 가능"
+    },
+    {
+     "ko": "라이스하우스",
+     "en": "Ricehouse",
+     "say": "볏짚, 쌀겨, 왕겨 같은 쌀 생산 부산물로 건축자재를 만드는 이탈리아 사례",
+     "more": "천연석회 등 100% 친환경 천연 재료로 단열재 외 다양한 자재(RH시리즈)를 만들어요."
+    }
+   ],
+   "slides": [
+    {
+     "kind": "title",
+     "big": "밍케하우스와 스트로베일",
+     "sub": "**밍케하우스(Minke House)**, **스트로베일(Straw Bale)**, **라이스하우스(Ricehouse)**"
+    },
+    {
+     "kind": "goal",
+     "items": [
+      "**밍케하우스(Minke House)** 의 특징을 여섯 줄로 말해요.",
+      "**스트로베일(Straw Bale)** 의 특성 8가지를 외워요.",
+      "**골조방식** 5층 이상, **무골조방식** 2층까지를 구별해요.",
+      "쌀 부산물로 만든 **라이스하우스(Ricehouse)** 사례를 알아요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "앞 단원과 잇기",
+     "items": [
+      "앞에서 **아도브(Adobe)** 는 틀 속에 흙을 채워 만드는 흙벽돌이었어요.",
+      "흙짚 방식처럼 짚을 흙과 함께 쓰는 법도 봤죠.",
+      "이번에는 흙집의 실제 사례와, 짚 자체로 벽을 만드는 **스트로베일(Straw Bale)** 를 봐요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "< 독일 카셀의 생태단지 내 **밍케하우스(Minke House)** >",
+     "items": [
+      "돔형의 주거건물이에요. 목구조 및 흙벽돌을 이용해 건축했어요.",
+      "**지붕 녹화(Green Roof)**: 단열효과, 열손실이 거의 없는 구조예요.",
+      "구조체를 제외한 벽체, 지붕, 바닥 등 건물 대부분에 '**어도비 벽돌(Adobe Brick)**' 을 썼어요.",
+      "**어도비 벽돌(Adobe Brick)** 로 내부 디자인 효과와 습도 조절 기능이 생겨요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "**밍케하우스(Minke House)** 특징 더",
+     "items": [
+      "자연적인 온도조절 기능: 실내 온도차가 적어요.",
+      "빗물관리: 녹화된 지붕과 외부공간의 흙바닥으로 빗물이 침투해요.",
+      "일부분만 하천으로 유출돼서 관개시설 비용이 절감돼요.",
+      "1강의 물 순환(빗물 모으기, 스며들게 하기)과 같은 생각이에요."
+     ]
+    },
+    {
+     "kind": "analogy",
+     "head": "풀 모자를 쓴 뚝배기 집",
+     "scene": "뚝배기 같은 흙 그릇에 두꺼운 풀 모자를 씌운 모습이에요. 모자가 더위와 추위를 막고, 비는 모자와 마당 흙에 스며들어요.",
+     "map": [
+      [
+       "풀 모자",
+       "**잔디지붕**, **지붕 녹화(Green Roof)**"
+      ],
+      [
+       "뚝배기 그릇",
+       "**어도비 벽돌(Adobe Brick)** 로 만든 벽, 온도차 적음"
+      ],
+      [
+       "비가 흙에 스며듦",
+       "빗물 침투, 일부만 하천 유출"
+      ]
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "**밍케하우스(Minke House)** 단면을 단순하게",
+     "svg": "<svg viewBox=\"0 0 480 270\" xmlns=\"http://www.w3.org/2000/svg\"><text x=\"240\" y=\"22\" font-size=\"15\" text-anchor=\"middle\" class=\"tb\">밍케하우스 단면 (단순화)</text><line x1=\"20\" y1=\"210\" x2=\"460\" y2=\"210\" class=\"e\"/><path d=\"M60,210 Q60,110 150,110 Q240,110 240,210\" class=\"n3 b1\"/><path d=\"M240,210 Q240,130 320,130 Q400,130 400,210\" class=\"n3 b1\"/><text x=\"150\" y=\"180\" font-size=\"14\" text-anchor=\"middle\" class=\"tl b1\">어도비 벽돌</text><text x=\"320\" y=\"185\" font-size=\"14\" text-anchor=\"middle\" class=\"tl b1\">목구조 + 흙</text><path d=\"M50,210 Q50,98 150,98 Q250,98 250,200\" class=\"e2 b2\"/><path d=\"M250,200 Q250,118 320,118 Q410,118 410,210\" class=\"e2 b2\"/><text x=\"420\" y=\"100\" font-size=\"14\" text-anchor=\"middle\" class=\"tb b2\">잔디로 덮은 지붕</text><line x1=\"110\" y1=\"40\" x2=\"118\" y2=\"81\" class=\"e2 b3\"/><polygon points=\"120,90 113,82 123,80\" class=\"arrow b3\"/><line x1=\"200\" y1=\"40\" x2=\"200\" y2=\"81\" class=\"e2 b3\"/><polygon points=\"200,90 195,81 205,81\" class=\"arrow b3\"/><line x1=\"300\" y1=\"50\" x2=\"300\" y2=\"99\" class=\"e2 b3\"/><polygon points=\"300,108 295,99 305,99\" class=\"arrow b3\"/><line x1=\"440\" y1=\"180\" x2=\"440\" y2=\"227\" class=\"e2 b3\"/><polygon points=\"440,236 435,227 445,227\" class=\"arrow b3\"/><text x=\"330\" y=\"248\" font-size=\"14\" text-anchor=\"middle\" class=\"t b3\">흙바닥으로 침투, 일부만 하천으로</text></svg>",
+     "caption": "돔 모양 흙집에 잔디 지붕을 덮었어요. 빗물은 지붕과 흙바닥으로 스며들고 일부만 하천으로 가요.",
+     "builds": 3
+    },
+    {
+     "kind": "points",
+     "head": "사진과 단면도 읽기 (p34~p39)",
+     "items": [
+      "**잔디지붕** 단면: 처마 끝 부분은 통나무를 이용해 흙이 흘러내리지 않게 했어요.",
+      "민케의 집 단면도: 지붕이 모두 잔디로 덮여 있는 집이에요.",
+      "진흙벽돌로 지어진 집 중앙의 홀(거실), 그리고 응접실 사진이 나와요.",
+      "**어도비 벽돌(Adobe Brick)** 벽이 곡선을 그리며 그대로 실내 디자인이 돼요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "**스트로베일(Straw Bale)** 특성 1~4",
+     "items": [
+      "1) 자연에서 재생산이 가능한 지속가능한 자연재료예요.",
+      "2) 습도조절, 탈취, 방음, 단열성능이 우수해요.",
+      "3) 재료 채취 때 에너지 투입량이 적어 가격이 저렴해요(수거 수준).",
+      "4) 시공이 간단해요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "**스트로베일(Straw Bale)** 특성 5~7",
+     "items": [
+      "5) 건초 블록을 벽돌처럼 쌓아 벽을 만들고 양 벽면을 흙이나 석회로 미장해요.",
+      "6) 외벽은 흙 or 석회 등으로 마감해요. 마르고 나면 습기가 들어오지 않는 구조로 시공해요.",
+      "7) 건초 블록은 습도 20% 이하의 블록만 써서 습기에 의한 부식을 막아요."
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "8) 공법 두 가지",
+     "cols": [
+      "공법",
+      "방법",
+      "층수"
+     ],
+     "rows": [
+      [
+       "**골조방식**",
+       "가구식 구조를 먼저 세운 뒤 건초블록을 쌓아서 벽 구성",
+       "5층 이상 (현재는 7층 이상도 가능)"
+      ],
+      [
+       "**무골조방식**",
+       "건초블록 자체가 내력벽 역할을 하는 구조",
+       "2층까지 시공 가능"
+      ]
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "**골조방식** 과 **무골조방식**",
+     "svg": "<svg viewBox=\"0 0 480 270\" xmlns=\"http://www.w3.org/2000/svg\"><text x=\"120\" y=\"22\" font-size=\"16\" text-anchor=\"middle\" class=\"tb b1\">골조방식</text><text x=\"360\" y=\"22\" font-size=\"16\" text-anchor=\"middle\" class=\"tb b2\">무골조방식</text><rect x=\"30\" y=\"40\" width=\"12\" height=\"180\" rx=\"2\" class=\"n b1\"/><rect x=\"198\" y=\"40\" width=\"12\" height=\"180\" rx=\"2\" class=\"n b1\"/><rect x=\"30\" y=\"40\" width=\"180\" height=\"12\" rx=\"2\" class=\"n b1\"/><rect x=\"42\" y=\"60\" width=\"76\" height=\"36\" rx=\"2\" class=\"n3 b1\"/><rect x=\"120\" y=\"60\" width=\"78\" height=\"36\" rx=\"2\" class=\"n3 b1\"/><rect x=\"42\" y=\"100\" width=\"76\" height=\"36\" rx=\"2\" class=\"n3 b1\"/><rect x=\"120\" y=\"100\" width=\"78\" height=\"36\" rx=\"2\" class=\"n3 b1\"/><rect x=\"42\" y=\"140\" width=\"76\" height=\"36\" rx=\"2\" class=\"n3 b1\"/><rect x=\"120\" y=\"140\" width=\"78\" height=\"36\" rx=\"2\" class=\"n3 b1\"/><rect x=\"42\" y=\"180\" width=\"76\" height=\"36\" rx=\"2\" class=\"n3 b1\"/><rect x=\"120\" y=\"180\" width=\"78\" height=\"36\" rx=\"2\" class=\"n3 b1\"/><text x=\"120\" y=\"244\" font-size=\"14\" text-anchor=\"middle\" class=\"t b1\">뼈대 먼저, 5층 이상</text><text x=\"120\" y=\"264\" font-size=\"13\" text-anchor=\"middle\" class=\"tm b1\">(현재 7층 이상도)</text><rect x=\"270\" y=\"100\" width=\"88\" height=\"36\" rx=\"2\" class=\"n3 b2\"/><rect x=\"360\" y=\"100\" width=\"88\" height=\"36\" rx=\"2\" class=\"n3 b2\"/><rect x=\"270\" y=\"140\" width=\"88\" height=\"36\" rx=\"2\" class=\"n3 b2\"/><rect x=\"360\" y=\"140\" width=\"88\" height=\"36\" rx=\"2\" class=\"n3 b2\"/><rect x=\"270\" y=\"180\" width=\"88\" height=\"36\" rx=\"2\" class=\"n3 b2\"/><rect x=\"360\" y=\"180\" width=\"88\" height=\"36\" rx=\"2\" class=\"n3 b2\"/><polygon points=\"262,98 359,60 456,98\" class=\"n b2\"/><text x=\"360\" y=\"244\" font-size=\"14\" text-anchor=\"middle\" class=\"t b2\">블록이 내력벽, 2층까지</text></svg>",
+     "caption": "왼쪽은 뼈대가 무게를 받치고 블록은 벽을 채워요. 오른쪽은 블록이 직접 지붕을 받쳐요.",
+     "builds": 2
+    },
+    {
+     "kind": "steps",
+     "head": "쓸 수 있는 건초 블록 고르기",
+     "given": "블록 세 개의 습도: A 15%, B 20%, C 25% (연습용 가정).",
+     "steps": [
+      "기준: 습도 20% 이하만 사용해요.",
+      "A 15% ≤ 20% → 사용",
+      "B 20% ≤ 20% → 사용 (이하는 20 을 포함해요)",
+      "C 25% > 20% → 사용 안 함 (습기로 부식 위험)"
+     ],
+     "answer": "A, B 사용, C 제외"
+    },
+    {
+     "kind": "points",
+     "head": "**스트로베일(Straw Bale)** 하우스와 **라이스하우스(Ricehouse)**",
+     "items": [
+      "**스트로베일(Straw Bale)** 하우스 사진, 영상(건축탐구 집) 사례가 나와요.",
+      "[ESG 세상] 쌀겨로 만든 100% 친환경 건축자재, 이탈리아의 '쌀 혁신' (23년 11월) 기사예요.",
+      "**라이스하우스(Ricehouse)** 는 볏짚뿐 아니라 쌀겨 등 쌀 생산 부산물과 천연석회 등 100% 친환경 천연 재료로 자재를 만들어요.",
+      "RH시리즈: 단열용 식물재료, 볏짚 단열 패널, 왕겨 천연석회 베이스플라스터, 바닥재, 마감재, 데크용 시스템, 왕겨 블록 등."
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "Straw Bale(스트로베일) 에 쓰는 건초 블록의 습도 기준은?",
+     "choices": [
+      "습도 10% 이하",
+      "습도 20% 이하",
+      "습도 30% 이하",
+      "습도 기준 없음"
+     ],
+     "a": 1,
+     "why": "7) 건초 블록은 습도 20% 이하의 블록만 사용해서 습기에 의한 부식을 막아요."
+    },
+    {
+     "kind": "check",
+     "q": "건초블록 자체가 내력벽 역할을 하는 스트로베일 공법과 층수는?",
+     "choices": [
+      "골조방식, 5층 이상",
+      "무골조방식, 2층까지",
+      "골조방식, 2층까지",
+      "무골조방식, 7층 이상"
+     ],
+     "a": 1,
+     "why": "**무골조방식** 은 블록이 내력벽이라 2층까지, **골조방식** 은 뼈대를 먼저 세워 5층 이상(현재 7층 이상도)이에요."
+    },
+    {
+     "kind": "check",
+     "q": "밍케하우스의 특징이 아닌 것은?",
+     "choices": [
+      "돔형 주거건물, 목구조와 흙벽돌",
+      "지붕 녹화로 단열효과",
+      "빗물을 모두 하천으로 바로 흘려보냄",
+      "어도비 벽돌로 습도 조절"
+     ],
+     "a": 2,
+     "why": "빗물은 녹화 지붕과 흙바닥으로 침투하고 일부분만 하천으로 유출돼요. 그래서 관개시설 비용이 줄어요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "슬라이드에 '밍케하우스' 와 '민케의 집' 두 표기가 섞여 있어요. 같은 집이에요.",
+      "**골조방식** 5층 이상(현재 7층 이상), **무골조방식** 2층까지. 숫자와 방식을 바꿔 내기 좋아요.",
+      "**스트로베일(Straw Bale)** 는 에너지 투입량이 적어서 싸요(수거 수준). 비싼 재료가 아니에요."
+     ]
+    },
+    {
+     "kind": "recap",
+     "items": [
+      "**밍케하우스(Minke House)**: 독일 카셀, 돔형, 목구조 + 흙벽돌, **지붕 녹화(Green Roof)** 단열, 대부분 **어도비 벽돌(Adobe Brick)**.",
+      "온도차 적음, 빗물 침투 후 일부만 하천으로(관개비용 절감), **잔디지붕** 처마는 통나무로 흙 흘러내림 방지.",
+      "**스트로베일(Straw Bale)**: 재생산 가능, 습도조절, 탈취, 방음, 단열, 저렴, 흙이나 석회 미장, 습도 20% 이하 블록.",
+      "**골조방식** 5층 이상(7층 이상도), **무골조방식** 2층까지. **라이스하우스(Ricehouse)**: 쌀 부산물 자재. 주문: **자연에서 빌려 쓰고, 돌려주며 순환시켜요.**",
+      "오늘의 용어: Minke House(밍케하우스), Adobe Brick(어도비 벽돌), Green Roof(지붕 녹화), 잔디지붕, Straw Bale(스트로베일), 골조방식, 무골조방식, Ricehouse(라이스하우스)"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "w3-10",
+   "title": "단열재 고르기",
+   "goal": "단열재의 기능과 종류(석유계, 미네랄울, 광물, 천연, 셀룰로우스)의 장단점과 주의할 점을 말할 수 있어요.",
+   "terms": [
+    {
+     "ko": "단열재",
+     "en": "Insulation",
+     "say": "열이 드나드는 것을 막아 건물 에너지를 아끼게 하는 재료. 겨울 패딩",
+     "more": "건물에서 소모되거나 방출되는 에너지를 줄여 탄소배출도 줄여요. 성분이 친환경적이고 인체에 해롭지 않아야 해요."
+    },
+    {
+     "ko": "석면",
+     "en": "Asbestos",
+     "say": "인체에 해로워서 단열재 성분의 유해성 예로 나온 물질"
+    },
+    {
+     "ko": "폴리스티렌",
+     "en": "Polystyrene",
+     "say": "석유로 만든 단열재. EPS, XPS 스티로폼",
+     "more": "단열 특성과 기후 내구성이 좋아 지하실, 지붕, 벽 같은 외부 영역에 써요. 제조 때 독성, 발암 물질과 온실가스가 나와요."
+    },
+    {
+     "ko": "폴리우레탄",
+     "en": "PUR",
+     "say": "석유로 만든 단열재. 폴리스티렌과 같은 줄에 묶여 나와요"
+    },
+    {
+     "ko": "미네랄울",
+     "en": "Mineral Wool",
+     "say": "유리면과 암면을 함께 부르는 말. 70%까지 폐유리로 만들어요",
+     "more": "경사진 지붕 단열에 써요. 1995년 이전 제품은 직물구조 때문에 암을 일으킬 수 있고, 이후 제품은 발암지수 40 을 충족해요."
+    },
+    {
+     "ko": "유리면",
+     "en": "Glass Wool",
+     "say": "유리를 솜처럼 만든 미네랄울"
+    },
+    {
+     "ko": "암면",
+     "en": "Rock Wool",
+     "say": "돌을 솜처럼 만든 미네랄울"
+    },
+    {
+     "ko": "발암지수",
+     "en": "",
+     "say": "단열재가 암을 일으킬 수 있는 정도를 나타낸 수치. 40 미만이면 인체에 무해한 것으로 봐요"
+    },
+    {
+     "ko": "천연단열재",
+     "en": "",
+     "say": "양모 같은 동물성 원료나 코르크, 코코넛 섬유, 목재섬유, 폐지 같은 식물성 원료로 만든 단열재",
+     "more": "천연이라도 살충제, 유해물질 첨가 여부, 인체에 무해한 성분(암모늄 화합물 등)으로 만들었는지 확인해야 해요."
+    },
+    {
+     "ko": "셀룰로우스 단열재",
+     "en": "Cellulose Insulation",
+     "say": "목재펄프를 주원료로 만들어 구조체 속에 분쇄해 채우는 단열재",
+     "more": "폐기 때 재활용 가능, 가벼워 건물 하중을 줄이고, 단열과 방음이 뛰어나고, 오염물질 배출이 없어요."
+    }
+   ],
+   "slides": [
+    {
+     "kind": "title",
+     "big": "단열재 고르기",
+     "sub": "**단열재(Insulation)**, **미네랄울(Mineral Wool)**, **셀룰로우스 단열재(Cellulose Insulation)**"
+    },
+    {
+     "kind": "goal",
+     "items": [
+      "**단열재(Insulation)** 가 갖춰야 할 세 가지를 말해요.",
+      "**폴리스티렌(Polystyrene)**, **폴리우레탄(PUR)** / **미네랄울(Mineral Wool)** / 광물 단열재의 제조와 장단점을 비교해요.",
+      "**천연단열재** 도 확인할 점이 있다는 것을 알아요.",
+      "국내 현황과 국외 **셀룰로우스 단열재(Cellulose Insulation)** 의 장점을 외워요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "앞 단원과 잇기",
+     "items": [
+      "앞에서 **스트로베일(Straw Bale)** 은 단열성능이 우수했고, **라이스하우스(Ricehouse)** 는 볏짚 단열 패널을 만들었죠.",
+      "이제 3장 친환경 건축재료로 넘어가요. 첫 번째가 단열재예요.",
+      "기초 다지기 wb-2 의 '단열 = 겨울 패딩' 을 떠올려요."
+     ]
+    },
+    {
+     "kind": "analogy",
+     "head": "단열재는 겨울 패딩",
+     "scene": "패딩은 몸의 열이 새지 않게 해요. 그런데 패딩 속 충전재가 몸에 해롭거나, 만들 때 공장이 공기를 더럽히면 좋은 패딩이 아니에요.",
+     "map": [
+      [
+       "열을 붙잡는 패딩",
+       "**단열재(Insulation)**"
+      ],
+      [
+       "패딩 속 충전재 재질",
+       "**폴리스티렌(Polystyrene)**, **미네랄울(Mineral Wool)**, 천연 섬유"
+      ],
+      [
+       "피부에 닿아도 안전한가",
+       "성분이 인체에 유해하지 않아야 함"
+      ],
+      [
+       "재활용 솜 패딩",
+       "폐지와 목재펄프로 만든 **셀룰로우스 단열재(Cellulose Insulation)**"
+      ]
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "**단열재(Insulation)** 의 종류 및 특성",
+     "items": [
+      "건물에서 소모되거나 방출되는 에너지를 줄이는 기능이에요(탄소배출 ↓).",
+      "열전도율과 열전달성 같은 기술적 특성을 봐요.",
+      "성분이 친환경적이고 인체에 유해하지 않아야 해요(ex. **석면(Asbestos)** 의 유해성).",
+      "종류 ①: **폴리스티렌(Polystyrene)** & **폴리우레탄(PUR)** 재질은 석유에서 생산해요.",
+      "종류 ②: **미네랄울(Mineral Wool)** 는 **유리면(Glass Wool)** 과 **암면(Rock Wool)**. 종류 ③: 광물은 화산석이나 규산염이 원료예요."
+     ]
+    },
+    {
+     "kind": "viz",
+     "viz": "eco.uvalue",
+     "head": "움직여 보기: 단열재 두께와 새는 열",
+     "caption": "기초 다지기 wb-2 의 손계산 숫자예요(표면 열전달저항 무시, 가정 값). 슬라이드가 말한 '열전도율' 이 바로 이 계산에 들어가요. 두께 막대를 움직여 봐요.",
+     "vp": "eco-uvalue-w310"
+    },
+    {
+     "kind": "check",
+     "q": "단열재가 건물에서 하는 일로 슬라이드에 나온 것은?",
+     "choices": [
+      "소모되거나 방출되는 에너지를 줄여 탄소배출을 줄인다",
+      "실내 습도를 높인다",
+      "건물 무게를 받친다"
+     ],
+     "a": 0,
+     "why": "**단열재(Insulation)** 는 건물에서 소모되거나 방출되는 에너지를 줄이는 기능을 해요(탄소배출 ↓). 성분도 인체에 해롭지 않아야 해요.",
+     "vp": "eco-uvalue-w310"
+    },
+    {
+     "kind": "figure",
+     "head": "단열재 세 무리",
+     "svg": "<svg viewBox=\"0 0 480 270\" xmlns=\"http://www.w3.org/2000/svg\"><text x=\"240\" y=\"22\" font-size=\"16\" text-anchor=\"middle\" class=\"tb\">단열재 세 무리와 원료</text><rect x=\"14\" y=\"44\" width=\"144\" height=\"36\" rx=\"2\" class=\"box2 b1\"/><text x=\"86.0\" y=\"66.9\" font-size=\"14\" text-anchor=\"middle\" class=\"tb b1\">폴리스티렌, PUR</text><text x=\"86\" y=\"104\" font-size=\"14\" text-anchor=\"middle\" class=\"t b1\">석유에서</text><text x=\"86\" y=\"126\" font-size=\"13\" text-anchor=\"middle\" class=\"tm b1\">에너지 집약 생산</text><text x=\"86\" y=\"160\" font-size=\"14\" text-anchor=\"middle\" class=\"t b1\">외부 영역</text><text x=\"86\" y=\"180\" font-size=\"13\" text-anchor=\"middle\" class=\"tm b1\">(지하실, 지붕, 벽)</text><rect x=\"168\" y=\"44\" width=\"144\" height=\"36\" rx=\"2\" class=\"box2 b2\"/><text x=\"240.0\" y=\"67.25\" font-size=\"15\" text-anchor=\"middle\" class=\"tb b2\">미네랄울</text><text x=\"240\" y=\"104\" font-size=\"14\" text-anchor=\"middle\" class=\"t b2\">70%까지 폐유리</text><text x=\"240\" y=\"126\" font-size=\"13\" text-anchor=\"middle\" class=\"tm b2\">유리면, 암면</text><text x=\"240\" y=\"160\" font-size=\"14\" text-anchor=\"middle\" class=\"t b2\">경사진 지붕</text><text x=\"240\" y=\"180\" font-size=\"13\" text-anchor=\"middle\" class=\"tm b2\">(steep roof)</text><rect x=\"322\" y=\"44\" width=\"144\" height=\"36\" rx=\"2\" class=\"box2 b3\"/><text x=\"394.0\" y=\"67.25\" font-size=\"15\" text-anchor=\"middle\" class=\"tb b3\">광물 단열재</text><text x=\"394\" y=\"104\" font-size=\"14\" text-anchor=\"middle\" class=\"t b3\">화산석, 규산염</text><text x=\"394\" y=\"126\" font-size=\"13\" text-anchor=\"middle\" class=\"tm b3\">인체에 무해</text><text x=\"394\" y=\"160\" font-size=\"14\" text-anchor=\"middle\" class=\"t b3\">사용 영역 제한</text><text x=\"394\" y=\"180\" font-size=\"13\" text-anchor=\"middle\" class=\"tm b3\">긴 운송경로</text><rect x=\"90\" y=\"214\" width=\"300\" height=\"36\" rx=\"2\" class=\"box b4\"/><text x=\"240.0\" y=\"237.25\" font-size=\"15\" text-anchor=\"middle\" class=\"tb b4\">천연단열재, 셀룰로우스는 따로</text></svg>",
+     "caption": "석유계, **미네랄울(Mineral Wool)**, 광물 단열재 순서로 나타나요. **천연단열재** 와 **셀룰로우스 단열재(Cellulose Insulation)** 는 뒤에서 따로 봐요.",
+     "builds": 4
+    },
+    {
+     "kind": "compare",
+     "head": "**폴리스티렌(Polystyrene)**(EPS/XPS 스티로폼)과 **폴리우레탄(PUR)**",
+     "cols": [
+      "항목",
+      "내용"
+     ],
+     "rows": [
+      [
+       "제조",
+       "석유에서 에너지 집약적 생산"
+      ],
+      [
+       "장점",
+       "단열 특성 뛰어남, 기후 내구성 뛰어남 → 외부 영역(지하실, 지붕, 벽)에 사용"
+      ],
+      [
+       "단점",
+       "제조 과정 독성, 발암 물질 생성 / 화재 시 인체에 매우 해로운, 분해 어려운 물질 첨가 / 제조 시 온실가스 발생 필수적"
+      ]
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "**미네랄울(Mineral Wool)**(**유리면(Glass Wool)** 과 **암면(Rock Wool)**)",
+     "cols": [
+      "항목",
+      "내용"
+     ],
+     "rows": [
+      [
+       "제조",
+       "70%까지 폐유리로 에너지 집약적 생산"
+      ],
+      [
+       "장점",
+       "단열 특성 뛰어남 → 경사진 지붕(steep roof) 단열에 사용"
+      ],
+      [
+       "단점",
+       "밀봉이 부족하면 실내 공기에 안 좋은 응고용 화학제품 첨가 / 1995년 이전 제품은 직물구조 때문에 암 유발 가능"
+      ],
+      [
+       "1995년 이후",
+       "'no effect level' 로 보는 인체 **발암지수** 40 을 충족"
+      ]
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "광물 단열재",
+     "cols": [
+      "항목",
+      "내용"
+     ],
+     "rows": [
+      [
+       "제조",
+       "광물 원료에서 생산"
+      ],
+      [
+       "장점",
+       "기초 재료는 재활용 불가능하지만 대부분 처리 가능(화산석, 규산염) / 인체에 무해 / 재활용 가능성 뛰어남"
+      ],
+      [
+       "장점 더",
+       "기포유리는 PUR(**폴리우레탄(PUR)**)과 PS 단열재 대용으로 적합"
+      ],
+      [
+       "단점",
+       "일부 긴 운송경로 / 원료 채광이 자연환경을 훼손할 우려가 높음 / 사용 영역이 제한됨"
+      ]
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "숫자 두 개 손으로 확인",
+     "given": "**미네랄울(Mineral Wool)** 100kg 과 인체 **발암지수** 기준 40 (표 아래 주석).",
+     "steps": [
+      "폐유리 비율: 최대 70%",
+      "100 × 0.70 = 70 → 미네랄울 100kg 에 폐유리 최대 70kg",
+      "주석: 인체 **발암지수** 40 미만 단열재는 인체에 무해한 것으로 봐요.",
+      "1995년 이후 미네랄울은 이 기준 40 을 충족해요."
+     ],
+     "answer": "70% 는 폐유리, 40 은 발암지수, 1995년이 기준 해"
+    },
+    {
+     "kind": "points",
+     "head": "**천연단열재** 의 특성 (+ 주의할 점)",
+     "items": [
+      "친환경성이 있어요. 동물성 원료(양모 등) 제품과 식물성 원료(코르크, 코코넛섬유, 목재섬유, 폐지 등) 제품으로 나뉘어요.",
+      "동물성 양모: 살충제를 쓰기도 해요.",
+      "식물성 코르크: 주로 마감재료로만 쓰여 사용이 제한적이에요.",
+      "식물성 코코넛 섬유: 내구성은 뛰어나지만 방화처리 필수, 긴 운송경로가 단점이에요.",
+      "목재섬유나 폐지: 원료는 충분하지만 방화와 방습 처리가 필요해요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "▶ 천연이라고 끝이 아니에요",
+     "items": [
+      "**천연단열재** 라도 살충제 사용 여부를 확인해요.",
+      "유해물질 첨가 여부를 확인해요.",
+      "암모늄 화합물처럼 인체에 무해한 성분으로 만들었는지 확인해요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "국내 단열재 현황",
+     "items": [
+      "화학성분을 지닌 제품이 주를 이뤄요(유해성 ↓ / 환경 측면의 불리함은 여전).",
+      "친환경 단열재 연구: 볏짚과 갈대를 이용해 화학재료와 혼합해요.",
+      "왕겨, 종이, 톱밥, 황토 등을 이용 + 목섬유."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "국외 현황: **셀룰로우스 단열재(Cellulose Insulation)** (& 목섬유)",
+     "items": [
+      "목재펄프를 주원료로 생산해요.",
+      "분쇄한 형태로 구조체 내부에 충진해요. 사진은 벽 속에 호스로 불어 넣는 모습이에요.",
+      "폐기 때 재활용 가능, 경량이라 건축물 자체 하중을 줄여요.",
+      "단열 성능 및 방음 성능이 뛰어나고, 오염물질 배출이 없어요."
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "'70%까지 폐유리로 에너지 집약적 생산, 경사진 지붕 단열에 사용' 하는 단열재는?",
+     "choices": [
+      "폴리스티렌",
+      "미네랄울",
+      "광물 단열재",
+      "셀룰로우스 단열재"
+     ],
+     "a": 1,
+     "why": "**미네랄울(Mineral Wool)**(**유리면(Glass Wool)**, **암면(Rock Wool)**) 예요. **폴리스티렌(Polystyrene)** 는 석유에서 생산해 외부 영역에 써요."
+    },
+    {
+     "kind": "check",
+     "q": "Cellulose Insulation(셀룰로우스 단열재) 의 설명으로 옳지 않은 것은?",
+     "choices": [
+      "목재펄프가 주원료다",
+      "분쇄해서 구조체 내부에 충진한다",
+      "무거워서 건물 하중이 늘어난다",
+      "폐기 때 재활용이 가능하다"
+     ],
+     "a": 2,
+     "why": "**셀룰로우스 단열재(Cellulose Insulation)** 는 경량이라 건축물 자체 하중을 줄여요."
+    },
+    {
+     "kind": "check",
+     "q": "천연단열재에 대한 주의점으로 슬라이드에 나온 것은?",
+     "choices": [
+      "양모는 살충제를 쓰기도 한다",
+      "코르크는 어디에나 제한 없이 쓴다",
+      "코코넛 섬유는 방화처리가 필요 없다",
+      "폐지는 원료가 부족하다"
+     ],
+     "a": 0,
+     "why": "양모는 살충제, 코르크는 마감재료로만 제한적, 코코넛 섬유는 방화처리 필수, 폐지와 목재섬유는 원료는 충분하나 방화, 방습 처리가 필요해요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "슬라이드에 '폴리스틸렌'(p45) 과 '폴리스티렌'(p46) 두 표기가 있어요. 같은 재료예요.",
+      "외부 영역(지하실, 지붕, 벽) = **폴리스티렌(Polystyrene)**, **폴리우레탄(PUR)**. 경사진 지붕 = **미네랄울(Mineral Wool)**. 쓰는 곳을 바꿔 내기 좋아요.",
+      "**발암지수** '40 미만' 이 무해 기준이에요. 1995년 이전 **미네랄울(Mineral Wool)** 는 암 유발 가능."
+     ]
+    },
+    {
+     "kind": "recap",
+     "items": [
+      "**단열재(Insulation)**: 에너지와 탄소배출 줄이기, 열전도율 같은 기술 특성, 인체 무해(**석면(Asbestos)** 조심).",
+      "**폴리스티렌(Polystyrene)**, **폴리우레탄(PUR)**: 석유, 외부 영역, 독성과 온실가스. **미네랄울(Mineral Wool)**: 70% 폐유리, 경사 지붕, 1995년 기준, **발암지수** 40.",
+      "광물: 화산석, 규산염, 인체 무해, 재활용 좋음, 긴 운송과 채광 훼손, 영역 제한.",
+      "**천연단열재**: 양모 살충제, 코르크 제한, 코코넛 방화와 운송, 폐지 방화와 방습. **셀룰로우스 단열재(Cellulose Insulation)**: 목재펄프 충진, 가볍고 조용하고 재활용.",
+      "오늘의 용어: Insulation(단열재), Asbestos(석면), Polystyrene(폴리스티렌), PUR(폴리우레탄), Mineral Wool(미네랄울), Glass Wool(유리면), Rock Wool(암면), 발암지수, 천연단열재, Cellulose Insulation(셀룰로우스 단열재)"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "w3-11",
+   "title": "도료, 창호, 접착제, 마감재",
+   "goal": "천연도료와 친환경도료, 창호 세 종류, 접착제 두 종류, 마감재와 리놀륨, 친환경 재료의 방향을 말할 수 있어요.",
+   "terms": [
+    {
+     "ko": "천연도료",
+     "en": "Natural Paint",
+     "say": "수지, 오일, 용제 같은 주요 성분을 재생산 가능한 순수 천연원료로 만든 페인트",
+     "more": "중금속과 VOCs 를 쓰지 않아 인체에 무해하고, 인화성 물질이 없어 화재 때 유독가스가 없어요."
+    },
+    {
+     "ko": "친환경도료",
+     "en": "Eco-friendly Paint",
+     "say": "석유화학을 쓰지만 중금속과 VOCs 를 적게 넣은 저공해 페인트",
+     "more": "1970년대 초 독일에서 가장 먼저 연구 개발됐어요. 국내는 천연도료보다 저공해, 저독성, 저VOCs 페인트 개발이 중심이에요."
+    },
+    {
+     "ko": "휘발성유기화합물",
+     "en": "VOCs",
+     "say": "쉽게 공기 중으로 날아가 실내공기를 더럽히는 화학 물질",
+     "more": "1강 대기 순환의 실내공기질 개선에서도 VOCs 억제가 나왔어요."
+    },
+    {
+     "ko": "목재창",
+     "en": "Wooden Window",
+     "say": "자연목재를 가공해 만든 창호. 공극이 많아 단열성이 높지만 물에 약해요"
+    },
+    {
+     "ko": "합성수지창",
+     "en": "PVC Window",
+     "say": "PVC 로 만든 창호. 단열성, 기밀성, 방음성이 좋지만 석유 기반이라 재사용이 어려워요",
+     "more": "내부식성, 내후성(기후변화에 견디는 능력), 방로효과(이슬방지)도 높아요."
+    },
+    {
+     "ko": "기밀성",
+     "en": "Airtightness",
+     "say": "틈으로 공기가 새지 않는 성질"
+    },
+    {
+     "ko": "천연접착제",
+     "en": "Natural Adhesive",
+     "say": "무독성 천연원료로 만든 접착제. 아교, 송진, 라텍스 등",
+     "more": "대부분 수용성이라 불연성, 무독성 면에서 유리하고 실내공기질에도 유리해요."
+    },
+    {
+     "ko": "합성접착제",
+     "en": "Synthetic Adhesive",
+     "say": "수지, 고무, 비닐 등의 혼합물질로 만든 접착제"
+    },
+    {
+     "ko": "마감재",
+     "en": "Finishing Material",
+     "say": "건축공사 마무리 단계에 쓰는 재료. 사람에게 직접 영향을 줘요",
+     "more": "환경친화 마감재는 목재, 리놀륨, 타일, 코르크 같은 천연 가공 재료, 석유원료 마감재는 PVC, 합성고무예요."
+    },
+    {
+     "ko": "리놀륨",
+     "en": "Linoleum",
+     "say": "바닥 마감재의 하나. 코르크계 리놀륨은 천연재료만 섞어 만든 친환경 바닥재",
+     "more": "고무계와 혼합해 만든 PVC, 비닐 계통 바닥과 구분해야 해요."
+    }
+   ],
+   "slides": [
+    {
+     "kind": "title",
+     "big": "도료, 창호, 접착제, 마감재",
+     "sub": "**천연도료(Natural Paint)**, **합성수지창(PVC Window)**, **리놀륨(Linoleum)**"
+    },
+    {
+     "kind": "goal",
+     "items": [
+      "**천연도료(Natural Paint)** 와 **친환경도료(Eco-friendly Paint)** 의 차이를 **휘발성유기화합물(VOCs)** 로 말해요.",
+      "천연도료 표9 의 여섯 성분을 외워요.",
+      "**목재창(Wooden Window)**, 알루미늄창, **합성수지창(PVC Window)** 의 장단점과 에너지효율 순서를 말해요.",
+      "접착제 두 종류와 **마감재(Finishing Material)**, **리놀륨(Linoleum)** 구분, 친환경 재료의 방향을 정리해요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "앞 단원과 잇기",
+     "items": [
+      "앞에서 **단열재(Insulation)** 는 인체에 해롭지 않아야 했죠. 천연이라도 살충제를 확인했어요.",
+      "칠하고 붙이고 마감하는 재료는 사람 몸에 더 가까이 있어요.",
+      "그래서 **휘발성유기화합물(VOCs)** 가 핵심 낱말이 돼요."
+     ]
+    },
+    {
+     "kind": "analogy",
+     "head": "벽에 바르는 화장품",
+     "scene": "피부에 바르는 화장품이 순한지 따지듯, 건물 피부에 바르는 페인트와 풀도 따져야 해요. 천연 원료 화장품과 순하게 만든 화장품은 조금 달라요.",
+     "map": [
+      [
+       "100% 천연 원료 화장품",
+       "**천연도료(Natural Paint)**"
+      ],
+      [
+       "자극 성분을 줄인 일반 화장품",
+       "**친환경도료(Eco-friendly Paint)**(저VOCs)"
+      ],
+      [
+       "화장품의 독한 향 성분",
+       "**휘발성유기화합물(VOCs)**"
+      ],
+      [
+       "마지막에 바르는 파우더",
+       "**마감재(Finishing Material)**"
+      ]
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "**천연도료(Natural Paint)** 의 특성",
+     "items": [
+      "주요 성분(수지, 오일, 용제 등)에 재생산이 가능한 순수 천연원료를 써요.",
+      "중금속과 **휘발성유기화합물(VOCs)** 가 사용되지 않아 인체에 무해해요.",
+      "내구성, 내알카리성, 내마모성, 통기성 등이 우수해요.",
+      "인화성 물질이 없어 화재 위험을 막고, 화재 때 유독가스 배출이 없어요.",
+      "생산, 도장 작업, 폐기 전 과정에서 오염물질이 나오지 않아요."
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "**천연도료(Natural Paint)** 의 구성 성분별 주원료 (표9)",
+     "cols": [
+      "구성성분",
+      "주원료"
+     ],
+     "rows": [
+      [
+       "수지",
+       "송진, 낙엽송수지, 코파이바수지, 페루수지, 프로폴리스 등"
+      ],
+      [
+       "오일",
+       "아마인유, 스톤파인 유, 동유, 잇꽃유, 피마자유 등"
+      ],
+      [
+       "용제",
+       "시츄러스 오일, 레몬껍질 오일, 터키레드 오일 등"
+      ],
+      [
+       "왁스",
+       "카나우바 왁스, 캔디릴라 왁스, 밀랍왁스, 미네랄 왁스, 파라핀 왁스 등"
+      ],
+      [
+       "안료",
+       "광물, 토양, 식물 등 천연자원으로부터 색소 추출"
+      ],
+      [
+       "기능성 첨가제",
+       "카세인, 콩 레시틴, 칼슘, 셀룰로오즈, 허브오일 등"
+      ]
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "**친환경도료(Eco-friendly Paint)** 의 특성",
+     "items": [
+      "기존 석유화학을 이용한 저공해, 저**휘발성유기화합물(VOCs)** 도료예요.",
+      "일반도료보다 주요성분의 중금속과 **휘발성유기화합물(VOCs)** 함량이 낮아요.",
+      "재료에서 나오는 유해 가스 방출량을 최소화해요.",
+      "1970년대 초 독일에서 가장 먼저 연구 개발 → 천연도료도 개발 생산.",
+      "국내: 천연도료보다는 저공해, 저독성, 저VOCs 페인트를 개발하는 실정이에요."
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "두 도료 비교",
+     "cols": [
+      "항목",
+      "천연도료(Natural Paint)",
+      "친환경도료(Eco-friendly Paint)"
+     ],
+     "rows": [
+      [
+       "원료",
+       "재생산 가능한 순수 천연원료",
+       "기존 석유화학"
+      ],
+      [
+       "VOCs, 중금속",
+       "사용하지 않음",
+       "함량이 낮음(저VOCs)"
+      ],
+      [
+       "사례",
+       "독일 AURO 천연도료",
+       "미국 Benjamin Moore 친환경도료"
+      ]
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "기타 1: 창호",
+     "items": [
+      "창호 종류: 목재, 플라스틱, 금속재. 에너지효율은 목재 or 플라스틱 > 금속재.",
+      "**목재창(Wooden Window)**: 자연목재를 가공한 친환경재료, 소재 자체 공극이 많아 단열성 높음, 질감의 심미적 친화력 높음, 물에 취약.",
+      "알루미늄창: 사용연한이 장기적, **기밀성(Airtightness)** ↑, 가벼워 여닫기 편리, 알루미늄 생산에 에너지가 많이 드는 단점."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "기타 1: **합성수지창(PVC Window)**",
+     "items": [
+      "단열성, 내부식성, 내후성(기후변화에 견디는 능력), 방로효과(이슬방지)가 높아요.",
+      "**기밀성(Airtightness)**, 방음성이 우수해요.",
+      "석유를 기초로 한 제품이라 재사용이 어렵고 환경적으로 불리한 단점이 있어요."
+     ]
+    },
+    {
+     "kind": "viz",
+     "viz": "eco.dew",
+     "head": "움직여 보기: 방로효과는 이슬 막기",
+     "caption": "기초 다지기 wb-4 의 결로 그림이에요. 창 표면이 이슬점보다 차가우면 물방울이 맺혀요. 숫자는 판정 연습용 가정 값이에요.",
+     "vp": "eco-dew-w311"
+    },
+    {
+     "kind": "figure",
+     "head": "창호 에너지효율 순서",
+     "svg": "<svg viewBox=\"0 0 480 270\" xmlns=\"http://www.w3.org/2000/svg\"><text x=\"240\" y=\"22\" font-size=\"16\" text-anchor=\"middle\" class=\"tb\">창호 재료별 에너지효율</text><text x=\"96\" y=\"70\" font-size=\"15\" text-anchor=\"end\" class=\"tb b1\">목재</text><rect x=\"106\" y=\"54\" width=\"300\" height=\"26\" rx=\"2\" class=\"n3 b1\"/><text x=\"96\" y=\"116\" font-size=\"15\" text-anchor=\"end\" class=\"tb b1\">플라스틱</text><rect x=\"106\" y=\"100\" width=\"300\" height=\"26\" rx=\"2\" class=\"n3 b1\"/><text x=\"96\" y=\"162\" font-size=\"15\" text-anchor=\"end\" class=\"tb b2\">금속재</text><rect x=\"106\" y=\"146\" width=\"150\" height=\"26\" rx=\"2\" class=\"n4 b2\"/><text x=\"290\" y=\"164\" font-size=\"13\" text-anchor=\"start\" class=\"tm b2\">알루미늄 생산에 에너지 많이</text><text x=\"240\" y=\"214\" font-size=\"16\" text-anchor=\"middle\" class=\"tb b3\">목재 or 플라스틱 &gt; 금속재</text><text x=\"240\" y=\"244\" font-size=\"13\" text-anchor=\"middle\" class=\"tm b3\">막대 길이는 순서만 보여 주는 그림이에요</text></svg>",
+     "caption": "**목재창(Wooden Window)** 나 플라스틱(**합성수지창(PVC Window)**)이 금속재보다 에너지효율이 좋아요.",
+     "builds": 3
+    },
+    {
+     "kind": "compare",
+     "head": "창호 세 가지 한눈에",
+     "cols": [
+      "창호",
+      "좋은 점",
+      "약점"
+     ],
+     "rows": [
+      [
+       "목재창(Wooden Window)",
+       "친환경, 공극 많아 단열성, 질감",
+       "물에 취약"
+      ],
+      [
+       "알루미늄창",
+       "오래 씀, 기밀성, 가벼움",
+       "생산에 에너지 많이"
+      ],
+      [
+       "합성수지창(PVC Window)",
+       "단열, 내부식, 내후, 방로, 기밀, 방음",
+       "석유 기초, 재사용 어려움"
+      ]
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "기타 2: 접착제",
+     "items": [
+      "천연계 / 합성계로 구분해요.",
+      "**천연접착제(Natural Adhesive)**: 석유화학제품과 달리 무독성 천연원료로 만들어요. 대부분 수용성이에요.",
+      "**천연접착제(Natural Adhesive)** 는 불연성, 무독성 면에서 유리하고 실내공기질에도 유리, 인체에 무해해요. ex) 아교, 송진, 라텍스.",
+      "**합성접착제(Synthetic Adhesive)**: 수지, 고무, 비닐 등의 혼합물질을 원료로 만들어요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "기타 3: **마감재(Finishing Material)**",
+     "items": [
+      "건축공사 마무리 단계에 쓰는 재료라 사람에게 직접적으로 영향을 줘요.",
+      "환경친화 마감재: 목재, 리놀륨, 타일, 코르크 같은 천연 가공 재료.",
+      "석유원료 마감재: PVC, 합성고무.",
+      "원목 바닥재: 인체 무해한 천연 바닥재예요. 단 접착제 선택이 중요해요."
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "**리놀륨(Linoleum)** 은 두 가지로 봐요",
+     "svg": "<svg viewBox=\"0 0 480 270\" xmlns=\"http://www.w3.org/2000/svg\"><rect x=\"150\" y=\"14\" width=\"180\" height=\"36\" rx=\"2\" class=\"box2 b1\"/><text x=\"240.0\" y=\"37.25\" font-size=\"15\" text-anchor=\"middle\" class=\"tb b1\">리놀륨(Linoleum)</text><line x1=\"200\" y1=\"52\" x2=\"118\" y2=\"99\" class=\"e2 b2\"/><polygon points=\"110,104 115,95 120,104\" class=\"arrow b2\"/><line x1=\"280\" y1=\"52\" x2=\"362\" y2=\"99\" class=\"e2 b3\"/><polygon points=\"370,104 360,104 365,95\" class=\"arrow b3\"/><rect x=\"10\" y=\"106\" width=\"210\" height=\"36\" rx=\"2\" class=\"box b2\"/><text x=\"115.0\" y=\"128.9\" font-size=\"14\" text-anchor=\"middle\" class=\"tb b2\">고무계와 혼합한 것</text><text x=\"115\" y=\"172\" font-size=\"14\" text-anchor=\"middle\" class=\"t b2\">PVC, 비닐 계통 바닥으로</text><text x=\"115\" y=\"194\" font-size=\"14\" text-anchor=\"middle\" class=\"t b2\">분류되는 것과 구분 필요</text><rect x=\"260\" y=\"106\" width=\"210\" height=\"36\" rx=\"2\" class=\"box b3\"/><text x=\"365.0\" y=\"128.9\" font-size=\"14\" text-anchor=\"middle\" class=\"tb b3\">코르크계 리놀륨</text><text x=\"365\" y=\"172\" font-size=\"14\" text-anchor=\"middle\" class=\"t b3\">천연재료들만 섞어서</text><text x=\"365\" y=\"194\" font-size=\"14\" text-anchor=\"middle\" class=\"tb b3\">친환경 바닥재</text><text x=\"240\" y=\"244\" font-size=\"13\" text-anchor=\"middle\" class=\"tm b4\">빨간 화살표 사진: 비닐 바닥 롤, 초록 화살표 사진: 코르크계 바닥</text></svg>",
+     "caption": "고무계와 섞은 것은 PVC, 비닐 계통 바닥과 구분하고, 코르크계 **리놀륨(Linoleum)** 은 천연재료만 섞은 친환경 바닥재예요.",
+     "builds": 4
+    },
+    {
+     "kind": "points",
+     "head": "생태건축에서 친환경 재료의 방향 및 목표",
+     "items": [
+      "사람들에게 무조건적으로 불편을 강요할 수 없어요.",
+      "옛날 방식 그대로 자연으로의 회귀가 목표일 수 없어요.",
+      "발전된 환경기술로 인간과 자연이 어우러지는 건축 환경을 목표로 해요.",
+      "주문으로 마무리: **자연에서 빌려 쓰고, 돌려주며 순환시켜요.**"
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "천연도료 표9 에서 '송진, 낙엽송수지, 프로폴리스' 가 속한 구성성분은?",
+     "choices": [
+      "수지",
+      "오일",
+      "용제",
+      "왁스"
+     ],
+     "a": 0,
+     "why": "수지는 송진, 낙엽송수지, 코파이바수지, 페루수지, 프로폴리스 등이에요. 오일은 아마인유, 동유, 피마자유 등이에요."
+    },
+    {
+     "kind": "check",
+     "q": "창호의 에너지효율 순서로 옳은 것은?",
+     "choices": [
+      "금속재 > 목재 or 플라스틱",
+      "목재 or 플라스틱 > 금속재",
+      "금속재 > 플라스틱 > 목재",
+      "모두 같다"
+     ],
+     "a": 1,
+     "why": "슬라이드: 에너지효율은 목재 or 플라스틱 > 금속재. 알루미늄은 생산에도 에너지가 많이 들어요."
+    },
+    {
+     "kind": "check",
+     "q": "VOCs(휘발성유기화합물) 를 '사용하지 않는' 도료는?",
+     "choices": [
+      "천연도료",
+      "친환경도료",
+      "일반도료",
+      "모두 사용한다"
+     ],
+     "a": 0,
+     "why": "**천연도료(Natural Paint)** 는 중금속과 **휘발성유기화합물(VOCs)** 를 쓰지 않아요. **친환경도료(Eco-friendly Paint)** 는 함량이 낮은 저VOCs 도료예요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "**친환경도료(Eco-friendly Paint)** 는 석유화학 기반의 저VOCs 도료예요. '천연' 이 아니에요. 연구는 1970년대 초 독일이 먼저.",
+      "**합성수지창(PVC Window)** 는 단열, 기밀, 방음이 좋지만 석유 기초라 재사용이 어려워요. **목재창(Wooden Window)** 는 물에 취약.",
+      "**리놀륨(Linoleum)** 이라고 다 친환경은 아니에요. 코르크계 **리놀륨(Linoleum)** 이 천연재료만 섞은 친환경 바닥재예요."
+     ]
+    },
+    {
+     "kind": "recap",
+     "items": [
+      "**천연도료(Natural Paint)**: 순수 천연원료, 중금속과 **휘발성유기화합물(VOCs)** 없음, 화재 때 유독가스 없음. 표9: 수지, 오일, 용제, 왁스, 안료, 기능성 첨가제.",
+      "**친환경도료(Eco-friendly Paint)**: 석유화학 저공해, 저VOCs, 1970년대 초 독일. 국내는 저VOCs 페인트 개발 실정.",
+      "창호: 목재 or 플라스틱 > 금속재. **목재창(Wooden Window)** 단열 좋고 물에 약함, **합성수지창(PVC Window)** 기밀과 방로, 재사용 어려움.",
+      "접착제: **천연접착제(Natural Adhesive)**(아교, 송진, 라텍스) / **합성접착제(Synthetic Adhesive)**. **마감재(Finishing Material)**: 코르크계 **리놀륨(Linoleum)** 은 친환경. 방향: 불편 강요도 회귀도 아닌 어우러짐.",
+      "오늘의 용어: Natural Paint(천연도료), Eco-friendly Paint(친환경도료), VOCs(휘발성유기화합물), Wooden Window(목재창), PVC Window(합성수지창), Airtightness(기밀성), Natural Adhesive(천연접착제), Synthetic Adhesive(합성접착제), Finishing Material(마감재), Linoleum(리놀륨)"
+     ]
+    }
+   ]
+  }
+ ]
+}

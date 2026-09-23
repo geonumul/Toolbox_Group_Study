@@ -1,0 +1,402 @@
+{
+ "deck": "N3L",
+ "file": "Lab2_Neural Nets and RNN Language Models.ipynb",
+ "pages": [
+  {
+   "p": 1,
+   "title": "Week 3 · Lab 2 — Neural Networks and an RNN Language Model",
+   "cells": [
+    {
+     "n": 1,
+     "type": "markdown",
+     "src": "# Week 3 · Lab 2 — Neural Networks and an RNN Language Model\n\n**Natural Language Processing (06488-01) · Fall 2026 · Yongil Kim, Dept. of AI, CUK**\n\nToday's theory, turned into code. We run it together in ~50 minutes.\n\n> 🇰🇷 오늘 배운 이론을 그대로 코드로 옮깁니다. 약 50분 동안 **함께 실행하며** 진행합니다.\n\n| Part | Topic · 내용 | Time |\n|---|---|---|\n| **0** | Setup — GPU, PyTorch<br>환경 설정 | ~3 min |\n| **1** | Tensors & **autograd** — check today's hand-derived gradients against PyTorch<br>텐서와 자동미분 — 손으로 유도한 gradient를 PyTorch와 대조 | ~14 min |\n| **2** | Build a **character-level RNN language model** (the two equations, in code)<br>문자 단위 RNN 언어모델 만들기 (강의의 두 수식을 코드로) | ~13 min |\n| **3** | **Generate** text and measure **perplexity**<br>텍스트 생성과 perplexity 측정 | ~8 min |\n| **4** | **Change one thing: the tokenizer** — same RNN, different result<br>토크나이저 하나만 교체 — 같은 RNN, 다른 결과 | ~10 min |\n\n> ⚠️ Our model is **tiny on purpose** (0.7M parameters, ~1.5 min of training on a CPU). Its output\n> will look like *almost*-Korean, and that is the expected result — not a bug in the code.\n> In **Part 4** we change one single thing — the **tokenizer** — and watch what moves.\n>\n> 🇰🇷 이 모델은 **의도적으로 아주 작습니다**(파라미터 0.7M, CPU 학습 약 1.5분). 출력이 *거의*\n> 한국어처럼 보이는 것이 정상이며, 코드가 잘못돼서가 아닙니다. **Part 4**에서는 **토크나이저**\n> 하나만 바꾸고 무엇이 달라지는지 봅니다.\n\n> **Just run every cell in order** — we walk through them together, so do not rush ahead.\n> Part 1 is direct preparation for **Assignment 2**; pay extra attention there.\n>\n> 🇰🇷 **모든 셀을 순서대로 실행하면 됩니다.** 함께 따라갈 테니 먼저 앞서가지 마세요.\n> Part 1은 **과제 2**의 직접적인 예습이니 특히 집중해 주세요.",
+     "out": ""
+    }
+   ]
+  },
+  {
+   "p": 2,
+   "title": "Part 0 — Setup",
+   "cells": [
+    {
+     "n": 2,
+     "type": "markdown",
+     "src": "---\n## Part 0 — Setup\n\n**Runtime → Change runtime type → T4 GPU → Save**, then run the next cell.\nIf no GPU is available, CPU is fine — this lab is sized for it.\n\n> 🇰🇷 **런타임 → 런타임 유형 변경 → T4 GPU → 저장** 후 아래 셀을 실행하세요.\n> GPU를 못 받아도 괜찮습니다. 이 실습은 CPU에서도 돌아가도록 크기를 맞춰 두었습니다.",
+     "out": ""
+    },
+    {
+     "n": 3,
+     "type": "code",
+     "src": "import math, re, time\nimport torch\nimport torch.nn as nn\n\ndevice = \"cuda\" if torch.cuda.is_available() else \"cpu\"\nprint(\"PyTorch :\", torch.__version__)\nprint(\"device  :\", device)\nif device == \"cuda\":\n    print(\"GPU     :\", torch.cuda.get_device_name(0))\nelse:\n    print(\"(CPU is fine for this lab — just a bit slower)\")",
+     "out": "PyTorch : 2.11.0+cu128\ndevice  : cuda\nGPU     : Tesla T4"
+    }
+   ]
+  },
+  {
+   "p": 3,
+   "title": "1.1 Shapes are the bookkeeping (lecture: “Why the Transposes?”)",
+   "cells": [
+    {
+     "n": 4,
+     "type": "markdown",
+     "src": "---\n## Part 1 — Tensors and Autograd\n\n### 1.1 Shapes are the bookkeeping (lecture: “Why the Transposes?”)\n\nThe single most useful debugging habit in deep learning: **print the shape**.\n\n> 🇰🇷 딥러닝에서 가장 쓸모 있는 디버깅 습관은 하나뿐입니다 — **shape를 찍어 보는 것**.\n> 강의의 “Why the Transposes?” 가 바로 이 이야기였습니다.",
+     "out": ""
+    },
+    {
+     "n": 5,
+     "type": "code",
+     "src": "x = torch.randn(5)          # a window vector: 5 features\nW = torch.randn(3, 5)       # hidden layer: 3 units, 5 inputs\nb = torch.randn(3)\nu = torch.randn(3)          # score weights\n\nz = W @ x + b               # (3,5)@(5,) + (3,) -> (3,)\nh = torch.tanh(z)\ns = u @ h                   # (3,)@(3,) -> scalar\n\nfor name, t in [(\"x\", x), (\"W\", W), (\"b\", b), (\"z\", z), (\"h\", h), (\"u\", u), (\"s\", s)]:\n    print(f\"{name:>2} : {tuple(t.shape)}\")\nprint(\"\\nscore s =\", s.item())",
+     "out": " x : (5,)\n W : (3, 5)\n b : (3,)\n z : (3,)\n h : (3,)\n u : (3,)\n s : ()\n\nscore s = -0.9169720411300659"
+    }
+   ]
+  },
+  {
+   "p": 4,
+   "title": "1.2 Autograd vs. your own calculus",
+   "cells": [
+    {
+     "n": 6,
+     "type": "markdown",
+     "src": "### 1.2 Autograd vs. your own calculus\n\nStart tiny. For  $f(x) = x^3 + 2x$,  the derivative is  $f'(x) = 3x^2 + 2$.\nPyTorch computes it by walking the graph backwards; we check it against the formula we wrote by hand.\n\n> 🇰🇷 작은 것부터 시작합니다. $f(x) = x^3 + 2x$ 의 도함수는 $f'(x) = 3x^2 + 2$ 입니다.\n> PyTorch는 그래프를 거꾸로 따라가며 이 값을 구하고, 우리는 손으로 쓴 공식과 대조합니다.",
+     "out": ""
+    },
+    {
+     "n": 7,
+     "type": "code",
+     "src": "x = torch.tensor(2.0, requires_grad=True)\nf = x**3 + 2*x\nf.backward()                       # PyTorch walks the graph backwards\n\nanalytic = 3*x.item()**2 + 2       # f'(x) = 3x^2 + 2\n\nprint(\"autograd :\", x.grad.item())\nprint(\"analytic :\", analytic)\nassert abs(x.grad.item() - analytic) < 1e-6\nprint(\"✓ they agree\")",
+     "out": "autograd : 14.0\nanalytic : 14.0\n✓ they agree"
+    }
+   ]
+  },
+  {
+   "p": 5,
+   "title": "1.3 The lecture's two-layer network — by hand vs. autograd",
+   "cells": [
+    {
+     "n": 8,
+     "type": "markdown",
+     "src": "### 1.3 The lecture's two-layer network — by hand vs. autograd\n\n$$z = Wx + b, \\qquad h = \\tanh(z), \\qquad s = u^{T}h$$\n\nFrom the slides:\n\n$$\\delta = \\frac{\\partial s}{\\partial z} = u \\odot \\tanh'(z), \\qquad\n\\frac{\\partial s}{\\partial W} = \\delta\\, x^{T}, \\qquad\n\\frac{\\partial s}{\\partial x} = W^{T}\\delta$$\n\n(Here everything is a 1-D torch vector, so we use `torch.outer` for $\\delta x^T$.)\nRecall $\\tanh'(z) = 1 - \\tanh^2(z)$.\n\n> 🇰🇷 강의 슬라이드의 2층 신경망입니다. 위의 세 식이 backpropagation의 전부입니다.\n> 여기서는 모든 값이 1차원 torch 벡터라서 $\\delta x^T$ 는 `torch.outer` 로 계산합니다.\n> $\\tanh'(z) = 1 - \\tanh^2(z)$ 라는 점을 기억하세요.\n> **이 셀이 과제 2 Part A와 정확히 같은 작업입니다** — 다만 대상이 word2vec으로 바뀔 뿐입니다.",
+     "out": ""
+    }
+   ]
+  },
+  {
+   "p": 6,
+   "title": "torch.manual_seed(0)",
+   "cells": [
+    {
+     "n": 9,
+     "type": "code",
+     "src": "torch.manual_seed(0)\nx = torch.randn(5, requires_grad=True)\nW = torch.randn(3, 5, requires_grad=True)\nb = torch.randn(3, requires_grad=True)\nu = torch.randn(3, requires_grad=True)\n\nz = W @ x + b\nh = torch.tanh(z)\ns = u @ h\ns.backward()                      # autograd fills W.grad, b.grad, x.grad\n\n# ---- now the SAME gradients, by hand ----\nwith torch.no_grad():\n    delta  = u * (1 - torch.tanh(z)**2)   # δ = u ⊙ tanh'(z)\n    dW     = torch.outer(delta, x)        # dW = δ xᵀ\n    db     = delta                        # db = δ\n    dx     = W.T @ delta                  # dx = Wᵀ δ\n\nfor name, mine, auto in [(\"dW\", dW, W.grad), (\"db\", db, b.grad), (\"dx\", dx, x.grad)]:\n    ok = torch.allclose(mine, auto, atol=1e-6)\n    print(f\"{name}: shape {tuple(mine.shape)} vs {tuple(auto.shape)}   match = {ok}\")\n    assert ok, f\"{name} does not match!\"\nprint(\"\\n✓ your calculus matches PyTorch exactly — this is what A2 asks you to do for word2vec\")",
+     "out": "dW: shape (3, 5) vs (3, 5)   match = True\ndb: shape (3,) vs (3,)   match = True\ndx: shape (5,) vs (5,)   match = True\n\n✓ your calculus matches PyTorch exactly — this is what A2 asks you to do for word2vec"
+    }
+   ]
+  },
+  {
+   "p": 7,
+   "title": "Part 2 — A Character-Level RNN Language Model",
+   "cells": [
+    {
+     "n": 10,
+     "type": "markdown",
+     "src": "**That was backpropagation.** Every framework does exactly this, just automatically and for\nmillions of parameters. From here on we let `loss.backward()` do the work.\n\n> 🇰🇷 **방금 한 것이 backpropagation입니다.** 모든 프레임워크가 똑같은 일을, 다만 자동으로\n> 그리고 수백만 개의 파라미터에 대해 수행할 뿐입니다. 이제부터는 `loss.backward()` 에 맡깁니다.\n\n---\n## Part 2 — A Character-Level RNN Language Model\n\nSame corpus as Lab 1 (NSMC movie reviews) — but now **character by character**.\n\n> 🇰🇷 Lab 1과 같은 코퍼스(NSMC 영화 리뷰)를 쓰되, 이번에는 **글자 단위**로 다룹니다.",
+     "out": ""
+    },
+    {
+     "n": 11,
+     "type": "code",
+     "src": "import pandas as pd\n\nurl = \"https://raw.githubusercontent.com/e9t/nsmc/master/ratings_train.txt\"\nnsmc = pd.read_csv(url, sep=\"\\t\").dropna()\n\n# take a slice so the lab trains in ~1 minute\nall_texts = nsmc[\"document\"].astype(str).tolist()\ntexts     = all_texts[:20000]\ncorpus    = \"\\n\".join(texts)\nheld_out  = \"\\n\".join(all_texts[20000:20200])     # never trained on — used in Part 4\n\nprint(f\"train    : {len(corpus):,} characters\")\nprint(f\"held-out : {len(held_out):,} characters\")\nprint(corpus[:200])",
+     "out": "train    : 727,466 characters\nheld-out : 7,654 characters\n아 더빙.. 진짜 짜증나네요 목소리\n흠...포스터보고 초딩영화줄....오버연기조차 가볍지 않구나\n너무재밓었다그래서보는것을추천한다\n교도소 이야기구먼 ..솔직히 재미는 없다..평점 조정\n사이몬페그의 익살스런 연기가 돋보였던 영화!스파이더맨에서 늙어보이기만 했던 커스틴 던스트가 너무나도 이뻐보였다\n막 걸음마 뗀 3세부터 초등학교 1학년생인 8살용영화.ㅋㅋㅋ..."
+    }
+   ]
+  },
+  {
+   "p": 8,
+   "title": "character vocabulary",
+   "cells": [
+    {
+     "n": 12,
+     "type": "code",
+     "src": "# character vocabulary\nchars = sorted(set(corpus))\nstoi  = {c: i for i, c in enumerate(chars)}\nitos  = {i: c for c, i in stoi.items()}\nV     = len(chars)\n\ndata = torch.tensor([stoi[c] for c in corpus], dtype=torch.long)\nprint(\"vocab size V =\", V)\nprint(\"first 20 chars :\", corpus[:20])\nprint(\"as indices     :\", data[:20].tolist())",
+     "out": "vocab size V = 1945\nfirst 20 chars : 아 더빙.. 진짜 짜증나네요 목소리\n\nas indices     : [1189, 1, 532, 965, 14, 14, 1, 1470, 1482, 1, 1482, 1467, 410, 448, 1300, 1, 827, 1069, 772, 0]"
+    }
+   ]
+  },
+  {
+   "p": 9,
+   "title": "mini-batches of (input, next-character) pairs",
+   "cells": [
+    {
+     "n": 13,
+     "type": "code",
+     "src": "# mini-batches of (input, next-character) pairs\ndef get_batch(data, batch_size=64, seq_len=64):\n    ix = torch.randint(len(data) - seq_len - 1, (batch_size,))\n    x = torch.stack([data[i     : i + seq_len]     for i in ix])\n    y = torch.stack([data[i + 1 : i + seq_len + 1] for i in ix])\n    return x.to(device), y.to(device)\n\nxb, yb = get_batch(data)\nprint(\"x:\", tuple(xb.shape), \" y:\", tuple(yb.shape))\nprint(\"x[0] :\", \"\".join(itos[i] for i in xb[0, :30].tolist()))\nprint(\"y[0] :\", \"\".join(itos[i] for i in yb[0, :30].tolist()), \"  ← shifted by one\")",
+     "out": "x: (64, 64)  y: (64, 64)\nx[0] : .\n김소현 개예쁨 내용도굿\n살아움직이는 그림을 감상하는\ny[0] : \n김소현 개예쁨 내용도굿\n살아움직이는 그림을 감상하는듯   ← shifted by one"
+    }
+   ]
+  },
+  {
+   "p": 10,
+   "title": "2.1 The RNN cell — the lecture's two equations",
+   "cells": [
+    {
+     "n": 14,
+     "type": "markdown",
+     "src": "### 2.1 The RNN cell — the lecture's two equations\n\n$$h^{(t)} = \\tanh\\!\\left(W_h\\,h^{(t-1)} + W_e\\,e^{(t)} + b\\right)$$\n\n`nn.Linear(in, out)` is exactly a matrix multiply (+ optional bias), so:\n`self.W_h(h_prev)` computes $W_h h^{(t-1)} + b$ and `self.W_e(e_t)` computes $W_e e^{(t)}$.\n\n> 🇰🇷 `nn.Linear(in, out)` 은 정확히 행렬곱(+선택적 bias)입니다. 그래서\n> `self.W_h(h_prev)` 가 $W_h h^{(t-1)} + b$ 를, `self.W_e(e_t)` 가 $W_e e^{(t)}$ 를 계산합니다.\n> 셀 **하나**를 모든 시점에서 똑같이 재사용한다는 점이 RNN의 핵심입니다.",
+     "out": ""
+    },
+    {
+     "n": 15,
+     "type": "code",
+     "src": "class MyRNNCell(nn.Module):\n    def __init__(self, emb_dim, hidden_dim):\n        super().__init__()\n        self.W_e = nn.Linear(emb_dim,    hidden_dim, bias=False)\n        self.W_h = nn.Linear(hidden_dim, hidden_dim, bias=True)\n\n    def forward(self, e_t, h_prev):\n        # the lecture equation, verbatim\n        return torch.tanh(self.W_h(h_prev) + self.W_e(e_t))\n\n\ncell = MyRNNCell(8, 16)\nh = cell(torch.randn(4, 8), torch.zeros(4, 16))\nprint(\"h:\", tuple(h.shape), \"(batch 4, hidden 16)\")\nassert h.shape == (4, 16)\nprint(\"✓ cell works\")",
+     "out": "h: (4, 16) (batch 4, hidden 16)\n✓ cell works"
+    }
+   ]
+  },
+  {
+   "p": 11,
+   "title": "the full model: embed → loop the cell over time → project to vocab",
+   "cells": [
+    {
+     "n": 16,
+     "type": "code",
+     "src": "# the full model: embed → loop the cell over time → project to vocab\nclass CharRNN(nn.Module):\n    def __init__(self, V, emb_dim=64, hidden_dim=256):\n        super().__init__()\n        self.emb        = nn.Embedding(V, emb_dim)\n        self.cell       = MyRNNCell(emb_dim, hidden_dim)\n        self.out        = nn.Linear(hidden_dim, V)\n        self.hidden_dim = hidden_dim\n\n    def forward(self, x, h=None):\n        B, T = x.shape\n        if h is None:\n            h = torch.zeros(B, self.hidden_dim, device=x.device)\n        E = self.emb(x)                       # B, T, emb\n        logits = []\n        for t in range(T):                    # ← the SAME cell at every step\n            h = self.cell(E[:, t, :], h)\n            logits.append(self.out(h))\n        return torch.stack(logits, dim=1), h  # B, T, V\n\nmodel = CharRNN(V).to(device)\nn_params = sum(p.numel() for p in model.parameters())\nprint(model)\nprint(f\"\\n{n_params:,} parameters\")",
+     "out": "CharRNN(\n  (emb): Embedding(1945, 64)\n  (cell): MyRNNCell(\n    (W_e): Linear(in_features=64, out_features=256, bias=False)\n    (W_h): Linear(in_features=256, out_features=256, bias=True)\n  )\n  (out): Linear(in_features=256, out_features=1945, bias=True)\n)\n\n706,521 parameters"
+    }
+   ]
+  },
+  {
+   "p": 12,
+   "title": "2.2 Training — cross-entropy at every step, plus gradient clipping",
+   "cells": [
+    {
+     "n": 17,
+     "type": "markdown",
+     "src": "### 2.2 Training — cross-entropy at every step, plus **gradient clipping**\n\n> 🇰🇷 모든 시점에서 cross-entropy를 계산하고, 강의에서 본 **gradient clipping**을 함께 겁니다.\n> 아래 셀은 CPU에서 약 1.5분 걸립니다. 돌아가는 동안 BPTT와 clipping 이야기를 이어가겠습니다.",
+     "out": ""
+    },
+    {
+     "n": 18,
+     "type": "code",
+     "src": "opt  = torch.optim.Adam(model.parameters(), lr=2e-3)\ncrit = nn.CrossEntropyLoss()\n\nSTEPS = 600\nt0 = time.time()\nfor step in range(1, STEPS + 1):\n    x, y = get_batch(data, batch_size=64, seq_len=64)\n\n    logits, _ = model(x)                                  # B, T, V\n    loss = crit(logits.reshape(-1, V), y.reshape(-1))     # predict the NEXT char everywhere\n\n    opt.zero_grad()\n    loss.backward()                                       # backprop through time\n    nn.utils.clip_grad_norm_(model.parameters(), 5.0)     # ← the lecture's fix for exploding gradients\n    opt.step()\n\n    if step % 100 == 0:\n        print(f\"step {step:4d}   loss {loss.item():.3f}   ppl {math.exp(loss.item()):7.1f}   ({time.time()-t0:.0f}s)\")\nprint(\"done\")",
+     "out": "step  100   loss 4.183   ppl    65.6   (9s)\nstep  200   loss 3.736   ppl    41.9   (17s)\nstep  300   loss 3.474   ppl    32.3   (20s)\nstep  400   loss 3.400   ppl    30.0   (24s)\nstep  500   loss 3.317   ppl    27.6   (28s)\nstep  600   loss 3.254   ppl    25.9   (32s)\ndone"
+    }
+   ]
+  },
+  {
+   "p": 13,
+   "title": "2.3 Did it actually learn Korean? — look at the predictions, not the prose",
+   "cells": [
+    {
+     "n": 19,
+     "type": "markdown",
+     "src": "### 2.3 Did it actually learn Korean? — look at the *predictions*, not the prose\n\nFree-running text from a 0.7M-parameter model always looks rough; that tells us little. The honest\nplace to see what the model learned is its **next-character distribution** — no sampling, no luck.\n\nWatch for three things in the output:\n\n- `최악의 영` → `화` at ~96%: it has found a word it can be sure about.\n- `시간이 아까` → `운 / 움 / 워 / 웠`: it has picked up the ㅂ-irregular conjugation family.\n- `이 영화는 정말 재미` → `있` and `없` as the top two, in some order: **both are correct Korean**,\n  and the model knows this is a coin flip between a compliment and a complaint.\n\n> 🇰🇷 0.7M짜리 모델이 자유롭게 써 내려간 문장은 원래 엉성합니다. 그것만으로는 알 수 있는 게 적습니다.\n> 모델이 무엇을 배웠는지 정직하게 보려면 **다음 글자 확률분포**를 보세요. 운이 개입하지 않습니다.\n> 출력에서 세 가지를 확인하세요.\n> - `최악의 영` → `화` 약 96%: 확신할 수 있는 단어를 찾아냈습니다.\n> - `시간이 아까` → `운 / 움 / 워 / 웠`: **ㅂ불규칙 활용** 패턴을 익혔습니다.\n> - `이 영화는 정말 재미` → `있` 과 `없` 이 (순서는 바뀔 수 있지만) 1·2위: **둘 다 올바른 한국어**이고,\n>   모델은 이 자리가 칭찬과 불평 사이의 반반 갈림길임을 알고 있습니다.",
+     "out": ""
+    }
+   ]
+  },
+  {
+   "p": 14,
+   "title": "what does the model think comes next?  (no sampling — just the top 5 probabiliti",
+   "cells": [
+    {
+     "n": 20,
+     "type": "code",
+     "src": "# what does the model think comes next?  (no sampling — just the top 5 probabilities)\n@torch.no_grad()\ndef top5(m, prompt, k=5):\n    m.eval()\n    h = torch.zeros(1, m.hidden_dim, device=device)\n    for c in prompt:\n        if c in stoi:\n            h = m.cell(m.emb(torch.tensor([stoi[c]], device=device)), h)\n    probs = torch.softmax(m.out(h), dim=-1)[0]\n    v, idx = torch.topk(probs, k)\n    m.train()\n    return [(itos[int(j)], float(x)) for j, x in zip(idx, v)]\n\n\nfor prompt in [\"최악의 영\", \"배우들의 연\", \"인생 영화입니\", \"시간이 아까\", \"이 영화는 정말 재미\"]:\n    print(prompt, \" →  \" + \"   \".join(f\"'{c}' {x*100:.0f}%\" for c, x in top5(model, prompt)))",
+     "out": "최악의 영  →  '화' 97%   '상' 1%   '웅' 0%   '환' 0%   '기' 0%\n배우들의 연  →  '기' 75%   '출' 14%   '화' 1%   '상' 0%   '성' 0%\n인생 영화입니  →  '다' 81%   ' ' 4%   '까' 3%   '.' 1%   '는' 1%\n시간이 아까  →  '운' 41%   '워' 19%   '웠' 15%   '움' 12%   '지' 5%\n이 영화는 정말 재미  →  '있' 38%   '없' 22%   '도' 7%   ' ' 5%   '가' 5%"
+    }
+   ]
+  },
+  {
+   "p": 15,
+   "title": "3.1 Sampling: feed the prediction back in, forever",
+   "cells": [
+    {
+     "n": 21,
+     "type": "markdown",
+     "src": "---\n## Part 3 — Generation and Perplexity\n\n### 3.1 Sampling: feed the prediction back in, forever\n\n> 🇰🇷 생성은 의외로 단순합니다. 모델이 예측한 글자를 **다시 입력으로 넣는 것**을 반복할 뿐입니다.",
+     "out": ""
+    },
+    {
+     "n": 22,
+     "type": "code",
+     "src": "@torch.no_grad()\ndef generate(model, prompt=\"이 영화\", n_chars=250, temperature=1.0):\n    model.eval()\n    h = torch.zeros(1, model.hidden_dim, device=device)\n\n    idx = [stoi[c] for c in prompt if c in stoi] or [stoi[\"\\n\"]]\n    for i in idx[:-1]:                      # warm the hidden state on the prompt\n        e = model.emb(torch.tensor([i], device=device))\n        h = model.cell(e, h)\n\n    cur, out = idx[-1], list(prompt)\n    for _ in range(n_chars):\n        e = model.emb(torch.tensor([cur], device=device))\n        h = model.cell(e, h)\n        # logits -> temperature -> softmax -> sample ONE index\n        logits = model.out(h) / temperature\n        probs  = torch.softmax(logits, dim=-1)\n        cur    = torch.multinomial(probs, num_samples=1).item()\n        out.append(itos[cur])\n\n    model.train()\n    return \"\".join(out)\n\nprint(generate(model, \"이 영화\", 250))",
+     "out": "이 영화인 나올뿐 그래리순오생하게 봐서 잤다 시치는 일저까 왜 평점하고 반...그렇다.. 왜대네요. 캐릭터 연기에서 개소재 안나올려는 묘도 아깝다 너무 진부하여 봤다이 왜이다 여주뉴 앓곡기만 몰랐지 못함듯. 짜플~~ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ 배우들은 생각된 여주 발미가 시대를 생각하니 하는거 공포영화: 연기 그래뷔도 인상사로 연기\n김동내 은생각보다\n이런영화오에 간로맨 스토리 너무 낮던 친구엄짱\n놀라서 짜리재밌음\n짝퉁신보 허료에드 낚사는데, 밤\n초반은 얼"
+    }
+   ]
+  },
+  {
+   "p": 16,
+   "title": "temperature = how bold the sampling is",
+   "cells": [
+    {
+     "n": 23,
+     "type": "code",
+     "src": "# temperature = how bold the sampling is\nfor t in [0.5, 1.0, 1.5]:\n    print(f\"───── temperature {t} \" + \"─\"*40)\n    print(generate(model, \"이 영화\", 140, temperature=t))\n    print()",
+     "out": "───── temperature 0.5 ────────────────────────────────────────\n이 영화는 어떤 시대를 보는 줄분이 아니라 재미있는 영화이 영화 영화가 보는 영화...\n진짜 재미없음...\n성룡 이 영화 너무 재밌어요...\n이건 뭐 이 영화가 나오는 영화라 같은 영화\n이 영화 중간이 다 진짜.... 어떤 영화.\n재밌어요 진짜 재밌습니다. \n\n───── temperature 1.0 ────────────────────────────────────────\n이 영화, 이제 ..\n쌍이리 가슴으로 언제로 '해인데 괜찮은 영화인지도 재밌겠다 ㅋㅋㅋ 100절 영화 떨음요였다. 가슴에 따위하나 하는 점 이가 영화 중간 깨그래 적인 열형 봤어요\n호까하다\n끝까지 이렇게 재미있습니다.\n스토리가 어제낼는 2친다!!!!!!\n살아\n\n───── temperature 1.5 ────────────────────────────────────────\n이 영화를 생권난다면\n흥을만쏘설의심사의하길툭뱅합겨근달게기\"C사&소좀나?..\n리잔쯤보는있어 근보니다.\n이 괜꿀야기는 놓네.1푸원전별뿐놨은 민뚝과 이것달사나유치림;D으지않낚하랑ㅠ\n초국쥘들과離*정격 폭준+에 약한을는수다!!이슨점~\n삼류트에서 책터도 뇌위했으잘한개견"
+    }
+   ]
+  },
+  {
+   "p": 17,
+   "title": "3.2 Perplexity — the number from the lecture",
+   "cells": [
+    {
+     "n": 24,
+     "type": "markdown",
+     "src": "### 3.2 Perplexity — the number from the lecture\n\n$$\\mathrm{PPL} = \\exp(J), \\qquad J = \\text{average cross-entropy}$$\n\n> 🇰🇷 강의에서 본 그 숫자입니다. 평균 cross-entropy에 $\\exp$ 를 씌운 값이고,\n> “모델이 다음 후보를 평균 몇 개로 좁혔는가”로 읽으면 직관적입니다.",
+     "out": ""
+    },
+    {
+     "n": 25,
+     "type": "code",
+     "src": "@torch.no_grad()\ndef perplexity(model, data, n_batches=20):\n    model.eval()\n    total = 0.0\n    for _ in range(n_batches):\n        x, y = get_batch(data, batch_size=64, seq_len=64)\n        logits, _ = model(x)\n        loss = crit(logits.reshape(-1, V), y.reshape(-1))\n        total += loss.item()\n    model.train()\n    # PPL = exp(average loss)\n    return math.exp(total / n_batches)\n\nppl = perplexity(model, data)\nprint(f\"character-level perplexity : {ppl:.2f}\")\nprint(f\"vocabulary size V          : {V}\")\nprint(f\"an untrained model would be around {V} — we are far below it ✓\")",
+     "out": "character-level perplexity : 25.92\nvocabulary size V          : 1945\nan untrained model would be around 1945 — we are far below it ✓"
+    }
+   ]
+  },
+  {
+   "p": 18,
+   "title": "4.1 Re-tokenize the same corpus",
+   "cells": [
+    {
+     "n": 26,
+     "type": "markdown",
+     "src": "---\n# Part 4 — Change ONE Thing: the Tokenizer\n\nOur char-RNN has to spell every word out of ~1,900 characters, one at a time. That is a hard game:\nto write “재미있다” it must get five separate guesses right in a row.\n\nWhat if each guess were a **bigger, more meaningful unit**? That is exactly the Week 2 question —\nso let's bring in a **pretrained subword tokenizer** and change *nothing else*:\nsame `MyRNNCell`, same `CharRNN` class, same training loop.\n\n*(We only download the **tokenizer** — a few MB — not anyone's trained model.)*\n\n> 🇰🇷 지금의 char-RNN은 약 1,900개 글자 중에서 한 글자씩 골라 단어를 **철자대로** 만들어야 합니다.\n> “재미있다”를 쓰려면 다섯 번의 예측을 연속으로 맞혀야 하는 셈이죠.\n> 만약 한 번의 예측이 **더 크고 의미 있는 단위**를 담당한다면 어떨까요? 이것이 바로 2주차의 질문입니다.\n> 그래서 **사전학습된 subword 토크나이저**만 가져오고 *나머지는 전부 그대로* 둡니다 —\n> 같은 `MyRNNCell`, 같은 `CharRNN` 클래스, 같은 학습 루프.\n>\n> *(내려받는 것은 **토크나이저**뿐입니다(수 MB). 남이 학습해 둔 모델은 쓰지 않습니다.)*\n\n### 4.1 Re-tokenize the same corpus",
+     "out": ""
+    }
+   ]
+  },
+  {
+   "p": 19,
+   "title": "from transformers import PreTrainedTokenizerFast",
+   "cells": [
+    {
+     "n": 27,
+     "type": "code",
+     "src": "from transformers import PreTrainedTokenizerFast\nimport collections\n\nsub_tok = PreTrainedTokenizerFast.from_pretrained(\n    \"skt/kogpt2-base-v2\", bos_token=\"</s>\", eos_token=\"</s>\", unk_token=\"<unk>\",\n    pad_token=\"<pad>\", mask_token=\"<mask>\")\n\ndemo = \"이 영화 정말 재미있다\"\nprint(\"characters :\", list(demo))\nprint(\"subwords   :\", sub_tok.tokenize(demo))\nprint()\n\nids_full = sub_tok.encode(corpus)\nprint(f\"same corpus: {len(corpus):,} characters  ->  {len(ids_full):,} subword tokens\")\nprint(f\"each guess now covers {len(corpus)/len(ids_full):.1f} characters on average\")",
+     "out": "Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.\nWARNING:huggingface_hub.utils._http:Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.\ntokenizer.json:   0%|          | 0.00/2.83M [00:00<?, ?B/s]\ncharacters : ['이', ' ', '영', '화', ' ', '정', '말', ' ', '재', '미', '있', '다']\nsubwords   : ['▁이', '▁영화', '▁정말', '▁재미', '있', '다']\n\nsame corpus: 727,466 characters  ->  390,136 subword tokens\neach guess now covers 1.9 characters on average"
+    }
+   ]
+  },
+  {
+   "p": 20,
+   "title": "4.2 Build a working vocabulary",
+   "cells": [
+    {
+     "n": 28,
+     "type": "markdown",
+     "src": "### 4.2 Build a working vocabulary\n\nThe full tokenizer knows 51,200 subwords, but our little corpus only uses a fraction of them —\nand a 51,200-way softmax would be slow. We keep the most frequent ones and map the rest to `<unk>`.\n\n> 🇰🇷 이 토크나이저는 51,200개의 subword를 알고 있지만, 우리 코퍼스는 그중 일부만 사용합니다.\n> 51,200개짜리 softmax는 느리기도 하고요. 그래서 **빈도 상위 토큰만 남기고** 나머지는 `<unk>` 로 보냅니다.",
+     "out": ""
+    },
+    {
+     "n": 29,
+     "type": "code",
+     "src": "KEEP = 6000\ncounts = collections.Counter(ids_full)\nkeep   = [t for t, _ in counts.most_common(KEEP)]\n\nold2new = {t: i + 1 for i, t in enumerate(keep)}      # 0 is reserved for <unk>\nnew2old = {i + 1: t for i, t in enumerate(keep)}\nV_sub   = KEEP + 1\n\ndata_sub = torch.tensor([old2new.get(t, 0) for t in ids_full], dtype=torch.long)\ncoverage = sum(counts[t] for t in keep) / len(ids_full)\n\nprint(f\"working vocabulary : {V_sub:,}  (covers {coverage:.1%} of all tokens)\")\nprint(f\"character vocab was: {V:,}\")\n\ndef decode_sub(ids):\n    return sub_tok.decode([new2old.get(i, sub_tok.unk_token_id) for i in ids])",
+     "out": "working vocabulary : 6,001  (covers 94.5% of all tokens)\ncharacter vocab was: 1,945"
+    }
+   ]
+  },
+  {
+   "p": 21,
+   "title": "4.3 Retrain — the exact same model class",
+   "cells": [
+    {
+     "n": 30,
+     "type": "markdown",
+     "src": "### 4.3 Retrain — *the exact same model class*\n\n> 🇰🇷 모델 코드는 한 글자도 바꾸지 않습니다. 어휘 크기만 달라진 같은 `CharRNN` 을 다시 학습합니다.",
+     "out": ""
+    },
+    {
+     "n": 31,
+     "type": "code",
+     "src": "sub_model = CharRNN(V_sub).to(device)          # same class, new vocabulary size\nsub_opt   = torch.optim.Adam(sub_model.parameters(), lr=2e-3)\n\nprint(f\"{sum(p.numel() for p in sub_model.parameters()):,} parameters \"\n      f\"(char model had {n_params:,})\")\n\nSUB_STEPS = 500\nt0 = time.time()\nfor step in range(1, SUB_STEPS + 1):\n    x, y = get_batch(data_sub, batch_size=64, seq_len=64)\n    logits, _ = sub_model(x)\n    loss = crit(logits.reshape(-1, V_sub), y.reshape(-1))\n    sub_opt.zero_grad(); loss.backward()\n    nn.utils.clip_grad_norm_(sub_model.parameters(), 5.0)\n    sub_opt.step()\n    if step % 100 == 0:\n        print(f\"step {step:4d}   loss {loss.item():.3f}   ({time.time()-t0:.0f}s)\")\nprint(\"done\")",
+     "out": "2,008,497 parameters (char model had 706,521)\nstep  100   loss 6.363   (4s)\nstep  200   loss 5.904   (7s)\nstep  300   loss 5.498   (12s)\nstep  400   loss 5.217   (15s)\nstep  500   loss 5.158   (19s)\ndone"
+    }
+   ]
+  },
+  {
+   "p": 22,
+   "title": "4.4 The moment of truth — same prompt, same temperature, both models",
+   "cells": [
+    {
+     "n": 32,
+     "type": "markdown",
+     "src": "### 4.4 The moment of truth — same prompt, **same temperature**, both models\n\n> 🇰🇷 같은 프롬프트, **같은 temperature**로 두 모델을 나란히 생성합니다.\n> temperature가 다르면 비교 자체가 성립하지 않습니다 — 조건을 맞추는 것이 오늘의 교훈이기도 합니다.",
+     "out": ""
+    },
+    {
+     "n": 33,
+     "type": "code",
+     "src": "@torch.no_grad()\ndef generate_sub(m, prompt=\"이 영화\", n_tokens=35, temperature=0.8):\n    m.eval()\n    h = torch.zeros(1, m.hidden_dim, device=device)\n    start = [old2new.get(t, 0) for t in sub_tok.encode(prompt)] or [0]\n    for i in start[:-1]:\n        h = m.cell(m.emb(torch.tensor([i], device=device)), h)\n\n    cur, out = start[-1], list(start)\n    for _ in range(n_tokens):\n        h = m.cell(m.emb(torch.tensor([cur], device=device)), h)\n        logits = m.out(h) / temperature\n        logits[0, 0] = -float(\"inf\")        # never emit <unk>: it is a bookkeeping token, not Korean\n        probs = torch.softmax(logits, dim=-1)\n        cur = torch.multinomial(probs, num_samples=1).item()\n        out.append(cur)\n    m.train()\n    return decode_sub(out)\n\n\nPROMPT = \"이 영화\"\nTEMP   = 0.8      # the SAME temperature for both models — otherwise the comparison is rigged\n\nprint(\"=\" * 74)\nprint(\"CHARACTER-level RNN   (V = %d, one guess = one character,  T = %.1f)\" % (V, TEMP))\nprint(\"=\" * 74)\nfor _ in range(2):\n    print(\" >\", generate(model, PROMPT, 70, temperature=TEMP))\n\nprint()\nprint(\"=\" * 74)\nprint(\"SUBWORD-level RNN     (V = %d, one guess = a chunk,  T = %.1f)\" % (V_sub, TEMP))\nprint(\"=\" * 74)\nfor _ in range(3):\n    print(\" >\", generate_sub(sub_model, PROMPT, 35, temperature=TEMP))",
+     "out": "==========================================================================\nCHARACTER-level RNN   (V = 1945, one guess = one character,  T = 0.8)\n==========================================================================\n > 이 영화  어울려엔 정도 이 영화는 ...\n마지막에 대사라는가 모두 영화를 만들었다아\n재미도 이 영화관 우들 연기 2편한 진부한 영화\n > 이 영화가 진짜 별로... 아무서 명화를 보는 저에 유치하고 질 영화\n10점준 영화가 왜 마음이 남는 영화. 그닥스트에5\n루라는 아름\n\n==========================================================================\nSUBWORD-level RNN     (V = 6001, one guess = a chunk,  T = 0.8)\n==========================================================================\n > 이 영화만의거지로지\n아들아깝다..\n어렸을때 본 영화..\n이런영화! 더빙 여송내용, 플롯정,의김다.다시 결말\n > 이 영화 그 어떤의 멋져..\n여기서 너무 좋다. 마음은 멋지마지막에이라도 없는 요 어까지 본듯한 편안\n종교찬하고 잘만들었는데\n > 이 영화 중 가장 걸릴줄 아는이지만 보고싶은영화\n왠만 하니다. 오그라드는 감동임\n진짜 재미있네요. 근데 기술이 허접해요"
+    }
+   ]
+  },
+  {
+   "p": 23,
+   "title": "@torch.no_grad()",
+   "cells": [
+    {
+     "n": 34,
+     "type": "markdown",
+     "src": "Those samples are entertaining, but they are **weak evidence**. Which one reads better flips from\nrun to run, and — measured over many samples — *both* models produce word forms the corpus never\ncontains, at roughly the same rate. Free-running text is the wrong place to look.\n\nSo look at what **one guess** buys each model instead (same top-5 view as in 2.3, now side by side):\n\n> 🇰🇷 위 출력은 재미있긴 하지만 **근거로는 약합니다.** 어느 쪽이 더 잘 읽히는지는 실행마다 뒤집히고,\n> 표본을 많이 모아 재 보면 *두 모델 모두* 코퍼스에 없는 단어꼴을 비슷한 비율로 만들어냅니다.\n> 자유 생성문은 판단 근거로 적절하지 않습니다.\n> 대신 **예측 한 번이 무엇을 사는지**를 보세요 — 2.3에서 본 top-5를, 이번에는 두 모델 나란히.",
+     "out": ""
+    },
+    {
+     "n": 35,
+     "type": "code",
+     "src": "@torch.no_grad()\ndef top5_sub(m, prompt, k=5):\n    \"\"\"the subword model's five most likely NEXT CHUNKS after `prompt`\"\"\"\n    m.eval()\n    h = torch.zeros(1, m.hidden_dim, device=device)\n    for t in sub_tok.encode(prompt):\n        h = m.cell(m.emb(torch.tensor([old2new.get(t, 0)], device=device)), h)\n    probs = torch.softmax(m.out(h), dim=-1)[0]\n    probs[0] = 0.0                                  # ignore <unk>\n    v, idx = torch.topk(probs, k)\n    m.train()\n    return [(sub_tok.decode([new2old.get(int(j), sub_tok.unk_token_id)]), float(x))\n            for j, x in zip(idx, v)]\n\n\nfmt = lambda pairs: \"   \".join(f\"'{c}' {x*100:.0f}%\" for c, x in pairs)\n\nfor prompt in [\"최악의 영\", \"배우들의 연\", \"이 영화는 정말 재미\"]:\n    print(prompt)\n    print(\"   character →  \" + fmt(top5(model, prompt)))\n    print(\"   subword   →  \" + fmt(top5_sub(sub_model, prompt)))\n    print()",
+     "out": "최악의 영\n   character →  '화' 97%   '상' 1%   '웅' 0%   '환' 0%   '기' 0%\n   subword   →  '화가' 87%   '환' 6%   '상으로' 1%   '활' 1%   '상과' 1%\n\n배우들의 연\n   character →  '기' 75%   '출' 14%   '화' 1%   '상' 0%   '성' 0%\n   subword   →  '기도' 28%   '기,' 20%   '기는' 17%   '기와' 9%   '기로' 6%\n\n이 영화는 정말 재미\n   character →  '있' 38%   '없' 22%   '도' 7%   ' ' 5%   '가' 5%\n   subword   →  '있' 28%   '있게' 27%   '없' 15%   '있어' 8%   '없음' 3%"
+    }
+   ]
+  },
+  {
+   "p": 24,
+   "title": "4.5 ⚠️ So which model is actually better? — the perplexity trap",
+   "cells": [
+    {
+     "n": 36,
+     "type": "markdown",
+     "src": "Read the `배우들의 연` row again:\n\n- the **character** model spends its whole guess on one syllable — `기`, with high confidence;\n- the **subword** model spends the same single guess on `기와 / 기도 / 기는 / 기, / 기에` — the noun\n  ending **and** the particle after it, decided in one shot.\n\nThat is the entire lesson. The model did not get smarter; its **unit** got bigger. One prediction\nnow carries ~1.9 characters of Korean instead of 1, which is exactly the 1.9 we measured in 4.1.\n\n> ⚠️ What is **not** true: that the subword model stops inventing words. It glues real pieces into\n> unreal forms just as the character model spells out impossible ones. The difference is real but\n> it is a difference in **cost**, not in cleanliness — so we have to measure it. Next cell.\n\n> 🇰🇷 `배우들의 연` 줄을 다시 보세요.\n> - **문자 모델**은 예측 한 번을 글자 하나(`기`)에 씁니다.\n> - **subword 모델**은 같은 예측 한 번으로 `기와 / 기도 / 기는 / 기, / 기에` — 즉 명사 어미 **와**\n>   그 뒤의 조사까지 한꺼번에 정합니다.\n>\n> 이것이 오늘의 핵심입니다. 모델이 똑똑해진 게 아니라 **단위가 커진 것**입니다. 이제 예측 한 번이\n> 한국어 1.9자를 담고, 이는 4.1에서 측정한 그 1.9와 정확히 같은 숫자입니다.\n>\n> ⚠️ **사실이 아닌 것**: \"subword 모델은 없는 단어를 안 만든다\"는 말은 틀립니다. 실제로 재 보면\n> 두 모델 모두 코퍼스에 없는 단어꼴을 비슷한 비율로 만듭니다. 차이는 **깨끗함**이 아니라 **비용**에\n> 있고, 그래서 눈이 아니라 **측정**으로 확인해야 합니다. 다음 셀에서 합니다.\n\n### 4.5 ⚠️ So which model is actually better? — the perplexity trap\n\nYour instinct says “compare their perplexities.” Watch why that fails.\n\n> 🇰🇷 “그러면 perplexity를 비교하면 되지 않나?” — 왜 그 방법이 실패하는지 직접 확인해 봅시다.",
+     "out": ""
+    }
+   ]
+  },
+  {
+   "p": 25,
+   "title": "import math",
+   "cells": [
+    {
+     "n": 37,
+     "type": "code",
+     "src": "import math\nLN2 = math.log(2)\n\n@torch.no_grad()\ndef total_nll(m, ids, vocab_size, seq_len=200):\n    # total negative log-likelihood (in nats) over a held-out sequence\n    m.eval(); total, n = 0.0, 0\n    for i in range(0, len(ids) - seq_len - 1, seq_len):\n        x = ids[i     : i + seq_len].unsqueeze(0)\n        y = ids[i + 1 : i + seq_len + 1].unsqueeze(0)\n        logits, _ = m(x)\n        total += crit(logits.reshape(-1, vocab_size), y.reshape(-1)).item() * seq_len\n        n += seq_len\n    m.train()\n    return total, n\n\nheld_char = torch.tensor([stoi[c] for c in held_out if c in stoi], dtype=torch.long).to(device)\nheld_sub  = torch.tensor([old2new.get(t, 0) for t in sub_tok.encode(held_out)],\n                         dtype=torch.long).to(device)\n\nnll_c, n_c = total_nll(model,     held_char, V)\nnll_s, n_s = total_nll(sub_model, held_sub,  V_sub)\nn_chars = len(held_out)\n\nprint(\"-- the NAIVE comparison (WRONG) \" + \"-\" * 40)\nprint(f\"   char-RNN    : perplexity {math.exp(nll_c / n_c):8.2f}   per CHARACTER  (V = {V})\")\nprint(f\"   subword-RNN : perplexity {math.exp(nll_s / n_s):8.2f}   per TOKEN      (V = {V_sub})\")\nprint(\"   -> 'the character model wins by a mile!'  ... but the top-5 view said otherwise.\")\nprint()\nprint(\"-- the FAIR comparison: BITS PER CHARACTER \" + \"-\" * 29)\nprint(f\"   char-RNN    : {nll_c / (n_c * LN2):5.2f} bits/char\")\nprint(f\"   subword-RNN : {nll_s / (n_chars * LN2):5.2f} bits/char   <- genuinely lower\")\nprint()\nprint(\"   Both numbers now answer the SAME question:\")\nprint(\"   'how many bits does this model need to describe one character of Korean?'\")",
+     "out": "-- the NAIVE comparison (WRONG) ----------------------------------------\n   char-RNN    : perplexity    27.48   per CHARACTER  (V = 1945)\n   subword-RNN : perplexity   299.07   per TOKEN      (V = 6001)\n   -> 'the character model wins by a mile!'  ... but the top-5 view said otherwise.\n\n-- the FAIR comparison: BITS PER CHARACTER -----------------------------\n   char-RNN    :  4.78 bits/char\n   subword-RNN :  4.30 bits/char   <- genuinely lower\n\n   Both numbers now answer the SAME question:\n   'how many bits does this model need to describe one character of Korean?'"
+    }
+   ]
+  },
+  {
+   "p": 26,
+   "title": "The lesson, from your own two models: perplexity is measured per predicted unit,",
+   "cells": [
+    {
+     "n": 38,
+     "type": "markdown",
+     "src": "**The lesson, from your own two models:** perplexity is measured *per predicted unit*, so a model\nthat predicts easy units (characters) looks better than one predicting hard units (subwords) —\neven when it is worse. Converting to **bits per character** puts them on one ruler.\n\nWhenever you read “our model reaches perplexity X” in a paper, ask first:\n**perplexity over which units, with which tokenizer?**\n\n> 🇰🇷 **오늘 직접 만든 두 모델이 보여준 교훈입니다.** perplexity는 *예측 단위 하나당* 측정됩니다.\n> 그래서 쉬운 단위(문자)를 맞히는 모델이, 어려운 단위(subword)를 맞히는 모델보다 — 실제로는 더\n> 나쁠 때조차 — 좋아 보입니다. **bits per character**로 환산해야 비로소 같은 자로 재게 됩니다.\n>\n> 논문에서 “우리 모델은 perplexity X를 달성했다”를 볼 때마다 먼저 물으세요:\n> **어떤 단위 기준인가? 어떤 토크나이저를 썼는가?**",
+     "out": ""
+    }
+   ]
+  },
+  {
+   "p": 27,
+   "title": "Wrap-up · 정리",
+   "cells": [
+    {
+     "n": 39,
+     "type": "markdown",
+     "src": "---\n## Challenge (optional) · 도전 과제 (선택)\n\n1. **Train longer.** Raise `SUB_STEPS` to 2000 and re-measure **bits/char**. How far does the\n   subword model get on time alone, and where does it stop helping?\n   > 🇰🇷 `SUB_STEPS` 를 2000으로 올리고 **bits/char**를 다시 재 보세요. 시간만으로 어디까지\n   > 좋아지고, 어느 지점부터 효과가 멈추나요?\n\n2. **Vanishing gradients, seen.** Train with `seq_len=200` instead of 64. Does the loss improve as\n   much per step? (The lecture's long-dependency problem, live.)\n   > 🇰🇷 `seq_len` 을 64 대신 200으로 학습해 보세요. 스텝당 loss 개선폭이 그대로인가요?\n   > (강의에서 다룬 장기 의존성 문제를 눈으로 확인하는 실험입니다.)\n\n3. **Swap the cell.** Replace `MyRNNCell` with `nn.LSTMCell` (it carries `(h, c)`, not just `h`).\n   Compare bits/char after the same number of steps — the gates should earn their keep.\n   > 🇰🇷 `MyRNNCell` 을 `nn.LSTMCell` 로 바꿔 보세요(`h` 만이 아니라 `(h, c)` 를 함께 넘깁니다).\n   > 같은 스텝 수에서 bits/char를 비교하면 게이트가 제 값을 하는지 보입니다.\n\n4. **Change KEEP.** Try `KEEP = 2000` and `KEEP = 12000`. What happens to coverage, to the\n   `<unk>` rate, to training speed, and to bits/char? This is a real engineering trade-off.\n   > 🇰🇷 `KEEP` 을 2000과 12000으로 바꿔 보세요. 커버리지, `<unk>` 비율, 학습 속도, bits/char가\n   > 각각 어떻게 움직이나요? 실무에서 실제로 마주치는 트레이드오프입니다.\n\n## Wrap-up · 정리\n\n- **Autograd = backprop**: the hand-derived δ, dW, db, dx matched PyTorch exactly\n  · 🇰🇷 손으로 유도한 δ, dW, db, dx가 PyTorch와 정확히 일치했습니다\n- **The RNN is two lines**: `tanh(W_h h + W_e e)`, looped with the *same* weights\n  · 🇰🇷 RNN의 본체는 두 줄입니다 — *같은* 가중치를 시점마다 반복 적용할 뿐\n- **Training**: cross-entropy at every step + gradient clipping\n  · 🇰🇷 학습: 모든 시점의 cross-entropy + gradient clipping\n- **Evaluation**: perplexity — and **bits/char** whenever the tokenizers differ\n  · 🇰🇷 평가: perplexity, 단 토크나이저가 다르면 반드시 **bits/char**\n- **The unit matters as much as the model**: one tokenizer swap changed what the model could get wrong\n  · 🇰🇷 단위는 모델만큼 중요합니다 — 토크나이저 하나를 바꾸자 “틀릴 수 있는 방식”이 달라졌습니다\n\n**Assignment 2 is out today** (15%, due **10/12 · W7**): the same calculus as Part 1.3, but for\nword2vec — first by hand, then in code. Start early.\n\n> 🇰🇷 **오늘 과제 2가 나갑니다**(15%, 마감 **10/12 · 7주차**). Part 1.3에서 한 것과 똑같은 미분을\n> 이번에는 word2vec에 대해 — 먼저 손으로, 그다음 코드로. 일찍 시작하세요.\n\n수고했습니다! 🎉",
+     "out": ""
+    }
+   ]
+  }
+ ]
+}

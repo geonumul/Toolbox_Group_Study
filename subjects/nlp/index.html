@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<!-- flat-restyle v1 -->
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>자연어처리 회독 스터디</title>
+<meta name="description" content="자연어처리: 강의 회독, 정리 슬라이드, 용어 카드, 문제은행">
+<meta name="theme-color" content="#F7F7FB" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#101120" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="자연어처리 회독">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%234E3FE5'/%3E%3Cline x1='10' y1='21' x2='22' y2='11' stroke='white' stroke-width='3'/%3E%3Ccircle cx='10' cy='21' r='4.5' fill='white'/%3E%3Ccircle cx='22' cy='11' r='4.5' fill='white'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../../engine/app.css?v=202609191836">
+<link rel="stylesheet" href="../../engine/site.css?v=202609191836">
+<link rel="stylesheet" href="../../assets/pet/pet.css?v=202609191836">
+</head>
+<body>
+<header id="hdr">
+  <div class="hwrap">
+    <a class="hubback" href="../../index.html#subjects" aria-label="전체 과목으로">전체 과목</a>
+    <a class="brand" href="#/" aria-label="과목 홈으로">
+      <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5h6.5a2 2 0 012 2V20a2 2 0 00-2-2H4z"/><path d="M20 5.5h-5.5a2 2 0 00-2 2V20a2 2 0 012-2H20z"/></svg>
+      <span>자연어처리 회독</span>
+    </a>
+    <nav id="nav" aria-label="주요 메뉴">
+      <a class="tab" data-nav="home" href="#/">홈</a>
+      <a class="tab" data-nav="wb" href="#/week/b">기초 다지기</a>
+      <a class="tab" data-nav="w1" href="#/week/1">1주차</a>
+      <a class="tab" data-nav="w2" href="#/week/2">2주차</a>
+      <a class="tab" data-nav="w2L" href="#/week/2L">2주차 실습</a>
+      <a class="tab" data-nav="w3" href="#/week/3">3주차</a>
+      <a class="tab" data-nav="w3L" href="#/week/3L">3주차 실습</a>
+      <a class="tab" data-nav="quiz" href="#/quiz">문제</a>
+      <a class="tab" data-nav="wrong" href="#/wrong">오답노트 <span id="wrongBadge" class="badge"></span></a>
+      <a class="tab" data-nav="tips" href="#/tips">답안 팁</a>
+      <a class="tab" data-nav="set" href="#/settings">설정</a>
+    </nav>
+    <div class="hright"><span id="hstat"></span></div>
+  </div>
+</header>
+<main id="app"><div class="empty"><b>불러오는 중</b>잠시만요.</div></main>
+<button class="top" id="topBtn" type="button">맨 위로</button>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="../../assets/firebase-config.js?v=202609191836"></script>
+<script src="../../assets/sync.js?v=202609191836"></script>
+<!-- 이용권 검사: 로그인과 이용권이 없으면 과목 화면을 가린다 (assets/access.js) -->
+<script src="../../assets/access-config.js?v=202609191836"></script>
+<script src="../../assets/access.js?v=202609191836" data-gate="subject"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" defer></script>
+<script src="data/meta.js?v=202609191836" defer></script>
+<script src="data/terms.js?v=202609191836" defer></script>
+<script src="data/bank.js?v=202609191836" defer></script>
+<script src="data/pages.js?v=202609191836" defer></script>
+<script src="../../engine/ink.js?v=202609191836" defer></script>
+<!-- 움직이는 그림: 쓰는 과목만 build_site.py 가 engine/viz/ 스크립트를 넣는다 -->
+<script src="../../engine/app.js?v=202609191836" defer></script>
+<script src="../../assets/pet/pet.js?v=202609191836" defer></script>
+<script src="../../assets/footer.js?v=202609191836"></script>
+</body>
+</html>

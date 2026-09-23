@@ -1,0 +1,3390 @@
+{
+ "deck": "N2",
+ "from": 22,
+ "to": 37,
+ "glossary": [
+  {
+   "ko": "워드투벡",
+   "en": "word2vec",
+   "say": "주변 단어를 맞히는 연습으로 단어 벡터를 배우는 방법",
+   "more": "2013년 Mikolov 등이 낸 틀이에요. 라벨 없이 큰 말뭉치 하나만 있으면 되고, 예측은 수단, 벡터가 목표예요."
+  },
+  {
+   "ko": "워드넷",
+   "en": "WordNet",
+   "say": "사람이 손으로 만든 영어 유의어, 상하위어 사전",
+   "more": "동의어 묶음과 'is-a' 계층(판다 ⊂ 곰 ⊂ 포유류)을 담았어요. 뉘앙스, 신조어, 유사도 숫자를 다루지 못해요."
+  },
+  {
+   "ko": "시소러스",
+   "en": "Thesaurus",
+   "say": "동의어, 반의어, 상하위어를 모아 정리한 사전",
+   "more": "워드넷이 대표적인 시소러스예요. 사람이 규칙처럼 정리한 것이라 계산 가능한 뜻이 되지 못해요."
+  },
+  {
+   "ko": "원-핫 벡터",
+   "en": "One-hot Vector",
+   "say": "한 칸만 1이고 나머지는 모두 0인 벡터",
+   "more": "어휘 크기만큼 칸이 필요하고 거의 다 0이라 희소해요. 서로 다른 두 단어의 내적은 항상 0이라 비슷함을 못 나타내요."
+  },
+  {
+   "ko": "직교",
+   "en": "Orthogonal",
+   "say": "두 벡터가 서로 직각이라 내적이 0인 상태",
+   "more": "원-핫 벡터는 모든 쌍이 직교해요. 그래서 motel 과 hotel 도 '전혀 안 비슷함'으로 나와요."
+  },
+  {
+   "ko": "분포 가설",
+   "en": "Distributional Hypothesis",
+   "say": "단어의 뜻은 그 단어 주변에 자주 오는 단어들로 알 수 있다는 생각",
+   "more": "Firth(1957)의 'You shall know a word by the company it keeps' 로 유명해요. word2vec, BERT, GPT 모두 이 생각 위에 서 있어요."
+  },
+  {
+   "ko": "분포 의미론",
+   "en": "Distributional Semantics",
+   "say": "단어의 뜻을 그 단어가 나타나는 문맥들의 모음으로 보는 방법",
+   "more": "banking 의 뜻을 알고 싶으면 banking 이 나온 수천 개 문장을 보는 식이에요. 사전도 라벨도 필요 없어요."
+  },
+  {
+   "ko": "단어 벡터",
+   "en": "Word Vector",
+   "say": "단어 하나를 나타내는 숫자 목록(지도 좌표)",
+   "more": "보통 50~1024차원의 실수로 된 밀집 벡터예요. 비슷한 문맥에 나오는 단어는 비슷한 벡터가 되게 만들어요."
+  },
+  {
+   "ko": "임베딩",
+   "en": "Embedding",
+   "say": "단어 벡터를 부르는 다른 이름",
+   "more": "word vector, (word) embedding, word representation 은 모두 같은 것이에요. 교수님은 임베딩이라는 말을 가장 많이 쓴대요."
+  },
+  {
+   "ko": "밀집 벡터",
+   "en": "Dense Vector",
+   "say": "칸 수는 적고 칸마다 의미 있는 실수가 차 있는 벡터",
+   "more": "원-핫 벡터처럼 수십만 칸에 0만 가득한 대신, 수백 칸에 모두 값이 들어 있어요."
+  },
+  {
+   "ko": "희소 벡터",
+   "en": "Sparse Vector",
+   "say": "칸 대부분이 0인 벡터",
+   "more": "원-핫 벡터가 대표예요. 칸 수가 어휘 크기만큼 커서 저장 공간이 많이 들고 표현력도 약해요."
+  },
+  {
+   "ko": "내적",
+   "en": "Dot Product",
+   "say": "같은 자리 숫자끼리 곱해서 모두 더한 값",
+   "more": "두 화살표가 같은 쪽을 볼수록 커요. word2vec 에서 '얼마나 비슷한가' 점수로 써요."
+  },
+  {
+   "ko": "코사인 유사도",
+   "en": "Cosine Similarity",
+   "say": "두 벡터가 가리키는 방향이 얼마나 같은지 -1~1로 나타낸 값",
+   "more": "내적을 두 벡터 길이의 곱으로 나눈 값이에요. 길이 영향을 빼고 방향만 봐요."
+  },
+  {
+   "ko": "말뭉치",
+   "en": "Corpus",
+   "say": "모델이 배우는 데 쓰는 큰 글 모음",
+   "more": "word2vec 의 재료는 큰 말뭉치 하나뿐이에요. 라벨이 필요 없어요."
+  },
+  {
+   "ko": "토큰",
+   "en": "Token",
+   "say": "모델이 글을 다루는 가장 작은 조각(레고 조각)",
+   "more": "이 부분 그림에서는 이해를 돕게 단어 하나를 토큰 하나로 보지만, 실제로는 서브워드 조각이에요."
+  },
+  {
+   "ko": "어휘",
+   "en": "Vocabulary",
+   "say": "모델이 아는 토큰 종류 전체 목록(레고 상자 조각 목록)",
+   "more": "크기를 |V| 나 V 로 적어요. 원-핫 벡터의 칸 수, 소프트맥스 분모의 항 수가 이 크기예요."
+  },
+  {
+   "ko": "중심 단어",
+   "en": "Center Word",
+   "say": "지금 창 한가운데에 있는 주인공 단어 c",
+   "more": "위치 t 의 단어 $w_t$ 예요. 스킵그램에서는 중심 단어가 주변 단어를 맞혀요."
+  },
+  {
+   "ko": "문맥 단어",
+   "en": "Context Word",
+   "say": "중심 단어 양옆 창 안에 있는 이웃 단어 o",
+   "more": "윈도우 크기가 m 이면 왼쪽 m 개, 오른쪽 m 개예요. $w_{t+j}$ 로 적어요."
+  },
+  {
+   "ko": "윈도우",
+   "en": "Window",
+   "say": "중심 단어 양옆으로 몇 칸까지 이웃으로 볼지 정한 창",
+   "more": "창 크기 m 을 한쪽 개수로 적어요(논문마다 양쪽 합으로 적기도 해요). 창을 한 칸씩 밀며 반복해요."
+  },
+  {
+   "ko": "스킵그램",
+   "en": "Skip-gram",
+   "say": "중심 단어로 주변 문맥 단어를 맞히는 word2vec 방식",
+   "more": "P(o|c) 를 크게 만들어요. 드문 단어와 작은 데이터에 조금 유리하다고 해요. gensim 에서 sg=1 이에요."
+  },
+  {
+   "ko": "연속 단어 주머니",
+   "en": "CBOW",
+   "say": "주변 문맥 단어들로 중심 단어를 맞히는 word2vec 방식",
+   "more": "Continuous Bag of Words 예요. 스킵그램과 방향만 반대이고 기본 생각은 같아요. gensim 에서 sg=0 이에요."
+  },
+  {
+   "ko": "자기 지도 학습",
+   "en": "Self-supervised Learning",
+   "say": "데이터가 스스로 문제와 정답을 만들어 주는 학습",
+   "more": "사람이 라벨을 달지 않아도 '가운데 단어의 이웃은 이 단어들' 이라는 정답이 글 안에 이미 있어요. GPT 의 다음 토큰 예측도 같은 철학이에요."
+  },
+  {
+   "ko": "다음 토큰 예측",
+   "en": "Next Token Prediction",
+   "say": "앞 토큰들을 보고 바로 다음 토큰을 맞히는 과제",
+   "more": "GPT 가 배우는 방식이에요. word2vec 이 이웃을 맞히는 것과 같은 자기 지도 학습 철학이에요."
+  },
+  {
+   "ko": "조건부 확률",
+   "en": "Conditional Probability",
+   "say": "어떤 것이 주어졌을 때 다른 것이 일어날 확률",
+   "more": "P(o|c) 는 'c 가 주어졌을 때 o 의 확률' 이라 읽어요(P o given c)."
+  },
+  {
+   "ko": "우도",
+   "en": "Likelihood",
+   "say": "지금 파라미터로 실제 데이터가 얼마나 그럴듯하게 설명되는지 나타낸 값",
+   "more": "word2vec 에서는 모든 위치, 모든 문맥 단어의 확률을 다 곱한 L(θ) 예요. 이것을 가장 크게 하는 θ 를 찾아요."
+  },
+  {
+   "ko": "목적 함수",
+   "en": "Objective Function",
+   "say": "학습이 가장 크게 또는 가장 작게 만들려는 목표 식",
+   "more": "word2vec 에서는 우도에 로그를 씌우고 부호를 뒤집고 T 로 나눈 J(θ) 를 가장 작게 만들어요."
+  },
+  {
+   "ko": "손실 함수",
+   "en": "Loss Function",
+   "say": "틀린 정도를 숫자로 매기는 벌점 식",
+   "more": "word2vec 의 J(θ) 가 손실 함수예요. 학습은 이 벌점을 가장 줄이는 방향으로 파라미터를 고치는 일이에요."
+  },
+  {
+   "ko": "음의 로그 우도",
+   "en": "Negative Log-Likelihood (NLL)",
+   "say": "확률에 로그를 씌우고 마이너스를 붙인 벌점",
+   "more": "정답 확률이 1에 가까우면 0에 가깝고, 0에 가까우면 아주 커져요. 딥러닝에서 가장 흔한 손실 함수예요."
+  },
+  {
+   "ko": "소프트맥스",
+   "en": "Softmax",
+   "say": "아무 실수 점수들을 모두 더해 1이 되는 확률로 바꾸는 함수",
+   "more": "점수마다 exp 를 씌워 양수로 만들고, 전체 합으로 나눠요. 큰 점수는 두드러지고(max), 작은 점수도 0이 되지 않아요(soft)."
+  },
+  {
+   "ko": "파라미터",
+   "en": "Parameter",
+   "say": "학습하면서 고쳐 나가는 모델 속 숫자들",
+   "more": "word2vec 에서는 모든 단어의 u 벡터와 v 벡터가 전부예요. 합쳐서 θ 라 부르고 2 × d × V 개예요."
+  },
+  {
+   "ko": "경사 하강법",
+   "en": "Gradient Descent",
+   "say": "기울기 반대 방향으로 조금씩 걸어 손실을 줄이는 방법",
+   "more": "θ_new = θ_old - α∇J 한 줄이에요. 모든 신경망 학습, GPT 학습도 이 원리예요."
+  },
+  {
+   "ko": "확률적 경사 하강법",
+   "en": "Stochastic Gradient Descent (SGD)",
+   "say": "전체 데이터 대신 몇 개 창(미니배치)만 보고 기울기를 어림해 자주 걷는 방법",
+   "more": "정확하지만 느린 것보다 흔들려도 빠른 것이 낫다는 딥러닝의 기본값이에요."
+  },
+  {
+   "ko": "학습률",
+   "en": "Learning Rate",
+   "say": "경사 하강법에서 한 번에 걷는 보폭 α",
+   "more": "너무 크면 튕겨 나가 발산하고, 너무 작으면 끝없이 오래 걸려요."
+  },
+  {
+   "ko": "기울기",
+   "en": "Gradient",
+   "say": "각 파라미터를 조금 바꿀 때 손실이 얼마나 변하는지 모은 벡터",
+   "more": "∇J 로 적고 '어느 쪽이 오르막인가' 를 알려 줘요. 반대로 가면 내리막이에요."
+  },
+  {
+   "ko": "편미분",
+   "en": "Partial Derivative",
+   "say": "여러 변수 중 하나만 조금 바꿨을 때의 변화율",
+   "more": "기울기 ∇J 는 파라미터 하나하나에 대한 편미분을 모은 벡터예요."
+  },
+  {
+   "ko": "미니배치",
+   "en": "Mini-batch",
+   "say": "전체 데이터에서 몇 개만 뽑은 작은 묶음",
+   "more": "SGD 는 미니배치로 기울기를 어림하고 한 걸음 걸어요. 한 바퀴 동안 걸음을 아주 많이 걸을 수 있어요."
+  },
+  {
+   "ko": "연쇄 법칙",
+   "en": "Chain Rule",
+   "say": "겹쳐진 함수를 미분할 때 안쪽, 바깥쪽 미분을 곱해 이어 가는 규칙",
+   "more": "맞물린 톱니바퀴처럼 변화가 전해져요. log P(o|c) 를 v_c 로 미분할 때 몇 줄 쓰면 돼요."
+  }
+ ],
+ "slides": [
+  {
+   "p": 22,
+   "title": "3부 word2vec: 뜻을 벡터로, 날 글에서 배우기",
+   "terms": [
+    "word2vec",
+    "Word Vector",
+    "Token"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "여기부터 오늘의 3부 **word2vec** 예요. 교수님이 오늘 가장 중요하다고 한 부분이에요.",
+      "앞에서는 글을 **토큰(Token)** 으로 잘랐어요. 이제 토큰을 숫자 목록으로 바꿔요.",
+      "부제 'meaning as a vector, learned from raw text' 는 '뜻을 벡터로, 날 글에서 배운다' 예요.",
+      "주문: 글을 토큰으로 자르고, 토큰을 벡터로 바꾸고, 벡터로 다음 토큰을 맞혀요."
+     ]
+    }
+   ],
+   "pass2": [],
+   "pass3": [
+    {
+     "kind": "prof",
+     "when": "2주차 월요일 1교시",
+     "lines": [
+      "세 번째 파트가 오늘 가장 중요한 부분이고, 수식이 나와서 조금 걱정되지만 충분히 이해할 수 있을 거라고 했어요.",
+      "원래 이름은 word2vec 이지만 지금은 단어가 아니라 토큰을 벡터로 바꾸니 '토큰 투 벡' 이 더 정확하다고 했어요."
+     ]
+    }
+   ],
+   "pass4": []
+  },
+  {
+   "p": 23,
+   "title": "뜻을 어떻게 나타낼까 (How Do We Represent Meaning?)",
+   "terms": [
+    "WordNet",
+    "Thesaurus",
+    "One-hot Vector",
+    "Distributional Semantics",
+    "Word Vector"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "컴퓨터는 계산기예요. '뜻' 이라는 말을 그대로는 못 다뤄요.",
+      "그래서 뜻을 **계산할 수 있는 숫자 목록**, 즉 벡터로 바꾸려고 해요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "사람들이 해 본 세 가지 시도",
+     "items": [
+      "1) 사람이 만든 사전 **워드넷(WordNet)**",
+      "2) 한 칸만 1인 **원-핫 벡터(One-hot Vector)**",
+      "3) 주변 단어로 뜻을 배우는 분포 벡터, 곧 **단어 벡터(Word Vector)** (오늘의 주인공)"
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "compare",
+     "head": "영어 문장 → 우리말 뜻",
+     "cols": [
+      "슬라이드 영어",
+      "우리말 뜻"
+     ],
+     "rows": [
+      [
+       "What is \"meaning\"?",
+       "'뜻' 이란 무엇일까요?"
+      ],
+      [
+       "useless to a computer",
+       "(사전 풀이는) 컴퓨터에게 쓸모없어요"
+      ],
+      [
+       "a computable object that carries meaning",
+       "뜻을 담은, 계산할 수 있는 것"
+      ],
+      [
+       "comparable, composable, learnable",
+       "비교할 수 있고, 조합할 수 있고, 배울 수 있는"
+      ],
+      [
+       "the answer will be a vector",
+       "답은 벡터가 될 거예요"
+      ]
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "세 시도가 이어지는 순서",
+     "steps": [
+      "**워드넷(WordNet)**: 사람이 손으로 만든 **시소러스(Thesaurus)** (유의어 사전)",
+      "→ 비슷한 정도를 숫자로 못 매겨서, 단어를 기호 하나로 보는 **원-핫 벡터(One-hot Vector)**",
+      "→ 모든 단어가 서로 남남이 되는 문제가 생겨서, 주변 문맥으로 배우는 분포 벡터",
+      "→ 분포 벡터를 배우는 방법이 **word2vec**"
+     ],
+     "answer": "사전 → 기호 → 분포 벡터. 뒤로 갈수록 '계산 가능한 뜻' 에 가까워져요."
+    },
+    {
+     "kind": "check",
+     "q": "이 슬라이드가 원하는 '뜻' 의 모양은?",
+     "choices": [
+      "사전에 적힌 설명 문장",
+      "비교하고 계산할 수 있는 숫자 목록(벡터)",
+      "단어의 철자"
+     ],
+     "a": 1,
+     "why": "컴퓨터가 비교, 조합, 학습할 수 있게 뜻을 벡터로 나타내려는 거예요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.061,
+       "y": 0.197,
+       "w": 0.704,
+       "h": 0.044,
+       "say": "사전은 뜻을 '단어가 나타내는 관념(idea)' 이라 하지만 컴퓨터에게는 쓸모없어요."
+      },
+      {
+       "x": 0.114,
+       "y": 0.244,
+       "w": 0.607,
+       "h": 0.036,
+       "say": "denotational semantics(가리키는 말 ↔ 가리켜지는 것): 철학적으로 맞지만 계산으로는 가망이 없대요."
+      },
+      {
+       "x": 0.061,
+       "y": 0.302,
+       "w": 0.789,
+       "h": 0.043,
+       "say": "우리가 원하는 것: 뜻을 담은 계산 가능한 것(computable object)."
+      },
+      {
+       "x": 0.061,
+       "y": 0.365,
+       "w": 0.779,
+       "h": 0.043,
+       "say": "세 시도: thesaurus(WordNet) → discrete symbols(one-hot) → distributional vectors."
+      },
+      {
+       "x": 0.289,
+       "y": 0.86,
+       "w": 0.425,
+       "h": 0.038,
+       "say": "질문은 철학 같지만 답은 벡터예요."
+      }
+     ]
+    },
+    {
+     "kind": "prof",
+     "when": "2주차 월요일 1교시",
+     "lines": [
+      "컴퓨터는 계산기라서, 사람이 단어에 준 뜻을 컴퓨터가 계산할 수 있기를 원한다고 했어요.",
+      "단어끼리 얼마나 비슷한지, 반대말인지, 어떤 관계인지 계산하려고 벡터로 나타낸다고 했어요."
+     ]
+    },
+    {
+     "kind": "bg",
+     "src": "기초 다지기 1단원 숫자 목록, 벡터",
+     "lines": [
+      "벡터는 숫자를 한 줄로 늘어놓은 목록이에요. 숫자 개수가 차원이에요.",
+      "(0.2, 0.7) 은 2차원 벡터, 평면 위 한 점(화살표)으로 그릴 수 있어요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "슬라이드가 소개하는 세 시도의 순서로 맞는 것은?",
+     "choices": [
+      "one-hot → WordNet → 분포 벡터",
+      "WordNet → one-hot → 분포 벡터",
+      "분포 벡터 → one-hot → WordNet"
+     ],
+     "a": 1,
+     "why": "시소러스(**워드넷(WordNet)**) → 이산 기호(**원-핫 벡터(One-hot Vector)**) → 분포 벡터 순서예요."
+    },
+    {
+     "kind": "english",
+     "head": "답안 문장으로 외우기",
+     "en": "단어의 의미를 컴퓨터가 다루려면 비교, 조합, 학습이 가능한 계산 가능한 대상, 즉 벡터(Vector)로 나타내야 한다.",
+     "ko": "'계산 가능(computable)' 이 핵심 낱말이에요.",
+     "tip": "세 시도: 사전 → 원-핫 → 분포 벡터."
+    }
+   ]
+  },
+  {
+   "p": 24,
+   "title": "시도 1: 워드넷 (Attempt 1, WordNet)",
+   "terms": [
+    "WordNet",
+    "Thesaurus"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "**워드넷(WordNet)** 은 사람이 손으로 만든 영어 유의어 사전이에요.",
+      "'판다는 곰의 한 종류, 곰은 포유류의 한 종류' 같은 관계도 적혀 있어요.",
+      "그런데 사전은 '사실 목록' 일 뿐, 얼마나 비슷한지 숫자로 못 알려 줘요."
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "points",
+     "head": "용어 뜻",
+     "items": [
+      "**시소러스(Thesaurus)**: 동의어, 반의어, 상위어, 하위어를 모아 둔 사전이에요.",
+      "**워드넷(WordNet)**: 대표적인 시소러스예요. 동의어 묶음(synonym set)과 'is-a' 계층이 있어요.",
+      "is-a 계층: 'panda ⊂ bear ⊂ mammal' 은 판다는 곰에, 곰은 포유류에 속한다는 뜻이에요."
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "세 가지 문제",
+     "cols": [
+      "슬라이드 영어",
+      "우리말 뜻"
+     ],
+     "rows": [
+      [
+       "nuance is lost",
+       "미묘한 뜻 차이를 잃어요 (proficient 는 어떤 문맥에서만 good)"
+      ],
+      [
+       "cannot keep up with new words",
+       "새로 생긴 말을 따라가지 못해요"
+      ],
+      [
+       "similarity is not computable",
+       "얼마나 비슷한지 숫자로 계산할 수 없어요"
+      ]
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "워드넷의 세 번째 문제 'similarity is not computable' 의 뜻은?",
+     "choices": [
+      "단어 수가 너무 적다",
+      "good 과 marvelous 가 얼마나 비슷한지 숫자로 못 낸다",
+      "영어만 있다"
+     ],
+     "a": 1,
+     "why": "사전은 '비슷하다' 는 적어 줘도 '0.8만큼 비슷하다' 는 못 알려 줘요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.061,
+       "y": 0.197,
+       "w": 0.768,
+       "h": 0.044,
+       "say": "WordNet: 손으로 만든 동의어 묶음과 is-a 계층의 시소러스. 전통 NLP 가 가장 사랑한 자원이래요."
+      },
+      {
+       "x": 0.114,
+       "y": 0.244,
+       "w": 0.407,
+       "h": 0.036,
+       "say": "예: good 의 동의어들, panda ⊂ bear ⊂ mammal 같은 계층."
+      },
+      {
+       "x": 0.061,
+       "y": 0.298,
+       "w": 0.657,
+       "h": 0.042,
+       "say": "문제 1: 뉘앙스를 잃어요. proficient 가 good 의 동의어인 건 일부 문맥에서만이에요."
+      },
+      {
+       "x": 0.061,
+       "y": 0.36,
+       "w": 0.668,
+       "h": 0.042,
+       "say": "문제 2: 신조어를 못 따라가요. 사람이 정리한 모든 자원의 운명이래요."
+      },
+      {
+       "x": 0.061,
+       "y": 0.421,
+       "w": 0.714,
+       "h": 0.043,
+       "say": "문제 3: 유사도를 계산할 수 없어요(not computable). good 과 marvelous 가 얼마나 비슷한지 숫자가 없어요."
+      },
+      {
+       "x": 0.282,
+       "y": 0.86,
+       "w": 0.441,
+       "h": 0.038,
+       "say": "사전은 사실의 목록일 뿐, 계산 가능한 뜻이 아니에요."
+      }
+     ]
+    },
+    {
+     "kind": "prof",
+     "when": "2주차 월요일 1교시",
+     "lines": [
+      "WordNet 은 전문가들이 수십 년 동안 손으로 만든 것이라 거의 영어 위주이고 한국어일 확률은 낮다고 했어요.",
+      "언어는 살아 있는데 사전은 그것을 고정(freeze)시켜서 좋지 않다고 했어요.",
+      "세 번째 문제가 가장 결정적: '0.8만큼 비슷해, 0.7만큼 비슷해' 처럼 정량적으로 계산할 수 없다고 했어요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "왜 '규칙 기반' 이 문제일까",
+     "items": [
+      "교수님은 시소러스를 쓰는 것이 결국 규칙 기반(rule-based) 방법이라 좋지 않다고 정리했어요.",
+      "사람이 정한 규칙은 문맥마다 바뀌는 뜻, 매일 생기는 새 말을 다 담지 못해요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "다음 중 슬라이드가 든 **워드넷(WordNet)** 의 문제가 **아닌** 것은?",
+     "choices": [
+      "뉘앙스를 잃는다",
+      "신조어를 따라가지 못한다",
+      "유사도를 숫자로 계산할 수 없다",
+      "벡터 차원이 너무 크다"
+     ],
+     "a": 3,
+     "why": "차원이 너무 큰 것은 다음 쪽 **원-핫 벡터(One-hot Vector)** 의 문제예요."
+    },
+    {
+     "kind": "english",
+     "head": "답안 문장으로 외우기",
+     "en": "워드넷(WordNet) 같은 시소러스는 뉘앙스를 잃고, 신조어를 따라가지 못하며, 단어 간 유사도를 수치로 계산할 수 없다.",
+     "ko": "문제 셋: 뉘앙스, 신조어, 유사도 계산 불가.",
+     "tip": "교수님이 가장 결정적이라 한 것은 세 번째예요."
+    }
+   ]
+  },
+  {
+   "p": 25,
+   "title": "시도 2: 원-핫 벡터 (Attempt 2, One-Hot Vectors)",
+   "terms": [
+    "One-hot Vector",
+    "Orthogonal",
+    "Dot Product",
+    "Sparse Vector",
+    "Vocabulary"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "**원-핫 벡터(One-hot Vector)** 는 단어마다 긴 줄을 주고 자기 자리 한 칸만 1, 나머지는 전부 0으로 적어요.",
+      "그런데 motel 과 hotel 처럼 뜻이 비슷한 단어도 1의 자리가 달라서 '전혀 안 비슷함' 이 돼요."
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "motel 과 hotel 의 원-핫 벡터",
+     "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 480 270\"><text class=\"tb\" x=\"60\" y=\"82\" font-size=\"17\" text-anchor=\"end\">motel</text><rect class=\"n b1\" x=\"75\" y=\"60\" width=\"26\" height=\"32\" rx=\"3\"/><text class=\"tl b1\" x=\"88\" y=\"82\" font-size=\"15\" text-anchor=\"middle\">0</text><rect class=\"n b1\" x=\"105\" y=\"60\" width=\"26\" height=\"32\" rx=\"3\"/><text class=\"tl b1\" x=\"118\" y=\"82\" font-size=\"15\" text-anchor=\"middle\">0</text><rect class=\"n b1\" x=\"135\" y=\"60\" width=\"26\" height=\"32\" rx=\"3\"/><text class=\"tl b1\" x=\"148\" y=\"82\" font-size=\"15\" text-anchor=\"middle\">0</text><rect class=\"n b1\" x=\"165\" y=\"60\" width=\"26\" height=\"32\" rx=\"3\"/><text class=\"tl b1\" x=\"178\" y=\"82\" font-size=\"15\" text-anchor=\"middle\">0</text><rect class=\"n b1\" x=\"195\" y=\"60\" width=\"26\" height=\"32\" rx=\"3\"/><text class=\"tl b1\" x=\"208\" y=\"82\" font-size=\"15\" text-anchor=\"middle\">0</text><rect class=\"n b1\" x=\"225\" y=\"60\" width=\"26\" height=\"32\" rx=\"3\"/><text class=\"tl b1\" x=\"238\" y=\"82\" font-size=\"15\" text-anchor=\"middle\">0</text><rect class=\"n2 b1\" x=\"255\" y=\"60\" width=\"26\" height=\"32\" rx=\"3\"/><text class=\"tl b1\" x=\"268\" y=\"82\" font-size=\"15\" text-anchor=\"middle\">1</text><rect class=\"n b1\" x=\"285\" y=\"60\" width=\"26\" height=\"32\" rx=\"3\"/><text class=\"tl b1\" x=\"298\" y=\"82\" font-size=\"15\" text-anchor=\"middle\">0</text><rect class=\"n b1\" x=\"315\" y=\"60\" width=\"26\" height=\"32\" rx=\"3\"/><text class=\"tl b1\" x=\"328\" y=\"82\" font-size=\"15\" text-anchor=\"middle\">0</text><rect class=\"n b1\" x=\"345\" y=\"60\" width=\"26\" height=\"32\" rx=\"3\"/><text class=\"tl b1\" x=\"358\" y=\"82\" font-size=\"15\" text-anchor=\"middle\">0</text><text class=\"tb\" x=\"60\" y=\"152\" font-size=\"17\" text-anchor=\"end\">hotel</text><rect class=\"n b1\" x=\"75\" y=\"130\" width=\"26\" height=\"32\" rx=\"3\"/><text class=\"tl b1\" x=\"88\" y=\"152\" font-size=\"15\" text-anchor=\"middle\">0</text><rect class=\"n b1\" x=\"105\" y=\"130\" width=\"26\" height=\"32\" rx=\"3\"/><text class=\"tl b1\" x=\"118\" y=\"152\" font-size=\"15\" text-anchor=\"middle\">0</text><rect class=\"n b1\" x=\"135\" y=\"130\" width=\"26\" height=\"32\" rx=\"3\"/><text class=\"tl b1\" x=\"148\" y=\"152\" font-size=\"15\" text-anchor=\"middle\">0</text><rect class=\"n2 b1\" x=\"165\" y=\"130\" width=\"26\" height=\"32\" rx=\"3\"/><text class=\"tl b1\" x=\"178\" y=\"152\" font-size=\"15\" text-anchor=\"middle\">1</text><rect class=\"n b1\" x=\"195\" y=\"130\" width=\"26\" height=\"32\" rx=\"3\"/><text class=\"tl b1\" x=\"208\" y=\"152\" font-size=\"15\" text-anchor=\"middle\">0</text><rect class=\"n b1\" x=\"225\" y=\"130\" width=\"26\" height=\"32\" rx=\"3\"/><text class=\"tl b1\" x=\"238\" y=\"152\" font-size=\"15\" text-anchor=\"middle\">0</text><rect class=\"n b1\" x=\"255\" y=\"130\" width=\"26\" height=\"32\" rx=\"3\"/><text class=\"tl b1\" x=\"268\" y=\"152\" font-size=\"15\" text-anchor=\"middle\">0</text><rect class=\"n b1\" x=\"285\" y=\"130\" width=\"26\" height=\"32\" rx=\"3\"/><text class=\"tl b1\" x=\"298\" y=\"152\" font-size=\"15\" text-anchor=\"middle\">0</text><rect class=\"n b1\" x=\"315\" y=\"130\" width=\"26\" height=\"32\" rx=\"3\"/><text class=\"tl b1\" x=\"328\" y=\"152\" font-size=\"15\" text-anchor=\"middle\">0</text><rect class=\"n b1\" x=\"345\" y=\"130\" width=\"26\" height=\"32\" rx=\"3\"/><text class=\"tl b1\" x=\"358\" y=\"152\" font-size=\"15\" text-anchor=\"middle\">0</text><text class=\"t b2\" x=\"240\" y=\"205\" font-size=\"16\" text-anchor=\"middle\">같은 자리에 1이 겹치지 않아요</text><text class=\"tb b2\" x=\"240\" y=\"235\" font-size=\"17\" text-anchor=\"middle\">그래서 내적 = 0 (전혀 안 비슷함)</text><text class=\"tm b2\" x=\"420\" y=\"115\" font-size=\"14\" text-anchor=\"middle\">칸 수 =</text><text class=\"tm b2\" x=\"420\" y=\"135\" font-size=\"14\" text-anchor=\"middle\">어휘 크기</text></svg>",
+     "caption": "1의 자리가 겹치지 않으니 비슷함 점수가 늘 0이에요.",
+     "builds": 2
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "points",
+     "head": "용어 뜻",
+     "items": [
+      "**원-핫 벡터(One-hot Vector)**: 칸 하나만 1인 벡터. 칸 수는 **어휘(Vocabulary)** 크기와 같아요.",
+      "**직교(Orthogonal)**: 두 벡터가 직각이라 **내적(Dot Product)** 이 0인 상태예요.",
+      "**희소 벡터(Sparse Vector)**: 칸 대부분이 0인 벡터. 원-핫 벡터가 대표예요.",
+      "discrete symbols(이산 기호): 단어를 서로 떨어진 이름표 하나로만 보는 방식이에요."
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "영어 문장 → 우리말 뜻",
+     "cols": [
+      "슬라이드 영어",
+      "우리말 뜻"
+     ],
+     "rows": [
+      [
+       "words as discrete symbols",
+       "단어를 따로 떨어진 기호로 봐요"
+      ],
+      [
+       "every pair of words is orthogonal",
+       "어떤 두 단어든 서로 직교해요"
+      ],
+      [
+       "\"Seattle motel\" can never match \"Seattle hotel\"",
+       "검색에서 두 말이 절대 서로 안 걸려요"
+      ],
+      [
+       "Similarity must live inside the representation",
+       "비슷함은 표현 안에 들어 있어야 해요 (나중에 덧붙이는 게 아니라)"
+      ]
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "**원-핫 벡터(One-hot Vector)** 로 나타낸 서로 다른 두 단어의 **내적(Dot Product)** 은?",
+     "choices": [
+      "항상 1",
+      "항상 0",
+      "뜻에 따라 다름"
+     ],
+     "a": 1,
+     "why": "1의 자리가 서로 달라서 같은 자리끼리 곱하면 모두 0이에요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.061,
+       "y": 0.197,
+       "w": 0.746,
+       "h": 0.042,
+       "say": "전통 NLP: 단어를 이산 기호로 봤어요. 벡터로 쓰면 1이 하나, 나머지 0인 one-hot 이에요."
+      },
+      {
+       "x": 0.061,
+       "y": 0.247,
+       "w": 0.771,
+       "h": 0.042,
+       "say": "치명적 결함: 모든 단어 쌍이 직교(orthogonal). 'Seattle motel' 검색이 'Seattle hotel' 과 절대 안 맞아요."
+      },
+      {
+       "x": 0.046,
+       "y": 0.47,
+       "w": 0.557,
+       "h": 0.063,
+       "say": "motel: 11번째 칸만 1이에요."
+      },
+      {
+       "x": 0.046,
+       "y": 0.584,
+       "w": 0.557,
+       "h": 0.066,
+       "say": "hotel: 8번째 칸만 1이에요. 1의 자리가 서로 달라요."
+      },
+      {
+       "x": 0.646,
+       "y": 0.476,
+       "w": 0.257,
+       "h": 0.165,
+       "say": "motel 과 hotel 의 내적 = 0. 직교라서 비슷함이라는 개념이 없어요."
+      },
+      {
+       "x": 0.261,
+       "y": 0.86,
+       "w": 0.482,
+       "h": 0.038,
+       "say": "비슷함은 나중에 덧붙이는 게 아니라 표현 안에 살아 있어야 해요."
+      }
+     ]
+    },
+    {
+     "kind": "formula",
+     "head": "원-핫 벡터끼리의 내적",
+     "tex": "\\text{motel}\\cdot\\text{hotel} = \\sum_{i=1}^{|V|} m_i\\, h_i = 0",
+     "parts": [
+      {
+       "sym": "\\text{motel},\\ \\text{hotel}",
+       "say": "두 단어의 원-핫 벡터예요."
+      },
+      {
+       "sym": "|V|",
+       "say": "어휘 크기. 벡터의 칸 수예요."
+      },
+      {
+       "sym": "m_i\\, h_i",
+       "say": "i 번째 칸끼리 곱한 값이에요. 둘 중 하나는 꼭 0이라 늘 0이에요."
+      },
+      {
+       "sym": "\\sum",
+       "say": "모든 칸의 곱을 더해요. 0을 아무리 더해도 0이에요."
+      }
+     ],
+     "whole": "같은 자리끼리 곱해서 더해도 1과 1이 만나는 자리가 없으니 내적은 0이에요."
+    },
+    {
+     "kind": "steps",
+     "head": "손계산: 어휘 5개로 원-핫 내적",
+     "steps": [
+      "어휘(가나다 대신 알파벳 순): [banking, crises, hotel, motel, pizza]",
+      "motel = (0, 0, 0, 1, 0),  hotel = (0, 0, 1, 0, 0)",
+      "같은 자리끼리 곱해요: 0×0, 0×0, 0×1, 1×0, 0×0 → 모두 0",
+      "더하면 motel 과 hotel 의 내적 = 0",
+      "motel 과 motel(자기 자신)은 넷째 칸 1×1 = 1 → 내적 1"
+     ],
+     "answer": "자기 자신만 1, 다른 단어는 누구와도 0. 비슷함을 전혀 못 나타내요.",
+     "given": "원-핫 벡터는 어휘 크기만큼 칸이 있어요."
+    },
+    {
+     "kind": "prof",
+     "when": "2주차 월요일 1교시",
+     "lines": [
+      "원-핫 벡터는 손글씨 숫자 0~9 분류처럼 클래스가 적을 때 라벨로 쓰면 자연스럽다고 했어요.",
+      "하지만 어휘가 100만 개면 단어 하나에 100만 칸, 그중 0이 999,999개라 차원이 너무 크고 희소하다고 했어요.",
+      "가장 중요한 문제는 내적이 0이라는 것. 모든 벡터가 직교해서 유사도를 표현할 수 없다고 했어요."
+     ]
+    },
+    {
+     "kind": "bg",
+     "src": "기초 다지기 1단원 숫자 목록, 벡터 / 2단원 내적과 코사인 유사도",
+     "lines": [
+      "원-핫 벡터는 1단원 끝에서 맛본 모양이에요.",
+      "내적은 같은 자리 숫자끼리 곱해서 모두 더하는 것(2단원). 0이면 두 화살표가 직각이에요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "실습 연결",
+     "items": [
+      "실습 N2L p.21 셀 첫 줄 주석이 'Similarity is a number now, something one-hot vectors could never give us' 예요.",
+      "학습한 단어 벡터로는 비슷함이 숫자로 나온다는 것을, 원-핫과 대비해서 보여 줘요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "어휘가 50,000개일 때 원-핫 벡터 하나에 들어 있는 0의 개수는?",
+     "choices": [
+      "1개",
+      "49,999개",
+      "50,000개",
+      "0개"
+     ],
+     "a": 1,
+     "why": "칸이 50,000개이고 그중 1이 한 칸이니 0은 50,000 - 1 = 49,999개예요."
+    },
+    {
+     "kind": "english",
+     "head": "답안 문장으로 외우기",
+     "en": "원-핫 벡터(One-hot Vector)는 모든 단어 쌍이 직교(Orthogonal)하여 내적이 0이므로 단어 간 유사도를 표현할 수 없고, 어휘 크기만큼 차원이 커서 희소하다.",
+     "ko": "문제 셋: 차원 = 어휘 크기, 희소, 내적 0(직교).",
+     "tip": "'motel 과 hotel 의 내적 = 0' 예시를 같이 쓰면 좋아요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "원-핫 벡터끼리도 **같은 단어**의 내적은 1이에요. 0이 되는 것은 서로 다른 두 단어예요.",
+      "'직교' 는 내적이 0이라는 뜻이지, 벡터가 0이라는 뜻이 아니에요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 26,
+   "title": "해결책: 분포 의미론 (The Fix, Distributional Semantics)",
+   "terms": [
+    "Distributional Hypothesis",
+    "Distributional Semantics",
+    "Corpus",
+    "word2vec"
+   ],
+   "pass1": [
+    {
+     "kind": "analogy",
+     "head": "친구를 보면 그 사람을 안다",
+     "scene": "처음 보는 사람도 늘 누구와 어울리는지 보면 어떤 사람인지 짐작이 가요. 단어도 늘 곁에 오는 단어를 보면 뜻을 알 수 있어요.",
+     "map": [
+      [
+       "늘 어울리는 친구들",
+       "주변 문맥 단어"
+      ],
+      [
+       "그 사람의 됨됨이",
+       "단어의 뜻"
+      ],
+      [
+       "친구를 보고 사람을 짐작",
+       "**분포 가설(Distributional Hypothesis)**"
+      ]
+     ]
+    },
+    {
+     "kind": "say",
+     "lines": [
+      "그래서 단어의 뜻 = 그 단어가 나오는 문맥들의 모음이라고 봐요. 이것이 **분포 의미론(Distributional Semantics)** 이에요.",
+      "사전도 라벨도 없이, 날 글만 있으면 돼요."
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "points",
+     "head": "용어 뜻",
+     "items": [
+      "**분포 가설(Distributional Hypothesis)**: 'You shall know a word by the company it keeps' (Firth, 1957). 단어는 어울리는 친구로 안다는 생각이에요.",
+      "**분포 의미론(Distributional Semantics)**: 그 생각대로 단어의 뜻을 '그 단어가 나오는 문맥의 모음' 으로 나타내는 방법이에요.",
+      "**말뭉치(Corpus)**: 문맥을 모으는 재료인 큰 글 모음이에요."
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "영어 문장 → 우리말 뜻",
+     "cols": [
+      "슬라이드 영어",
+      "우리말 뜻"
+     ],
+     "rows": [
+      [
+       "A word's meaning = the set of contexts it appears in",
+       "단어의 뜻 = 그 단어가 나타나는 문맥들의 모음"
+      ],
+      [
+       "Look at thousands of its contexts",
+       "그 단어가 나온 문맥 수천 개를 보세요"
+      ],
+      [
+       "The most successful idea of modern statistical NLP",
+       "현대 통계적 NLP 에서 가장 성공한 생각"
+      ],
+      [
+       "no dictionary, no labels, just raw text",
+       "사전도 라벨도 없이, 날 글만으로"
+      ]
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "**분포 가설(Distributional Hypothesis)** 를 가장 잘 나타낸 말은?",
+     "choices": [
+      "단어의 뜻은 철자로 정해진다",
+      "단어의 뜻은 주변에 함께 나오는 단어로 알 수 있다",
+      "단어의 뜻은 사전으로만 알 수 있다"
+     ],
+     "a": 1,
+     "why": "'친구를 보면 그 사람을 안다' 처럼 문맥으로 뜻을 알아요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.061,
+       "y": 0.197,
+       "w": 0.518,
+       "h": 0.044,
+       "say": "Firth(1957): 'You shall know a word by the company it keeps', 단어는 어울리는 친구로 안다."
+      },
+      {
+       "x": 0.061,
+       "y": 0.26,
+       "w": 0.4,
+       "h": 0.042,
+       "say": "단어의 뜻 = 그 단어가 나타나는 문맥들의 집합(the set of contexts)."
+      },
+      {
+       "x": 0.061,
+       "y": 0.324,
+       "w": 0.621,
+       "h": 0.143,
+       "say": "banking 의 뜻이 궁금하면 문맥 수천 개를 봐요: 'debt problems turning into banking crises', 'unified banking regulation'."
+      },
+      {
+       "x": 0.061,
+       "y": 0.485,
+       "w": 0.7,
+       "h": 0.042,
+       "say": "현대 통계적 NLP 의 가장 성공한 생각. word2vec, BERT, GPT 모두 이 위에 서 있어요."
+      },
+      {
+       "x": 0.296,
+       "y": 0.86,
+       "w": 0.411,
+       "h": 0.038,
+       "say": "문맥에서 뜻을: 사전도 라벨도 없이 날 글만."
+      }
+     ]
+    },
+    {
+     "kind": "prof",
+     "when": "2주차 월요일 1교시",
+     "lines": [
+      "'전전긍긍' 을 몰라도 '빨래를 하고 싶은데 세제가 없어서 전전긍긍하고 있다' 를 보면 뜻이 온다고 예를 들었어요.",
+      "banking 주변에는 crisis 같은 말이 자주 나오고 햄버거는 잘 안 나오니, banking 과 햄버거는 먼 단어라는 걸 문맥으로 알아낸대요.",
+      "word2vec 의 가장 중요한 개념은 주변 문맥으로 단어에 의미를 주자는 것이라고 강조했어요."
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "문맥으로 가까움을 짐작하는 순서",
+     "steps": [
+      "큰 **말뭉치(Corpus)** 에서 banking 이 나온 문장을 모두 모아요",
+      "각 문장에서 banking 양옆에 온 단어를 적어요 (turning, into, crises, regulation ...)",
+      "crises 는 자주 나오고, hamburger 는 거의 안 나와요",
+      "그래서 banking 과 crises 는 가깝고, banking 과 hamburger 는 멀다고 봐요"
+     ],
+     "answer": "뜻을 사전으로 적지 않고, 함께 나오는 빈도로 알아내요."
+    },
+    {
+     "kind": "points",
+     "head": "실습 연결",
+     "items": [
+      "실습 N2L p.20 셀 첫 줄 주석이 바로 이 문장이에요: 'you shall know a word by the company it keeps'.",
+      "most_similar 로 '영화', '배우', '최고', '쓰레기' 의 가장 가까운 이웃 5개를 출력해요. 결과는 실행마다 조금 달라요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "'You shall know a word by the company it keeps' 를 말한 사람과 연도는?",
+     "choices": [
+      "Mikolov, 2013",
+      "J. R. Firth, 1957",
+      "Zipf, 1949"
+     ],
+     "a": 1,
+     "why": "슬라이드에 J. R. Firth, 1957 로 적혀 있어요. Mikolov 2013 은 **word2vec** 논문이에요."
+    },
+    {
+     "kind": "english",
+     "head": "답안 문장으로 외우기",
+     "en": "분포 가설(Distributional Hypothesis)에 따르면 단어의 의미는 그 단어가 함께 등장하는 주변 문맥으로 결정되며, 분포 의미론은 단어의 의미를 그 단어가 나타나는 문맥들의 집합으로 표현한다.",
+     "ko": "'주변 문맥 = 뜻' 한 줄이 핵심이에요.",
+     "tip": "word2vec, BERT, GPT 의 공통 바탕이라는 점도 함께 써요."
+    }
+   ]
+  },
+  {
+   "p": 27,
+   "title": "단어 벡터 (Word Vectors)",
+   "terms": [
+    "Word Vector",
+    "Embedding",
+    "Dense Vector",
+    "Dot Product",
+    "Cosine Similarity",
+    "One-hot Vector"
+   ],
+   "pass1": [
+    {
+     "kind": "analogy",
+     "head": "단어의 지도 좌표",
+     "scene": "지도 위에 동네마다 좌표가 있듯, 단어마다 좌표(숫자 목록)를 줘요. 뜻이 비슷한 단어는 가까이 살아요.",
+     "map": [
+      [
+       "지도 위 좌표",
+       "**단어 벡터(Word Vector)**, **임베딩(Embedding)**"
+      ],
+      [
+       "가까이 사는 이웃",
+       "뜻이 비슷한 단어"
+      ],
+      [
+       "두 집 사이 거리, 방향",
+       "비슷함 점수(**내적(Dot Product)**)"
+      ]
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "뜻이 비슷하면 가까이",
+     "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 480 270\"><line class=\"e\" x1=\"40\" y1=\"240\" x2=\"441.0\" y2=\"240.0\"/><polygon class=\"arrow\" points=\"450.0,240.0 441.0,235.0 441.0,245.0\"/><line class=\"e\" x1=\"40\" y1=\"240\" x2=\"40.0\" y2=\"29.0\"/><polygon class=\"arrow\" points=\"40.0,20.0 35.0,29.0 45.0,29.0\"/><circle class=\"n2 b1\" cx=\"330\" cy=\"70\" r=\"8\"/><text class=\"t b1\" x=\"344\" y=\"75\" font-size=\"15\" text-anchor=\"start\">motel</text><circle class=\"n2 b1\" cx=\"360\" cy=\"95\" r=\"8\"/><text class=\"t b1\" x=\"374\" y=\"100\" font-size=\"15\" text-anchor=\"start\">hotel</text><circle class=\"n3 b1\" cx=\"120\" cy=\"90\" r=\"8\"/><text class=\"t b1\" x=\"134\" y=\"95\" font-size=\"15\" text-anchor=\"start\">banking</text><circle class=\"n3 b1\" cx=\"150\" cy=\"125\" r=\"8\"/><text class=\"t b1\" x=\"164\" y=\"130\" font-size=\"15\" text-anchor=\"start\">crises</text><circle class=\"n4 b1\" cx=\"250\" cy=\"205\" r=\"8\"/><text class=\"t b1\" x=\"264\" y=\"210\" font-size=\"15\" text-anchor=\"start\">pizza</text><rect class=\"hl b2\" x=\"300\" y=\"45\" width=\"150\" height=\"75\" rx=\"3\"/><rect class=\"hl b2\" x=\"90\" y=\"65\" width=\"140\" height=\"85\" rx=\"3\"/><text class=\"tb b2\" x=\"240\" y=\"262\" font-size=\"15\" text-anchor=\"middle\">뜻이 비슷한 단어는 가까이 살아요</text></svg>",
+     "caption": "motel 과 hotel, banking 과 crises 는 가까이, pizza 는 멀리 있어요(설명용 그림).",
+     "builds": 2
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "points",
+     "head": "용어 뜻",
+     "items": [
+      "**단어 벡터(Word Vector)**: 단어 하나를 나타내는 실수 목록이에요. 보통 50~1024차원이에요.",
+      "**밀집 벡터(Dense Vector)**: 칸 수는 적고 모든 칸에 값이 차 있는 벡터예요. 원-핫은 반대로 **희소 벡터(Sparse Vector)** 예요.",
+      "**임베딩(Embedding)**: 단어 벡터의 다른 이름. word vectors = (word) embeddings = (neural) word representations, 모두 같은 것이에요.",
+      "**내적(Dot Product)**: 두 벡터의 비슷함 점수예요."
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "원-핫 벡터와 단어 벡터",
+     "cols": [
+      "",
+      "**원-핫 벡터(One-hot Vector)**",
+      "**단어 벡터(Word Vector)**"
+     ],
+     "rows": [
+      [
+       "칸 수",
+       "어휘 크기 |V| (수만~수십만)",
+       "50~1024 정도"
+      ],
+      [
+       "칸 속 값",
+       "1 하나, 나머지 0",
+       "모든 칸에 실수"
+      ],
+      [
+       "비슷함",
+       "서로 다른 단어는 늘 0",
+       "내적으로 숫자가 나옴"
+      ],
+      [
+       "정하는 법",
+       "번호만 붙이면 끝",
+       "학습해야 함 → **word2vec**"
+      ]
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "단어 벡터의 설계 원칙 'similar contexts → similar vectors' 의 뜻은?",
+     "choices": [
+      "철자가 비슷하면 벡터가 비슷하다",
+      "비슷한 문맥에 나오는 단어는 비슷한 벡터를 갖게 한다",
+      "벡터는 모두 같게 한다"
+     ],
+     "a": 1,
+     "why": "**분포 가설(Distributional Hypothesis)** 를 벡터에 그대로 옮긴 원칙이에요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.061,
+       "y": 0.197,
+       "w": 0.718,
+       "h": 0.093,
+       "say": "모든 단어에 밀집 실수 벡터(dense real-valued vector)를 줘요. 보통 50~1024차원 (원-핫은 |V| 차원). banking = (0.286, 0.792, -0.177, ...)"
+      },
+      {
+       "x": 0.061,
+       "y": 0.307,
+       "w": 0.693,
+       "h": 0.042,
+       "say": "설계 원칙: 비슷한 문맥 → 비슷한 벡터. 비슷함은 내적(dot product)으로 재요."
+      },
+      {
+       "x": 0.061,
+       "y": 0.368,
+       "w": 0.754,
+       "h": 0.041,
+       "say": "부르는 이름: word vectors = (word) embeddings = (neural) word representations. 모두 같은 것."
+      },
+      {
+       "x": 0.061,
+       "y": 0.428,
+       "w": 0.561,
+       "h": 0.042,
+       "say": "남은 문제: 이 숫자들을 어떻게 배우나(LEARN)? → word2vec"
+      },
+      {
+       "x": 0.3,
+       "y": 0.86,
+       "w": 0.404,
+       "h": 0.038,
+       "say": "단어는 공간 속 한 점, 그러면 기하가 곧 뜻이 돼요."
+      }
+     ]
+    },
+    {
+     "kind": "formula",
+     "head": "단어 벡터 하나의 모양",
+     "tex": "v_{\\text{banking}} = (0.286,\\ 0.792,\\ -0.177,\\ \\dots) \\in \\mathbb{R}^{d}",
+     "parts": [
+      {
+       "sym": "v_{\\text{banking}}",
+       "say": "banking 이라는 단어의 벡터예요."
+      },
+      {
+       "sym": "0.286,\\ 0.792,\\ \\dots",
+       "say": "칸마다 들어 있는 실수. 사람이 정하지 않고 학습으로 정해져요."
+      },
+      {
+       "sym": "\\mathbb{R}^{d}",
+       "say": "실수 d 개짜리 목록이라는 뜻. d 는 차원(예 100, 256, 300)이에요."
+      }
+     ],
+     "whole": "banking 은 실수 d 개짜리 좌표 하나로 나타나요."
+    },
+    {
+     "kind": "steps",
+     "head": "손계산: 3차원 단어 벡터로 내적과 코사인 유사도",
+     "steps": [
+      "motel = (0.9, 0.1, 0.3), hotel = (0.8, 0.2, 0.4), pizza = (-0.2, 0.9, 0.1) (설명용 숫자)",
+      "motel 과 hotel 의 내적 = 0.9×0.8 + 0.1×0.2 + 0.3×0.4 = 0.72 + 0.02 + 0.12 = 0.86",
+      "motel 과 pizza 의 내적 = -0.18 + 0.09 + 0.03 = -0.06",
+      "길이: |motel| = √0.91 ≈ 0.954, |hotel| = √0.84 ≈ 0.917, |pizza| = √0.86 ≈ 0.927",
+      "코사인: 0.86 / (0.954 × 0.917) ≈ 0.984,  -0.06 / (0.954 × 0.927) ≈ -0.068"
+     ],
+     "answer": "motel 과 hotel 은 거의 같은 쪽(0.984), motel 과 pizza 는 거의 직각(-0.068). 원-핫과 달리 비슷함이 숫자로 나와요.",
+     "given": "3차원 설명용 벡터 세 개"
+    },
+    {
+     "kind": "prof",
+     "when": "2주차 월요일 1교시",
+     "lines": [
+      "차원은 64, 128, 256 처럼 모델마다 다른 엔지니어링 선택이라고 했어요.",
+      "256차원이면 실수 256개가 단어 하나를 나타내고, '어휘 수 × 256' 표(룩업 테이블)에서 단어 번호 줄을 뽑아 쓴다고 했어요.",
+      "논문마다 word vector, word embedding, word representation 으로 다르게 부르지만 같은 말이고, 임베딩이란 말을 지겹게 듣게 될 거래요."
+     ]
+    },
+    {
+     "kind": "bg",
+     "src": "기초 다지기 2단원 내적과 코사인 유사도",
+     "lines": [
+      "내적 = 같은 자리끼리 곱해서 더하기. 코사인 유사도 = 내적 ÷ (두 길이의 곱).",
+      "코사인은 1이면 같은 방향, 0이면 직각, -1이면 반대 방향이에요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "실습 연결",
+     "items": [
+      "실습 N2L p.19 는 vector_size=100 으로 학습해서 '영화' 벡터의 앞 8칸을 출력해요. 값은 실행마다 조금 달라요.",
+      "N2L p.21 은 similarity 로 (영화, 드라마), (영화, 배우), (영화, 김치) 의 **코사인 유사도(Cosine Similarity)** 를 숫자로 내요.",
+      "N2L p.23 은 '왕 - 남자 + 여자' 벡터 계산(유추)을 해 봐요. 공간 속 위치가 곧 뜻이라는 말을 직접 확인해요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "a = (1, 2, 0), b = (2, 0, 3) 의 내적은?",
+     "choices": [
+      "0",
+      "2",
+      "5",
+      "8"
+     ],
+     "a": 1,
+     "why": "1×2 + 2×0 + 0×3 = 2 예요."
+    },
+    {
+     "kind": "check",
+     "q": "다음 중 **단어 벡터(Word Vector)** 와 **같은 뜻이 아닌** 이름은?",
+     "choices": [
+      "word embedding",
+      "word representation",
+      "one-hot vector"
+     ],
+     "a": 2,
+     "why": "원-핫 벡터는 학습된 밀집 벡터가 아니에요. 나머지 둘은 단어 벡터의 다른 이름이에요."
+    },
+    {
+     "kind": "english",
+     "head": "답안 문장으로 외우기",
+     "en": "단어 벡터(Word Vector, 임베딩)는 각 단어를 50~1024차원 정도의 밀집 벡터(Dense Vector)로 나타내며, 비슷한 문맥에 나오는 단어가 비슷한 벡터를 갖도록 학습하고 유사도는 내적으로 측정한다.",
+     "ko": "밀집, 저차원, 비슷한 문맥 → 비슷한 벡터, 내적.",
+     "tip": "원-핫(|V| 차원, 희소)과 짝지어 외워요."
+    }
+   ]
+  },
+  {
+   "p": 28,
+   "title": "word2vec 의 아이디어 (word2vec, The Idea)",
+   "terms": [
+    "word2vec",
+    "Corpus",
+    "Center Word",
+    "Context Word",
+    "Window",
+    "Self-supervised Learning",
+    "Next Token Prediction"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "**word2vec** 는 단어 벡터를 배우는 방법이에요. 재료는 큰 **말뭉치(Corpus)** 하나뿐이에요.",
+      "글 위로 작은 창을 밀면서, 가운데 단어가 양옆 이웃 단어를 맞히게 해요.",
+      "잘 맞히려고 애쓰는 사이에 벡터에 문맥이 스며들어요. 맞히기는 수단, 벡터가 목표예요."
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "누가 정답을 주나",
+     "cols": [
+      "",
+      "보통의 학습",
+      "**word2vec**"
+     ],
+     "rows": [
+      [
+       "정답(라벨)",
+       "사람이 달아 줘요",
+       "글 속 이웃 단어가 곧 정답"
+      ],
+      [
+       "재료",
+       "라벨 달린 데이터",
+       "날 글 말뭉치 하나"
+      ]
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "points",
+     "head": "용어 뜻",
+     "items": [
+      "**중심 단어(Center Word)**: 창 한가운데의 주인공 단어예요.",
+      "**문맥 단어(Context Word)**: 중심 단어 양옆 창 안의 이웃 단어예요.",
+      "**윈도우(Window)**: 양옆 몇 칸까지 이웃으로 볼지 정한 창이에요.",
+      "**자기 지도 학습(Self-supervised Learning)**: 데이터가 스스로 문제와 정답을 만들어 주는 학습이에요. GPT 의 **다음 토큰 예측(Next Token Prediction)** 도 여기에 속해요."
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "영어 문장 → 우리말 뜻",
+     "cols": [
+      "슬라이드 영어",
+      "우리말 뜻"
+     ],
+     "rows": [
+      [
+       "a framework for learning word vectors",
+       "단어 벡터를 배우는 틀"
+      ],
+      [
+       "one large corpus, that's all (no labels!)",
+       "큰 말뭉치 하나면 끝 (라벨 없음!)"
+      ],
+      [
+       "make the center word predict its neighbors",
+       "중심 단어가 이웃을 맞히게 해요"
+      ],
+      [
+       "prediction is the means, vectors are the goal",
+       "예측은 수단, 벡터가 목표"
+      ],
+      [
+       "the data supplies its own answers",
+       "데이터가 스스로 정답을 줘요"
+      ]
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "word2vec 이 벡터를 얻는 흐름",
+     "steps": [
+      "큰 말뭉치를 준비해요 (라벨 없음)",
+      "창을 한 칸씩 밀며 (중심 단어, 이웃 단어) 짝을 만들어요",
+      "중심 단어 벡터로 이웃 단어를 맞히게 해요",
+      "틀린 만큼 벡터를 조금씩 고쳐요",
+      "다 끝나면 맞히기 모델은 버리고 벡터만 가져가요"
+     ],
+     "answer": "예측은 수단, 벡터가 목표예요."
+    },
+    {
+     "kind": "check",
+     "q": "**word2vec** 학습에 꼭 필요한 재료는?",
+     "choices": [
+      "사람이 단 라벨",
+      "큰 말뭉치 하나",
+      "워드넷 사전"
+     ],
+     "a": 1,
+     "why": "'one large corpus, that's all (no labels!)' 이에요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.061,
+       "y": 0.197,
+       "w": 0.539,
+       "h": 0.042,
+       "say": "word2vec (Mikolov et al. 2013): 단어 벡터를 배우는 틀."
+      },
+      {
+       "x": 0.061,
+       "y": 0.254,
+       "w": 0.396,
+       "h": 0.042,
+       "say": "재료: 큰 말뭉치 하나가 전부 (라벨 없음!)."
+      },
+      {
+       "x": 0.061,
+       "y": 0.315,
+       "w": 0.621,
+       "h": 0.042,
+       "say": "아이디어: 글 위로 창을 밀면서 중심 단어가 이웃을 예측하게 해요."
+      },
+      {
+       "x": 0.061,
+       "y": 0.374,
+       "w": 0.775,
+       "h": 0.042,
+       "say": "잘 예측하려면 벡터가 문맥을 흡수할 수밖에 없어요. 예측은 수단, 벡터가 목표."
+      },
+      {
+       "x": 0.061,
+       "y": 0.431,
+       "w": 0.636,
+       "h": 0.082,
+       "say": "자기 지도 학습(self-supervised learning)의 원형. GPT 의 'predict the next token' 도 똑같은 철학."
+      },
+      {
+       "x": 0.299,
+       "y": 0.86,
+       "w": 0.407,
+       "h": 0.038,
+       "say": "이웃을 맞히다 보면 뜻이 부산물로 떨어져 나와요."
+      }
+     ]
+    },
+    {
+     "kind": "prof",
+     "when": "2주차 월요일 2교시",
+     "lines": [
+      "재료는 큰 코퍼스 하나이고, 라벨이 없다는 게 핵심이라고 했어요.",
+      "창 크기 표기는 논문마다 달라서, 왼쪽 3개 오른쪽 3개를 3이라 쓰기도 하고 자기 포함 7이라 쓰기도 한대요. 교수님은 한쪽 개수(3)로 쓴대요.",
+      "아무도 '너는 이런 벡터여야 해' 라고 라벨을 주지 않고, 주변을 보고 자기 숫자를 바꿔 간다고 했어요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "GPT 와 같은 철학",
+     "items": [
+      "**자기 지도 학습(Self-supervised Learning)**: 글 속 이웃 단어가 정답이라 사람이 라벨을 달 필요가 없어요.",
+      "GPT 의 **다음 토큰 예측(Next Token Prediction)** 도 '글 속 다음 토큰이 정답' 이라 같은 철학이에요.",
+      "주문 그대로: 글을 토큰으로 자르고, 토큰을 벡터로 바꾸고, 벡터로 다음 토큰을 맞혀요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "실습 연결",
+     "items": [
+      "실습 N2L p.19 에서 gensim Word2Vec(sentences, vector_size=100, window=5, min_count=5, sg=1, negative=10, ...) 한 줄로 이 아이디어를 돌려요.",
+      "재료는 NSMC 영화 리뷰를 공백으로 자른 단어 목록뿐이에요. 라벨(긍정, 부정)은 쓰지 않아요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "'prediction is the means, vectors are the goal' 의 뜻으로 맞는 것은?",
+     "choices": [
+      "예측 정확도가 최종 목표다",
+      "이웃 맞히기는 수단이고, 진짜 얻으려는 것은 단어 벡터다",
+      "벡터는 예측이 끝나면 버린다"
+     ],
+     "a": 1,
+     "why": "**word2vec** 는 맞히기 연습을 통해 벡터를 얻는 것이 목적이에요."
+    },
+    {
+     "kind": "english",
+     "head": "답안 문장으로 외우기",
+     "en": "word2vec 은 라벨 없이 큰 말뭉치(Corpus)만으로 중심 단어(Center Word)가 문맥 단어(Context Word)를 예측하게 학습해 단어 벡터를 얻는 자기 지도 학습(Self-supervised Learning)이다.",
+     "ko": "라벨 없음, 중심 → 이웃 예측, 벡터가 목표.",
+     "tip": "GPT 의 다음 토큰 예측과 같은 철학이라는 한 줄을 덧붙이면 좋아요."
+    }
+   ]
+  },
+  {
+   "p": 29,
+   "title": "창 밀기 (Sliding Windows)",
+   "terms": [
+    "Center Word",
+    "Context Word",
+    "Window",
+    "Conditional Probability",
+    "Skip-gram",
+    "CBOW"
+   ],
+   "pass1": [
+    {
+     "kind": "figure",
+     "head": "창을 한 칸씩 밀며 이웃 맞히기",
+     "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 480 270\"><rect class=\"n3 b1\" x=\"10\" y=\"130\" width=\"72\" height=\"40\" rx=\"3\"/><text class=\"tl b1\" x=\"46\" y=\"155\" font-size=\"14\" text-anchor=\"middle\">problems</text><rect class=\"n3 b1\" x=\"88\" y=\"130\" width=\"72\" height=\"40\" rx=\"3\"/><text class=\"tl b1\" x=\"124\" y=\"155\" font-size=\"14\" text-anchor=\"middle\">turning</text><rect class=\"n2 b1\" x=\"166\" y=\"130\" width=\"72\" height=\"40\" rx=\"3\"/><text class=\"tl b1\" x=\"202\" y=\"155\" font-size=\"14\" text-anchor=\"middle\">into</text><rect class=\"n3 b1\" x=\"244\" y=\"130\" width=\"72\" height=\"40\" rx=\"3\"/><text class=\"tl b1\" x=\"280\" y=\"155\" font-size=\"14\" text-anchor=\"middle\">banking</text><rect class=\"n3 b1\" x=\"322\" y=\"130\" width=\"72\" height=\"40\" rx=\"3\"/><text class=\"tl b1\" x=\"358\" y=\"155\" font-size=\"14\" text-anchor=\"middle\">crises</text><rect class=\"n b1\" x=\"400\" y=\"130\" width=\"72\" height=\"40\" rx=\"3\"/><text class=\"tl b1\" x=\"436\" y=\"155\" font-size=\"14\" text-anchor=\"middle\">as</text><text class=\"tb b1\" x=\"202\" y=\"195\" font-size=\"15\" text-anchor=\"middle\">중심 단어 c</text><polyline class=\"e2 b2\" fill=\"none\" points=\"196.0,130.0 196.0,88.0 46.0,88.0\"/><line class=\"e2 b2\" x1=\"46\" y1=\"88\" x2=\"46.0\" y2=\"120.0\"/><polygon class=\"arrow b2\" points=\"46.0,129.0 51.0,120.0 41.0,120.0\"/><polyline class=\"e2 b2\" fill=\"none\" points=\"196.0,130.0 196.0,108.0 124.0,108.0\"/><line class=\"e2 b2\" x1=\"124\" y1=\"108\" x2=\"124.0\" y2=\"120.0\"/><polygon class=\"arrow b2\" points=\"124.0,129.0 129.0,120.0 119.0,120.0\"/><polyline class=\"e2 b2\" fill=\"none\" points=\"208.0,130.0 208.0,108.0 280.0,108.0\"/><line class=\"e2 b2\" x1=\"280\" y1=\"108\" x2=\"280.0\" y2=\"120.0\"/><polygon class=\"arrow b2\" points=\"280.0,129.0 285.0,120.0 275.0,120.0\"/><polyline class=\"e2 b2\" fill=\"none\" points=\"208.0,130.0 208.0,88.0 358.0,88.0\"/><line class=\"e2 b2\" x1=\"358\" y1=\"88\" x2=\"358.0\" y2=\"120.0\"/><polygon class=\"arrow b2\" points=\"358.0,129.0 363.0,120.0 353.0,120.0\"/><text class=\"tb b2\" x=\"240\" y=\"50\" font-size=\"16\" text-anchor=\"middle\">P(o|c) 를 크게: 이웃 4개 맞히기</text><text class=\"tm b2\" x=\"120\" y=\"225\" font-size=\"14\" text-anchor=\"middle\">왼쪽 m=2</text><text class=\"tm b2\" x=\"320\" y=\"225\" font-size=\"14\" text-anchor=\"middle\">오른쪽 m=2</text><rect class=\"hl b3\" x=\"244\" y=\"240\" width=\"72\" height=\"24\" rx=\"3\"/><text class=\"t b3\" x=\"160\" y=\"257\" font-size=\"14\" text-anchor=\"middle\">한 칸 밀면 다음 중심:</text><text class=\"tb b3\" x=\"280\" y=\"257\" font-size=\"14\" text-anchor=\"middle\">banking</text></svg>",
+     "caption": "into 가 중심이면 양옆 2칸씩, 이웃 4개를 맞혀요. 다 하면 창을 한 칸 밀어요.",
+     "builds": 3
+    },
+    {
+     "kind": "say",
+     "lines": [
+      "문장 하나에서 창을 밀 때마다 작은 맞히기 문제가 생겨요.",
+      "말뭉치가 크면 이런 문제가 수백만 개 공짜로 생겨요."
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "points",
+     "head": "기호와 용어",
+     "items": [
+      "c: **중심 단어(Center Word)**, 위치 t 에 있어요.",
+      "o: **문맥 단어(Context Word)**, 창 크기 m 안에 있어요.",
+      "P(o|c): **조건부 확률(Conditional Probability)**. 'c 가 주어졌을 때 o 가 나올 확률' 이라 읽어요(P o given c).",
+      "슬라이드 목표: 모든 위치 t, 모든 이웃에 대해 P(o|c) 를 크게 벡터를 고쳐요."
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "영어 문장 → 우리말 뜻",
+     "cols": [
+      "슬라이드 영어",
+      "우리말 뜻"
+     ],
+     "rows": [
+      [
+       "slide one step and repeat",
+       "한 칸 밀고 반복해요"
+      ],
+      [
+       "adjust vectors to make P(o|c) large",
+       "P(o|c) 가 커지도록 벡터를 고쳐요"
+      ],
+      [
+       "millions of tiny prediction problems, for free",
+       "작은 예측 문제 수백만 개가 공짜로"
+      ]
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "그림에서 중심 단어가 into, 창 크기 m = 2 일 때 문맥 단어가 **아닌** 것은?",
+     "choices": [
+      "turning",
+      "banking",
+      "crises",
+      "as"
+     ],
+     "a": 3,
+     "why": "into 양옆 2칸은 problems, turning, banking, crises 예요. as 는 3칸 떨어져 있어요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "그림 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.061,
+       "y": 0.197,
+       "w": 0.668,
+       "h": 0.042,
+       "say": "중심 단어 c 는 위치 t, 문맥 단어 o 는 창 크기 m 안. 한 칸 밀고 반복해요."
+      },
+      {
+       "x": 0.146,
+       "y": 0.378,
+       "w": 0.607,
+       "h": 0.041,
+       "say": "화살표 위 식: P(w_{t-2}|w_t), P(w_{t-1}|w_t), P(w_{t+1}|w_t), P(w_{t+2}|w_t)."
+      },
+      {
+       "x": 0.396,
+       "y": 0.489,
+       "w": 0.109,
+       "h": 0.095,
+       "say": "중심 단어 w_t = into (주황)."
+      },
+      {
+       "x": 0.12,
+       "y": 0.489,
+       "w": 0.276,
+       "h": 0.095,
+       "say": "왼쪽 문맥 단어: problems, turning."
+      },
+      {
+       "x": 0.506,
+       "y": 0.489,
+       "w": 0.25,
+       "h": 0.095,
+       "say": "오른쪽 문맥 단어: banking, crises. 회색 as 는 창 밖이에요."
+      },
+      {
+       "x": 0.061,
+       "y": 0.774,
+       "w": 0.579,
+       "h": 0.041,
+       "say": "모든 위치 t, 모든 문맥 단어에 대해 P(o|c) 가 커지도록 벡터를 고쳐요."
+      }
+     ]
+    },
+    {
+     "kind": "formula",
+     "head": "창 안의 확률 하나",
+     "tex": "P(w_{t+j} \\mid w_t),\\quad -m \\le j \\le m,\\ j \\ne 0",
+     "parts": [
+      {
+       "sym": "w_t",
+       "say": "위치 t 의 중심 단어 c 예요. 그림에서는 into."
+      },
+      {
+       "sym": "w_{t+j}",
+       "say": "중심에서 j 칸 떨어진 문맥 단어 o. j 가 음수면 왼쪽, 양수면 오른쪽이에요."
+      },
+      {
+       "sym": "\\mid",
+       "say": "'주어졌을 때(given)'. 오른쪽이 조건, 왼쪽이 맞힐 대상이에요."
+      },
+      {
+       "sym": "-m \\le j \\le m",
+       "say": "창 크기 m. 왼쪽 m 칸부터 오른쪽 m 칸까지예요."
+      },
+      {
+       "sym": "j \\ne 0",
+       "say": "자기 자신(중심 단어)은 빼요."
+      }
+     ],
+     "whole": "중심 단어가 주어졌을 때, 창 안 이웃 단어 하나가 나올 확률이에요."
+    },
+    {
+     "kind": "steps",
+     "head": "손계산: 5단어 문장에서 (중심, 문맥) 쌍 세기, m = 2",
+     "steps": [
+      "문장: problems turning into banking crises (단어 5개)",
+      "problems 중심: 오른쪽 2개만 → 2쌍",
+      "turning 중심: 왼쪽 1, 오른쪽 2 → 3쌍",
+      "into 중심: 양쪽 2개씩 → 4쌍 (problems, turning, banking, crises)",
+      "banking 3쌍, crises 2쌍",
+      "모두 더하면 2 + 3 + 4 + 3 + 2 = 14쌍"
+     ],
+     "answer": "문장 하나, 단어 5개에서도 맞히기 문제가 14개 생겨요. 말뭉치 전체면 수백만 개예요.",
+     "given": "창 크기 m = 2, 문장 끝에서는 창이 잘려요"
+    },
+    {
+     "kind": "prof",
+     "when": "2주차 월요일 2교시",
+     "lines": [
+      "창 크기 2로 'problems turning into banking crises' 를 보고, 중심 단어 into 의 벡터를 배우려고 양옆 문맥 단어의 확률을 계산한다고 했어요.",
+      "into 가 주어졌을 때 banking 이 나올 확률은 높아지게, 주변에 없는 피자, 햄버거의 확률은 낮아지게 한대요.",
+      "반대로 문맥 단어가 주어졌을 때 가운데가 into 일 확률을 계산하는 방향도 있다고 했어요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "두 방향: 스킵그램과 CBOW",
+     "items": [
+      "이 슬라이드처럼 중심으로 이웃을 맞히는 P(o|c) 방향이 **스킵그램(Skip-gram)** 예요.",
+      "이웃으로 중심을 맞히는 반대 방향은 **연속 단어 주머니(CBOW)** 이고, 뒤에서 다시 나와요.",
+      "실습 N2L p.19 의 sg=1 이 스킵그램, window=5 가 창 크기 m 이에요(한쪽 5칸)."
+     ]
+    },
+    {
+     "kind": "bg",
+     "src": "기초 다지기 5단원 확률 기초",
+     "lines": [
+      "P(A|B) 는 'B 가 일어났을 때 A 가 일어날 확률' 이에요(조건부 확률).",
+      "빈도로 보면: B 가 있던 경우들 중 A 도 있던 비율이에요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "단어 7개 문장, 창 크기 m = 1 일 때 (중심, 문맥) 쌍은 모두 몇 개?",
+     "choices": [
+      "7개",
+      "12개",
+      "14개",
+      "6개"
+     ],
+     "a": 1,
+     "why": "양끝 단어는 이웃 1개, 가운데 5개 단어는 2개씩: 1 + 2×5 + 1 = 12개예요."
+    },
+    {
+     "kind": "english",
+     "head": "답안 문장으로 외우기",
+     "en": "word2vec(스킵그램)은 위치 t 의 중심 단어 c 를 기준으로 창 크기 m 안의 문맥 단어 o 에 대해 P(o|c) 가 커지도록 벡터를 조정하고, 창을 한 칸씩 밀며 반복한다.",
+     "ko": "c = 중심, o = 문맥, m = 창 크기, P(o|c) 크게.",
+     "tip": "'o given c' 로 읽으면 방향을 안 헷갈려요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "창 크기 m 은 **한쪽** 칸 수예요. m = 2 면 이웃은 최대 4개예요(논문에 따라 양쪽 합으로 적기도 해요).",
+      "P(o|c) 는 'c 로 o 를 맞히기'(스킵그램), P(c|o) 는 반대 방향(CBOW)이에요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 30,
+   "title": "우도 (The Likelihood)",
+   "terms": [
+    "Likelihood",
+    "Parameter",
+    "Word Vector",
+    "Center Word",
+    "Context Word",
+    "Window"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "창을 밀며 얻은 맞히기 확률을 **전부 곱해서** 숫자 하나로 만들어요. 이것이 **우도(Likelihood)** 예요.",
+      "벡터가 좋을수록 진짜 글이 '그럴듯하게' 보여서 이 숫자가 커져요.",
+      "그래서 이 숫자를 가장 크게 만드는 벡터를 찾아요."
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "points",
+     "head": "용어 뜻",
+     "items": [
+      "**우도(Likelihood)**: 지금 벡터들로 실제 말뭉치가 얼마나 그럴듯한지 나타낸 값 L(θ) 예요.",
+      "θ(세타): 고칠 수 있는 모든 **파라미터(Parameter)**, 곧 모든 **단어 벡터(Word Vector)** 예요.",
+      "∏(파이): 모두 곱하라는 기호예요. ∑(시그마)가 '모두 더하기' 인 것과 짝이에요."
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "영어 문장 → 우리말 뜻",
+     "cols": [
+      "슬라이드 영어",
+      "우리말 뜻"
+     ],
+     "rows": [
+      [
+       "multiply the probabilities of all context words",
+       "창 안 모든 문맥 단어 확률을 곱해요"
+      ],
+      [
+       "θ = every adjustable parameter = all the word vectors",
+       "θ = 고칠 수 있는 모든 파라미터 = 모든 단어 벡터"
+      ],
+      [
+       "find θ that maximizes L(θ)",
+       "L(θ) 를 가장 크게 하는 θ 를 찾아요"
+      ],
+      [
+       "numerically awful",
+       "(곱이) 숫자로 다루기 끔찍해요"
+      ]
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "**우도(Likelihood)** L(θ) 를 두고 학습이 하려는 일은?",
+     "choices": [
+      "가장 작게",
+      "가장 크게",
+      "0으로"
+     ],
+     "a": 1,
+     "why": "'find θ that maximizes L(θ)', 가장 크게 하는 θ 를 찾아요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.061,
+       "y": 0.197,
+       "w": 0.625,
+       "h": 0.042,
+       "say": "모든 위치 t = 1 ... T 에서 창 안 모든 문맥 단어 확률을 곱해요."
+      },
+      {
+       "x": 0.289,
+       "y": 0.26,
+       "w": 0.361,
+       "h": 0.216,
+       "say": "우도 식 L(θ). 바깥 ∏ 는 위치 t, 안쪽 ∏ 는 창 안 j."
+      },
+      {
+       "x": 0.061,
+       "y": 0.52,
+       "w": 0.411,
+       "h": 0.041,
+       "say": "θ = 고칠 수 있는 모든 파라미터 = 모든 단어 벡터."
+      },
+      {
+       "x": 0.061,
+       "y": 0.577,
+       "w": 0.654,
+       "h": 0.041,
+       "say": "좋은 벡터일수록 실제 말뭉치가 더 그럴듯해 보여요. L(θ) 를 최대로 하는 θ 를 찾아요."
+      },
+      {
+       "x": 0.061,
+       "y": 0.631,
+       "w": 0.721,
+       "h": 0.042,
+       "say": "확률 수백만 개의 곱은 숫자로 다루기 끔찍해요 → 로그를 씌우고 부호를 뒤집어요(다음 쪽)."
+      },
+      {
+       "x": 0.329,
+       "y": 0.86,
+       "w": 0.346,
+       "h": 0.038,
+       "say": "말뭉치 전체가 최대로 만들 숫자 하나가 돼요."
+      }
+     ]
+    },
+    {
+     "kind": "formula",
+     "head": "우도 L(θ)",
+     "tex": "L(\\theta) = \\prod_{t=1}^{T} \\prod_{\\substack{-m \\le j \\le m \\\\ j \\ne 0}} P(w_{t+j} \\mid w_t; \\theta)",
+     "parts": [
+      {
+       "sym": "L(\\theta)",
+       "say": "우도. θ 를 넣으면 숫자 하나가 나오는 함수예요."
+      },
+      {
+       "sym": "\\prod_{t=1}^{T}",
+       "say": "위치 t 를 1부터 T(말뭉치 길이)까지 바꾸며 모두 곱해요."
+      },
+      {
+       "sym": "\\prod_{-m \\le j \\le m,\\ j \\ne 0}",
+       "say": "각 위치에서 창 안 이웃(자기 자신 빼고)을 모두 곱해요."
+      },
+      {
+       "sym": "P(w_{t+j} \\mid w_t; \\theta)",
+       "say": "중심 단어 w_t 로 이웃 w_{t+j} 를 맞힐 확률."
+      },
+      {
+       "sym": ";\\ \\theta",
+       "say": "'θ 를 쓰면' 이라는 뜻. 확률이 지금 벡터들로 계산된다는 표시예요."
+      }
+     ],
+     "whole": "말뭉치 모든 위치, 창 안 모든 이웃의 맞힐 확률을 다 곱한 값. 이것을 가장 크게 만드는 θ 를 찾아요."
+    },
+    {
+     "kind": "steps",
+     "head": "손계산: 확률을 곱하면 금방 작아져요",
+     "steps": [
+      "이웃 확률 세 개: 0.5, 0.4, 0.2",
+      "곱: 0.5 × 0.4 × 0.2 = 0.04",
+      "0.1 을 20번만 곱해도 0.1^20 = 0.00000000000000000001 (10의 -20승)",
+      "말뭉치 전체면 수백만 개를 곱하니 컴퓨터가 0과 구별하기도 어려워져요",
+      "로그를 씌우면 곱이 합으로: ln 0.5 + ln 0.4 + ln 0.2 = -0.693 - 0.916 - 1.609 = -3.219"
+     ],
+     "answer": "ln 0.04 도 -3.219 로 같아요. 로그는 곱을 합으로 바꿔 다루기 쉬운 크기로 만들어요.",
+     "given": "ln 은 밑이 e 인 자연로그"
+    },
+    {
+     "kind": "prof",
+     "when": "2주차 월요일 2교시",
+     "lines": [
+      "θ 는 벡터들의 집합으로, 예를 들어 어휘 10만 개, 64차원이면 10만 × 64 표라고 했어요. 인공지능 학과에서 말하는 파라미터래요.",
+      "∏ 는 j 를 바꿔 가며 모두 곱하는 것, ∑ 는 모두 더하는 것이라고 고등학교 기호로 풀어 줬어요.",
+      "0~1 사이 확률을 계속 곱하면 0에 가까워져서, 어떤 θ 든 L 이 아주 작아 비교, 계산이 어렵다고 했어요."
+     ]
+    },
+    {
+     "kind": "bg",
+     "src": "기초 다지기 4단원 로그와 지수",
+     "lines": [
+      "log(a × b) = log a + log b. 로그는 곱을 합으로 바꿔요.",
+      "0과 1 사이 수의 로그는 음수예요. 1에 가까울수록 0에 가까워요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "우도 식의 ∏ 기호가 뜻하는 것은?",
+     "choices": [
+      "모두 더하기",
+      "모두 곱하기",
+      "가장 큰 값 고르기"
+     ],
+     "a": 1,
+     "why": "∏ 는 곱, ∑ 는 합이에요."
+    },
+    {
+     "kind": "check",
+     "q": "확률 0.5, 0.5, 0.5, 0.5 를 모두 곱한 값은?",
+     "choices": [
+      "2.0",
+      "0.5",
+      "0.0625",
+      "0.125"
+     ],
+     "a": 2,
+     "why": "0.5^4 = 0.0625. 곱할수록 작아져요."
+    },
+    {
+     "kind": "english",
+     "head": "답안 문장으로 외우기",
+     "en": "word2vec 의 우도(Likelihood) L(θ) 는 모든 위치 t 와 창 안의 모든 문맥 단어에 대해 P(w_{t+j}|w_t; θ) 를 곱한 값이며, 학습은 L(θ) 를 최대화하는 θ(모든 단어 벡터)를 찾는 것이다.",
+     "ko": "두 겹 곱(위치, 창), θ = 모든 단어 벡터, 최대화.",
+     "tip": "곱은 너무 작아져서 다음 쪽에서 로그를 씌워요."
+    }
+   ]
+  },
+  {
+   "p": 31,
+   "title": "목적 함수 (The Objective Function)",
+   "terms": [
+    "Objective Function",
+    "Loss Function",
+    "Negative Log-Likelihood (NLL)",
+    "Likelihood",
+    "Parameter"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "우도를 그대로 쓰면 숫자가 너무 작아요. 그래서 세 번 손질해요.",
+      "로그를 씌우고(곱 → 합), 부호를 뒤집고(최대 → 최소), T 로 나눠 평균을 내요.",
+      "그렇게 만든 J(θ) 가 **손실 함수(Loss Function)** 예요. 이 벌점을 가장 줄이는 게 학습이에요."
+     ]
+    },
+    {
+     "kind": "analogy",
+     "head": "손실 함수 = 틀린 정도를 매기는 벌점",
+     "scene": "시험에서 틀릴수록 벌점이 쌓이듯, 이웃 단어를 못 맞힐수록 J 가 커져요.",
+     "map": [
+      [
+       "벌점",
+       "J(θ), **손실 함수(Loss Function)**"
+      ],
+      [
+       "벌점 줄이기",
+       "학습"
+      ],
+      [
+       "벌점이 적은 학생",
+       "좋은 단어 벡터"
+      ]
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "points",
+     "head": "용어 뜻",
+     "items": [
+      "**목적 함수(Objective Function)**: 학습이 가장 크게 또는 가장 작게 만들려는 목표 식이에요.",
+      "**손실 함수(Loss Function)**: 줄이려는 벌점 쪽 목적 함수예요. 여기서는 J(θ).",
+      "**음의 로그 우도(Negative Log-Likelihood)**: 로그 우도에 마이너스를 붙인 것. J(θ) 는 그 평균이에요."
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "L(θ) 에서 J(θ) 로: 세 번 손질",
+     "steps": [
+      "log 를 씌워요: 곱(∏) → 합(∑). 아주 작은 수들이 다룰 만한 음수가 돼요",
+      "부호를 뒤집어요(마이너스): 최대화 → 최소화. 이제 벌점이 돼요",
+      "T 로 나눠요: 말뭉치 길이에 상관없는 평균 벌점이 돼요"
+     ],
+     "answer": "L 을 최대로 = J 를 최소로. 같은 θ 를 찾는 두 표현이에요."
+    },
+    {
+     "kind": "compare",
+     "head": "영어 문장 → 우리말 뜻",
+     "cols": [
+      "슬라이드 영어",
+      "우리말 뜻"
+     ],
+     "rows": [
+      [
+       "Take the log / flip the sign / divide by T",
+       "로그를 씌우고 / 부호를 뒤집고 / T 로 나눠요"
+      ],
+      [
+       "average negative log-likelihood, our loss function",
+       "평균 음의 로그 우도, 우리의 손실 함수"
+      ],
+      [
+       "Minimizing J = maximizing prediction accuracy = good word vectors",
+       "J 최소화 = 예측 정확도 최대화 = 좋은 단어 벡터"
+      ],
+      [
+       "One puzzle piece left",
+       "남은 퍼즐 한 조각: P(o|c; θ) 를 벡터로 어떻게 계산하나"
+      ]
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "J(θ) 앞에 마이너스를 붙인 까닭은?",
+     "choices": [
+      "계산을 빠르게 하려고",
+      "최대화 문제를 최소화(벌점 줄이기) 문제로 바꾸려고",
+      "확률을 양수로 만들려고"
+     ],
+     "a": 1,
+     "why": "flip the sign (max → min). 벌점을 줄이는 모양으로 바꿔요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.061,
+       "y": 0.197,
+       "w": 0.554,
+       "h": 0.042,
+       "say": "로그(곱 → 합), 부호 뒤집기(최대 → 최소), T 로 나누기(평균)."
+      },
+      {
+       "x": 0.229,
+       "y": 0.26,
+       "w": 0.4,
+       "h": 0.228,
+       "say": "목적 함수 J(θ) 식."
+      },
+      {
+       "x": 0.061,
+       "y": 0.52,
+       "w": 0.436,
+       "h": 0.041,
+       "say": "J(θ) = 평균 음의 로그 우도(negative log-likelihood), 우리의 손실 함수."
+      },
+      {
+       "x": 0.061,
+       "y": 0.577,
+       "w": 0.521,
+       "h": 0.041,
+       "say": "J 최소화 = 예측 정확도 최대화 = 좋은 단어 벡터."
+      },
+      {
+       "x": 0.061,
+       "y": 0.631,
+       "w": 0.507,
+       "h": 0.042,
+       "say": "남은 퍼즐: P(o|c; θ) 를 벡터로 어떻게 계산할까? (다음 두 쪽)"
+      },
+      {
+       "x": 0.304,
+       "y": 0.86,
+       "w": 0.398,
+       "h": 0.038,
+       "say": "J 를 최소화: 모든 딥러닝 이야기는 정확히 이렇게 시작해요."
+      }
+     ]
+    },
+    {
+     "kind": "formula",
+     "head": "목적 함수 J(θ)",
+     "tex": "J(\\theta) = -\\frac{1}{T} \\sum_{t=1}^{T} \\sum_{\\substack{-m \\le j \\le m \\\\ j \\ne 0}} \\log P(w_{t+j} \\mid w_t; \\theta)",
+     "parts": [
+      {
+       "sym": "J(\\theta)",
+       "say": "손실 함수(벌점). 작을수록 좋아요."
+      },
+      {
+       "sym": "-",
+       "say": "부호 뒤집기. log 확률은 음수라 마이너스를 붙이면 양수 벌점이 돼요."
+      },
+      {
+       "sym": "\\frac{1}{T}",
+       "say": "위치 수 T 로 나눠 평균을 내요."
+      },
+      {
+       "sym": "\\sum_{t}\\ \\sum_{j}",
+       "say": "우도의 두 겹 곱 ∏ 가 로그 덕분에 두 겹 합 ∑ 로 바뀌었어요."
+      },
+      {
+       "sym": "\\log P(w_{t+j} \\mid w_t; \\theta)",
+       "say": "이웃 하나를 맞힐 확률의 로그. 확률이 1에 가까우면 0에 가까워요."
+      }
+     ],
+     "whole": "모든 위치, 모든 이웃에 대해 -log(맞힐 확률) 을 더해 평균 낸 벌점이에요."
+    },
+    {
+     "kind": "steps",
+     "head": "손계산: 벡터가 좋아지면 J 가 줄어요 (T = 2, 위치마다 이웃 2개)",
+     "steps": [
+      "처음 벡터의 이웃 확률: 위치 1 (0.5, 0.25), 위치 2 (0.8, 0.4)",
+      "로그 합: -0.693 - 1.386 - 0.223 - 0.916 = -3.219",
+      "J = -(1/2) × (-3.219) = 1.609",
+      "고친 벡터의 이웃 확률: (0.9, 0.5), (0.9, 0.8) → 로그 합 -1.127",
+      "J = -(1/2) × (-1.127) = 0.564"
+     ],
+     "answer": "이웃을 더 잘 맞히니 J 가 1.609 에서 0.564 로 줄었어요. J 최소화 = 잘 맞히기예요.",
+     "given": "ln 은 자연로그, 설명용 확률"
+    },
+    {
+     "kind": "prof",
+     "when": "2주차 월요일 2교시",
+     "lines": [
+      "로그의 가장 큰 장점은 곱(∏)이 합(∑)으로 바뀌는 것이고, 0에 붙은 작은 값들의 차이를 벌려 준다고 했어요.",
+      "마이너스가 붙었으니 이제 최소화해야 하고, θ 를 조금씩 바꿔 J 를 최소로 하는 θ 를 찾는 과정이 학습이라고 했어요.",
+      "L(θ) 를 높이려고 음의 로그를 씌운 NLL 손실 함수 J 를 가장 줄이는 방향으로 학습된다는 것, 이게 가장 중요하니 기억해 달라고 했어요."
+     ]
+    },
+    {
+     "kind": "bg",
+     "src": "기초 다지기 4단원 로그와 지수 / 6단원 소프트맥스와 교차 엔트로피",
+     "lines": [
+      "-log(확률) 은 확률이 1이면 0, 작을수록 커지는 벌점이에요.",
+      "6단원의 '정답 확률의 -log 를 벌점으로' 가 바로 이 모양이에요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "-ln P 벌점: P = 1 일 때와 P = 0.5 일 때 값으로 맞는 것은? (ln 0.5 ≈ -0.693)",
+     "choices": [
+      "0 과 0.693",
+      "1 과 0.5",
+      "0 과 -0.693",
+      "1 과 0.693"
+     ],
+     "a": 0,
+     "why": "-ln 1 = 0, -ln 0.5 ≈ 0.693. 확률이 낮을수록 벌점이 커요."
+    },
+    {
+     "kind": "english",
+     "head": "답안 문장으로 외우기",
+     "en": "우도에 로그를 취해 곱을 합으로 바꾸고, 부호를 뒤집어 최소화 문제로 만들고, T 로 나누어 평균을 낸 J(θ) 가 평균 음의 로그 우도(NLL)이며, 이 손실 함수를 가장 줄이는 방향으로 학습한다.",
+     "ko": "로그, 부호, 평균 세 손질 + '손실 함수를 가장 줄이는 방향으로 학습'.",
+     "tip": "교수님이 가장 중요하다고 한 문장이에요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "L(θ) 는 **최대화**, J(θ) 는 **최소화**. 방향이 반대지만 찾는 θ 는 같아요.",
+      "J 식의 ∑ 아래에도 j ≠ 0 이 있어요. 중심 단어 자신은 맞히지 않아요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 32,
+   "title": "단어마다 벡터 두 개 (Two Vectors per Word)",
+   "terms": [
+    "Center Word",
+    "Context Word",
+    "Dot Product",
+    "Cosine Similarity",
+    "word2vec"
+   ],
+   "pass1": [
+    {
+     "kind": "figure",
+     "head": "한 단어, 두 개의 벡터",
+     "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 480 270\"><rect class=\"n2 b1\" x=\"30\" y=\"40\" width=\"180\" height=\"60\" rx=\"3\"/><text class=\"tl b1\" x=\"120\" y=\"67\" font-size=\"16\" text-anchor=\"middle\">v_banking</text><text class=\"tl b1\" x=\"120\" y=\"88\" font-size=\"13\" text-anchor=\"middle\">주인공(중심)일 때</text><rect class=\"n3 b1\" x=\"270\" y=\"40\" width=\"180\" height=\"60\" rx=\"3\"/><text class=\"tl b1\" x=\"360\" y=\"67\" font-size=\"16\" text-anchor=\"middle\">u_banking</text><text class=\"tl b1\" x=\"360\" y=\"88\" font-size=\"13\" text-anchor=\"middle\">이웃(문맥)일 때</text><text class=\"tb b1\" x=\"240\" y=\"25\" font-size=\"15\" text-anchor=\"middle\">단어 banking 하나에 벡터 두 개</text><rect class=\"n3 b2\" x=\"30\" y=\"150\" width=\"180\" height=\"50\" rx=\"3\"/><text class=\"tl b2\" x=\"120\" y=\"180\" font-size=\"15\" text-anchor=\"middle\">u_o (이웃 o)</text><rect class=\"n2 b2\" x=\"270\" y=\"150\" width=\"180\" height=\"50\" rx=\"3\"/><text class=\"tl b2\" x=\"360\" y=\"180\" font-size=\"15\" text-anchor=\"middle\">v_c (중심 c)</text><text class=\"tb b2\" x=\"240\" y=\"235\" font-size=\"16\" text-anchor=\"middle\">비슷함 점수 = 내적 u_o v_c</text><text class=\"tm b2\" x=\"240\" y=\"258\" font-size=\"14\" text-anchor=\"middle\">크면 o 가 c 근처에 나올 법해요</text></svg>",
+     "caption": "주인공일 때는 v, 이웃일 때는 u. 비슷함은 두 벡터의 내적이에요.",
+     "builds": 2
+    },
+    {
+     "kind": "analogy",
+     "head": "두 화살표가 얼마나 같은 쪽을 보는지",
+     "scene": "두 사람이 같은 쪽을 가리키면 생각이 비슷한 거예요. 벡터도 같은 쪽을 볼수록 **내적(Dot Product)** 이 커요.",
+     "map": [
+      [
+       "두 사람이 가리키는 방향",
+       "u_o 와 v_c"
+      ],
+      [
+       "같은 쪽을 가리킴",
+       "내적이 큼 → o 가 c 근처에 잘 나옴"
+      ],
+      [
+       "반대쪽을 가리킴",
+       "내적이 음수"
+      ]
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "points",
+     "head": "기호 뜻",
+     "items": [
+      "v_w: 단어 w 가 **중심 단어(Center Word)** 일 때 쓰는 벡터예요.",
+      "u_w: 단어 w 가 **문맥 단어(Context Word)** 일 때 쓰는 벡터예요.",
+      "u_o 와 v_c 의 **내적(Dot Product)**: 이웃 o 와 중심 c 의 비슷함 점수. 크면 o 가 c 근처에 나올 법해요."
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "영어 문장 → 우리말 뜻",
+     "cols": [
+      "슬라이드 영어",
+      "우리말 뜻"
+     ],
+     "rows": [
+      [
+       "give every word TWO vectors",
+       "모든 단어에 벡터를 두 개 줘요"
+      ],
+      [
+       "used when w is the center word / a context word",
+       "w 가 중심 단어일 때 / 문맥 단어일 때 써요"
+      ],
+      [
+       "It makes optimization cleaner",
+       "최적화(학습 계산)가 깔끔해져요"
+      ],
+      [
+       "average them or just keep v",
+       "학습 뒤엔 둘을 평균 내거나 v 만 써요"
+      ],
+      [
+       "the single most reused idea in this course",
+       "이 과목에서 가장 많이 다시 쓰이는 생각"
+      ]
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "단어 banking 이 창 가운데(주인공)에 있을 때 쓰는 벡터는?",
+     "choices": [
+      "u_banking",
+      "v_banking",
+      "둘의 평균"
+     ],
+     "a": 1,
+     "why": "중심 단어일 때는 v, 문맥 단어일 때는 u 예요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.061,
+       "y": 0.197,
+       "w": 0.364,
+       "h": 0.042,
+       "say": "word2vec 의 비법: 모든 단어에 벡터 두 개."
+      },
+      {
+       "x": 0.061,
+       "y": 0.254,
+       "w": 0.296,
+       "h": 0.042,
+       "say": "v_w: w 가 중심(center) 단어일 때 써요."
+      },
+      {
+       "x": 0.061,
+       "y": 0.311,
+       "w": 0.289,
+       "h": 0.042,
+       "say": "u_w: w 가 문맥(context) 단어일 때 써요."
+      },
+      {
+       "x": 0.061,
+       "y": 0.371,
+       "w": 0.568,
+       "h": 0.043,
+       "say": "비슷함 점수는 내적 u_o^T v_c (u_o 와 v_c 의 내적). 크면 o 가 c 근처에 있을 가능성이 커요."
+      },
+      {
+       "x": 0.061,
+       "y": 0.431,
+       "w": 0.625,
+       "h": 0.042,
+       "say": "왜 둘? 최적화가 깔끔해져서. 학습 뒤에는 평균 내거나 v 만 써요."
+      },
+      {
+       "x": 0.407,
+       "y": 0.711,
+       "w": 0.186,
+       "h": 0.108,
+       "say": "내적 식: u^T v = u 와 v 의 내적 = ∑ u_i v_i (i = 1 ... d), 같은 자리끼리 곱해 더하기."
+      }
+     ]
+    },
+    {
+     "kind": "formula",
+     "head": "내적 (Dot Product)",
+     "tex": "u^{\\top} v = u \\cdot v = \\sum_{i=1}^{d} u_i\\, v_i",
+     "parts": [
+      {
+       "sym": "u^{\\top} v",
+       "say": "u 를 눕혀(전치) v 와 곱한 것. 내적을 행렬 곱으로 적은 모양이에요."
+      },
+      {
+       "sym": "u \\cdot v",
+       "say": "같은 내적을 점으로 적은 모양이에요."
+      },
+      {
+       "sym": "u_i\\, v_i",
+       "say": "i 번째 칸끼리 곱한 값."
+      },
+      {
+       "sym": "\\sum_{i=1}^{d}",
+       "say": "1번 칸부터 d 번 칸까지 모두 더해요. d 는 벡터 차원이에요."
+      }
+     ],
+     "whole": "같은 자리 숫자끼리 곱해서 모두 더한 값. 같은 쪽을 볼수록 커요."
+    },
+    {
+     "kind": "steps",
+     "head": "손계산: 3차원 내적",
+     "steps": [
+      "u = (1, 2, 0), v = (0.5, 1, -1)",
+      "칸끼리 곱: 1×0.5 = 0.5, 2×1 = 2, 0×(-1) = 0",
+      "모두 더하기: 0.5 + 2 + 0 = 2.5"
+     ],
+     "answer": "u 와 v 의 내적 = 2.5 (양수라 대체로 같은 쪽을 봐요).",
+     "given": "3차원 설명용 벡터"
+    },
+    {
+     "kind": "prof",
+     "when": "2주차 월요일 2교시",
+     "lines": [
+      "같은 토큰이라도 주인공일 때는 v, 윈도우 안 문맥으로 나올 때는 u 를 쓴다고 했어요.",
+      "비슷함의 정량적 척도로 내적을 쓰고, 내적이 높으면 비슷한 방향, 낮으면 반대 방향을 가리킨대요.",
+      "u 와 v 를 나누는 건 수학적으로 최적화가 깔끔해지기 때문이고, 학습 뒤에는 v 나 u 중 아무거나 써도 된다고 했어요."
+     ]
+    },
+    {
+     "kind": "bg",
+     "src": "기초 다지기 2단원 내적과 코사인 유사도 / 3단원 행렬과 행렬 곱, shape",
+     "lines": [
+      "내적은 곱해서 더하기. **코사인 유사도(Cosine Similarity)** 는 내적을 두 길이의 곱으로 나눈 것이에요.",
+      "u^T v 의 T 는 전치(transpose). 세로 벡터를 가로로 눕혀 곱하면 숫자 하나가 나와요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "u = (2, -1), v = (1, 3) 의 내적은?",
+     "choices": [
+      "5",
+      "-1",
+      "1",
+      "7"
+     ],
+     "a": 1,
+     "why": "2×1 + (-1)×3 = 2 - 3 = -1 이에요. 음수면 대체로 반대쪽을 봐요."
+    },
+    {
+     "kind": "english",
+     "head": "답안 문장으로 외우기",
+     "en": "word2vec 은 각 단어 w 에 중심 단어일 때의 벡터 v_w 와 문맥 단어일 때의 벡터 u_w 두 개를 두고, 문맥 단어 o 와 중심 단어 c 의 유사도 점수를 내적 u_o^T v_c 로 계산한다.",
+     "ko": "v = 중심(center), u = 문맥(context), 점수 = 내적.",
+     "tip": "두 개인 이유: 최적화가 깔끔해서. 학습 뒤 평균 또는 v 만 사용."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "u 가 문맥, v 가 중심이에요. 알파벳 순서로 외우지 말고 'v 는 가운데(center)' 로 짝지어요.",
+      "내적은 방향뿐 아니라 길이에도 영향을 받아요. 방향만 보려면 코사인 유사도를 써요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 33,
+   "title": "소프트맥스: 점수를 확률로 (Softmax, From Scores to Probabilities)",
+   "terms": [
+    "Softmax",
+    "Dot Product",
+    "Vocabulary",
+    "Conditional Probability",
+    "Center Word",
+    "Context Word"
+   ],
+   "pass1": [
+    {
+     "kind": "analogy",
+     "head": "점수를 모두 더해 1이 되는 확률 파이로 나누기",
+     "scene": "반 친구들의 점수를 파이 한 판으로 나눠 준다고 생각해요. 점수가 높은 친구가 큰 조각을 받고, 낮은 친구도 아주 작은 조각은 받아요.",
+     "map": [
+      [
+       "친구들의 점수",
+       "각 단어의 내적 점수"
+      ],
+      [
+       "파이 한 판(합 1)",
+       "확률 분포"
+      ],
+      [
+       "큰 점수 → 큰 조각",
+       "비슷할수록 높은 확률(max)"
+      ],
+      [
+       "작아도 0은 아님",
+       "soft"
+      ]
+     ]
+    },
+    {
+     "kind": "say",
+     "lines": [
+      "**내적(Dot Product)** 점수는 음수도, 아주 큰 수도 될 수 있어요. 확률은 0~1 이고 합이 1이어야 해요.",
+      "그 둘을 이어 주는 함수가 **소프트맥스(Softmax)** 예요. 이것이 앞 쪽에서 남았던 마지막 퍼즐 조각이에요."
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "steps",
+     "head": "소프트맥스 세 단계 (슬라이드 번호 그대로)",
+     "steps": [
+      "(1) 내적: u_o 와 v_c 의 내적으로 o 와 c 의 비슷함 점수를 내요. 클수록 확률도 커요",
+      "(2) exp: 점수에 지수함수를 씌워 모두 양수로 만들어요",
+      "(3) 정규화: 어휘의 모든 단어 w 에 대한 exp 합으로 나눠 합이 1이 되게 해요"
+     ],
+     "answer": "점수를 넣으면 확률이 나와요 (Scores in, probabilities out)."
+    },
+    {
+     "kind": "compare",
+     "head": "영어 문장 → 우리말 뜻",
+     "cols": [
+      "슬라이드 영어",
+      "우리말 뜻"
+     ],
+     "rows": [
+      [
+       "Numerator: exponentiate the score of the true context word o",
+       "분자: 진짜 문맥 단어 o 의 점수에 exp"
+      ],
+      [
+       "Denominator: normalize by the scores of EVERY word in the vocabulary",
+       "분모: 어휘의 모든 단어 점수로 정규화"
+      ],
+      [
+       "big scores stand out (max), small scores never hit zero (soft)",
+       "큰 점수는 두드러지고(max), 작은 점수도 0이 안 돼요(soft)"
+      ],
+      [
+       "that Σ over |V| ... will cause trouble soon",
+       "분모의 |V| 개 합이 곧 말썽을 부려요"
+      ]
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "점수 → exp → 확률",
+     "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 480 270\"><text class=\"tb b1\" x=\"110\" y=\"25\" font-size=\"15\" text-anchor=\"middle\">점수(내적)</text><text class=\"tb b3\" x=\"360\" y=\"25\" font-size=\"15\" text-anchor=\"middle\">확률(합 = 1)</text><text class=\"t b1\" x=\"20\" y=\"74\" font-size=\"14\" text-anchor=\"start\">banking</text><rect class=\"n3 b1\" x=\"85\" y=\"55\" width=\"110.0\" height=\"28\" rx=\"3\"/><text class=\"t b1\" x=\"203.0\" y=\"75\" font-size=\"14\" text-anchor=\"start\">2</text><line class=\"e2 b2\" x1=\"215\" y1=\"69\" x2=\"256.0\" y2=\"69.0\"/><polygon class=\"arrow b2\" points=\"265.0,69.0 256.0,64.0 256.0,74.0\"/><text class=\"tm b2\" x=\"240\" y=\"60\" font-size=\"12\" text-anchor=\"middle\">exp</text><rect class=\"n2 b3\" x=\"280\" y=\"55\" width=\"113.09096248171973\" height=\"28\" rx=\"3\"/><text class=\"t b3\" x=\"399.0909624817197\" y=\"75\" font-size=\"14\" text-anchor=\"start\">0.665</text><text class=\"t b1\" x=\"20\" y=\"144\" font-size=\"14\" text-anchor=\"start\">crises</text><rect class=\"n3 b1\" x=\"85\" y=\"125\" width=\"70.0\" height=\"28\" rx=\"3\"/><text class=\"t b1\" x=\"163.0\" y=\"145\" font-size=\"14\" text-anchor=\"start\">1</text><line class=\"e2 b2\" x1=\"215\" y1=\"139\" x2=\"256.0\" y2=\"139.0\"/><polygon class=\"arrow b2\" points=\"265.0,139.0 256.0,134.0 256.0,144.0\"/><text class=\"tm b2\" x=\"240\" y=\"130\" font-size=\"12\" text-anchor=\"middle\">exp</text><rect class=\"n2 b3\" x=\"280\" y=\"125\" width=\"41.603840079315596\" height=\"28\" rx=\"3\"/><text class=\"t b3\" x=\"327.6038400793156\" y=\"145\" font-size=\"14\" text-anchor=\"start\">0.245</text><text class=\"t b1\" x=\"20\" y=\"214\" font-size=\"14\" text-anchor=\"start\">pizza</text><rect class=\"n3 b1\" x=\"85\" y=\"195\" width=\"30.0\" height=\"28\" rx=\"3\"/><text class=\"t b1\" x=\"123.0\" y=\"215\" font-size=\"14\" text-anchor=\"start\">0</text><line class=\"e2 b2\" x1=\"215\" y1=\"209\" x2=\"256.0\" y2=\"209.0\"/><polygon class=\"arrow b2\" points=\"265.0,209.0 256.0,204.0 256.0,214.0\"/><text class=\"tm b2\" x=\"240\" y=\"200\" font-size=\"12\" text-anchor=\"middle\">exp</text><rect class=\"n2 b3\" x=\"280\" y=\"195\" width=\"15.30519743896468\" height=\"28\" rx=\"3\"/><text class=\"t b3\" x=\"301.3051974389647\" y=\"215\" font-size=\"14\" text-anchor=\"start\">0.090</text><text class=\"tm b3\" x=\"240\" y=\"262\" font-size=\"14\" text-anchor=\"middle\">exp 로 양수, 전체 합으로 나누면 확률 파이</text></svg>",
+     "caption": "banking, crises, pizza 의 점수 2, 1, 0 이 확률 0.665, 0.245, 0.090 이 돼요.",
+     "builds": 3
+    },
+    {
+     "kind": "check",
+     "q": "**소프트맥스(Softmax)** 결과를 모두 더하면?",
+     "choices": [
+      "0",
+      "1",
+      "어휘 크기",
+      "점수의 합"
+     ],
+     "a": 1,
+     "why": "전체 합으로 나눴으니 확률을 모두 더하면 1이에요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.061,
+       "y": 0.197,
+       "w": 0.529,
+       "h": 0.042,
+       "say": "내적은 아무 실수나 될 수 있어요 → 확률이 필요 → softmax."
+      },
+      {
+       "x": 0.693,
+       "y": 0.305,
+       "w": 0.271,
+       "h": 0.076,
+       "say": "(1) 내적이 o 와 c 의 비슷함을 비교해요. 내적이 클수록 확률도 커요."
+      },
+      {
+       "x": 0.018,
+       "y": 0.286,
+       "w": 0.229,
+       "h": 0.032,
+       "say": "(2) exp 는 모든 값을 양수로 만들어요."
+      },
+      {
+       "x": 0.532,
+       "y": 0.508,
+       "w": 0.079,
+       "h": 0.036,
+       "say": "(3) 정규화: 분모로 나눠 합을 1로."
+      },
+      {
+       "x": 0.061,
+       "y": 0.645,
+       "w": 0.718,
+       "h": 0.041,
+       "say": "분모: 어휘의 모든(EVERY) 단어 점수로 정규화해요 → 제대로 된 분포."
+      },
+      {
+       "x": 0.061,
+       "y": 0.756,
+       "w": 0.561,
+       "h": 0.041,
+       "say": "분모의 |V| 개 합을 기억하세요. 곧 말썽을 부려요."
+      }
+     ]
+    },
+    {
+     "kind": "formula",
+     "head": "소프트맥스로 쓴 P(o|c)",
+     "tex": "P(o \\mid c) = \\frac{\\exp(u_o^{\\top} v_c)}{\\sum_{w \\in V} \\exp(u_w^{\\top} v_c)}",
+     "parts": [
+      {
+       "sym": "u_o^{\\top} v_c",
+       "say": "진짜 이웃 o 의 u 벡터와 중심 c 의 v 벡터의 내적 점수."
+      },
+      {
+       "sym": "\\exp(\\cdot)",
+       "say": "e(약 2.718)의 거듭제곱. 음수를 넣어도 양수가 나와요."
+      },
+      {
+       "sym": "\\sum_{w \\in V}",
+       "say": "어휘 V 의 모든 단어 w 에 대해 더해요. 단어가 10만 개면 10만 번."
+      },
+      {
+       "sym": "u_w^{\\top} v_c",
+       "say": "어휘 속 단어 w 하나와 중심 c 의 점수."
+      },
+      {
+       "sym": "\\frac{\\ \\cdot\\ }{\\ \\cdot\\ }",
+       "say": "내 몫 ÷ 전체. 그래서 0~1 사이, 모두 더하면 1이에요."
+      }
+     ],
+     "whole": "진짜 이웃의 exp 점수를, 어휘 모든 단어의 exp 점수 합으로 나눈 몫이에요."
+    },
+    {
+     "kind": "steps",
+     "head": "손계산: 어휘 3개 소프트맥스",
+     "steps": [
+      "중심 into 의 v_c = (1, 0.5). u_banking = (1, 2), u_crises = (1, 0), u_pizza = (-1, 2)",
+      "(1) 내적 점수: banking 1×1 + 2×0.5 = 2, crises 1 + 0 = 1, pizza -1 + 1 = 0",
+      "(2) exp: e^2 ≈ 7.389, e^1 ≈ 2.718, e^0 = 1",
+      "(3) 합: 7.389 + 2.718 + 1 = 11.107",
+      "나누기: P(banking|into) ≈ 0.665, P(crises|into) ≈ 0.245, P(pizza|into) ≈ 0.090",
+      "확인: 0.665 + 0.245 + 0.090 = 1"
+     ],
+     "answer": "점수 2, 1, 0 → 확률 약 0.665, 0.245, 0.090. 점수 0인 pizza 도 0이 아니에요(soft).",
+     "given": "2차원 설명용 벡터, 어휘 3개"
+    },
+    {
+     "kind": "prof",
+     "when": "2주차 월요일 2교시",
+     "lines": [
+      "내적은 방향이 반대면 음수가 될 수 있는데 확률은 늘 양수여야 해서 exp 를 붙인다고 했어요.",
+      "exp 는 0~1 로 묶이지 않으니, 어휘 모든 단어와의 합으로 나눠 정규화해야 확률이 된대요.",
+      "soft 는 0이나 1이 절대 나오지 않는다는 뜻으로 보면 되고, 말썽은 분모: 이웃 6개를 계산하려고 어휘 10만 개와 모두 내적해야 한다고 했어요."
+     ]
+    },
+    {
+     "kind": "bg",
+     "src": "기초 다지기 6단원 소프트맥스와 교차 엔트로피",
+     "lines": [
+      "소프트맥스 = 점수마다 exp, 그다음 전체 합으로 나누기.",
+      "6단원 손계산과 같은 순서예요. 계산기로 e^2, e^1 을 구해 연습해 보세요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "실습 연결",
+     "items": [
+      "분모가 너무 비싼 문제를 푸는 방법이 바로 다음 쪽들의 네거티브 샘플링이에요.",
+      "실습 N2L p.19 의 negative=10 이 그 설정(가짜 이웃 10개)이에요. gensim 은 전체 소프트맥스 대신 이것을 써요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "점수가 (0, 0, 0) 인 단어 3개에 소프트맥스를 쓰면 각 확률은?",
+     "choices": [
+      "모두 0",
+      "모두 1",
+      "모두 1/3",
+      "모두 1/2"
+     ],
+     "a": 2,
+     "why": "e^0 = 1 이 세 개, 합 3. 각각 1/3 이에요."
+    },
+    {
+     "kind": "check",
+     "q": "소프트맥스 식에서 계산량이 가장 큰 부분은?",
+     "choices": [
+      "분자의 내적 하나",
+      "분모의 어휘 전체 합",
+      "exp 한 번"
+     ],
+     "a": 1,
+     "why": "분모는 어휘의 모든 단어와 내적해야 해서 |V| 번 계산해요. 슬라이드가 '곧 말썽' 이라 한 부분이에요."
+    },
+    {
+     "kind": "english",
+     "head": "답안 문장으로 외우기",
+     "en": "소프트맥스(Softmax)는 내적 점수 u_o^T v_c 에 지수함수를 취해 양수로 만들고, 어휘 전체 단어에 대한 지수 점수의 합으로 나누어 합이 1인 확률 P(o|c) 로 바꾼다.",
+     "ko": "내적 → exp → 정규화 세 단계.",
+     "tip": "큰 점수는 두드러지고(max) 작은 점수도 0이 되지 않는다(soft)."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "분모의 합은 창 안 이웃만이 아니라 **어휘 전체** 단어에 대해서예요.",
+      "소프트맥스는 가장 큰 값 하나만 고르는 max 가 아니에요. 모든 단어에 0보다 큰 확률을 줘요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 34,
+   "title": "파라미터 θ (The Parameters θ)",
+   "terms": [
+    "Parameter",
+    "Vocabulary",
+    "Center Word",
+    "Context Word",
+    "Loss Function"
+   ],
+   "pass1": [
+    {
+     "kind": "figure",
+     "head": "θ 는 두 개의 큰 표",
+     "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 480 270\"><text class=\"tb b1\" x=\"120\" y=\"25\" font-size=\"15\" text-anchor=\"middle\">중심 벡터 V</text><text class=\"tb b1\" x=\"360\" y=\"25\" font-size=\"15\" text-anchor=\"middle\">문맥 벡터 U</text><rect class=\"n2 b1\" x=\"30\" y=\"40\" width=\"180\" height=\"34\" rx=\"3\"/><text class=\"tl b1\" x=\"120\" y=\"63\" font-size=\"14\" text-anchor=\"middle\">v_aardvark</text><rect class=\"n3 b1\" x=\"270\" y=\"40\" width=\"180\" height=\"34\" rx=\"3\"/><text class=\"tl b1\" x=\"360\" y=\"63\" font-size=\"14\" text-anchor=\"middle\">u_aardvark</text><rect class=\"n2 b1\" x=\"30\" y=\"82\" width=\"180\" height=\"34\" rx=\"3\"/><text class=\"tl b1\" x=\"120\" y=\"105\" font-size=\"14\" text-anchor=\"middle\">v_a</text><rect class=\"n3 b1\" x=\"270\" y=\"82\" width=\"180\" height=\"34\" rx=\"3\"/><text class=\"tl b1\" x=\"360\" y=\"105\" font-size=\"14\" text-anchor=\"middle\">u_a</text><rect class=\"n2 b1\" x=\"30\" y=\"124\" width=\"180\" height=\"34\" rx=\"3\"/><text class=\"tl b1\" x=\"120\" y=\"147\" font-size=\"14\" text-anchor=\"middle\">v_...</text><rect class=\"n3 b1\" x=\"270\" y=\"124\" width=\"180\" height=\"34\" rx=\"3\"/><text class=\"tl b1\" x=\"360\" y=\"147\" font-size=\"14\" text-anchor=\"middle\">u_...</text><rect class=\"n2 b1\" x=\"30\" y=\"166\" width=\"180\" height=\"34\" rx=\"3\"/><text class=\"tl b1\" x=\"120\" y=\"189\" font-size=\"14\" text-anchor=\"middle\">v_zebra</text><rect class=\"n3 b1\" x=\"270\" y=\"166\" width=\"180\" height=\"34\" rx=\"3\"/><text class=\"tl b1\" x=\"360\" y=\"189\" font-size=\"14\" text-anchor=\"middle\">u_zebra</text><text class=\"tm b2\" x=\"120\" y=\"222\" font-size=\"14\" text-anchor=\"middle\">|V| 줄 × d 칸</text><text class=\"tm b2\" x=\"360\" y=\"222\" font-size=\"14\" text-anchor=\"middle\">|V| 줄 × d 칸</text><text class=\"tb b2\" x=\"240\" y=\"255\" font-size=\"16\" text-anchor=\"middle\">θ = 둘을 합친 전부: 2 × d × V 개 숫자</text></svg>",
+     "caption": "중심 벡터 표 V 와 문맥 벡터 표 U 를 합친 것이 θ 예요.",
+     "builds": 2
+    },
+    {
+     "kind": "say",
+     "lines": [
+      "학습이란 이 수천만 개 숫자를 J 가 줄어들 때까지 살짝살짝 고치는 일이에요."
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "points",
+     "head": "기호와 용어",
+     "items": [
+      "**파라미터(Parameter)** θ: 모든 u 와 v 를 한 줄로 쌓은 긴 벡터예요.",
+      "V(중심 벡터 표): 줄마다 단어 하나의 v. |V| 줄 × d 칸이에요.",
+      "U(문맥 벡터 표): 줄마다 단어 하나의 u. 역시 |V| 줄 × d 칸이에요.",
+      "d: 벡터 차원(칸 수), |V|: **어휘(Vocabulary)** 크기(단어 수)."
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "영어 문장 → 우리말 뜻",
+     "cols": [
+      "슬라이드 영어",
+      "우리말 뜻"
+     ],
+     "rows": [
+      [
+       "all u's and v's stacked into one long vector",
+       "모든 u 와 v 를 한 줄로 쌓은 긴 벡터"
+      ],
+      [
+       "2 × d × V real numbers",
+       "실수 2 × d × V 개"
+      ],
+      [
+       "\"Training a model\" = nudging these numbers until J goes down",
+       "'모델 학습' = J 가 내려갈 때까지 이 숫자들을 살짝씩 미는 것"
+      ]
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "θ 에 들어 있는 것은?",
+     "choices": [
+      "모든 단어의 u 벡터와 v 벡터",
+      "말뭉치 문장들",
+      "소프트맥스 확률들"
+     ],
+     "a": 0,
+     "why": "θ 는 학습으로 고치는 숫자 전부, 곧 V 표와 U 표예요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "그림 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.061,
+       "y": 0.197,
+       "w": 0.729,
+       "h": 0.042,
+       "say": "θ = 모든 u, v 를 한 줄로 쌓은 것. 2 × d × V 개 실수 (d=300, V=100k → 6천만)."
+      },
+      {
+       "x": 0.2,
+       "y": 0.305,
+       "w": 0.271,
+       "h": 0.457,
+       "say": "중심 벡터 표 V: aardvark 부터 zebra 까지 줄마다 v, 칸은 d 개."
+      },
+      {
+       "x": 0.486,
+       "y": 0.305,
+       "w": 0.264,
+       "h": 0.457,
+       "say": "문맥 벡터 표 U: 같은 단어들의 u. 역시 |V| × d."
+      },
+      {
+       "x": 0.763,
+       "y": 0.47,
+       "w": 0.091,
+       "h": 0.095,
+       "say": "Θ ∈ R^{2|V|×d}: 한 단어에 벡터 두 개, 각각 d 차원."
+      },
+      {
+       "x": 0.436,
+       "y": 0.755,
+       "w": 0.093,
+       "h": 0.044,
+       "say": "Θ = [V; U]: 두 표를 위아래로 붙인 것."
+      },
+      {
+       "x": 0.3,
+       "y": 0.86,
+       "w": 0.406,
+       "h": 0.038,
+       "say": "모델 학습 = J 가 내려갈 때까지 이 숫자들을 살짝씩 미는 것."
+      }
+     ]
+    },
+    {
+     "kind": "formula",
+     "head": "θ 의 모양과 크기",
+     "tex": "\\theta = [V;\\,U] \\in \\mathbb{R}^{2|V| \\times d}",
+     "parts": [
+      {
+       "sym": "V",
+       "say": "중심 벡터 표. 단어마다 v 한 줄, |V| 줄."
+      },
+      {
+       "sym": "U",
+       "say": "문맥 벡터 표. 단어마다 u 한 줄, |V| 줄."
+      },
+      {
+       "sym": "[V;\\,U]",
+       "say": "두 표를 위아래로 이어 붙여요."
+      },
+      {
+       "sym": "\\mathbb{R}^{2|V| \\times d}",
+       "say": "실수 표, 2|V| 줄 × d 칸. 숫자 개수는 2 × |V| × d."
+      }
+     ],
+     "whole": "θ 는 모든 단어의 v 와 u 를 쌓은 2|V| × d 표예요."
+    },
+    {
+     "kind": "steps",
+     "head": "손계산: 파라미터 개수",
+     "steps": [
+      "공식: 2 × d × V",
+      "작은 예: d = 3, V = 4 → 2 × 3 × 4 = 24개",
+      "슬라이드 예: d = 300, V = 100,000 → 2 × 300 × 100,000",
+      "= 60,000,000 (6천만 개)"
+     ],
+     "answer": "벡터 두 개(u, v) 때문에 2가 곱해져요. 단어 10만 개, 300차원이면 6천만 개예요."
+    },
+    {
+     "kind": "prof",
+     "when": "2주차 월요일 2교시",
+     "lines": [
+      "v 표(파란색) 하나만 있어도 룩업 테이블인데, u 를 따로 두는 기술을 써서 u 표(빨간색)도 생겼다고 했어요.",
+      "그래서 θ 는 어휘 × 차원의 2배가 되고, 두 개를 쓰는 건 수학적 편의를 위해서래요."
+     ]
+    },
+    {
+     "kind": "warn",
+     "head": "슬라이드 그림의 작은 오타",
+     "items": [
+      "문맥 벡터 표 U 의 맨 아래 zebra 줄 가운데 칸이 v_zebra,2 로 적혀 있어요. 같은 줄의 다른 칸처럼 u_zebra,2 가 맞아요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "실습 연결",
+     "items": [
+      "실습 N2L p.19 는 vector_size=100 이라 d = 100 이에요.",
+      "출력되는 'vocabulary size' 가 V 예요. 그 값을 넣으면 2 × 100 × V 개 숫자를 배우는 셈이에요(V 는 실행해서 확인)."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "d = 100, V = 20,000 일 때 word2vec 파라미터(u, v 모두) 개수는?",
+     "choices": [
+      "2,000,000",
+      "4,000,000",
+      "200,000",
+      "40,000"
+     ],
+     "a": 1,
+     "why": "2 × 100 × 20,000 = 4,000,000 이에요."
+    },
+    {
+     "kind": "english",
+     "head": "답안 문장으로 외우기",
+     "en": "word2vec 의 파라미터 θ 는 모든 단어의 중심 벡터 v 와 문맥 벡터 u 를 쌓은 것으로 2 × d × |V| 개의 실수이며, 학습은 손실 J 가 줄어들도록 이 숫자들을 조금씩 조정하는 것이다.",
+     "ko": "2 × d × V (d=300, V=100k → 6천만).",
+     "tip": "2 는 u, v 두 벡터 때문이에요."
+    }
+   ]
+  },
+  {
+   "p": 35,
+   "title": "학습: 경사 하강법 (Training, Gradient Descent)",
+   "terms": [
+    "Gradient Descent",
+    "Learning Rate",
+    "Gradient",
+    "Partial Derivative",
+    "Loss Function",
+    "Parameter"
+   ],
+   "pass1": [
+    {
+     "kind": "analogy",
+     "head": "안개 낀 산에서 발밑 기울기만 보고 내려가기",
+     "scene": "안개 때문에 골짜기가 안 보여요. 발밑이 어느 쪽으로 기울었는지만 보고, 내리막 쪽으로 한 걸음씩 걸어요.",
+     "map": [
+      [
+       "산의 높이",
+       "**손실 함수(Loss Function)** J(θ)"
+      ],
+      [
+       "발밑 기울기",
+       "**기울기(Gradient)** ∇J"
+      ],
+      [
+       "한 걸음의 보폭",
+       "**학습률(Learning Rate)** α"
+      ],
+      [
+       "골짜기 바닥",
+       "손실이 가장 작은 θ"
+      ]
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "한 걸음씩 내려가기",
+     "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 480 270\"><polyline class=\"e b1\" fill=\"none\" points=\"40.0,45.0 50.0,61.6 60.0,77.3 70.0,92.2 80.0,106.2 90.0,119.4 100.0,131.7 110.0,143.2 120.0,153.8 130.0,163.6 140.0,172.5 150.0,180.6 160.0,187.8 170.0,194.2 180.0,199.7 190.0,204.4 200.0,208.2 210.0,211.2 220.0,213.3 230.0,214.6 240.0,215.0 250.0,214.6 260.0,213.3 270.0,211.2 280.0,208.2 290.0,204.4 300.0,199.7 310.0,194.2 320.0,187.8 330.0,180.6 340.0,172.5 350.0,163.6 360.0,153.8 370.0,143.2 380.0,131.7 390.0,119.4 400.0,106.2 410.0,92.2 420.0,77.3 430.0,61.6 440.0,45.0\"/><text class=\"tm b1\" x=\"70\" y=\"262\" font-size=\"14\" text-anchor=\"middle\">파라미터 θ</text><text class=\"tm b1\" x=\"30\" y=\"30\" font-size=\"14\" text-anchor=\"start\">손실 J</text><circle class=\"n4 b1\" cx=\"420\" cy=\"68.29999999999998\" r=\"8\"/><text class=\"t b1\" x=\"406\" y=\"55.29999999999998\" font-size=\"14\" text-anchor=\"end\">지금 여기</text><line class=\"e2 b2\" x1=\"412\" y1=\"65.29999999999998\" x2=\"391.6\" y2=\"111.5\"/><polygon class=\"arrow b2\" points=\"388.0,119.7 396.2,113.5 387.1,109.4\"/><circle class=\"n2 b2\" cx=\"380\" cy=\"122.70000000000002\" r=\"8\"/><line class=\"e2 b3\" x1=\"372\" y1=\"119.70000000000002\" x2=\"357.2\" y2=\"148.2\"/><polygon class=\"arrow b3\" points=\"353.0,156.1 361.6,150.5 352.7,145.9\"/><circle class=\"n2 b3\" cx=\"345\" cy=\"159.14375\" r=\"8\"/><line class=\"e b3\" x1=\"240\" y1=\"245\" x2=\"240.0\" y2=\"231.0\"/><polygon class=\"arrow b3\" points=\"240.0,222.0 235.0,231.0 245.0,231.0\"/><text class=\"tb b3\" x=\"260\" y=\"258\" font-size=\"15\" text-anchor=\"start\">골짜기(손실 최소)</text><text class=\"t b2\" x=\"200\" y=\"90\" font-size=\"14\" text-anchor=\"middle\">발밑 기울기의 반대쪽으로</text><text class=\"t b2\" x=\"200\" y=\"112\" font-size=\"14\" text-anchor=\"middle\">보폭 α 만큼 한 걸음</text></svg>",
+     "caption": "기울기 반대쪽으로 보폭 α 만큼 걸으면 손실이 조금씩 줄어요.",
+     "builds": 3
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "points",
+     "head": "기호와 용어",
+     "items": [
+      "**경사 하강법(Gradient Descent)**: 기울기 반대 방향으로 조금씩 걸어 손실을 줄이는 방법이에요.",
+      "**기울기(Gradient)** ∇J: 파라미터 하나하나에 대한 **편미분(Partial Derivative)** 을 모은 벡터, '어느 쪽이 오르막인가' 예요.",
+      "**학습률(Learning Rate)** α: 한 걸음의 보폭이에요."
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "영어 문장 → 우리말 뜻",
+     "cols": [
+      "슬라이드 영어",
+      "우리말 뜻"
+     ],
+     "rows": [
+      [
+       "step in the direction opposite the gradient, a little at a time",
+       "기울기 반대 방향으로 조금씩 걸어요"
+      ],
+      [
+       "Too big: diverge. Too small: forever",
+       "너무 크면 발산, 너무 작으면 끝이 없어요"
+      ],
+      [
+       "\"which way is uphill\"",
+       "어느 쪽이 오르막인가"
+      ],
+      [
+       "THE one principle behind all neural network training",
+       "모든 신경망 학습 뒤에 있는 단 하나의 원리"
+      ]
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "**학습률(Learning Rate)** α 를 너무 크게 잡으면?",
+     "choices": [
+      "학습이 끝없이 오래 걸린다",
+      "골짜기를 지나쳐 튕겨 나가 발산할 수 있다",
+      "기울기가 0이 된다"
+     ],
+     "a": 1,
+     "why": "'Too big: diverge'. 너무 작으면 'forever' 예요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.061,
+       "y": 0.197,
+       "w": 0.621,
+       "h": 0.042,
+       "say": "J(θ) 를 내리고 싶어요 → 기울기 반대 방향으로 조금씩 걸어요."
+      },
+      {
+       "x": 0.275,
+       "y": 0.273,
+       "w": 0.439,
+       "h": 0.146,
+       "say": "업데이트 식: θ_new = θ_old - α ∇_θ J(θ)."
+      },
+      {
+       "x": 0.061,
+       "y": 0.476,
+       "w": 0.521,
+       "h": 0.042,
+       "say": "α = 학습률, 보폭. 너무 크면 발산, 너무 작으면 끝이 없어요."
+      },
+      {
+       "x": 0.061,
+       "y": 0.533,
+       "w": 0.461,
+       "h": 0.041,
+       "say": "∇J = 편미분들의 벡터, '어느 쪽이 오르막인가'."
+      },
+      {
+       "x": 0.061,
+       "y": 0.59,
+       "w": 0.7,
+       "h": 0.041,
+       "say": "모든 신경망 학습의 단 하나의 원리. GPT 도 정확히 이 한 줄로 학습해요."
+      },
+      {
+       "x": 0.061,
+       "y": 0.647,
+       "w": 0.546,
+       "h": 0.041,
+       "say": "전체 유도는 다음 주(신경망 기초) + 과제 A2 에서 손으로 해요."
+      }
+     ]
+    },
+    {
+     "kind": "formula",
+     "head": "경사 하강법 한 걸음",
+     "tex": "\\theta^{\\text{new}} = \\theta^{\\text{old}} - \\alpha\\, \\nabla_{\\theta} J(\\theta)",
+     "parts": [
+      {
+       "sym": "\\theta^{\\text{old}}",
+       "say": "지금 서 있는 곳, 현재 파라미터예요."
+      },
+      {
+       "sym": "\\nabla_{\\theta} J(\\theta)",
+       "say": "θ 에 대한 J 의 기울기. 오르막 방향을 가리켜요."
+      },
+      {
+       "sym": "-",
+       "say": "빼기: 오르막의 반대, 내리막으로 가요."
+      },
+      {
+       "sym": "\\alpha",
+       "say": "학습률. 한 걸음의 보폭(예 0.1)."
+      },
+      {
+       "sym": "\\theta^{\\text{new}}",
+       "say": "한 걸음 걸은 뒤의 새 파라미터. 보통 J 가 조금 줄어요."
+      }
+     ],
+     "whole": "지금 자리에서 기울기 반대쪽으로 α 만큼 걸어 새 자리로 가요."
+    },
+    {
+     "kind": "steps",
+     "head": "손계산: 한 걸음 (J(θ) = θ², 기울기 2θ)",
+     "steps": [
+      "지금 θ = 3, J = 9. 기울기 = 2 × 3 = 6 (오른쪽이 오르막)",
+      "α = 0.1: θ_new = 3 - 0.1 × 6 = 2.4, J = 5.76 (줄었어요)",
+      "α = 1.1 (너무 큼): θ_new = 3 - 1.1 × 6 = -3.6, J = 12.96 (오히려 커져 발산)",
+      "α = 0.001 (너무 작음): θ_new = 3 - 0.006 = 2.994 (거의 안 움직여요)"
+     ],
+     "answer": "알맞은 보폭이면 J 가 9 → 5.76 으로 줄어요. 보폭이 크면 발산, 작으면 끝이 없어요.",
+     "given": "J(θ) = θ² 는 바닥이 θ = 0 인 설명용 손실"
+    },
+    {
+     "kind": "prof",
+     "when": "2주차 월요일 2교시",
+     "lines": [
+      "기울기는 고차원 평면에서 다음 걸음 방향을 알려 주고, 그 방향으로 살짝 가면 새 θ 에서 J 가 더 작아진다는 게 경사 하강법이래요.",
+      "실제 손실 면은 예쁜 그릇 모양이 아니라 안장점, 극소점이 많아서 α 를 너무 크게 주면 안 된다고 했어요.",
+      "손실 함수를 아무리 잘 설계해도 항상 옳은 방향으로만 가는 건 아니라는 걸 알아 두라고 했어요."
+     ]
+    },
+    {
+     "kind": "bg",
+     "src": "기초 다지기 7단원 함수, 기울기, 미분 / 8단원 경사 하강법과 손실",
+     "lines": [
+      "x² 의 미분은 2x. 기울기가 양수면 오른쪽이 오르막이에요(7단원).",
+      "8단원의 '한 걸음 손계산' 과 같은 식이에요. 과제 2(A2)에서 손으로 유도해요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "J(θ) = θ², θ = 2, α = 0.25 일 때 한 걸음 뒤 θ 는?",
+     "choices": [
+      "1",
+      "1.5",
+      "3",
+      "0"
+     ],
+     "a": 0,
+     "why": "기울기 2θ = 4. θ_new = 2 - 0.25 × 4 = 1 이에요."
+    },
+    {
+     "kind": "english",
+     "head": "답안 문장으로 외우기",
+     "en": "경사 하강법(Gradient Descent)은 θ_new = θ_old - α∇J(θ) 로, 손실의 기울기 반대 방향으로 학습률 α 만큼 조금씩 이동하여 손실 함수를 줄인다. α 가 너무 크면 발산하고 너무 작으면 학습이 끝나지 않는다.",
+     "ko": "빼기(-) = 기울기 반대, α = 보폭.",
+     "tip": "'손실을 가장 줄이는 방향으로 학습' 이라는 교수님 강조와 이어져요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "식의 부호는 **마이너스**예요. 기울기는 오르막을 가리키니 빼야 내려가요.",
+      "∇J 는 숫자 하나가 아니라 파라미터 수만큼 긴 벡터예요(word2vec 이면 6천만 칸)."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 36,
+   "title": "확률적 경사 하강법 (Stochastic Gradient Descent)",
+   "terms": [
+    "Stochastic Gradient Descent (SGD)",
+    "Gradient Descent",
+    "Mini-batch",
+    "Gradient",
+    "Window",
+    "Corpus"
+   ],
+   "pass1": [
+    {
+     "kind": "figure",
+     "head": "한 번에 크게 vs 조금 보고 자주",
+     "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 480 270\"><circle class=\"e b1\" cx=\"130\" cy=\"150\" r=\"70\"/><circle class=\"e b1\" cx=\"130\" cy=\"150\" r=\"35\"/><circle class=\"e b1\" cx=\"360\" cy=\"150\" r=\"70\"/><circle class=\"e b1\" cx=\"360\" cy=\"150\" r=\"35\"/><text class=\"tb b1\" x=\"130\" y=\"30\" font-size=\"15\" text-anchor=\"middle\">경사 하강법</text><text class=\"tb b1\" x=\"360\" y=\"30\" font-size=\"15\" text-anchor=\"middle\">SGD</text><polyline class=\"e2 b2\" fill=\"none\" points=\"50.0,60.0 85.0,100.0 112.0,132.0 128.0,148.0\"/><circle class=\"n2 b2\" cx=\"50\" cy=\"60\" r=\"4\"/><circle class=\"n2 b2\" cx=\"85\" cy=\"100\" r=\"4\"/><circle class=\"n2 b2\" cx=\"112\" cy=\"132\" r=\"4\"/><circle class=\"n2 b2\" cx=\"128\" cy=\"148\" r=\"4\"/><polyline class=\"e2 b2\" fill=\"none\" points=\"280.0,60.0 300.0,95.0 322.0,88.0 330.0,125.0 352.0,118.0 348.0,142.0 365.0,146.0 356.0,155.0\"/><circle class=\"n4 b2\" cx=\"280\" cy=\"60\" r=\"4\"/><circle class=\"n4 b2\" cx=\"300\" cy=\"95\" r=\"4\"/><circle class=\"n4 b2\" cx=\"322\" cy=\"88\" r=\"4\"/><circle class=\"n4 b2\" cx=\"330\" cy=\"125\" r=\"4\"/><circle class=\"n4 b2\" cx=\"352\" cy=\"118\" r=\"4\"/><circle class=\"n4 b2\" cx=\"348\" cy=\"142\" r=\"4\"/><circle class=\"n4 b2\" cx=\"365\" cy=\"146\" r=\"4\"/><circle class=\"n4 b2\" cx=\"356\" cy=\"155\" r=\"4\"/><text class=\"tm b2\" x=\"130\" y=\"250\" font-size=\"13\" text-anchor=\"middle\">전체를 보고 드문드문 큰 걸음</text><text class=\"tm b2\" x=\"360\" y=\"250\" font-size=\"13\" text-anchor=\"middle\">조금 보고 자주, 삐뚤빼뚤</text></svg>",
+     "caption": "SGD 는 길이 삐뚤빼뚤해도 걸음을 훨씬 자주 걸어 빨리 가까이 가요.",
+     "builds": 2
+    },
+    {
+     "kind": "say",
+     "lines": [
+      "J 는 말뭉치 전체에 대한 합이라, 정확한 기울기 하나를 얻으려면 창 수십억 개를 다 봐야 해요.",
+      "그래서 창 몇 개만 보고 기울기를 어림해서 자주 걸어요. 이것이 **확률적 경사 하강법(SGD)** 예요."
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "points",
+     "head": "용어 뜻",
+     "items": [
+      "**확률적 경사 하강법(SGD)**: 전체 대신 몇 개 창으로 기울기를 어림하고 자주 걷는 방법이에요.",
+      "**미니배치(Mini-batch)**: 전체에서 뽑은 작은 묶음(몇 개 창)이에요.",
+      "stochastic(확률적): 매번 무작위로 뽑은 묶음을 쓰니 걸음마다 조금씩 흔들려요."
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "경사 하강법과 SGD",
+     "cols": [
+      "",
+      "**경사 하강법(Gradient Descent)**",
+      "**확률적 경사 하강법(SGD)**"
+     ],
+     "rows": [
+      [
+       "기울기 계산에 쓰는 데이터",
+       "말뭉치 전체",
+       "미니배치(창 몇 개)"
+      ],
+      [
+       "걸음 한 번의 비용",
+       "아주 비쌈",
+       "아주 쌈"
+      ],
+      [
+       "걸음 방향",
+       "정확",
+       "흔들림(noisy)"
+      ],
+      [
+       "걸음 횟수",
+       "드물게",
+       "자주"
+      ]
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "SGD 가 기울기를 어림할 때 쓰는 것은?",
+     "choices": [
+      "말뭉치 전체",
+      "미니배치(창 몇 개)",
+      "단어 하나의 철자"
+     ],
+     "a": 1,
+     "why": "'estimate the gradient from a few windows (a mini-batch)' 예요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.061,
+       "y": 0.197,
+       "w": 0.675,
+       "h": 0.042,
+       "say": "문제: J 는 말뭉치 전체의 합. 정확한 기울기 하나에 창 수십억 개를 봐야 해요."
+      },
+      {
+       "x": 0.061,
+       "y": 0.25,
+       "w": 0.6,
+       "h": 0.042,
+       "say": "해결, SGD: 창 몇 개(미니배치)로 기울기를 어림하고 자주 걸어요."
+      },
+      {
+       "x": 0.121,
+       "y": 0.393,
+       "w": 0.368,
+       "h": 0.362,
+       "say": "왼쪽: 경사 하강법. 전체 데이터로 한 걸음씩, 매끈한 길로 별(최소점)에 다가가요."
+      },
+      {
+       "x": 0.511,
+       "y": 0.393,
+       "w": 0.368,
+       "h": 0.362,
+       "say": "오른쪽: SGD. 미니배치로 빠른 걸음 여러 번, 길은 삐뚤빼뚤하지만 별 근처로 가요."
+      },
+      {
+       "x": 0.277,
+       "y": 0.86,
+       "w": 0.45,
+       "h": 0.038,
+       "say": "흔들려도 빠른 것이 정확하지만 느린 것을 이겨요. 모든 딥러닝의 기본값."
+      }
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "손계산: 미니배치로 기울기 어림하기",
+     "steps": [
+      "창 4개의 기울기가 각각 2, 4, 6, 8 이라 해요 (파라미터 하나짜리 설명용)",
+      "전체 기울기(경사 하강법): (2 + 4 + 6 + 8) / 4 = 5",
+      "미니배치 {2, 4}: 평균 3. 미니배치 {6, 8}: 평균 7 → 매번 조금 틀려요(흔들림)",
+      "그래도 두 어림의 평균은 (3 + 7) / 2 = 5 로 전체와 같아요",
+      "창 1,000,000개, 미니배치 100개면 한 바퀴에 걸음 1,000,000 / 100 = 10,000번 (경사 하강법은 1번)"
+     ],
+     "answer": "하나하나는 흔들려도 평균은 맞고, 같은 시간에 걸음을 1만 배 많이 걸어요.",
+     "given": "설명용 숫자"
+    },
+    {
+     "kind": "prof",
+     "when": "2주차 월요일 2교시",
+     "lines": [
+      "모든 파라미터에 대해 기울기를 구하는 건 너무 커서, 창 몇 개만 뽑아 미니배치 안의 기울기만 본다고 했어요.",
+      "오른쪽 빨간 길처럼 삐뚤삐뚤해도 확률적인 계산으로 결국 별 가까이 간다고 했어요.",
+      "최적화 방법 자체는 이 수업에서 자세히 다루지 않고, 머신러닝이나 딥러닝 수업에서 다룬다고 했어요."
+     ]
+    },
+    {
+     "kind": "bg",
+     "src": "기초 다지기 8단원 경사 하강법과 손실",
+     "lines": [
+      "8단원 끝의 '미니배치와 SGD' 를 같이 보면 좋아요.",
+      "미니배치 크기가 클수록 덜 흔들리지만 한 걸음이 비싸져요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "창 500,000개를 미니배치 50개씩 나누면 한 바퀴(전체 한 번)에 SGD 걸음은 몇 번?",
+     "choices": [
+      "50번",
+      "10,000번",
+      "500,000번",
+      "1번"
+     ],
+     "a": 1,
+     "why": "500,000 / 50 = 10,000번이에요."
+    },
+    {
+     "kind": "english",
+     "head": "답안 문장으로 외우기",
+     "en": "확률적 경사 하강법(SGD)은 말뭉치 전체 대신 몇 개의 창으로 이루어진 미니배치(Mini-batch)로 기울기를 추정하여 자주 업데이트하는 방법으로, 경로는 흔들리지만 훨씬 빠르게 최소점 근처에 도달한다.",
+     "ko": "미니배치, 추정, 자주, 흔들려도 빠름.",
+     "tip": "'Noisy but fast beats exact but slow'."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "SGD 도 업데이트 식은 경사 하강법과 같아요. 다른 것은 기울기를 **어디서** 계산하느냐(전체 vs 미니배치)뿐이에요.",
+      "'확률적' 은 결과가 확률이라는 뜻이 아니라, 무작위로 뽑은 일부를 쓴다는 뜻이에요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 37,
+   "title": "기울기: 아름다운 한 줄 (The Gradient, One Beautiful Line)",
+   "terms": [
+    "Gradient",
+    "Chain Rule",
+    "Partial Derivative",
+    "Softmax",
+    "Center Word",
+    "Context Word"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "중심 벡터 v_c 를 어느 쪽으로 고칠지 알려 주는 **기울기(Gradient)** 가 딱 한 줄로 나와요.",
+      "'실제로 본 이웃' 빼기 '모델이 예상한 이웃'. 이 차이만큼 고쳐요.",
+      "예상이 맞으면 거의 안 고치고, 크게 틀리면 크게 고쳐요. 배움 = 놀람 줄이기예요."
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "본 것과 예상한 것",
+     "cols": [
+      "",
+      "뜻",
+      "기호"
+     ],
+     "rows": [
+      [
+       "observed(본 것)",
+       "실제로 나온 이웃 단어의 벡터",
+       "u_o"
+      ],
+      [
+       "expected(예상한 것)",
+       "모델이 확률로 예상한 이웃 벡터의 평균",
+       "∑ P(w|c) u_w"
+      ]
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "points",
+     "head": "기호와 용어",
+     "items": [
+      "∂/∂v_c: v_c 에 대한 **편미분(Partial Derivative)**. 'v_c 를 조금 바꾸면 log P 가 얼마나 변하나' 예요.",
+      "observed(관측): 실제로 창 안에 있던 이웃 o 의 벡터 u_o.",
+      "expected(기대): **소프트맥스(Softmax)** 확률로 가중 평균한 모든 단어의 u_w.",
+      "**연쇄 법칙(Chain Rule)**: 겹친 함수를 미분하는 규칙. 맞물린 톱니바퀴처럼 몇 줄이면 유도돼요."
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "observed - expected",
+     "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 480 270\"><line class=\"e b1\" x1=\"20\" y1=\"245\" x2=\"460\" y2=\"245\"/><line class=\"e b1\" x1=\"70\" y1=\"15\" x2=\"70\" y2=\"260\"/><line class=\"e2 b1\" x1=\"70\" y1=\"245\" x2=\"166.0\" y2=\"53.0\"/><polygon class=\"arrow b1\" points=\"170.0,45.0 161.5,50.8 170.4,55.3\"/><text class=\"t b1\" x=\"180.0\" y=\"50.0\" font-size=\"14\" text-anchor=\"start\">observed = u_banking (1, 2)</text><line class=\"e b2\" x1=\"70\" y1=\"245\" x2=\"147.7\" y2=\"101.9\"/><polygon class=\"arrow b2\" points=\"152.0,93.9 143.3,99.5 152.1,104.2\"/><text class=\"t b2\" x=\"165.99388536592392\" y=\"113.94569421095954\" font-size=\"14\" text-anchor=\"start\">expected (0.820, 1.511)</text><line class=\"e2 b3\" x1=\"151.99388536592392\" y1=\"93.94569421095954\" x2=\"166.9\" y2=\"53.4\"/><polygon class=\"arrow b3\" points=\"170.0,45.0 162.2,51.7 171.6,55.2\"/><text class=\"tb b3\" x=\"330\" y=\"150\" font-size=\"15\" text-anchor=\"middle\">차이 (0.180, 0.489)</text><text class=\"tm b3\" x=\"330\" y=\"172\" font-size=\"14\" text-anchor=\"middle\">이만큼 v_c 를 밀어요</text></svg>",
+     "caption": "실제 본 벡터와 예상 평균 벡터의 차이가 v_c 를 밀 방향이에요(p.33 손계산 숫자).",
+     "builds": 3
+    },
+    {
+     "kind": "check",
+     "q": "예상(expected)이 본 것(observed)과 거의 같으면 기울기는?",
+     "choices": [
+      "아주 크다",
+      "거의 0이다",
+      "음수가 된다"
+     ],
+     "a": 1,
+     "why": "차이가 거의 없으니 고칠 것도 거의 없어요. 이미 잘 맞히고 있다는 뜻이에요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.061,
+       "y": 0.197,
+       "w": 0.6,
+       "h": 0.042,
+       "say": "log P(o|c) 를 중심 벡터 v_c 로 미분해요(연쇄 법칙 몇 줄)."
+      },
+      {
+       "x": 0.146,
+       "y": 0.266,
+       "w": 0.682,
+       "h": 0.171,
+       "say": "∂/∂v_c log P(o|c) = u_o - ∑ P(w|c) u_w = observed - expected."
+      },
+      {
+       "x": 0.061,
+       "y": 0.489,
+       "w": 0.489,
+       "h": 0.042,
+       "say": "observed: 실제로 본 문맥 단어의 벡터 u_o."
+      },
+      {
+       "x": 0.061,
+       "y": 0.543,
+       "w": 0.468,
+       "h": 0.041,
+       "say": "expected: 모델의 평균 문맥 벡터 ∑ P(w|c) u_w."
+      },
+      {
+       "x": 0.061,
+       "y": 0.603,
+       "w": 0.725,
+       "h": 0.042,
+       "say": "본 것과 예상한 것의 차이만큼 고쳐요. 배움 = 놀람 줄이기."
+      },
+      {
+       "x": 0.246,
+       "y": 0.86,
+       "w": 0.511,
+       "h": 0.038,
+       "say": "observed - expected: 앞으로 훈련할 모든 분류기에서 다시 나오는 모양."
+      }
+     ]
+    },
+    {
+     "kind": "formula",
+     "head": "중심 벡터에 대한 기울기",
+     "tex": "\\frac{\\partial}{\\partial v_c} \\log P(o \\mid c) = u_o - \\sum_{w \\in V} P(w \\mid c)\\, u_w",
+     "parts": [
+      {
+       "sym": "\\frac{\\partial}{\\partial v_c}",
+       "say": "v_c 로 편미분. v_c 칸들을 조금씩 바꿀 때의 변화율 벡터."
+      },
+      {
+       "sym": "\\log P(o \\mid c)",
+       "say": "진짜 이웃 o 를 맞힐 확률의 로그(소프트맥스로 계산)."
+      },
+      {
+       "sym": "u_o",
+       "say": "observed. 실제 본 이웃의 문맥 벡터."
+      },
+      {
+       "sym": "P(w \\mid c)",
+       "say": "모델이 단어 w 가 이웃일 거라 본 확률(소프트맥스)."
+      },
+      {
+       "sym": "\\sum_{w \\in V} P(w \\mid c)\\, u_w",
+       "say": "expected. 확률을 가중치로 한 모든 u_w 의 평균."
+      }
+     ],
+     "whole": "기울기 = 실제 본 이웃 벡터 - 모델이 예상한 평균 이웃 벡터."
+    },
+    {
+     "kind": "steps",
+     "head": "손계산: 기울기 한 번, 한 걸음 (p.33 숫자 이어서)",
+     "steps": [
+      "확률: P(banking) = 0.665, P(crises) = 0.245, P(pizza) = 0.090. 실제 이웃 o = banking",
+      "expected = 0.665×(1, 2) + 0.245×(1, 0) + 0.090×(-1, 2) ≈ (0.820, 1.511)",
+      "observed = u_banking = (1, 2)",
+      "기울기 = (1 - 0.820, 2 - 1.511) ≈ (0.180, 0.489)",
+      "손실 J = -log P 이니 ∇J = -(기울기). α = 0.5 로 v_c 새 값 = (1, 0.5) + 0.5 × (0.180, 0.489) ≈ (1.090, 0.745)",
+      "새 점수 banking ≈ 2.579 → P(banking) 이 0.665 에서 약 0.747 로 올라요"
+     ],
+     "answer": "한 걸음에 P(banking|into) 가 0.665 → 0.747, 벌점 -log P 는 0.408 → 0.292 로 줄었어요.",
+     "given": "v_c = (1, 0.5), u_banking = (1, 2), u_crises = (1, 0), u_pizza = (-1, 2)"
+    },
+    {
+     "kind": "prof",
+     "when": "2주차 월요일 2교시",
+     "lines": [
+      "미분 유도는 수업에서 하지 않지만 집에서 해 보면 어렵지 않고, 연쇄 법칙을 몇 번 쓰면 쉽게 된다고 했어요.",
+      "예상한 단어와 실제 단어가 같으면 그 방향 기울기는 거의 없고(이미 잘했으니까), 전혀 다른 단어가 나오면 '와우 포인트' 라 기울기가 크대요.",
+      "이 observed 빼기 expected 가 사실상 딥러닝의 기본이라고 했어요."
+     ]
+    },
+    {
+     "kind": "bg",
+     "src": "기초 다지기 7단원 함수, 기울기, 미분",
+     "lines": [
+      "연쇄 법칙 맛보기: 겉함수 미분 × 속함수 미분. 맞물린 톱니바퀴처럼 이어져요.",
+      "log 의 미분은 1/x, exp 의 미분은 exp 자신이에요. 이 둘과 연쇄 법칙이면 이 한 줄이 나와요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "과제와 이어지는 부분",
+     "items": [
+      "슬라이드: 'You derive the full thing in A2'. 이 식의 전체 유도는 과제 2(A2)에서 손으로 해요.",
+      "다음 주(3주차) 신경망 기초의 역전파, 연쇄 법칙과 바로 이어져요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "기울기 식 u_o - ∑ P(w|c) u_w 에서 ∑ P(w|c) u_w 를 부르는 이름은?",
+     "choices": [
+      "observed",
+      "expected",
+      "learning rate",
+      "likelihood"
+     ],
+     "a": 1,
+     "why": "모델이 확률로 예상한 평균 문맥 벡터, expected 예요."
+    },
+    {
+     "kind": "check",
+     "q": "u_o = (1, 2), 모델의 expected = (1, 2) 이면 v_c 에 대한 기울기는?",
+     "choices": [
+      "(1, 2)",
+      "(0, 0)",
+      "(2, 4)",
+      "(-1, -2)"
+     ],
+     "a": 1,
+     "why": "observed - expected = (0, 0). 이미 정확히 예상해서 고칠 게 없어요."
+    },
+    {
+     "kind": "english",
+     "head": "답안 문장으로 외우기",
+     "en": "log P(o|c) 를 v_c 로 미분하면 u_o - ∑_w P(w|c) u_w, 즉 관측한 문맥 벡터(observed)에서 기대한 평균 문맥 벡터(expected)를 뺀 값이며, 학습은 이 차이를 줄인다.",
+     "ko": "observed - expected 한 줄.",
+     "tip": "과제 A2 에서 연쇄 법칙으로 직접 유도해요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "이 식은 log P 의 기울기예요. 손실 J = -log P 를 줄이려면 부호가 반대라서, 결국 v_c 에 (observed - expected) 를 α 배 **더해요**.",
+      "∑ 는 창 안 이웃이 아니라 어휘 전체 w 에 대해서예요(소프트맥스 분모와 같은 범위)."
+     ]
+    }
+   ]
+  }
+ ]
+}

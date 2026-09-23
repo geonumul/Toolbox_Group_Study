@@ -11,7 +11,8 @@ window.SDT_ACCESS = {
     {slug: "modern-space-design", key: "archhist_v2", name: "근현대 공간디자인"},
     {slug: "interior-construction", key: "sdt_interior_v1", name: "실내디자인시공과실무"},
     {slug: "iot-smart-home", key: "sdt_iot_v1", name: "IoT 스마트홈"},
-    {slug: "eco-architecture", key: "sdt_eco_v1", name: "친환경건축"}
+    {slug: "eco-architecture", key: "sdt_eco_v1", name: "친환경건축"},
+    {slug: "signals-systems", key: "sdt_sigsys_v1", name: "신호및시스템"}
   ],
   plans: [
     {kind: "subject", name: "과목별 이용권", desc: "과목 하나를 60일 동안 열어요. 중간고사나 기말고사 하나를 준비하기에 맞아요.", days: 60, price: "6,900원"},

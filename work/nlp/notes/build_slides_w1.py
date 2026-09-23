@@ -1,0 +1,273 @@
+# -*- coding: utf-8 -*-
+"""1주차 정리 슬라이드 (N1 강의 소개와 자연어처리의 역사) -> slides_w1.json"""
+import json, pathlib
+
+W = pathlib.Path(__file__).resolve().parent
+assert 5 + 40 + 25 + 30 == 100 and 25 + 30 == 55
+
+
+def T(ko, en, say, more=""):
+    d = {"ko": ko, "en": en, "say": say}
+    if more:
+        d["more"] = more
+    return d
+
+
+def title(big, sub): return {"kind": "title", "big": big, "sub": sub}
+def goal(*items): return {"kind": "goal", "items": list(items)}
+def pts(head, *items): return {"kind": "points", "head": head, "items": list(items)}
+def ana(head, scene, pairs): return {"kind": "analogy", "head": head, "scene": scene, "map": [list(p) for p in pairs]}
+def fig(head, svg, caption, builds): return {"kind": "figure", "head": head, "svg": svg, "caption": caption, "builds": builds}
+def cmp_(head, cols, rows): return {"kind": "compare", "head": head, "cols": cols, "rows": rows}
+def check(q, choices, a, why): return {"kind": "check", "q": q, "choices": choices, "a": a, "why": why}
+def warn(head, *items): return {"kind": "warn", "head": head, "items": list(items)}
+def recap(*items): return {"kind": "recap", "items": list(items)}
+def eng(head, en, ko, tip=None):
+    d = {"kind": "english", "head": head, "en": en, "ko": ko}
+    if tip:
+        d["tip"] = tip
+    return d
+def steps(head, st, answer, given=None):
+    d = {"kind": "steps", "head": head, "steps": st, "answer": answer}
+    if given:
+        d["given"] = given
+    return d
+
+
+SVG_GRADE = ('<svg viewBox="0 0 480 270" xmlns="http://www.w3.org/2000/svg">'
+             '<rect class="box" x="20" y="40" width="440" height="60" rx="2"/>'
+             '<rect class="n b1" x="20" y="40" width="22" height="60"/>'
+             '<rect class="n2 b2" x="42" y="40" width="176" height="60"/>'
+             '<rect class="n3 b3" x="218" y="40" width="110" height="60"/>'
+             '<rect class="n4 b4" x="328" y="40" width="132" height="60"/>'
+             '<text class="t b1" x="31" y="125" font-size="14" text-anchor="middle">5%</text>'
+             '<text class="tb b2" x="130" y="76" font-size="16" text-anchor="middle">과제 40%</text>'
+             '<text class="tb b3" x="273" y="76" font-size="16" text-anchor="middle">팀 프로젝트 25%</text>'
+             '<text class="tb b4" x="394" y="76" font-size="16" text-anchor="middle">기말 30%</text>'
+             '<text class="tm b1" x="31" y="145" font-size="14" text-anchor="middle">출석</text>'
+             '<line class="e2 b4" x1="218" y1="170" x2="460" y2="170"/>'
+             '<text class="t b4" x="339" y="200" font-size="15" text-anchor="middle">팀 프로젝트 + 기말 = 55%</text>'
+             '<text class="tm b4" x="240" y="245" font-size="14" text-anchor="middle">중간고사 없음, 8주차는 프로젝트 제안 발표</text>'
+             '</svg>')
+SVG_NLU = ('<svg viewBox="0 0 480 270" xmlns="http://www.w3.org/2000/svg">'
+           '<rect class="box" x="10" y="95" width="120" height="70" rx="2"/><text class="tb" x="70" y="126" font-size="15" text-anchor="middle">글 (TEXT)</text>'
+           '<text class="tm" x="70" y="148" font-size="13" text-anchor="middle">내일 부산 KTX 몇 시?</text>'
+           '<rect class="n2 b1" x="180" y="95" width="120" height="70" rx="2"/><text class="tl b1" x="240" y="126" font-size="15" text-anchor="middle">뜻 (MEANING)</text>'
+           '<text class="tl b1" x="240" y="148" font-size="12" text-anchor="middle">의도, 목적지, 날짜</text>'
+           '<line class="e2 b1" x1="130" y1="115" x2="178" y2="115"/><polygon class="arrow b1" points="178,115 170,110 170,120"/>'
+           '<text class="t b1" x="155" y="85" font-size="14" text-anchor="middle">NLU</text>'
+           '<rect class="box b2" x="350" y="95" width="120" height="70" rx="2"/><text class="tb b2" x="410" y="126" font-size="15" text-anchor="middle">글 (TEXT)</text>'
+           '<text class="tm b2" x="410" y="148" font-size="12" text-anchor="middle">첫 KTX 는 05:13</text>'
+           '<line class="e2 b2" x1="300" y1="145" x2="348" y2="145"/><polygon class="arrow b2" points="348,145 340,140 340,150"/>'
+           '<text class="t b2" x="325" y="185" font-size="14" text-anchor="middle">NLG</text>'
+           '<text class="tm" x="240" y="235" font-size="14" text-anchor="middle">이해해서 들어오고, 생성해서 나가요</text></svg>')
+SVG_AMB = ('<svg viewBox="0 0 480 270" xmlns="http://www.w3.org/2000/svg">'
+           '<rect class="n2" x="190" y="20" width="100" height="50" rx="2"/><text class="tl" x="240" y="52" font-size="20" text-anchor="middle">배</text>'
+           '<line class="e b1" x1="240" y1="70" x2="90" y2="150"/><line class="e b2" x1="240" y1="70" x2="240" y2="150"/><line class="e b3" x1="240" y1="70" x2="390" y2="150"/>'
+           '<rect class="box b1" x="40" y="150" width="100" height="44" rx="2"/><text class="t b1" x="90" y="178" font-size="16" text-anchor="middle">먹는 배</text>'
+           '<rect class="box b2" x="190" y="150" width="100" height="44" rx="2"/><text class="t b2" x="240" y="178" font-size="16" text-anchor="middle">타는 배</text>'
+           '<rect class="box b3" x="340" y="150" width="100" height="44" rx="2"/><text class="t b3" x="390" y="178" font-size="16" text-anchor="middle">몸의 배</text>'
+           '<text class="tm b3" x="240" y="240" font-size="14" text-anchor="middle">같은 글자, 여러 뜻: 중의성(Ambiguity)</text></svg>')
+SVG_MORPH = ('<svg viewBox="0 0 480 270" xmlns="http://www.w3.org/2000/svg">'
+             '<rect class="n2" x="150" y="30" width="180" height="50" rx="2"/><text class="tl" x="240" y="62" font-size="20" text-anchor="middle">먹었겠더라</text>'
+             '<rect class="box b1" x="30" y="150" width="90" height="44" rx="2"/><text class="t b1" x="75" y="178" font-size="17" text-anchor="middle">먹-</text>'
+             '<rect class="box b1" x="140" y="150" width="90" height="44" rx="2"/><text class="t b1" x="185" y="178" font-size="17" text-anchor="middle">-었-</text>'
+             '<rect class="box b1" x="250" y="150" width="90" height="44" rx="2"/><text class="t b1" x="295" y="178" font-size="17" text-anchor="middle">-겠-</text>'
+             '<rect class="box b1" x="360" y="150" width="90" height="44" rx="2"/><text class="t b1" x="405" y="178" font-size="17" text-anchor="middle">-더라</text>'
+             '<line class="e b1" x1="240" y1="80" x2="75" y2="150"/><line class="e b1" x1="240" y1="80" x2="185" y2="150"/>'
+             '<line class="e b1" x1="240" y1="80" x2="295" y2="150"/><line class="e b1" x1="240" y1="80" x2="405" y2="150"/>'
+             '<text class="tm b2" x="240" y="235" font-size="14" text-anchor="middle">한 어절 = 형태소 네 개가 붙은 것 (교착어)</text></svg>')
+
+
+def timeline(hi):
+    names = ["규칙", "통계", "word2vec", "seq2seq", "트랜스포머", "LLM"]
+    years = ["1950s", "1990s", "2013", "2014", "2017", "2020"]
+    s = '<svg viewBox="0 0 480 270" xmlns="http://www.w3.org/2000/svg"><line class="e" x1="30" y1="130" x2="450" y2="130"/>'
+    for i, (n, y) in enumerate(zip(names, years)):
+        x = 40 + i * 80
+        cls = "n2" if i in hi else "n"
+        s += f'<circle class="{cls} b{1 if i < 3 else 2}" cx="{x}" cy="130" r="12"/>'
+        s += f'<text class="tb b{1 if i < 3 else 2}" x="{x}" y="{95 if i % 2 else 175}" font-size="15" text-anchor="middle">{n}</text>'
+        s += f'<text class="tm b{1 if i < 3 else 2}" x="{x}" y="{75 if i % 2 else 195}" font-size="13" text-anchor="middle">{y}</text>'
+    s += '<text class="tm b2" x="240" y="250" font-size="14" text-anchor="middle">사람이 적는 지식은 줄고, 데이터에서 배우는 것은 늘어요</text></svg>'
+    return s
+
+
+U = []
+
+# ---------------- w1-1
+t = [T("자연어처리", "Natural Language Processing (NLP)", "컴퓨터가 사람 말(글)을 처리하고, 이해하고, 만들어 내게 하는 분야예요."),
+     T("과제", "Programming Assignment", "파이썬, PyTorch 로 직접 구현하는 프로그래밍 과제예요. 성적의 40%예요."),
+     T("텀 프로젝트", "Term Project", "팀으로 하는 학기 프로젝트. 8주차에 제안, 학기 말에 결과와 보고서예요."),
+     T("기말고사", "Final Exam", "16주차 시험. 성적의 30%예요.")]
+U.append({"id": "w1-1", "title": "강의 운영과 평가", "goal": "이 과목이 무엇을 배우고, 성적을 어떻게 매기는지 말할 수 있어요.", "terms": t, "slides": [
+    title("강의 운영과 평가", "자연어처리(NLP) 한 학기 지도"),
+    goal("한 학기에 무엇을 배우는지", "성적 비율 네 가지", "중간고사가 없는 대신 무엇을 하는지"),
+    ana("한 학기를 여행으로", "토큰이라는 첫 정류장에서 출발해 LLM 시스템을 만들고 평가하는 종점까지 가는 여행이에요.",
+        [("첫 정류장", "토큰이 뭘까 (2주차)"), ("중간 큰 역", "어텐션과 트랜스포머 (4주차)"), ("종점", "LLM 시스템 만들고 평가하기")]),
+    pts("과목 한눈에 (N1 p.4)", "**자연어처리(Natural Language Processing (NLP))**, 전공선택 3학점, 월요일 7~9교시", "이론 + 실습(Colab, PyTorch, Hugging Face)",
+        "토큰화부터 트랜스포머, LLM 학습, RAG, 에이전트까지", "필요한 것: 편하게 쓰는 파이썬. 신경망은 수업에서 쌓아 가요"),
+    pts("네 덩어리 (N1 p.5)", "W1~4 기초: 토큰, 벡터, 어텐션, 트랜스포머", "W5~7 LLM 학습: 사전 학습, 사후 학습, 정렬", "W9~11 적응과 시스템: PEFT, RAG, 에이전트", "W12~14 평가와 최전선: 벤치마크, 추론, 한국어 NLP"),
+    pts("강의 목표 네 가지", "**자연어처리** 의 기본 개념과 방법 이해", "어텐션, 트랜스포머, 언어 모델 학습 이해", "Python, PyTorch, Hugging Face 로 구현하고 미세 조정", "한국어와 다국어를 위한 믿을 만한 NLP 시스템 설계와 평가"),
+    fig("성적 네 조각 (N1 p.8)", SVG_GRADE, "출석 5, **과제** 40, **텀 프로젝트** 25, **기말고사** 30", 4),
+    steps("합쳐 보기", ["5 + 40 + 25 + 30 = 100", "**텀 프로젝트** 25 + **기말고사** 30 = 55"], "교수님: **과제** 40% 보다 55% 쪽을 더 신경 써 달라"),
+    pts("일정 (N1 p.6)", "중간고사 없음: 8주차는 **텀 프로젝트** 제안 발표", "16주차 **기말고사**", "휴강 한 주는 15주차 보강주에 채워요"),
+    pts("교재와 도구 (N1 p.7)", "주교재: 트랜스포머를 활용한 자연어 처리 (Hugging Face 팀)", "부교재: 밑바닥부터 만들면서 배우는 LLM", "무료: Jurafsky & Martin 3판, Stanford CS224N", "실습은 모두 Colab (무료 GPU)"),
+    warn("규칙과 헷갈리는 점", "AI 도구(ChatGPT, Claude)는 써도 되지만 썼다고 밝히고 내 말로 써요.", "슬라이드 표는 휴강을 6주차에, 아래 문구는 W5 라고 적어 서로 달라요. 공지를 확인해요.",
+         "**과제** 는 40% 로 한 항목 중 가장 크지만, 교수님은 팀 프로젝트와 기말 합 55% 를 강조했어요."),
+    check("이 과목에 없는 것은?", ["중간고사", "기말고사", "텀 프로젝트", "프로그래밍 과제"], 0, "중간고사 대신 8주차에 **텀 프로젝트** 제안을 해요."),
+    check("성적에서 가장 큰 한 항목은?", ["프로그래밍 **과제** 40%", "**기말고사** 30%", "**텀 프로젝트** 25%", "출석 5%"], 0, "한 항목으로는 과제 40% 가 가장 커요. 다만 팀 프로젝트와 기말을 합치면 55% 예요."),
+    eng("외워 둘 한 줄", "평가는 출석 5%, 프로그래밍 과제 40%, 텀 프로젝트 25%, 기말고사 30% 이고 중간고사는 없다.", "8주차는 텀 프로젝트 제안 발표예요."),
+    recap("**자연어처리** 한 학기: 토큰에서 LLM 시스템까지", "성적: 5 / 40 / 25 / 30, 중간고사 없음", "교수님: 텀 프로젝트와 기말 55% 를 신경 써요",
+          "오늘의 용어: 자연어처리(NLP), 과제(Programming Assignment), 텀 프로젝트(Term Project), 기말고사(Final Exam)"),
+]})
+
+# ---------------- w1-2
+t = [T("자연어처리", "Natural Language Processing (NLP)", "컴퓨터가 사람 말(글)을 처리하고, 이해하고, 만들어 내게 하는 분야예요."),
+     T("자연어", "Natural Language", "사람이 자라면서 쓰는 말. 한국어, 영어 같은 것이에요. 파이썬 같은 인공 언어는 아니에요."),
+     T("자연어 이해", "Natural Language Understanding (NLU)", "글이 들어와서 그 뜻(의도, 대상, 사실)을 알아내는 쪽이에요."),
+     T("자연어 생성", "Natural Language Generation (NLG)", "뜻에서 새 글을 만들어 내는 쪽이에요. 요약, 번역, 대답 같은 것이에요."),
+     T("분류", "Classification", "글을 보고 정해진 라벨 하나를 붙이는 일. 스팸, 감정 분석 같은 것이에요."),
+     T("대규모 언어 모델", "Large Language Model (LLM)", "아주 많은 글로 학습한 큰 언어 모델. ChatGPT, Claude 같은 것이에요.")]
+U.append({"id": "w1-2", "title": "자연어처리란: 이해와 생성", "goal": "NLP 의 정의와 NLU, NLG 를 구별하고, 주요 과제 종류를 말할 수 있어요.", "terms": t, "slides": [
+    title("자연어처리란", "글에서 뜻으로, 뜻에서 글로"),
+    goal("**자연어(Natural Language)** 가 무엇인지", "**NLU** 와 **NLG** 의 차이", "NLP 과제 다섯 가지"),
+    pts("정의 (N1 p.10)", "**자연어** = 사람이 자라며 쓰는 말(한국어, 영어). 파이썬이나 논리식은 아니에요",
+        "**자연어처리(NLP)** = 컴퓨터가 사람 말을 처리, 이해, 생성하게 하는 것", "언어를 잘 다루는 기계는 똑똑해 보여요. 그래서 NLP 가 AI 의 중심이에요"),
+    ana("통역사 두 명", "손님 말을 듣고 무엇을 원하는지 알아채는 직원(이해)과, 알아낸 답을 손님 말로 전해 주는 직원(생성)이 한 팀이에요.",
+        [("알아채는 직원", "**자연어 이해(NLU)**"), ("전해 주는 직원", "**자연어 생성(NLG)**"), ("한 팀", "하나의 **자연어처리** 분야")]),
+    fig("NLU 는 들어오고, NLG 는 나가요", SVG_NLU, "내일 부산 가는 KTX 몇 시야? → 의도=열차 시간, 목적지=부산, 날짜=내일 → 내일 부산행 첫 KTX 는 05:13 입니다", 2),
+    cmp_("둘을 나란히", ["", "NLU", "NLG"], [["방향", "글 → 뜻", "뜻 → 글"], ["하는 일", "분류, 추출, 검색, 답 찾기", "쓰기, 요약, 응답 (**자연어 생성**)"], ["예", "질문에서 목적지 뽑기", "열차 시간 안내문 쓰기"]]),
+    pts("하루 동안 쓰는 NLP (N1 p.11)", "07:30 키보드 자동 완성과 오타 고침", "10:00 스팸 필터, 글 **분류(Classification)** 기", "13:20 파파고 신경망 번역",
+        "19:00 음성 비서: 말을 글로 바꾼 뒤 NLP 가 뜻을 알아내요", "23:00 ChatGPT, Claude: **대규모 언어 모델(LLM)** (과제에 쓰면 밝히기)"),
+    cmp_("NLP 과제 지도 (N1 p.15)", ["과제", "모양", "예"], [["분류", "글 → 라벨", "스팸, 감정, 주제"], ["시퀀스 라벨링", "토큰마다 → 태그", "품사, 개체명"],
+                                                         ["텍스트-투-텍스트", "글 → 새 글", "번역, 요약"], ["검색과 질의응답", "문서 찾기 → 답", "검색, QA"], ["대화와 생성", "문맥 → 응답", "챗봇, 글쓰기 도우미"]]),
+    pts("2026 년의 반전", "이제 **대규모 언어 모델(Large Language Model (LLM))** 하나가 프롬프트 하나로 이 과제를 모두 해요", "그래도 부품을 이해하는 엔지니어가 전체를 만들고, 평가하고, 고쳐요"),
+    check("'내일 부산 KTX 몇 시야?' 에서 목적지=부산을 뽑아내는 것은?", ["**NLU**", "**NLG**", "번역", "요약"], 0, "글에서 뜻을 알아내는 쪽이 **자연어 이해(NLU)** 예요."),
+    check("스팸 메일을 걸러 내는 일은 어떤 과제?", ["**분류(Classification)**", "시퀀스 라벨링", "텍스트-투-텍스트", "대화"], 0, "글 하나에 스팸/아님 라벨 하나를 붙여요."),
+    warn("헷갈리는 점", "파이썬도 '언어' 지만 **자연어** 가 아니에요. 사람이 만든 규칙 언어예요.", "번역은 NLU 와 NLG 를 둘 다 해요. 이해하고 나서 새 글을 써요(**자연어 생성**).", "**대규모 언어 모델** 은 이해와 생성을 한 모델로 해요."),
+    recap("**자연어처리** = 사람 말을 처리, 이해, 생성", "**NLU** 글 → 뜻, **NLG** 뜻 → 글", "과제 다섯: 분류, 시퀀스 라벨링, 텍스트-투-텍스트, 검색과 QA, 대화",
+          "오늘의 용어: 자연어(Natural Language), 자연어 이해(NLU), 자연어 생성(NLG), 분류(Classification), 대규모 언어 모델(LLM)"),
+]})
+
+# ---------------- w1-3
+t = [T("중의성", "Ambiguity", "같은 글이 여러 뜻을 가질 수 있는 성질이에요.", "교수님: NLP 의 핵심 어려움. 모든 시대가 이 문제에 대한 새 답이었어요."),
+     T("지시어 해소", "Reference", "'그것' 같은 말이 무엇을 가리키는지 알아내는 문제예요."),
+     T("화용론", "Pragmatics", "말의 글자 뜻이 아니라 상황 속 진짜 뜻(칭찬인지 비꼼인지)을 다루는 것이에요."),
+     T("생략", "Ellipsis", "문맥으로 알 수 있는 주어, 목적어를 말에서 빼는 것이에요."),
+     T("저자원 언어", "Low-resource Language", "학습할 데이터가 거의 없는 언어예요. 지구의 7,000 개 넘는 언어 대부분이에요.")]
+U.append({"id": "w1-3", "title": "언어가 어려운 이유: 중의성", "goal": "중의성의 여러 모양을 예와 함께 말할 수 있어요.", "terms": t, "slides": [
+    title("언어가 어려운 이유", "같은 글, 여러 뜻"),
+    goal("**중의성(Ambiguity)** 이 무엇인지", "단어, 구조, 띄어쓰기 중의성의 예", "문맥과 세상 지식이 왜 필요한지"),
+    ana("중의성은", "친구가 '배 좀 봐' 라고 문자를 보내면, 과일 가게인지 바닷가인지 아픈 배인지 상황을 봐야 알아요.",
+        [("친구의 문자", "같은 글자"), ("상황", "문맥"), ("여러 가능한 뜻", "**중의성(Ambiguity)**")]),
+    fig("단어 하나, 뜻 셋", SVG_AMB, "'배' 는 과일, 배(boat), 몸의 배. 영어 bank 도 강둑과 은행", 3),
+    cmp_("중의성의 층 (N1 p.12)", ["층", "예", "헷갈리는 것"], [["단어", "배, bank", "어떤 뜻?"], ["구조", "I saw a man with a telescope", "망원경을 든 사람은 누구?"],
+                                                        ["띄어쓰기", "아버지가방에들어가신다", "아버지가 방에 / 아버지 가방에"]]),
+    pts("더 어려운 것 (N1 p.13)", "**지시어 해소(Reference)**: 트로피가 가방에 안 들어갔다, 그게 너무 커서. '그게' 는? big 을 small 로 바꾸면 답이 뒤집혀요 (Winograd)",
+        "**화용론(Pragmatics)**: '잘~한다' 는 칭찬일까 비꼼일까", "**생략(Ellipsis)**: '밥 먹었어?' 주어도 목적어도 없어요"),
+    pts("언어는 가만히 있지 않아요", "갓생, 억텐 같은 새 말이 달마다 생겨요", "지구에는 7,000 개 넘는 언어, 대부분 데이터가 거의 없는 **저자원 언어(Low-resource Language)**", "**저자원 언어** 는 학습 데이터가 적어서 NLP 가 특히 어려워요"),
+    pts("핵심", "사람은 **중의성** 을 모르는 새 풀어요", "기계는 글자만으로는 못 풀고 문맥과 세상 지식이 필요해요", "교수님: 중의성이 NLP 의 핵심 어려움, 모든 시대가 이 문제의 새 답"),
+    check("'트로피가 가방에 안 들어갔다, 그게 너무 커서' 의 어려움은?", ["**지시어 해소(Reference)**", "띄어쓰기", "**생략(Ellipsis)**", "저자원"], 0, "'그게' 가 트로피인지 가방인지 가리키는 대상을 알아내야 해요."),
+    check("'아버지가방에들어가신다' 는 어떤 중의성?", ["띄어쓰기 **중의성**", "단어 중의성", "화용론", "생략"], 0, "띄어쓰기에 따라 '아버지가 방에' 와 '아버지 가방에' 로 달라져요."),
+    warn("헷갈리는 점", "**화용론** 은 글자 뜻은 같은데 상황 속 의도가 다른 경우예요(칭찬과 비꼼).", "**생략** 은 한국어에서 특히 흔해요. 주어가 없는 문장이 많아요."),
+    recap("**중의성** = 같은 글, 여러 뜻, NLP 의 핵심 어려움", "단어, 구조, 띄어쓰기, 지시어, 화용론, 생략", "풀려면 문맥과 세상 지식이 필요해요",
+          "오늘의 용어: 중의성(Ambiguity), 지시어 해소(Reference), 화용론(Pragmatics), 생략(Ellipsis), 저자원 언어(Low-resource Language)"),
+]})
+
+# ---------------- w1-4
+t = [T("교착어", "Agglutinative Language", "낱말 뒤에 조각(어미, 조사)을 계속 붙여 뜻을 만드는 언어예요. 한국어가 그래요."),
+     T("형태소", "Morpheme", "뜻을 가진 가장 작은 말 조각이에요. 먹-, -었-, -겠-, -더라 처럼요."),
+     T("형태소 분석", "Morphological Analysis", "어절을 형태소로 나누는 일이에요. 한국어 NLP 에서 중요해요."),
+     T("높임법", "Honorifics", "같은 사실도 상대에 따라 먹어, 드세요, 잡수세요 처럼 다르게 말하는 것이에요."),
+     T("띄어쓰기", "Spacing", "낱말 사이의 빈칸. 실제 글에서는 잘 안 지켜지고, 틀리면 뜻이 바뀌어요.")]
+U.append({"id": "w1-4", "title": "한국어 NLP 의 어려움", "goal": "한국어가 NLP 에서 어려운 까닭 네 가지를 말할 수 있어요.", "terms": t, "slides": [
+    title("한국어 NLP", "한국어만의 어려움"),
+    goal("**교착어(Agglutinative Language)** 가 무엇인지", "**형태소(Morpheme)** 분석이 왜 중요한지", "띄어쓰기, 높임법, 어순의 어려움"),
+    ana("교착어는", "기차에 칸을 하나씩 이어 붙이듯, 낱말 뒤에 시간, 추측, 회상 같은 조각을 이어 붙여요.",
+        [("기관차", "어간 먹-"), ("붙인 칸들", "-었-, -겠-, -더라"), ("완성된 기차", "먹었겠더라 한 어절")]),
+    fig("먹었겠더라 = 네 조각", SVG_MORPH, "먹- + -었- + -겠- + -더라. 한 어절에 **형태소** 여러 개", 2),
+    pts("교착어라서 생기는 일 (N1 p.14)", "영어 동사는 모양이 몇 개뿐, 한국어 동사는 수천 가지 모양", "그래서 **형태소 분석(Morphological Analysis)** 이 중요해요 (교수님도 강조)",
+        "2주차: 한국어 토큰화에서 이 문제를 다시 봐요"),
+    pts("다른 어려움", "**띄어쓰기(Spacing)**: 실제 글에서 잘 안 지켜지고, 바뀌면 뜻도 바뀌어요 (아버지가방에...)", "**높임법(Honorifics)**: 먹어 / 드세요 / 잡수세요, 같은 사실 다른 사회적 뜻",
+        "어순이 자유롭고 주어를 자주 빼요. 모델이 먼저 보는 영어와 달라요"),
+    pts("그래서", "EXAONE, HyperCLOVA X 같은 한국어 LLM 이 따로 있는 까닭: 한국어에 맞춘 주의가 필요해서"),
+    check("'먹었겠더라' 를 먹-, -었-, -겠-, -더라 로 나누는 일은?", ["**형태소 분석(Morphological Analysis)**", "번역", "띄어쓰기 교정", "높임법 변환"], 0, "어절을 뜻을 가진 가장 작은 조각, 곧 **형태소** 로 나누는 거예요."),
+    check("한국어가 **교착어(Agglutinative Language)** 라는 말의 뜻은?", ["낱말 뒤에 조각을 붙여 뜻을 만든다", "어순이 고정돼 있다", "글자가 소리를 나타낸다", "높임말이 없다"], 0, "어간 뒤에 어미와 조사를 이어 붙여요."),
+    warn("헷갈리는 점", "**높임법** 은 사실(먹는다)은 같고 사회적 뜻만 달라요.", "**띄어쓰기** 문제와 중의성 예(아버지가방에)는 w1-3 과 같은 예예요."),
+    recap("한국어는 **교착어**: 한 어절에 **형태소** 여러 개", "그래서 **형태소 분석** 이 중요", "띄어쓰기, 높임법, 자유 어순과 주어 생략도 어려움",
+          "오늘의 용어: 교착어, 형태소(Morpheme), 형태소 분석, 높임법(Honorifics), 띄어쓰기(Spacing)"),
+]})
+
+# ---------------- w1-5
+t = [T("기계 번역", "Machine Translation (MT)", "컴퓨터로 한 언어를 다른 언어로 옮기는 것이에요."),
+     T("튜링 테스트", "Turing Test", "대화만으로 사람과 기계를 구별할 수 없으면 기계가 생각한다고 보자는 시험이에요."),
+     T("엘리자", "ELIZA", "1966년 MIT 의 첫 챗봇. 약 200개 패턴 규칙으로 심리 상담사 흉내를 냈어요."),
+     T("알팩 보고서", "ALPAC Report", "1966년 보고서. 기계 번역이 약속보다 훨씬 어렵다고 해서 미국 지원이 10년 멈췄어요."),
+     T("잡음 채널 모델", "Noisy Channel Model", "Shannon(1948)의 통신을 확률로 보는 틀. 통계 번역과 음성 인식의 설계도예요."),
+     T("엔그램", "n-gram", "바로 앞 몇 단어만 보고 다음 단어 확률을 세는 방법이에요.")]
+U.append({"id": "w1-5", "title": "역사 1: 시작, 규칙, 통계", "goal": "1947 년부터 2000 년대까지 규칙에서 통계로 넘어간 흐름을 연도와 함께 말할 수 있어요.", "terms": t, "slides": [
+    title("역사 1", "시작, 1막 규칙, 2막 통계"),
+    goal("시작의 네 사건과 연도", "1막 규칙의 대표와 한계", "2막 통계의 생각과 한계"),
+    fig("70년 여섯 걸음 중 앞 둘", timeline({0, 1}), "규칙 → 통계 → word2vec → seq2seq → 트랜스포머 → LLM", 2),
+    cmp_("시작 (1947~1956, N1 p.17)", ["연도", "사건", "뜻"], [["1947", "Warren Weaver 의 메모", "**기계 번역(Machine Translation)** 을 암호 풀기로 상상"],
+                                                         ["1950", "Alan Turing '기계가 생각할 수 있나'", "대화가 지능의 시험, **튜링 테스트(Turing Test)**"],
+                                                         ["1954", "Georgetown-IBM 시연", "러시아어 60문장 → 영어, '5년 안에 해결' (실제론 아님)"],
+                                                         ["1956", "Dartmouth 여름 워크숍", "인공지능(AI) 이라는 이름이 생김"]]),
+    ana("1막 규칙은", "외국어 사전과 문법책을 사람이 끝없이 써서 기계에게 주는 것과 같아요. 책은 계속 두꺼워지는데 예외가 또 나와요.",
+        [("사람이 쓴 문법책", "손으로 만든 규칙, 문법"), ("끝없이 늘어나는 예외", "규칙이 계속 깨짐"), ("대표 선수", "**ELIZA**, SHRDLU")]),
+    cmp_("1막 규칙 (1950s~1980s, N1 p.18)", ["연도", "사건"], [["1966", "**ELIZA**(MIT): 약 200개 패턴 규칙의 심리 상담 챗봇"], ["1966", "**ALPAC Report**: 기계 번역이 약속보다 어려움, 미국 지원 10년 동결"],
+                                                       ["1970s~80s", "손으로 만든 문법과 지식 시스템 (SHRDLU 등)"]]),
+    pts("1막의 교훈", "언어를 손으로 다 적을 수는 없어요. 규칙책은 끝없이 커지고 그래도 깨져요"),
+    pts("2막 통계 (1990s~2000s, N1 p.19)", "뿌리: Shannon 1948, 통신을 확률로 보는 **잡음 채널 모델(Noisy Channel Model)**", "규칙 대신 큰 말뭉치에서 패턴을 세요: **n-gram** 언어 모델 = P(다음 단어 | 앞 단어들)",
+        "IBM 이 의회 문장 쌍 수백만 개로 프랑스어-영어 번역을 배워요", "Jelinek: '언어학자를 한 명 해고할 때마다 성능이 오른다'", "스팸 필터, 품사 태거, 음성 인식, 검색에 쓰였어요"),
+    pts("2막의 한계와 교훈", "세기만 해서는 cat 과 kitten 이 비슷한 줄 몰라요. 뜻의 개념이 없어요", "교훈: 데이터가 규칙을 이긴다. 하지만 단어를 세는 것은 이해가 아니다"),
+    check("1966 년 기계 번역 지원을 10년 멈추게 한 것은?", ["**ALPAC Report**", "**ELIZA**", "Georgetown-IBM 시연", "Dartmouth 워크숍"], 0, "ALPAC 보고서가 기계 번역이 약속보다 훨씬 어렵다고 했어요."),
+    check("2막 통계의 한계로 슬라이드가 든 것은?", ["cat 과 kitten 이 관련 있다는 것을 못 봐요", "데이터가 너무 적어요", "규칙이 너무 많아요", "GPU 가 없어요"], 0, "세기에는 뜻의 개념이 없어요. 이 벽을 3막 word2vec 이 넘어요."),
+    warn("헷갈리는 연도", "1947 Weaver, 1950 Turing(**튜링 테스트**), 1954 Georgetown-IBM, 1956 Dartmouth", "1966 에 **ELIZA** 와 **ALPAC** 가 같은 해예요", "Shannon **잡음 채널 모델** 은 1948, 통계 시대의 뿌리예요"),
+    recap("시작: 1947 Weaver, 1950 Turing, 1954 Georgetown-IBM, 1956 Dartmouth", "1막 규칙: ELIZA, ALPAC, 교훈은 '손으로 다 못 적는다'", "2막 통계: **잡음 채널 모델** 과 n-gram, 교훈은 '데이터가 이기지만 세기는 이해가 아니다'",
+          "오늘의 용어: 기계 번역(MT), 튜링 테스트(Turing Test), ELIZA, ALPAC Report, 잡음 채널 모델(Noisy Channel Model), n-gram"),
+]})
+
+# ---------------- w1-6
+t = [T("워드투벡", "word2vec", "단어마다 벡터를 날 글에서 배우는 방법(2013)이에요."),
+     T("분포 가설", "Distributional Hypothesis", "단어의 뜻은 함께 나오는 단어로 알 수 있다는 생각. Firth 1957 이에요."),
+     T("시퀀스-투-시퀀스", "seq2seq", "인코더가 원문을 압축하고 디코더가 새 글을 쓰는 구조(2014)예요."),
+     T("어텐션", "Attention", "디코더가 필요할 때 원문을 다시 돌아보게 하는 방법(2015)이에요."),
+     T("트랜스포머", "Transformer", "2017년 'Attention Is All You Need'. 순환 없이 어텐션만, 모든 단어를 병렬로 처리해요."),
+     T("사전 학습", "Pre-training", "라벨 없는 웹 글 전체로 한 번 크게 배우고, 과제마다 싸게 맞추는 방법이에요."),
+     T("대규모 언어 모델", "Large Language Model (LLM)", "아주 많은 글로 학습한 큰 언어 모델. ChatGPT, Claude 같은 것이에요."),
+     T("스케일링 법칙", "Scaling Laws", "파라미터, 데이터, 계산을 늘리면 성능이 예측 가능하게 좋아진다는 법칙이에요.")]
+U.append({"id": "w1-6", "title": "역사 2: word2vec 에서 LLM 까지", "goal": "2013 년 이후 신경망 NLP 의 흐름과 70 년의 공통 패턴을 말할 수 있어요.", "terms": t, "slides": [
+    title("역사 2", "3막 신경망, 4막 사전 학습, 5막 LLM"),
+    goal("**word2vec**, **seq2seq**, **어텐션** 의 연도와 뜻", "**트랜스포머** 와 **사전 학습** 이 바꾼 것", "70년을 관통하는 패턴"),
+    fig("70년 여섯 걸음 중 뒤 넷", timeline({2, 3, 4, 5}), "규칙 → 통계 → word2vec → seq2seq → 트랜스포머 → LLM", 2),
+    pts("3막 word2vec (2013, N1 p.20)", "**word2vec**: 모든 단어가 날 글에서 배운 벡터가 돼요. 라벨이 필요 없어요",
+        "**분포 가설(Distributional Hypothesis)**: 'You shall know a word by the company it keeps' (Firth, 1957)", "방향에 뜻이 있어요: king - man + woman ≈ queen, Seoul - Korea + Japan ≈ Tokyo",
+        "통계의 벽이 무너져요: cat 과 kitten 이 드디어 이웃"),
+    ana("분포 가설은", "친구를 보면 그 사람을 알 수 있어요. 늘 같은 친구들과 어울리는 두 사람은 비슷한 사람일 거예요.",
+        [("어울리는 친구들", "함께 나오는 단어(문맥)"), ("비슷한 두 사람", "뜻이 비슷한 두 단어"), ("사람의 지도 위 자리", "단어 벡터")]),
+    pts("3막 seq2seq 와 어텐션 (2014~16, N1 p.21)", "RNN, LSTM: 단어를 하나씩 읽으며 기억을 들고 다녀요", "**seq2seq**(2014): 인코더가 원문을 압축, 디코더가 번역문을 써요",
+        "**어텐션**(2015): 디코더가 필요할 때 원문을 다시 봐요", "2016: 구글 번역이 하룻밤에 신경망으로, 사용자가 느낄 만큼 좋아짐", "교훈: 단어를 벡터로 나타내고 규칙은 신경망이 배우게 하라"),
+    pts("4막 트랜스포머와 사전 학습 (N1 p.22)", "2017 'Attention Is All You Need': **트랜스포머**, 어디서나 어텐션, 순환 없음", "모든 단어를 병렬로 처리해서 GPU 로 크게 키우기 좋아요",
+        "새 방법: 라벨 없는 웹 전체로 한 번 **사전 학습**, 과제마다 싸게 적응", "2018 BERT 와 GPT: 한 생각의 두 반쪽. NLP 의 'ImageNet 순간'"),
+    pts("5막 LLM (2020~, N1 p.23)", "**스케일링 법칙**: 파라미터, 데이터, 계산을 늘리면 예측대로 좋아져요", "GPT-3 (2020): 프롬프트에 예시 몇 개만 보여 주면 해요 (인컨텍스트 학습)",
+        "ChatGPT (2022): 지시 튜닝 + RLHF, 두 달 만에 사용자 1억 명", "2023~26: GPT-4, Claude, Gemini, Llama, 한국어 EXAONE, HyperCLOVA X 등", "**대규모 언어 모델(Large Language Model (LLM))** 로 NLP 가 연구 주제에서 기반 시설이 됐어요. 5~14주차가 이 흐름이에요"),
+    cmp_("다섯 막 한 장에 (N1 p.24)", ["막", "때", "핵심"], [["1 규칙", "1950s~80s", "사람이 규칙을 씀"], ["2 통계", "1990s~2000s", "말뭉치에서 셈"], ["3 신경망", "2013~16", "**word2vec**, **seq2seq**, **어텐션**"],
+                                                     ["4 사전 학습", "2017~", "**트랜스포머**, BERT, GPT"], ["5 LLM", "2020~", "**대규모 언어 모델**, **스케일링 법칙**"]]),
+    pts("70년의 패턴", "막이 바뀔수록 사람이 적어 넣는 지식은 줄고, 데이터에서 배우는 것은 늘어요", "모든 막이 **중의성** 이라는 같은 문제의 새 답이에요"),
+    check("'Attention Is All You Need' 가 나온 해와 모델은?", ["2017, **트랜스포머**", "2013, **word2vec**", "2014, **seq2seq**", "2020, GPT-3"], 0, "2017 년 트랜스포머예요. 순환 없이 어텐션만 써요."),
+    check("king - man + woman ≈ queen 을 보여 준 것은?", ["**word2vec** (2013)", "ELIZA", "n-gram", "ALPAC"], 0, "단어 벡터의 방향에 뜻이 담겨 있다는 예예요."),
+    check("**트랜스포머** 가 GPU 로 크게 키우기 좋은 까닭은?", ["모든 단어를 병렬로 처리해서", "규칙이 적어서", "단어를 하나씩 읽어서", "라벨이 많아서"], 0, "순환이 없어서 차례로 읽지 않고 한꺼번에 계산해요."),
+    warn("헷갈리는 연도", "word2vec 2013, seq2seq 2014, 어텐션 2015, 구글 번역 신경망 2016", "트랜스포머 2017, BERT 와 GPT 2018, GPT-3 2020, ChatGPT 2022",
+         "슬라이드는 다섯 막(규칙, 통계, 신경망, 사전 학습, LLM)으로 나눠요. 여섯 걸음 그림은 3막을 둘로 나눈 것이에요."),
+    recap("3막: word2vec(2013), seq2seq(2014), 어텐션(2015)", "4막: 트랜스포머(2017), 사전 학습, BERT, GPT(2018)", "5막: **스케일링 법칙**, GPT-3, ChatGPT, 한국어 **대규모 언어 모델**",
+          "오늘의 용어: word2vec, 분포 가설, seq2seq, 어텐션, 트랜스포머, 사전 학습, 대규모 언어 모델, 스케일링 법칙"),
+]})
+
+d = {"week": "1", "title": "1주차. 강의 소개와 자연어처리의 역사", "units": U}
+raw = json.dumps(d, ensure_ascii=False, indent=1)
+for ch in ("—", "–", "·"):
+    assert ch not in raw
+(W / "slides_w1.json").write_text(raw, encoding="utf-8")
+print("ok", len(U), sum(len(u["slides"]) for u in U))

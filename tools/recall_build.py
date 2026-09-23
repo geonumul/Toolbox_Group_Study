@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 """가리고 설명하기 데이터 만들기: 강의 슬라이드에서 가릴 말(1, 2, 3단계)과 소단원 목록을 뽑는다.
+프로필에 "all_lines": True 가 있으면 4단계(다 가리기: 쪽의 모든 글 줄, 작은 글씨와 그림 속 글자까지)도 만든다.
 
 사용: python tools/recall_build.py <과목> [덱 ...] [--png 쪽,쪽] [--png-dir 폴더] [--ocr]
-  과목: iot-smart-home, eco-architecture 또는 gnn
-  --png 3,10,20   가린 칸을 슬라이드 그림 위에 그린 확인용 PNG 를 만든다 (빨강 1단계, 파랑 2단계, 초록 3단계)
+  과목: iot-smart-home, eco-architecture, gnn (코드 프로필) 또는 work/<과목>/recall/profile.json 이 있는 과목
+  --png 3,10,20   가린 칸을 슬라이드 그림 위에 그린 확인용 PNG 를 만든다 (빨강 1단계, 파랑 2단계, 초록 3단계, 보라 4단계)
   --png-dir 폴더  확인용 PNG 를 둘 곳 (없으면 recall/_check/)
   --ocr           글자 층이 없는 PDF 의 OCR 을 다시 한다 (없으면 캐시 사용)
 
@@ -94,6 +95,55 @@ def _eco():
 
 PROFILES = {"iot-smart-home": _iot, "gnn": _gnn, "eco-architecture": _eco}
 
+
+# ---- 데이터 프로필 블록 시작: 새 과목은 코드를 고치지 않고 work/<과목>/recall/profile.json 만 둔다 ----
+# profile.json 예 (경로는 work/<과목>/ 기준, 모두 선택):
+#   {"layout": "a4" | "wide" | "slide",        쪽 모양 (a4: 세로 A4 강의안, slide: 가로 16:9 또는 4:3 슬라이드, wide: GNN 식)
+#    "layouts": {"S2": "a4"},                  덱마다 다른 쪽 모양
+#    "glossary": ["rules/용어사전.json"],        용어 [{ko, en, ...}] 배열 파일들
+#    "glossary_units": ["notes/slides_w*.json", "terms/*.json"],   정리 슬라이드 단원 용어, 주차 용어집도 용어로
+#    "corpus": ["bank/*.json"],                문제은행 글 (용어가 나온 횟수로 중요도를 잰다)
+#    "gap_spaces": true,                       PDF 글자 층에 한글 띄어쓰기가 없으면 글자 사이 틈으로 빈칸을 넣는다
+#    "all_lines": true,                        4단계(다 가리기): 쪽의 모든 글 줄을 가린다
+#    "ocr_extra": true,                        4단계에 그림 속 글자(OCR 줄)도 더한다
+#    "force_ocr": false, "ocr_fix": [[틀린, 바른]], "ocr_word_fix": {틀린: 바른}, "unit_pages": {덱: {단원 id: [첫 쪽, 끝 쪽]}}}
+# 덱과 PDF 는 work/<과목>/subject.json 의 decks, 레슨은 lesson/<덱>_*.json, 결과는 recall/, 그림은 subjects/<과목>/img/
+def profile_from_json(slug):
+    w = ROOT / "work" / slug
+    f = w / "recall" / "profile.json"
+    if not f.exists():
+        return None
+    pj = json.loads(f.read_text(encoding="utf-8"))
+    cfg = json.loads((w / "subject.json").read_text(encoding="utf-8"))
+    rel = lambda xs: [str(w / x) for x in xs]
+    prof = {
+        "name": slug,
+        "decks": {k: _pdf(v["pdf"]) for k, v in cfg["decks"].items()},
+        "lesson": str(w / "lesson" / "{deck}_*.json"),
+        "glossary": rel(pj.get("glossary", [])),
+        "glossary_units": rel(pj.get("glossary_units", [])),
+        "corpus": rel(pj.get("corpus", ["bank/*.json"])),
+        "out": w / "recall",
+        "img": ROOT / "subjects" / slug / "img",
+        "layout": pj.get("layout", "a4"),
+        "layouts": pj.get("layouts", {}),
+    }
+    for k in ("gap_spaces", "all_lines", "ocr_extra", "force_ocr", "ocr_fix", "ocr_word_fix", "unit_pages"):
+        if k in pj:
+            prof[k] = pj[k]
+    return prof
+
+
+def get_profile(slug):
+    if slug in PROFILES:
+        return PROFILES[slug]()
+    return profile_from_json(slug)
+
+
+def layout_of(prof, deck):
+    return prof.get("layouts", {}).get(deck, prof["layout"])
+# ---- 데이터 프로필 블록 끝 ----
+
 HANGUL = "가-힣"
 JOSA = sorted("""은 는 이 가 을 를 의 에 에서 에게 에는 에서는 으로 로 으로는 로는 으로의 로의 와 과 와의 과의 도 만 까지 부터 보다 처럼 이나 나 이며 며
 이고 고 이다 다 입니다 이란 란 라는 이라는 인 한 하는 하고 하여 해 해서 했다 된 되는 되어 됨 함 들 들은 들이 들을 들의 에도 에만 만의 이자 적 적인 적으로""".split(), key=len, reverse=True)
@@ -104,7 +154,7 @@ STOP = set("""것 수 등 및 또는 그리고 하지만 때 경우 위해 통�
 the a an of and or to in for on with by is are be as at from that this it we our can not""".split())
 UNIT = r"(?:GHz|MHz|kHz|Hz|dBm|dB|Mbps|kbps|Gbps|bps|mW|kW|W|V|mA|m|cm|mm|km|%|ms|lux|ppm|℃|°C|초|분|시간|문항|점|개|층|단계|가지|년|세대|비트|바이트|bit|byte|원|배|채널|대)"
 JOSA_SET = set(JOSA)
-MIN_H = {"a4": 0.017, "wide": 0.018}   # 가릴 글자의 최소 높이 (쪽 높이 비율)
+MIN_H = {"a4": 0.017, "wide": 0.018, "slide": 0.015}   # 가릴 글자의 최소 높이 (쪽 높이 비율)
 NUM_RE = re.compile(r"(?<![\w.])(-?\d+(?:[.,]\d+)?\s?" + UNIT + r")(?![A-Za-z])")
 
 
@@ -116,8 +166,9 @@ def clean(t):
     return t.translate(BAD_CHARS)
 
 
-def chars_from_pdf(page):
-    """[(줄 글자들 [(c, x0, y0, x1, y1)], 글자 크기)]  좌표는 비율"""
+def chars_from_pdf(page, gap=False):
+    """[(줄 글자들 [(c, x0, y0, x1, y1)], 글자 크기)]  좌표는 비율
+    gap=True: 글자 층에 띄어쓰기 글자가 없는 PDF 에서 글자 사이 틈이 크면 빈칸을 넣는다 (4단계 블록, 프로필 gap_spaces)"""
     W, H = page.rect.width, page.rect.height
     out = []
     for b in page.get_text("rawdict")["blocks"]:
@@ -127,12 +178,16 @@ def chars_from_pdf(page):
             if abs(ln["dir"][1]) > 0.1:          # 세로 글자는 건너뜀
                 continue
             cs, size = [], 0
+            prev = None
             for sp in ln["spans"]:
                 font = sp["font"]
                 math_font = re.search(r"math|symbol|wingding", font, re.I)
                 for ch in sp["chars"]:
                     x0, y0, x1, y1 = ch["bbox"]
                     h = y1 - y0
+                    if gap and prev and not ch["c"].isspace() and not prev[0].isspace() and x0 - prev[1] > sp["size"] * 0.18:
+                        cs.append((" ", prev[1] / W, (y0 + h * 0.06) / H, x0 / W, (y1 - h * 0.04) / H))
+                    prev = (ch["c"], x1)
                     # 글자 상자는 줄 높이 전체라 위아래를 조금 줄인다
                     y0, y1 = y0 + h * 0.06, y1 - h * 0.04
                     c = ch["c"] if not math_font else "\u0000"
@@ -233,6 +288,14 @@ def classify(lines, layout):
             elif cy < 0.18 and size >= 15:
                 zone = "title"
             elif re.fullmatch(r"\d+\s*/\s*\d+", text):
+                zone = "skip"
+        elif layout == "slide":                    # 가로 슬라이드 (4단계 블록): 오른쪽 위 머리글은 빼고 맨 위 제목 띠는 title
+            cx = sum((c[1] + c[3]) / 2 for c in cs) / len(cs)
+            if cy < 0.09 and cx > 0.62:
+                zone = "skip"
+            elif cy < 0.09:
+                zone = "title"
+            elif re.fullmatch(r"\d+", text.strip()) and cy > 0.93:
                 zone = "skip"
         else:
             if cy < 0.09:
@@ -474,7 +537,7 @@ def build_deck(prof, deck, args, corpus, gloss_entries):
     # 쪽 글자
     has_text = not prof.get("force_ocr") and sum(len(p.get_text("words")) for p in doc) > len(doc) * 3
     if has_text:
-        raw = [chars_from_pdf(p) for p in doc]
+        raw = [chars_from_pdf(p, prof.get("gap_spaces", False)) for p in doc]
     else:
         cache = prof["out"] / "_ocr" / f"{deck}.json"
         if args.get("ocr") and cache.exists():
@@ -488,7 +551,15 @@ def build_deck(prof, deck, args, corpus, gloss_entries):
                     for a, b in fix:
                         w[0] = w[0].replace(a, b)
         raw = [chars_from_ocr(pg) for pg in ocr]
-    pages = [classify(r, prof["layout"]) for r in raw]
+    layout = layout_of(prof, deck)
+    pages = [classify(r, layout) for r in raw]
+    r0 = doc[0].rect
+    ocr_extra = None
+    if prof.get("all_lines") and prof.get("ocr_extra") and has_text:   # 4단계 블록: 그림 속 글자는 OCR 로
+        cache = prof["out"] / "_ocr" / f"{deck}.json"
+        if args.get("ocr") and cache.exists():
+            cache.unlink()
+        ocr_extra = [classify(chars_from_ocr(pg), layout) for pg in ocr_pages(pdf, cache)]
     N = len(pages)
     cands = [find_candidates(pg, pats, slides.get(i + 1, {}).get("terms", []), corpus) for i, pg in enumerate(pages)]
     df = Counter()
@@ -546,7 +617,7 @@ def build_deck(prof, deck, args, corpus, gloss_entries):
                 cs = ln["cs"][a:b]
                 while cs and cs[-1][0].isspace():
                     cs = cs[:-1]
-                if not cs or max(c[4] - c[2] for c in cs) < MIN_H[prof["layout"]]:
+                if not cs or max(c[4] - c[2] for c in cs) < MIN_H[layout]:
                     continue                       # 너무 작은 글자(그림 속 작은 이름표)는 누르기 어려워 가리지 않는다
                 x0 = min(c[1] for c in cs) - 0.003
                 x1 = max(c[3] for c in cs) + 0.003
@@ -556,26 +627,109 @@ def build_deck(prof, deck, args, corpus, gloss_entries):
                 x1, y1 = min(1, x1), min(1, y1)
                 text = clean("".join(c[0] for c in cs)).strip()
                 masks.append([round(x0, 4), round(y0, 4), round(x1 - x0, 4), round(y1 - y0, 4), use, text])
+        if prof.get("all_lines"):                  # 4단계 블록: 모든 글 줄을 4단계 칸으로
+            masks += line_masks(pg, (ocr_extra[i] if ocr_extra else None), r0.width / r0.height)
         masks.sort(key=lambda m: (m[4], round(m[1], 2), m[0]))
         for m in masks:
-            for lv in (1, 2, 3):
+            for lv in (1, 2, 3, 4):
                 if m[4] <= lv:
                     stats[lv] += 1
         out_pages.append({"p": p, "m": masks})
     sec_file = prof["out"] / f"{deck}_sections.json"
     sections = json.loads(sec_file.read_text(encoding="utf-8")) if sec_file.exists() else []
     check_sections(deck, sections, N)
-    r0 = doc[0].rect
     res = {"deck": deck, "total": N, "ar": round(r0.width / r0.height, 4), "pages": out_pages, "sections": sections}
     prof["out"].mkdir(parents=True, exist_ok=True)
     (prof["out"] / f"{deck}.json").write_text(json.dumps(res, ensure_ascii=False, indent=0), encoding="utf-8")
     content = sum(1 for pg in out_pages if pg["m"])
     nsub = sum(len(c["items"]) for c in sections)
-    print(f"  {deck}: {N}쪽 (가린 칸 있는 쪽 {content}), 칸 1단계 {stats[1]}, 2단계 {stats[2]}, 3단계 {stats[3]}, 큰 단원 {len(sections)}, 소단원 {nsub}"
+    print(f"  {deck}: {N}쪽 (가린 칸 있는 쪽 {content}), 칸 1단계 {stats[1]}, 2단계 {stats[2]}, 3단계 {stats[3]}" + (f", 4단계(다 가리기) {stats[4]}" if prof.get("all_lines") else "") + f", 큰 단원 {len(sections)}, 소단원 {nsub}"
           + ("" if has_text else " (OCR)"))
     if args.get("png"):
         draw_check(prof, deck, res, args["png"], args.get("png_dir"))
     return res
+
+
+# ---- 4단계(다 가리기) 블록 시작 ----
+def _bbox(cs):
+    cs = [c for c in cs if not c[0].isspace()]
+    if not cs:
+        return None
+    return [min(c[1] for c in cs), min(c[2] for c in cs), max(c[3] for c in cs), max(c[4] for c in cs)]
+
+
+def ocr_line_ok(t):
+    """그림 속 글자로 볼 만한 OCR 줄인가: 한글이 2자 이상이고 절반 이상이 한글(한자로 잘못 읽은 글자가 한글의 절반을 넘지 않음),
+    또는 영문자 4자 이상이고 60% 이상이 영문. 아이콘, 그림 무늬를 글자로 잘못 읽은 조각을 거른다"""
+    s = re.sub(r"\s", "", t)
+    if not s:
+        return False
+    ko = len(re.findall(r"[가-힣]", s))
+    en = len(re.findall(r"[A-Za-z]", s))
+    han = len(re.findall(r"[⺀-鿿豈-﫿]", s))
+    if ko >= 2 and ko / len(s) >= 0.5 and han * 2 <= ko:
+        return True
+    return en >= 4 and en / len(s) >= 0.6
+
+
+def line_masks(lines, ocr_lines=None, ar=1.414):
+    """쪽의 글 줄(머리글 제외)을 같은 높이, 가까운 것끼리 이어 한 칸씩 4단계 칸으로 만든다.
+    ocr_lines: 그림 속 글자 OCR 줄. 글자 층 줄과 겹치지 않는 것만 더한다. ar: 쪽 가로/세로 비"""
+    rows = []
+    for ln in lines:
+        if ln["zone"] == "skip":
+            continue
+        b = _bbox(ln["cs"])
+        if not b or not re.search(r"[0-9A-Za-z가-힣]", ln["text"]):
+            continue
+        rows.append([b, clean(ln["text"]).strip()])
+    pdf_boxes = [r[0] for r in rows]
+
+    def covered(b):
+        area = max((b[2] - b[0]) * (b[3] - b[1]), 1e-9)
+        inter = 0
+        for p in pdf_boxes:
+            w = min(b[2], p[2]) - max(b[0], p[0])
+            h = min(b[3], p[3]) - max(b[1], p[1])
+            if w > 0 and h > 0:
+                inter += w * h
+        return inter / area
+    for ln in ocr_lines or []:
+        if ln["zone"] == "skip":
+            continue
+        b = _bbox(ln["cs"])
+        t = clean(ln["text"]).strip()
+        if not b or covered(b) > 0.25 or not ocr_line_ok(t):
+            continue
+        if b[3] - b[1] < 0.012 or b[3] - b[1] > 0.05:
+            continue
+        rows.append([b, t])
+    rows.sort(key=lambda r: ((r[0][1] + r[0][3]) / 2, r[0][0]))
+    merged = []
+    for b, t in rows:
+        for m in merged:
+            mb = m[0]
+            hmin = min(b[3] - b[1], mb[3] - mb[1])
+            vov = min(b[3], mb[3]) - max(b[1], mb[1])
+            gap = (max(b[0], mb[0]) - min(b[2], mb[2])) * ar      # 가로 틈을 세로 비율 단위로
+            if vov > 0.5 * hmin and gap < 1.2 * max(b[3] - b[1], mb[3] - mb[1]):
+                if b[0] < mb[0]:
+                    m[1] = t + " " + m[1]
+                else:
+                    m[1] = m[1] + " " + t
+                m[0] = [min(b[0], mb[0]), min(b[1], mb[1]), max(b[2], mb[2]), max(b[3], mb[3])]
+                break
+        else:
+            merged.append([list(b), t])
+    out = []
+    for (x0, y0, x1, y1), t in merged:
+        if y1 - y0 < 0.008:
+            continue
+        x0, y0 = max(0, x0 - 0.004), max(0, y0 - 0.003)
+        x1, y1 = min(1, x1 + 0.004), min(1, y1 + 0.003)
+        out.append([round(x0, 4), round(y0, 4), round(x1 - x0, 4), round(y1 - y0, 4), 4, re.sub(r"\s+", " ", t)[:200]])
+    return out
+# ---- 4단계(다 가리기) 블록 끝 ----
 
 
 def check_sections(deck, sections, N):
@@ -598,7 +752,7 @@ def draw_check(prof, deck, res, pages, outdir=None):
     from PIL import Image, ImageDraw
     outdir = outdir or prof["out"] / "_check"
     outdir.mkdir(parents=True, exist_ok=True)
-    colors = {1: (220, 40, 40, 150), 2: (40, 120, 220, 130), 3: (30, 160, 80, 120)}
+    colors = {1: (220, 40, 40, 150), 2: (40, 120, 220, 130), 3: (30, 160, 80, 120), 4: (150, 70, 200, 70)}
     for p in pages:
         if p > res["total"]:
             continue
@@ -614,10 +768,11 @@ def draw_check(prof, deck, res, pages, outdir=None):
 
 def main():
     argv = sys.argv[1:]
-    if not argv or argv[0] not in PROFILES:
+    prof = get_profile(argv[0]) if argv else None
+    if not prof:
         print(__doc__)
+        print("  (새 과목: work/<과목>/recall/profile.json 을 두면 된다. 이 파일 위쪽 '데이터 프로필 블록' 참고)")
         sys.exit(1)
-    prof = PROFILES[argv[0]]()
     args = {"ocr": "--ocr" in argv, "png": None}
     if "--png" in argv:
         args["png"] = [int(x) for x in argv[argv.index("--png") + 1].split(",")]

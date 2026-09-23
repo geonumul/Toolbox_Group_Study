@@ -1,0 +1,366 @@
+{
+ "deck": "N2L",
+ "file": "Lab0-1_Tokenization and Word Vectors_full.ipynb",
+ "pages": [
+  {
+   "p": 1,
+   "title": "Week 2 · Lab 0 + Lab 1 — Tokenization and Word Vectors",
+   "cells": [
+    {
+     "n": 1,
+     "type": "markdown",
+     "src": "# Week 2 · Lab 0 + Lab 1 — Tokenization and Word Vectors\n\n**Natural Language Processing (06488-01) · Fall 2026 · Yongil Kim, Dept. of AI, CUK**\n\nWelcome to the first lab! Today, in ~75 minutes:\n\n| Part | Topic | Time |\n|---|---|---|\n| **Lab 0** | Colab onboarding — GPU, PyTorch, Hugging Face, your first `pipeline()` | ~25 min |\n| **Lab 1-1** | Build **BPE from scratch** (~20 lines of Python) | ~20 min |\n| **Lab 1-2** | Real tokenizers & the **fertility** problem | ~10 min |\n| **Lab 1-3** | Train **your own Korean tokenizer** | ~10 min |\n| **Lab 1-4** | **word2vec** on real Korean data — similarity, analogies, visualization | ~15 min |\n\n> **How to use this notebook**: run cells top-to-bottom with `Shift+Enter`.\n> Cells marked **`# TODO`** are yours to complete — everything else just runs.\n> Stuck? Ask right away — that's what lab time is for.",
+     "out": ""
+    }
+   ]
+  },
+  {
+   "p": 2,
+   "title": "0.1 Turn on the GPU",
+   "cells": [
+    {
+     "n": 2,
+     "type": "markdown",
+     "src": "---\n## Lab 0 — Colab Onboarding\n\n### 0.1 Turn on the GPU\n\nMenu: **Runtime → Change runtime type → Hardware accelerator: `T4 GPU` → Save.**\n\nThen run the cell below. You should see a Tesla T4 with ~15 GB of memory.",
+     "out": ""
+    },
+    {
+     "n": 3,
+     "type": "code",
+     "src": "# What GPU did we get?\n!nvidia-smi",
+     "out": ""
+    }
+   ]
+  },
+  {
+   "p": 3,
+   "title": "Python & PyTorch sanity check",
+   "cells": [
+    {
+     "n": 4,
+     "type": "code",
+     "src": "# Python & PyTorch sanity check\nimport sys, torch\n\nprint(\"Python     :\", sys.version.split()[0])\nprint(\"PyTorch    :\", torch.__version__)\nprint(\"CUDA ready :\", torch.cuda.is_available())\nif torch.cuda.is_available():\n    print(\"GPU        :\", torch.cuda.get_device_name(0))",
+     "out": ""
+    }
+   ]
+  },
+  {
+   "p": 4,
+   "title": "0.2 Your first tensors on a GPU",
+   "cells": [
+    {
+     "n": 5,
+     "type": "markdown",
+     "src": "### 0.2 Your first tensors on a GPU\n\nA neural network is just tensor arithmetic. Here is a 3×3 matrix multiply on the GPU —\nthe same operation that, repeated billions of times, trains GPT.",
+     "out": ""
+    },
+    {
+     "n": 6,
+     "type": "code",
+     "src": "device = \"cuda\" if torch.cuda.is_available() else \"cpu\"\n\na = torch.randn(3, 3, device=device)   # random 3x3 matrix, lives on the GPU\nb = torch.randn(3, 3, device=device)\nc = a @ b                              # matrix multiplication\n\nprint(c)\nprint(\"\\nresult lives on:\", c.device)",
+     "out": ""
+    }
+   ]
+  },
+  {
+   "p": 5,
+   "title": "0.3 Hugging Face — the app store of NLP",
+   "cells": [
+    {
+     "n": 7,
+     "type": "markdown",
+     "src": "### 0.3 Hugging Face — the app store of NLP\n\n[huggingface.co](https://huggingface.co) hosts almost every model you will use this semester.\n\n**One-time setup (do this now):**\n1. Create a free account at https://huggingface.co/join\n2. Get a token at https://huggingface.co/settings/tokens (type: **Read**)\n3. Keep it somewhere safe — some models & uploads will need it later\n   *(today's lab works without logging in, so don't worry if step 2 takes a while)*",
+     "out": ""
+    },
+    {
+     "n": 8,
+     "type": "code",
+     "src": "# Install today's extra libraries (transformers & torch are preinstalled on Colab)\n!pip install -q -U tokenizers gensim",
+     "out": ""
+    }
+   ]
+  },
+  {
+   "p": 6,
+   "title": "0.4 The 3-line magic: pipeline()",
+   "cells": [
+    {
+     "n": 9,
+     "type": "markdown",
+     "src": "### 0.4 The 3-line magic: `pipeline()`\n\nBefore we open the black box in the coming weeks — let's see it work.",
+     "out": ""
+    },
+    {
+     "n": 10,
+     "type": "code",
+     "src": "from transformers import (\n    pipeline,\n    PreTrainedTokenizerFast,\n    AutoModelForCausalLM,\n)\n\n# English sentiment analysis (downloads a small pretrained model on first run)\nclf = pipeline(\"sentiment-analysis\")\nprint(clf(\"This course is surprisingly fun!\"))\nprint(clf(\"I stayed up all night debugging and everything still crashes.\"))",
+     "out": ""
+    }
+   ]
+  },
+  {
+   "p": 7,
+   "title": "Korean text generation with a small Korean GPT-2 (skt/kogpt2-base-v2)",
+   "cells": [
+    {
+     "n": 11,
+     "type": "code",
+     "src": "# Korean text generation with a small Korean GPT-2 (skt/kogpt2-base-v2)\nmodel_name = \"skt/kogpt2-base-v2\"\n\ntokenizer = PreTrainedTokenizerFast.from_pretrained(\n    model_name,\n    bos_token=\"</s>\",\n    eos_token=\"</s>\",\n    unk_token=\"<unk>\",\n    pad_token=\"<pad>\",\n    mask_token=\"<mask>\",\n)\n\nmodel = AutoModelForCausalLM.from_pretrained(model_name)\n\ngen = pipeline(\n    \"text-generation\",\n    model=model,\n    tokenizer=tokenizer,\n)\n\nout = gen(\n    \"자연어 처리는 \",\n    max_new_tokens=30,\n    do_sample=True,\n    top_p=0.95,\n    clean_up_tokenization_spaces=False,\n)\n\nprint(out[0][\"generated_text\"])",
+     "out": ""
+    }
+   ]
+  },
+  {
+   "p": 8,
+   "title": "Lab 1-1 — BPE From Scratch",
+   "cells": [
+    {
+     "n": 12,
+     "type": "markdown",
+     "src": "**That's a real language model completing your Korean sentence.**\nBy week 7 you will understand every single thing that just happened — and today we start\nwith its very first step: how the model *saw* your text at all.\n\n---\n## Lab 1-1 — BPE From Scratch\n\nThe lecture's toy corpus: `low ×5 · lower ×2 · newest ×6 · widest ×3`\n\nThe algorithm (slide *BPE — The Algorithm*):\n1. start from characters\n2. count all **adjacent pairs**\n3. **merge** the most frequent pair, record the rule\n4. repeat",
+     "out": ""
+    }
+   ]
+  },
+  {
+   "p": 9,
+   "title": "Our toy corpus: each word is a tuple of symbols + a frequency.",
+   "cells": [
+    {
+     "n": 13,
+     "type": "code",
+     "src": "# Our toy corpus: each word is a tuple of symbols + a frequency.\n# '</w>' marks end-of-word (so \"low\" in \"lower\" and \"low\" alone are distinguishable).\n\ncorpus = {\n    (\"l\", \"o\", \"w\", \"</w>\"): 5,\n    (\"l\", \"o\", \"w\", \"e\", \"r\", \"</w>\"): 2,\n    (\"n\", \"e\", \"w\", \"e\", \"s\", \"t\", \"</w>\"): 6,\n    (\"w\", \"i\", \"d\", \"e\", \"s\", \"t\", \"</w>\"): 3,\n}\n\nfor word, freq in corpus.items():\n    print(f\"{' '.join(word):<22} x{freq}\")",
+     "out": ""
+    }
+   ]
+  },
+  {
+   "p": 10,
+   "title": "from collections import Counter",
+   "cells": [
+    {
+     "n": 14,
+     "type": "code",
+     "src": "from collections import Counter\n\ndef get_pair_counts(corpus):\n    \"\"\"Count how often each ADJACENT symbol pair occurs, weighted by word frequency.\"\"\"\n    pairs = Counter()\n    for word, freq in corpus.items():\n        for i in range(len(word) - 1):\n            pairs[(word[i], word[i + 1])] += freq\n    return pairs\n\npairs = get_pair_counts(corpus)\nprint(\"top 5 pairs:\", pairs.most_common(5))",
+     "out": ""
+    }
+   ]
+  },
+  {
+   "p": 11,
+   "title": "def merge_pair(corpus, pair):",
+   "cells": [
+    {
+     "n": 15,
+     "type": "code",
+     "src": "def merge_pair(corpus, pair):\n    \"\"\"Merge every occurrence of `pair` = (a, b) into a single symbol 'ab'.\"\"\"\n    a, b = pair\n    new_corpus = {}\n    for word, freq in corpus.items():\n        new_word, i = [], 0\n        while i < len(word):\n            if i < len(word) - 1 and word[i] == a and word[i + 1] == b:\n                new_word.append(a + b)      # merge!\n                i += 2\n            else:\n                new_word.append(word[i])\n                i += 1\n        new_corpus[tuple(new_word)] = freq\n    return new_corpus\n\n# quick check: merge ('e','s') once\ndemo = merge_pair(corpus, (\"e\", \"s\"))\nfor word, freq in demo.items():\n    print(f\"{' '.join(word):<22} x{freq}\")",
+     "out": ""
+    }
+   ]
+  },
+  {
+   "p": 12,
+   "title": "The full BPE training loop — this is the whole algorithm!",
+   "cells": [
+    {
+     "n": 16,
+     "type": "code",
+     "src": "# The full BPE training loop — this is the whole algorithm!\n\ndef train_bpe(corpus, num_merges):\n    merges = []\n    for step in range(num_merges):\n        pairs = get_pair_counts(corpus)\n        if not pairs:\n            break\n        best = max(pairs, key=pairs.get)          # most frequent pair\n        corpus = merge_pair(corpus, best)\n        merges.append(best)\n        print(f\"merge {step+1}: {best}  (count={pairs[best]})\")\n    return corpus, merges\n\nfinal_corpus, merges = train_bpe(dict(corpus), num_merges=8)\n\nprint(\"\\nfinal corpus:\")\nfor word, freq in final_corpus.items():\n    print(f\"  {' '.join(word):<20} x{freq}\")",
+     "out": ""
+    }
+   ]
+  },
+  {
+   "p": 13,
+   "title": "Tokenize an UNSEEN word by replaying the learned merges in order.",
+   "cells": [
+    {
+     "n": 17,
+     "type": "code",
+     "src": "# Tokenize an UNSEEN word by replaying the learned merges in order.\n\ndef bpe_tokenize(word, merges):\n    symbols = list(word) + [\"</w>\"]\n    for a, b in merges:                    # replay merges in training order\n        i = 0\n        while i < len(symbols) - 1:\n            if symbols[i] == a and symbols[i + 1] == b:\n                symbols[i:i + 2] = [a + b]\n            else:\n                i += 1\n    return symbols\n\nprint(\"lowest  →\", bpe_tokenize(\"lowest\", merges))   # never seen in training!\nprint(\"newer   →\", bpe_tokenize(\"newer\", merges))\nprint(\"widow   →\", bpe_tokenize(\"widow\", merges))",
+     "out": ""
+    }
+   ]
+  },
+  {
+   "p": 14,
+   "title": "Lab 1-2 — Real Tokenizers & Fertility",
+   "cells": [
+    {
+     "n": 18,
+     "type": "markdown",
+     "src": "**Notice**: `lowest` was *never* in the training corpus, yet it tokenizes cleanly into\n`low + est` — and `est` was discovered as a unit purely from counting. No linguistics anywhere.\n\n---\n## Lab 1-2 — Real Tokenizers & Fertility\n\nNow the industrial-strength versions. Watch what happens to Korean.",
+     "out": ""
+    },
+    {
+     "n": 19,
+     "type": "code",
+     "src": "from transformers import AutoTokenizer, PreTrainedTokenizerFast\n\n# English-centric BPE\ngpt2_tok = AutoTokenizer.from_pretrained(\"gpt2\")\n# Korean-trained BPE\nkogpt_tok = PreTrainedTokenizerFast.from_pretrained(\n    \"skt/kogpt2-base-v2\",\n    bos_token=\"</s>\",\n    eos_token=\"</s>\",\n    unk_token=\"<unk>\",\n    pad_token=\"<pad>\",\n    mask_token=\"<mask>\",\n)\n\nen = \"The weather is really nice today.\"\nko = \"오늘은 날씨가 정말 좋네요.\"\n\nfor name, tok in [(\"GPT-2 (EN-centric)\", gpt2_tok), (\"KoGPT-2 (KO-trained)\", kogpt_tok)]:\n    print(f\"=== {name} ===\")\n    for s in (en, ko):\n        tokens = tok.tokenize(s)\n        print(f\"  {len(tokens):>2} tokens ← {s}\")\n        print(f\"     {tokens}\")\n    print()",
+     "out": ""
+    }
+   ]
+  },
+  {
+   "p": 15,
+   "title": "Fertility = tokens per whitespace word. Compute it for both tokenizers on both s",
+   "cells": [
+    {
+     "n": 20,
+     "type": "code",
+     "src": "# Fertility = tokens per whitespace word. Compute it for both tokenizers on both sentences.\n\ndef fertility(tokenizer, sentence):\n    n_tokens = len(tokenizer.tokenize(sentence))\n    n_words = len(sentence.split())\n    return n_tokens / n_words\n\nfor name, tok in [(\"GPT-2\", gpt2_tok), (\"KoGPT-2\", kogpt_tok)]:\n    print(f\"{name:<8} EN fertility = {fertility(tok, en):.2f}   KO fertility = {fertility(tok, ko):.2f}\")",
+     "out": ""
+    }
+   ]
+  },
+  {
+   "p": 16,
+   "title": "Lab 1-3 — Train Your Own Korean Tokenizer",
+   "cells": [
+    {
+     "n": 21,
+     "type": "markdown",
+     "src": "**This is the fertility problem from the lecture, live**: the same Korean sentence costs\nseveral times more tokens on an English-centric tokenizer. Tokens = money = context space.\n\n---\n## Lab 1-3 — Train Your Own Korean Tokenizer\n\nLet's fix it ourselves: train a BPE tokenizer **on Korean data**.\nData: **NSMC** (Naver Sentiment Movie Corpus) — 150k Korean movie reviews, the classic Korean NLP dataset.",
+     "out": ""
+    },
+    {
+     "n": 22,
+     "type": "code",
+     "src": "import pandas as pd\n\n# NSMC: id / document / label (0=negative, 1=positive)\nurl = \"https://raw.githubusercontent.com/e9t/nsmc/master/ratings_train.txt\"\nnsmc = pd.read_csv(url, sep=\"\\t\").dropna()\n\nprint(nsmc.shape)\nnsmc.head()",
+     "out": ""
+    }
+   ]
+  },
+  {
+   "p": 17,
+   "title": "from tokenizers import Tokenizer, models, trainers, pre_tokenizers",
+   "cells": [
+    {
+     "n": 23,
+     "type": "code",
+     "src": "from tokenizers import Tokenizer, models, trainers, pre_tokenizers\n\ntexts = nsmc[\"document\"].astype(str).tolist()\n\n# Build a BPE tokenizer and train it on the 150k Korean reviews\nmy_tok = Tokenizer(models.BPE(unk_token=\"[UNK]\"))\nmy_tok.pre_tokenizer = pre_tokenizers.Whitespace()\n\ntrainer = trainers.BpeTrainer(\n    vocab_size=8000,\n    special_tokens=[\"[UNK]\", \"[PAD]\"],\n)\nmy_tok.train_from_iterator(texts, trainer)\n\nprint(\"vocab size:\", my_tok.get_vocab_size())",
+     "out": ""
+    }
+   ]
+  },
+  {
+   "p": 18,
+   "title": "Compare on the same Korean sentence",
+   "cells": [
+    {
+     "n": 24,
+     "type": "code",
+     "src": "# Compare on the same Korean sentence\nenc = my_tok.encode(ko)\nprint(f\"our Korean BPE : {len(enc.tokens):>2} tokens → {enc.tokens}\")\nprint(f\"GPT-2          : {len(gpt2_tok.tokenize(ko)):>2} tokens\")\n\n# and on review-style text it has actually seen the style of:\nsample = \"이 영화 진짜 재미있어요 배우들 연기가 대박\"\nprint(f\"\\nour Korean BPE : {my_tok.encode(sample).tokens}\")",
+     "out": ""
+    }
+   ]
+  },
+  {
+   "p": 19,
+   "title": "Lab 1-4 — word2vec on Real Korean Data",
+   "cells": [
+    {
+     "n": 25,
+     "type": "markdown",
+     "src": "**You just trained a tokenizer** — the exact same process (with a bigger corpus and vocab)\nthat produced the tokenizers inside HyperCLOVA X and EXAONE.\n\n---\n## Lab 1-4 — word2vec on Real Korean Data\n\nNow the second half of the lecture: **from tokens to vectors.**\nWe train skip-gram word2vec on the NSMC reviews and explore the space it learns.",
+     "out": ""
+    },
+    {
+     "n": 26,
+     "type": "code",
+     "src": "from gensim.models import Word2Vec\nimport re\n\n# Sentences for word2vec: for simplicity, split each review on whitespace with eliminating punctuation\nsentences = []\n\nfor t in texts:\n    # punctuation\n    t = re.sub(r\"[^가-힣A-Za-z0-9\\s]\", \" \", t)\n    # whitespace split\n    tokens = t.split()\n    sentences.append(tokens)\n\nw2v = Word2Vec(\n    sentences,\n    vector_size=100,   # d — embedding dimension\n    window=5,          # m — context window size\n    min_count=5,       # ignore very rare words\n    sg=1,              # 1 = skip-gram (the lecture's variant), 0 = CBOW\n    negative=10,       # k negative samples\n    workers=4,\n    seed=42,\n)\n\nprint(\"vocabulary size:\", len(w2v.wv))\nprint(\"vector for '영화':\", w2v.wv[\"영화\"][:8], \"…\")",
+     "out": ""
+    }
+   ]
+  },
+  {
+   "p": 20,
+   "title": "Nearest neighbors — \"you shall know a word by the company it keeps\"",
+   "cells": [
+    {
+     "n": 27,
+     "type": "code",
+     "src": "# Nearest neighbors — \"you shall know a word by the company it keeps\"\nfor query in [\"영화\", \"배우\", \"최고\", \"쓰레기\"]:\n    neighbors = w2v.wv.most_similar(query, topn=5)\n    pretty = \", \".join(f\"{w}({s:.2f})\" for w, s in neighbors)\n    print(f\"{query:>4} → {pretty}\")",
+     "out": ""
+    }
+   ]
+  },
+  {
+   "p": 21,
+   "title": "Similarity is a number now — something one-hot vectors could never give us",
+   "cells": [
+    {
+     "n": 28,
+     "type": "code",
+     "src": "# Similarity is a number now — something one-hot vectors could never give us\npairs = [(\"영화\", \"드라마\"), (\"영화\", \"배우\"), (\"영화\", \"김치\")]\nfor a, b in pairs:\n    if a in w2v.wv and b in w2v.wv:\n        print(f\"sim({a}, {b}) = {w2v.wv.similarity(a, b):.3f}\")\n    else:\n        print(f\"sim({a}, {b}) = OOV\")",
+     "out": ""
+    }
+   ]
+  },
+  {
+   "p": 22,
+   "title": "for word in [\"영화\", \"드라마\", \"배우\", \"김치\"]:",
+   "cells": [
+    {
+     "n": 29,
+     "type": "code",
+     "src": "for word in [\"영화\", \"드라마\", \"배우\", \"김치\"]:\n    print(\n        word,\n        \"in vocab:\", word in w2v.wv,\n        \"count:\", w2v.wv.get_vecattr(word, \"count\") if word in w2v.wv else 0\n    )",
+     "out": ""
+    }
+   ]
+  },
+  {
+   "p": 23,
+   "title": "Vector arithmetic — the analogy game (results vary: this corpus is small & infor",
+   "cells": [
+    {
+     "n": 30,
+     "type": "code",
+     "src": "# Vector arithmetic — the analogy game (results vary: this corpus is small & informal!)\nresult = w2v.wv.most_similar(positive=[\"여자\", \"왕\"], negative=[\"남자\"], topn=3)\nprint(\"왕 - 남자 + 여자 ≈\", result)",
+     "out": ""
+    }
+   ]
+  },
+  {
+   "p": 24,
+   "title": "Visualize the space",
+   "cells": [
+    {
+     "n": 31,
+     "type": "markdown",
+     "src": "### Visualize the space\n\nDo similar words really cluster? Let's project 60 frequent words to 2-D with PCA.",
+     "out": ""
+    },
+    {
+     "n": 32,
+     "type": "code",
+     "src": "# Korean font for matplotlib on Colab (run once; ignore the warnings)\n!apt-get -qq install -y fonts-nanum > /dev/null\nimport matplotlib.font_manager as fm, matplotlib.pyplot as plt\nfm.fontManager.addfont(\"/usr/share/fonts/truetype/nanum/NanumGothic.ttf\")\nplt.rcParams[\"font.family\"] = \"NanumGothic\"\nplt.rcParams[\"axes.unicode_minus\"] = False",
+     "out": ""
+    }
+   ]
+  },
+  {
+   "p": 25,
+   "title": "import numpy as np",
+   "cells": [
+    {
+     "n": 33,
+     "type": "code",
+     "src": "import numpy as np\nfrom sklearn.decomposition import PCA\n\nwords = [w for w, _ in sorted(w2v.wv.key_to_index.items(), key=lambda kv: kv[1])[:200]\n         if len(w) >= 2][:60]\nvecs = np.array([w2v.wv[w] for w in words])\n\nxy = PCA(n_components=2).fit_transform(vecs)\n\nplt.figure(figsize=(11, 7))\nplt.scatter(xy[:, 0], xy[:, 1], s=12, color=\"#2C5F9E\")\nfor (x, y), w in zip(xy, words):\n    plt.annotate(w, (x, y), fontsize=10, alpha=0.85)\nplt.title(\"word2vec on NSMC — 60 frequent words, PCA to 2-D\")\nplt.tight_layout()\nplt.show()",
+     "out": ""
+    }
+   ]
+  },
+  {
+   "p": 26,
+   "title": "Wrap-up",
+   "cells": [
+    {
+     "n": 34,
+     "type": "markdown",
+     "src": "\n## Wrap-up\n\n- **Lab 0**: GPU runtime, PyTorch tensors, Hugging Face `pipeline()`\n- **BPE**: you implemented count-and-merge and tokenized unseen words\n- **Fertility**: English-centric tokenizers punish Korean — you measured it\n- **Your tokenizer**: trained on 150k Korean reviews in seconds\n- **word2vec**: skip-gram on real data → neighbors, similarity, analogies, a 2-D map\n\n**Assignment 1 (out today, due before next Monday's class)** builds directly on Parts 1-3 and 1-4.\nNext week: neural network foundations & your first neural language model. 수고했습니다! 🎉",
+     "out": ""
+    }
+   ]
+  }
+ ]
+}

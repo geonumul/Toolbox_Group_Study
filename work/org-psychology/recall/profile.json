@@ -1,0 +1,8 @@
+{
+ "layout": "slide",
+ "glossary": ["rules/용어사전.json"],
+ "corpus": ["bank/*.json"],
+ "gap_spaces": true,
+ "all_lines": true,
+ "ocr_extra": true
+}

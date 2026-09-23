@@ -1,0 +1,4221 @@
+{
+ "deck": "N1",
+ "from": 1,
+ "to": 27,
+ "glossary": [
+  {
+   "ko": "자연어처리",
+   "en": "Natural Language Processing (NLP)",
+   "say": "컴퓨터가 사람 말을 처리하고, 이해하고, 만들어 내게 하는 분야",
+   "more": "자연어 이해(NLU)와 자연어 생성(NLG) 두 방향을 합친 말이에요. 말을 잘 다루는 기계가 똑똑해 보여서 AI 의 한가운데 있어요."
+  },
+  {
+   "ko": "자연어 이해",
+   "en": "Natural Language Understanding (NLU)",
+   "say": "글에서 뜻(의도, 개체, 사실)을 뽑아내는 쪽",
+   "more": "분류, 정보 뽑기, 검색, 질문에 답하기가 여기에 들어가요. 방향은 글 → 뜻이에요."
+  },
+  {
+   "ko": "자연어 생성",
+   "en": "Natural Language Generation (NLG)",
+   "say": "뜻에서 새 글을 만들어 내는 쪽",
+   "more": "글쓰기, 요약, 응답이 여기에 들어가요. 방향은 뜻 → 글이에요."
+  },
+  {
+   "ko": "중의성",
+   "en": "Ambiguity",
+   "say": "같은 글자가 여러 뜻으로 읽히는 성질",
+   "more": "단어(배, bank), 구조(I saw a man with a telescope), 띄어쓰기(아버지가방에) 수준이 있어요. NLP 의 핵심 난제예요."
+  },
+  {
+   "ko": "교착어",
+   "en": "Agglutinative Language",
+   "say": "어간에 작은 조각을 붙여 한 단어를 만드는 언어, 한국어가 대표",
+   "more": "먹- + -었- + -겠- + -더라 → 먹었겠더라처럼요. 그래서 한국어 동사는 형태가 수천 가지예요."
+  },
+  {
+   "ko": "형태소",
+   "en": "Morpheme",
+   "say": "뜻을 가진 가장 작은 말의 조각",
+   "more": "먹었겠더라는 먹-, -었-, -겠-, -더라 네 형태소로 이루어져요."
+  },
+  {
+   "ko": "형태소 분석기",
+   "en": "Morphological Analyzer",
+   "say": "단어를 형태소로 쪼개 주는 도구",
+   "more": "한국어는 형태소가 많이 붙어서 형태소 분석이 특히 중요해요. 2주차 토큰화와 이어져요."
+  },
+  {
+   "ko": "말뭉치",
+   "en": "Corpus",
+   "say": "컴퓨터가 배우려고 모아 둔 아주 많은 글 묶음",
+   "more": "통계 시대(2막)부터 말뭉치에서 패턴을 세는 방식이 중심이 됐어요."
+  },
+  {
+   "ko": "토큰",
+   "en": "Token",
+   "say": "글을 컴퓨터가 다루는 작은 조각으로 자른 것",
+   "more": "레고 조각에 비유해요. 단어일 수도, 단어 조각일 수도 있어요. 2주차에 자세히 배워요."
+  },
+  {
+   "ko": "토큰화",
+   "en": "Tokenization",
+   "say": "글을 토큰으로 자르는 일",
+   "more": "과목 주문의 첫 단계예요. 2주차 주제예요."
+  },
+  {
+   "ko": "엔그램",
+   "en": "n-gram",
+   "say": "바로 앞 몇 단어만 보고 다음 단어를 맞히는 세기 방법",
+   "more": "n 개씩 붙은 단어 묶음을 말해요. 1-gram 은 한 단어, 2-gram 은 두 단어. 3주차에 직접 만들어요."
+  },
+  {
+   "ko": "언어 모델",
+   "en": "Language Model (LM)",
+   "say": "다음에 올 단어(토큰)를 맞히는 모델",
+   "more": "휴대폰 자판의 다음 단어 추천과 같아요. P(다음 단어 | 앞 단어들)을 계산해요."
+  },
+  {
+   "ko": "워드투벡",
+   "en": "word2vec",
+   "say": "단어를 벡터(지도 좌표)로 바꾸는 2013년 방법",
+   "more": "라벨 없이 날 글에서, 주변 단어로 뜻을 배워요. king - man + woman ≈ queen 같은 뜻의 산수가 돼요."
+  },
+  {
+   "ko": "단어 벡터",
+   "en": "Word Vector",
+   "say": "단어를 숫자 목록으로 나타낸 것, 단어의 지도 좌표",
+   "more": "뜻이 비슷한 단어는 가까운 벡터가 돼요."
+  },
+  {
+   "ko": "분포 가설",
+   "en": "Distributional Hypothesis",
+   "say": "'친구를 보면 그 사람을 안다' 처럼, 주변 단어로 단어 뜻을 안다는 생각",
+   "more": "Firth(1957)의 'You shall know a word by the company it keeps' 가 대표 문장이에요."
+  },
+  {
+   "ko": "순환 신경망",
+   "en": "Recurrent Neural Network (RNN)",
+   "say": "문장을 한 단어씩 읽으며 메모장(은닉 상태)을 고쳐 쓰는 신경망",
+   "more": "매 단계 같은 부품을 다시 써요. 3주차에 자세히 배워요."
+  },
+  {
+   "ko": "장단기 메모리",
+   "en": "LSTM",
+   "say": "RNN 을 고쳐서 긴 문장도 더 잘 기억하게 한 신경망",
+   "more": "게이트로 무엇을 기억하고 잊을지 정해요. 1990년대에 나왔어요."
+  },
+  {
+   "ko": "은닉 상태",
+   "en": "Hidden State",
+   "say": "RNN 이 지금까지 읽은 내용을 요약해 들고 있는 메모장",
+   "more": "한 단어를 읽을 때마다 새로 고쳐 써요."
+  },
+  {
+   "ko": "시퀀스-투-시퀀스",
+   "en": "seq2seq",
+   "say": "문장을 받아 다른 문장을 내놓는 구조(2014)",
+   "more": "인코더가 원문을 압축하고 디코더가 결과 문장을 써요. 기계 번역에서 나왔어요."
+  },
+  {
+   "ko": "어텐션",
+   "en": "Attention",
+   "say": "결과를 만들 때 입력 중 지금 중요한 부분에 주목하는 방법",
+   "more": "2015년 seq2seq 번역에서 나왔고, 2017년 트랜스포머의 핵심이 됐어요. 4주차 주제예요."
+  },
+  {
+   "ko": "트랜스포머",
+   "en": "Transformer",
+   "say": "어텐션만으로 만든 신경망 구조(2017)",
+   "more": "순환 없이 모든 단어를 병렬로 처리해서 GPU 로 크게 키우기 좋아요. 요즘 LLM 의 뼈대예요."
+  },
+  {
+   "ko": "사전 학습",
+   "en": "Pre-training",
+   "say": "라벨 없는 거대한 글로 먼저 언어를 익히는 단계",
+   "more": "한 번 사전 학습한 모델을 여러 일에 싸게 맞춰 써요. BERT, GPT(2018)가 대표예요."
+  },
+  {
+   "ko": "사후 학습",
+   "en": "Post-training",
+   "say": "사전 학습 뒤 사람이 원하는 대로 모델을 다듬는 단계",
+   "more": "지시 학습, RLHF 같은 방법이 들어가요. 7주차 주제예요."
+  },
+  {
+   "ko": "대규모 언어 모델",
+   "en": "Large Language Model (LLM)",
+   "say": "아주 많은 글로 학습한 아주 큰 언어 모델",
+   "more": "ChatGPT, Claude, EXAONE 같은 모델이에요. 프롬프트 하나로 여러 NLP 일을 해요."
+  },
+  {
+   "ko": "파라미터",
+   "en": "Parameter",
+   "say": "모델이 학습하며 스스로 맞춰 가는 숫자들",
+   "more": "개수가 모델 크기예요. GPT-3 는 175B(1,750억) 개예요."
+  },
+  {
+   "ko": "분류",
+   "en": "Classification",
+   "say": "글 하나에 라벨 하나를 붙이는 일",
+   "more": "스팸/정상, 긍정/부정, 주제 가르기가 대표예요."
+  },
+  {
+   "ko": "개체명 인식",
+   "en": "Named Entity Recognition (NER)",
+   "say": "글 속에서 사람, 장소, 날짜 같은 이름 붙은 것을 찾는 일",
+   "more": "토큰마다 태그를 붙이는 시퀀스 레이블링의 한 종류예요."
+  },
+  {
+   "ko": "합성곱 신경망",
+   "en": "Convolutional Neural Network (CNN)",
+   "say": "작은 창을 밀며 특징을 잡는 신경망",
+   "more": "이미지에서 유명하지만 글에도 써요. 3주차에 나와요."
+  },
+  {
+   "ko": "튜링 테스트",
+   "en": "Turing Test",
+   "say": "기계와 대화해 보고 사람인지 기계인지 가리는 지능 시험",
+   "more": "1950년 앨런 튜링이 'Can machines think?' 를 물으며 제안했어요."
+  },
+  {
+   "ko": "엘리자",
+   "en": "ELIZA",
+   "say": "1966년 MIT 의 최초 챗봇",
+   "more": "패턴 규칙 약 200개로 심리 상담사를 흉내 냈어요. 뜻도 기억도 없었지만 사람들은 속마음을 털어놨어요."
+  },
+  {
+   "ko": "조지타운-IBM 시연",
+   "en": "Georgetown-IBM Experiment",
+   "say": "1954년 러시아어 60문장을 영어로 번역해 보인 시연",
+   "more": "'5년 안에 번역 해결' 을 장담했지만 틀렸어요."
+  },
+  {
+   "ko": "기계 번역",
+   "en": "Machine Translation (MT)",
+   "say": "컴퓨터가 한 언어를 다른 언어로 옮기는 일",
+   "more": "1947 위버의 '번역 = 암호 풀기' 에서 시작해 2016년 구글 번역의 신경망 전환까지 이어져요."
+  },
+  {
+   "ko": "ALPAC 보고서",
+   "en": "ALPAC Report",
+   "say": "1966년 기계 번역이 약속보다 훨씬 어렵다고 결론 낸 미국 보고서",
+   "more": "그 뒤 미국 연구 지원이 약 10년 동안 끊겨 'AI 겨울' 이 왔어요."
+  },
+  {
+   "ko": "다트머스 워크숍",
+   "en": "Dartmouth Workshop",
+   "say": "1956년 여름, 인공지능이라는 이름이 생긴 모임",
+   "more": "사진 맨 오른쪽이 섀넌이에요."
+  },
+  {
+   "ko": "인공지능",
+   "en": "Artificial Intelligence (AI)",
+   "say": "사람처럼 생각하고 배우는 기계를 만드는 분야",
+   "more": "1956년 다트머스 워크숍에서 이름이 생겼어요."
+  },
+  {
+   "ko": "규칙 기반 방법",
+   "en": "Rule-based Approach",
+   "say": "사람이 규칙을 손으로 써서 말을 처리하는 방법(1막)",
+   "more": "ELIZA, SHRDLU 가 예예요. 언어는 규칙으로 다 적을 수 없어서 한계에 부딪혔어요."
+  },
+  {
+   "ko": "통계 기반 방법",
+   "en": "Statistical Approach",
+   "say": "규칙 대신 많은 글에서 패턴을 세어 확률로 처리하는 방법(2막)",
+   "more": "n-gram, IBM 통계 번역이 대표예요. 뜻을 모른다는 벽이 있었어요."
+  },
+  {
+   "ko": "잡음 채널 모델",
+   "en": "Noisy Channel Model",
+   "say": "잡음 낀 통로를 지나 망가진 메시지를 확률로 원래대로 되돌리는 생각",
+   "more": "섀넌(1948)의 정보 이론에서 나왔고, 통계 번역과 음성 인식의 설계도가 됐어요."
+  },
+  {
+   "ko": "신경망",
+   "en": "Neural Network",
+   "say": "숫자를 여러 층으로 계산하며 데이터에서 규칙을 배우는 모델",
+   "more": "3막부터 NLP 의 주인공이에요. 기초 다지기 9단원에서 자세히 봐요."
+  },
+  {
+   "ko": "인코더",
+   "en": "Encoder",
+   "say": "원문을 읽고 요약(압축)하는 부분",
+   "more": "seq2seq 에서 원문 쪽을 맡아요."
+  },
+  {
+   "ko": "디코더",
+   "en": "Decoder",
+   "say": "요약을 받아 결과 문장을 한 단어씩 쓰는 부분",
+   "more": "seq2seq 에서 번역문 쪽을 맡아요. 어텐션으로 원문을 다시 봐요."
+  },
+  {
+   "ko": "미세 조정",
+   "en": "Fine-tuning",
+   "say": "사전 학습한 모델을 작은 데이터로 특정 일에 맞추는 것",
+   "more": "감성 분석, 질의응답, 번역 같은 일마다 적은 데이터만 있으면 돼요."
+  },
+  {
+   "ko": "스케일링 법칙",
+   "en": "Scaling Laws",
+   "say": "파라미터, 데이터, 계산을 늘리면 성능이 예측 가능하게 좋아진다는 법칙",
+   "more": "그래서 모델을 계속 키웠고, 4년에 약 5,700배 커졌어요."
+  },
+  {
+   "ko": "문맥 내 학습",
+   "en": "In-context Learning",
+   "say": "모델을 다시 학습시키지 않고 프롬프트 속 예시만 보고 일을 해내는 능력",
+   "more": "GPT-3(2020)가 보여 줬어요. 예시 몇 개를 주는 퓨샷 방식이 대표예요."
+  },
+  {
+   "ko": "지시 학습",
+   "en": "Instruction Tuning",
+   "say": "지시문을 따르도록 모델을 추가로 학습시키는 것",
+   "more": "ChatGPT(2022)가 RLHF 와 함께 썼어요."
+  },
+  {
+   "ko": "인간 피드백 강화 학습",
+   "en": "RLHF",
+   "say": "사람이 더 좋다고 고른 답 쪽으로 모델을 다듬는 방법",
+   "more": "Reinforcement Learning from Human Feedback 의 줄임말이에요. 사후 학습의 한 방법이에요."
+  },
+  {
+   "ko": "",
+   "en": "BERT",
+   "say": "2018년 나온 사전 학습 언어 모델",
+   "more": "GPT 와 함께 '한 번 배워 어디서나 쓰기' 시대를 연 두 반쪽이에요. 5주차에 배워요."
+  },
+  {
+   "ko": "",
+   "en": "GPT",
+   "say": "2018년부터 나온 다음 단어를 맞히며 사전 학습한 언어 모델 계열",
+   "more": "GPT-3(2020)는 문맥 내 학습을, ChatGPT(2022)는 대화 서비스를 보여 줬어요."
+  },
+  {
+   "ko": "",
+   "en": "ChatGPT",
+   "say": "2022년 11월 공개된 대화형 LLM 서비스",
+   "more": "지시 학습과 RLHF 를 더했고, 두 달 만에 사용자 1억 명을 모았어요."
+  },
+  {
+   "ko": "엑사원",
+   "en": "EXAONE",
+   "say": "LG AI연구원의 한국어 대규모 언어 모델",
+   "more": "교수님이 개발에 참여했다고 소개한 모델이에요. HyperCLOVA X 와 함께 한국어 LLM 의 예예요."
+  },
+  {
+   "ko": "화용론",
+   "en": "Pragmatics",
+   "say": "같은 말이 상황에 따라 다른 뜻이 되는 것을 다루는 분야",
+   "more": "'잘~한다' 가 칭찬인지 비꼼인지 가리는 문제예요."
+  },
+  {
+   "ko": "생략",
+   "en": "Ellipsis",
+   "say": "문장에서 맥락으로 알 수 있는 말을 빼는 것",
+   "more": "'밥 먹었어?' 에는 주어도 목적어도 없어요. 한국어에 특히 많아요."
+  },
+  {
+   "ko": "지시 대상",
+   "en": "Reference",
+   "say": "'그것', 'it' 같은 말이 가리키는 대상",
+   "more": "트로피 문장처럼 세상 지식이 있어야 찾을 수 있을 때가 많아요."
+  },
+  {
+   "ko": "위노그라드 스키마",
+   "en": "Winograd Schema",
+   "say": "한 단어만 바꾸면 it 이 가리키는 대상이 뒤집히는 문장 시험",
+   "more": "big 이면 트로피, small 이면 가방. 문법이 아니라 세상 지식을 시험해요."
+  },
+  {
+   "ko": "높임법",
+   "en": "Honorifics",
+   "say": "말하는 상대에 따라 높여 말하는 한국어 문법",
+   "more": "먹어 / 드세요 / 잡수세요는 같은 사실, 다른 사회적 뜻이에요."
+  },
+  {
+   "ko": "저자원 자연어처리",
+   "en": "Low-resource NLP",
+   "say": "데이터가 아주 적은 언어를 다루는 NLP",
+   "more": "지구의 7,000개 넘는 언어 대부분이 여기에 들어가요."
+  },
+  {
+   "ko": "시퀀스 레이블링",
+   "en": "Sequence Labeling",
+   "say": "문장 속 토큰마다 태그를 하나씩 붙이는 일",
+   "more": "품사 태깅, 개체명 인식이 대표예요."
+  },
+  {
+   "ko": "품사 태깅",
+   "en": "Part-of-Speech Tagging (POS)",
+   "say": "단어마다 명사, 동사 같은 품사를 붙이는 일",
+   "more": "시퀀스 레이블링의 대표 예예요. 통계 시대에도 쓰였어요."
+  },
+  {
+   "ko": "감성 분석",
+   "en": "Sentiment Analysis",
+   "say": "글이 긍정인지 부정인지 가리는 일",
+   "more": "분류의 대표 예예요."
+  },
+  {
+   "ko": "검색 증강 생성",
+   "en": "Retrieval-Augmented Generation (RAG)",
+   "say": "먼저 관련 자료를 찾아 오고, 그걸 근거로 답을 만들게 하는 방법",
+   "more": "10주차 주제예요. 교수님 연구실의 주요 연구 주제이기도 해요."
+  },
+  {
+   "ko": "에이전트",
+   "en": "Agent",
+   "say": "도구를 쓰고 계획을 세워 여러 단계 일을 해내는 LLM 시스템",
+   "more": "11주차 주제예요."
+  },
+  {
+   "ko": "파이토치",
+   "en": "PyTorch",
+   "say": "신경망을 만들고 학습시키는 파이썬 도구",
+   "more": "이 수업의 실습 도구예요."
+  },
+  {
+   "ko": "허깅 페이스",
+   "en": "Hugging Face",
+   "say": "사전 학습된 모델을 쉽게 받아 쓰게 해 주는 도구와 모임",
+   "more": "transformers 라이브러리를 만들었고, 주교재도 이 팀이 썼어요."
+  },
+  {
+   "ko": "텀 프로젝트",
+   "en": "Term Project",
+   "say": "팀으로 한 학기 동안 하는 프로젝트",
+   "more": "성적의 25%예요. 8주차에 제안 발표, 학기 말에 결과와 보고서를 내요."
+  },
+  {
+   "ko": "프로그래밍 과제",
+   "en": "Programming Assignment",
+   "say": "파이썬으로 직접 코드를 짜는 과제",
+   "more": "성적의 40%예요. 파이토치, 트랜스포머 구현, RAG, 에이전트, 평가가 들어가요."
+  }
+ ],
+ "slides": [
+  {
+   "p": 1,
+   "title": "Natural Language Processing (표지)",
+   "terms": [
+    "Natural Language Processing (NLP)"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "**자연어처리(Natural Language Processing (NLP))** 첫 시간이에요.",
+      "2026년 2학기, 가톨릭대학교 인공지능학과 전공선택 과목이에요.",
+      "이 과목의 주문을 먼저 들어 두세요.",
+      "글을 토큰으로 자르고, 토큰을 벡터로 바꾸고, 벡터로 다음 토큰을 맞혀요."
+     ]
+    }
+   ],
+   "pass2": [],
+   "pass3": [],
+   "pass4": []
+  },
+  {
+   "p": 2,
+   "title": "Reminder",
+   "terms": [],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "수업 자료는 저작권 있는 그림이 들어 있어서 밖으로 퍼뜨리면 안 돼요.",
+      "수강생 학습용으로만 쓰라고 하셨어요.",
+      "화면이나 소리에 문제가 있으면 참지 말고 바로 말해 달라고 하셨어요."
+     ]
+    }
+   ],
+   "pass2": [],
+   "pass3": [],
+   "pass4": []
+  },
+  {
+   "p": 3,
+   "title": "Contents",
+   "terms": [
+    "Natural Language Processing (NLP)"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "1. Syllabus & Introduction: 수업이 어떻게 돌아가고 어떻게 평가되는지",
+      "2. What is NLP?: **자연어처리(Natural Language Processing (NLP))**가 무엇이고 왜 어려운지",
+      "3. A Brief History of NLP: 70년 역사를 다섯 막으로",
+      "4. How Machines Read Text: 기계가 글을 읽는 법(다음 주 이야기)"
+     ]
+    },
+    {
+     "kind": "say",
+     "lines": [
+      "실제 오늘 덱의 4부는 교수님 연구실(MINT Lab) 소개로 끝나요.",
+      "목차 4번 제목과 실제 4부가 달라도 놀라지 마세요."
+     ]
+    }
+   ],
+   "pass2": [],
+   "pass3": [],
+   "pass4": []
+  },
+  {
+   "p": 4,
+   "title": "1. Syllabus | Course at a Glance",
+   "terms": [
+    "Natural Language Processing (NLP)",
+    "Token",
+    "Tokenization",
+    "Transformer",
+    "Large Language Model (LLM)",
+    "Retrieval-Augmented Generation (RAG)",
+    "Agent"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "이 쪽은 수업 소개 카드예요.",
+      "한 학기 동안 '토큰이 뭐지?' 에서 출발해요.",
+      "끝에는 **대규모 언어 모델(Large Language Model (LLM))** 시스템을 만들고 평가하는 데까지 가요."
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "compare",
+     "head": "슬라이드 영어, 우리말로",
+     "cols": [
+      "영어",
+      "뜻"
+     ],
+     "rows": [
+      [
+       "Course",
+       "자연어처리, 06488-01, 전공선택 3학점 3시간"
+      ],
+      [
+       "When & where",
+       "월요일 7~9교시, B345 강의실, 이론 + 실습"
+      ],
+      [
+       "What we cover",
+       "**토큰화(Tokenization)**부터 **트랜스포머(Transformer)**, LLM 학습, RAG, 에이전트까지"
+      ],
+      [
+       "You need",
+       "파이썬을 편하게 쓰기. 머신러닝, 딥러닝 기초는 있으면 도움"
+      ]
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "처음 보는 이름 미리 맛보기",
+     "items": [
+      "**토큰(Token)**: 글을 컴퓨터가 다루는 작은 조각으로 자른 것(레고 조각)",
+      "**트랜스포머(Transformer)**: 요즘 거의 모든 언어 모델의 뼈대(4주차)",
+      "**검색 증강 생성(Retrieval-Augmented Generation (RAG))**: 먼저 자료를 찾아 보고 답하게 하는 방법(10주차)",
+      "**에이전트(Agent)**: 도구를 쓰며 여러 단계 일을 해내는 LLM(11주차)"
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "이 수업을 듣는 데 꼭 필요하다고 한 것은?",
+     "choices": [
+      "파이썬을 편하게 쓰기",
+      "딥러닝 수업 이수",
+      "언어학 전공"
+     ],
+     "a": 0,
+     "why": "슬라이드의 You need 는 comfortable Python 이에요. 머신러닝, 딥러닝 기초는 '있으면 도움' 이에요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.071,
+       "y": 0.193,
+       "w": 0.7,
+       "h": 0.046,
+       "say": "Course: 자연어처리, 06488-01 분반, 전공선택, 3 credits / 3 hours"
+      },
+      {
+       "x": 0.071,
+       "y": 0.258,
+       "w": 0.625,
+       "h": 0.044,
+       "say": "When & where: 월요일 7~9교시, B345. lecture + hands-on practice = 이론 + 실습"
+      },
+      {
+       "x": 0.071,
+       "y": 0.429,
+       "w": 0.686,
+       "h": 0.046,
+       "say": "What we cover: **토큰화(Tokenization)**부터 Transformers, LLM training, RAG, agents 까지"
+      },
+      {
+       "x": 0.071,
+       "y": 0.494,
+       "w": 0.689,
+       "h": 0.044,
+       "say": "You need: comfortable Python. we build up the neural parts as we go = 신경망은 수업에서 차근차근"
+      },
+      {
+       "x": 0.243,
+       "y": 0.86,
+       "w": 0.518,
+       "h": 0.038,
+       "say": "한 학기: '토큰이 뭐지?' 에서 LLM 시스템을 만들고 평가하기까지"
+      }
+     ]
+    },
+    {
+     "kind": "prof",
+     "when": "1주차 월요일 OT",
+     "lines": [
+      "선수 과목은 딱히 없어요. 1, 2, 3, 4학년이 골고루 섞여 있어요.",
+      "파이썬만 편하게 쓰면 실습, 과제, 팀 프로젝트에 큰 문제 없어요.",
+      "머신러닝, 딥러닝을 들었으면 더 편하지만, 천천히 따라오면 돼요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "이 수업의 시간과 장소는?",
+     "choices": [
+      "월요일 7~9교시, B345",
+      "화요일 1~3교시, B345",
+      "월요일 1~3교시, N223"
+     ],
+     "a": 0,
+     "why": "When & where 줄: Monday 7~9교시, B345 예요. N223 은 교수님 연구실 번호예요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "선수 과목은 없지만 파이썬은 미리 익혀 두세요.",
+      "교수님: '호기심과 파이썬을 다음 주까지 챙겨 오세요.'"
+     ]
+    }
+   ]
+  },
+  {
+   "p": 5,
+   "title": "1. Syllabus | What This Course Is About",
+   "terms": [
+    "Natural Language Processing (NLP)",
+    "Tokenization",
+    "Attention",
+    "Transformer",
+    "Pre-training",
+    "Post-training",
+    "Retrieval-Augmented Generation (RAG)",
+    "Agent",
+    "PyTorch",
+    "Hugging Face"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "이 과목 = **자연어처리(Natural Language Processing (NLP))** 기초 + 요즘 언어 모델이에요.",
+      "그리고 모든 개념을 직접 코드로 돌려 봐요."
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "한 학기 로드맵",
+     "svg": "<svg viewBox=\"0 0 480 270\" xmlns=\"http://www.w3.org/2000/svg\"><text x=\"240\" y=\"40\" font-size=\"16\" text-anchor=\"middle\" class=\"tb\">한 학기 로드맵</text><rect x=\"10\" y=\"90\" width=\"100\" height=\"70\" rx=\"2\" class=\"n2 b1\"/><text x=\"60\" y=\"120\" font-size=\"15\" text-anchor=\"middle\" class=\"tl b1\">기초</text><text x=\"60\" y=\"144\" font-size=\"14\" text-anchor=\"middle\" class=\"tl b1\">1~4주</text><line x1=\"112\" y1=\"125\" x2=\"120\" y2=\"125\" class=\"e2 b2\"/><polygon points=\"128,125 119,120 119,130\" class=\"arrow b2\"/><rect x=\"130\" y=\"90\" width=\"100\" height=\"70\" rx=\"2\" class=\"n b2\"/><text x=\"180\" y=\"120\" font-size=\"15\" text-anchor=\"middle\" class=\"tl b2\">LLM 학습</text><text x=\"180\" y=\"144\" font-size=\"14\" text-anchor=\"middle\" class=\"tl b2\">5~7주</text><line x1=\"232\" y1=\"125\" x2=\"240\" y2=\"125\" class=\"e2 b3\"/><polygon points=\"248,125 239,120 239,130\" class=\"arrow b3\"/><rect x=\"250\" y=\"90\" width=\"100\" height=\"70\" rx=\"2\" class=\"n b3\"/><text x=\"300\" y=\"120\" font-size=\"15\" text-anchor=\"middle\" class=\"tl b3\">적응, 시스템</text><text x=\"300\" y=\"144\" font-size=\"14\" text-anchor=\"middle\" class=\"tl b3\">9~11주</text><line x1=\"352\" y1=\"125\" x2=\"360\" y2=\"125\" class=\"e2 b4\"/><polygon points=\"368,125 359,120 359,130\" class=\"arrow b4\"/><rect x=\"370\" y=\"90\" width=\"100\" height=\"70\" rx=\"2\" class=\"n b4\"/><text x=\"420\" y=\"120\" font-size=\"15\" text-anchor=\"middle\" class=\"tl b4\">평가, 최전선</text><text x=\"420\" y=\"144\" font-size=\"14\" text-anchor=\"middle\" class=\"tl b4\">12~14주</text><text x=\"240\" y=\"210\" font-size=\"14\" text-anchor=\"middle\" class=\"tm b4\">8주: 텀 프로젝트 제안 발표</text><text x=\"240\" y=\"236\" font-size=\"14\" text-anchor=\"middle\" class=\"tm b4\">16주: 기말고사 (중간고사는 없어요)</text></svg>",
+     "caption": "기초 → LLM 학습 → 적응과 시스템 → 평가와 최전선 순서로 가요.",
+     "builds": 4
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "points",
+     "head": "슬라이드 핵심 문장 뜻",
+     "items": [
+      "**foundations of NLP + modern language models** = 자연어처리 기초 + 최신 언어 모델",
+      "**hands-on with PyTorch & Hugging Face** = **파이토치(PyTorch)**와 **허깅 페이스(Hugging Face)**로 직접 해 보기",
+      "**Implementation first** = 구현이 먼저, 모든 개념에 직접 돌리는 코드가 붙어요"
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "강의 목표 4가지 (Goals)",
+     "cols": [
+      "영어 요지",
+      "뜻"
+     ],
+     "rows": [
+      [
+       "1. fundamental concepts",
+       "**자연어처리(Natural Language Processing (NLP))**의 기본 개념과 방법 이해"
+      ],
+      [
+       "2. attention, Transformer, LM training",
+       "**어텐션(Attention)**, **트랜스포머(Transformer)** 구조, 언어 모델 학습 이해"
+      ],
+      [
+       "3. implement and fine-tune",
+       "파이썬, 파이토치, 허깅 페이스로 직접 구현하고 미세 조정"
+      ],
+      [
+       "4. Korean & multilingual",
+       "한국어와 여러 언어용 믿을 만한 시스템 설계, 평가"
+      ]
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "강의 목표 4번에서 특히 챙기는 언어는?",
+     "choices": [
+      "한국어와 다국어",
+      "파이썬만",
+      "영어만"
+     ],
+     "a": 0,
+     "why": "Design and evaluate reliable NLP systems for Korean & multilingual applications 예요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.071,
+       "y": 0.193,
+       "w": 0.7,
+       "h": 0.044,
+       "say": "This course = foundations of NLP + modern language models"
+      },
+      {
+       "x": 0.071,
+       "y": 0.25,
+       "w": 0.693,
+       "h": 0.082,
+       "say": "Topics: **토큰화(Tokenization)**, 표현 학습, **어텐션(Attention)**, **사전 학습(Pre-training)**, **사후 학습(Post-training)**, RAG, agents, 평가, 다국어, 책임 있는 AI"
+      },
+      {
+       "x": 0.1,
+       "y": 0.447,
+       "w": 0.593,
+       "h": 0.188,
+       "say": "Goals 1~4: 이해 두 개, 구현 하나, 설계와 평가 하나"
+      },
+      {
+       "x": 0.054,
+       "y": 0.711,
+       "w": 0.911,
+       "h": 0.14,
+       "say": "네 칸: W1~4 기초, W5~7 LLM 학습, W9~11 PEFT, RAG, agents, W12~14 평가, 추론, 한국어 NLP"
+      },
+      {
+       "x": 0.264,
+       "y": 0.878,
+       "w": 0.475,
+       "h": 0.036,
+       "say": "Implementation first: 모든 개념에 직접 돌리는 코드"
+      }
+     ]
+    },
+    {
+     "kind": "prof",
+     "when": "1주차 월요일 OT",
+     "lines": [
+      "한 문장으로 요약하면, NLP 기초부터 최신 언어 모델까지",
+      "파이토치와 허깅 페이스로 직접 만들어 보면서 배우는 수업이에요.",
+      "**토큰화(Tokenization)**부터 **에이전트(Agent)**까지 LLM 업계 기술 스택 전체를 한 학기에 훑어요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "오늘 덱에서 이미 이름이 나오는 것",
+     "items": [
+      "**사전 학습(Pre-training)**: 라벨 없는 거대한 글로 먼저 언어를 익히기(5~6주차)",
+      "**사후 학습(Post-training)**: 사전 학습 뒤 사람이 원하는 대로 다듬기(7주차)"
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "로드맵 네 칸의 순서로 맞는 것은?",
+     "choices": [
+      "기초 → LLM 학습 → 적응과 시스템 → 평가와 최전선",
+      "LLM 학습 → 기초 → 평가 → 적응",
+      "평가 → 기초 → 적응 → LLM 학습"
+     ],
+     "a": 0,
+     "why": "W1~4 Foundations, W5~7 Training LLMs, W9~11 Adaptation & systems, W12~14 Evaluation & frontiers 예요."
+    },
+    {
+     "kind": "english",
+     "head": "강의 목표 한 줄",
+     "en": "이 수업은 자연어처리(NLP)의 기초 개념을 이해하고, 어텐션과 트랜스포머(Transformer), 언어 모델 학습을 이해하며, 파이토치와 허깅 페이스로 구현하고, 한국어와 다국어 시스템을 설계, 평가하는 것을 목표로 한다.",
+     "ko": "이해 2개(기초, 트랜스포머) + 구현 1개 + 설계와 평가 1개",
+     "tip": "이해, 이해, 구현, 평가 네 박자로 외워요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "로드맵에 8주차가 빠져 있어요. 8주차는 텀 프로젝트 제안 발표 주예요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 6,
+   "title": "1. Syllabus | Weekly Plan (16 Weeks)",
+   "terms": [
+    "Natural Language Processing (NLP)",
+    "Large Language Model (LLM)",
+    "Tokenization",
+    "Word Vector",
+    "Convolutional Neural Network (CNN)",
+    "Recurrent Neural Network (RNN)",
+    "Language Model (LM)",
+    "Attention",
+    "Transformer",
+    "BERT",
+    "GPT",
+    "Pre-training",
+    "Post-training",
+    "RLHF",
+    "Retrieval-Augmented Generation (RAG)",
+    "Agent",
+    "Term Project"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "16주 계획표예요.",
+      "1~4주 기초, 5~7주 LLM 학습, 8주 팀 프로젝트 제안, 9~14주 최신 기술이에요.",
+      "16주가 기말고사예요. 중간고사는 없어요!"
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "compare",
+     "head": "큰 구간으로 보기",
+     "cols": [
+      "주",
+      "무엇"
+     ],
+     "rows": [
+      [
+       "1~4주",
+       "기초: **토큰화(Tokenization)**, **단어 벡터(Word Vector)**, 신경망, **어텐션(Attention)**과 **트랜스포머(Transformer)**"
+      ],
+      [
+       "5~7주",
+       "LLM 학습: **BERT**, **GPT**, **사전 학습(Pre-training)**, **사후 학습(Post-training)**"
+      ],
+      [
+       "8주",
+       "**텀 프로젝트(Term Project)** 제안 발표 (중간고사 대신)"
+      ],
+      [
+       "9~14주",
+       "적응, **검색 증강 생성(Retrieval-Augmented Generation (RAG))**, **에이전트(Agent)**, 평가, 추론, 한국어"
+      ],
+      [
+       "15~16주",
+       "15주 보강, 16주 기말고사"
+      ]
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "이 수업에 중간고사가 있나요?",
+     "choices": [
+      "없다. 8주차 텀 프로젝트 제안 발표로 대신한다",
+      "있다. 8주차에 본다",
+      "있다. 15주차에 본다"
+     ],
+     "a": 0,
+     "why": "No midterm, week 8 is your term-project proposal 이에요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "표 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.054,
+       "y": 0.269,
+       "w": 0.446,
+       "h": 0.279,
+       "say": "1~4주: 소개와 역사, 토큰화와 단어 벡터, CNN과 RNN과 언어 모델, 어텐션과 트랜스포머"
+      },
+      {
+       "x": 0.054,
+       "y": 0.548,
+       "w": 0.446,
+       "h": 0.209,
+       "say": "5~7주: BERT, GPT, T5 / 사전 학습(휴강 표시) / 사후 학습 SFT, RLHF, DPO"
+      },
+      {
+       "x": 0.054,
+       "y": 0.758,
+       "w": 0.446,
+       "h": 0.07,
+       "say": "8주: Term project, proposal"
+      },
+      {
+       "x": 0.5,
+       "y": 0.269,
+       "w": 0.45,
+       "h": 0.209,
+       "say": "9~11주: LoRA 같은 효율적 적응, 검색과 RAG, 에이전트와 도구 사용"
+      },
+      {
+       "x": 0.5,
+       "y": 0.478,
+       "w": 0.45,
+       "h": 0.209,
+       "say": "12~14주: LLM-as-a-judge 평가, 추론(CoT), 한국어와 다국어, 안전과 편향"
+      },
+      {
+       "x": 0.207,
+       "y": 0.863,
+       "w": 0.589,
+       "h": 0.038,
+       "say": "아래 줄: 중간고사 없음, 휴강한 주는 15주차에 보강"
+      }
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "1~8주 자세히 (우리 스터디는 1~3주)",
+     "cols": [
+      "주",
+      "주제"
+     ],
+     "rows": [
+      [
+       "1",
+       "과목 소개, NLP 와 LLM 의 역사 (오늘)"
+      ],
+      [
+       "2",
+       "**토큰화(Tokenization)**와 **단어 벡터(Word Vector)**, 한국어 서브워드"
+      ],
+      [
+       "3",
+       "신경망 기초: **합성곱 신경망(Convolutional Neural Network (CNN))**, **순환 신경망(Recurrent Neural Network (RNN))**, 언어 모델링"
+      ],
+      [
+       "4",
+       "**어텐션(Attention)**과 **트랜스포머(Transformer)** 구조"
+      ],
+      [
+       "5~6",
+       "사전 학습된 LM(**BERT**, **GPT**, T5), **사전 학습(Pre-training)**의 데이터와 규모"
+      ],
+      [
+       "7~8",
+       "**사후 학습(Post-training)**(SFT, **인간 피드백 강화 학습(RLHF)**, DPO), 8주 **텀 프로젝트(Term Project)** 제안"
+      ]
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "9~16주 자세히",
+     "cols": [
+      "주",
+      "주제"
+     ],
+     "rows": [
+      [
+       "9",
+       "효율적 적응: 프롬프트, LoRA/QLoRA, 양자화"
+      ],
+      [
+       "10",
+       "검색과 **검색 증강 생성(Retrieval-Augmented Generation (RAG))**: 임베딩, 재순위, 근거 대기"
+      ],
+      [
+       "11",
+       "**에이전트(Agent)**와 도구 사용: 계획, 기억, 실패 복구"
+      ],
+      [
+       "12~13",
+       "벤치마크와 평가(LLM-as-a-judge), 추론과 효율적 추론(CoT)"
+      ],
+      [
+       "14",
+       "한국어와 다국어 NLP, 안전과 편향"
+      ],
+      [
+       "15~16",
+       "15주 보강주, 16주 기말고사"
+      ]
+     ]
+    },
+    {
+     "kind": "prof",
+     "when": "1주차 월요일 OT",
+     "lines": [
+      "계획서에는 5주차가 휴강인데, 오늘(8월 31일)이 1주차가 되어서 이 표로는 6주차가 휴강이에요.",
+      "개천절 대체 휴일 때문이고, 보강이 있어요.",
+      "8주차에는 팀을 미리 짜서 각 팀이 어떤 주제로 할지 발표해요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "3주차 주제에 들어 있지 않은 것은?",
+     "choices": [
+      "**합성곱 신경망(Convolutional Neural Network (CNN))**",
+      "**순환 신경망(Recurrent Neural Network (RNN))**",
+      "**검색 증강 생성(Retrieval-Augmented Generation (RAG))**"
+     ],
+     "a": 2,
+     "why": "3주차는 **합성곱 신경망(Convolutional Neural Network (CNN))**, **순환 신경망(Recurrent Neural Network (RNN))**, 언어 모델링이에요. RAG 는 10주차예요."
+    },
+    {
+     "kind": "check",
+     "q": "8주차에 하는 일은?",
+     "choices": [
+      "텀 프로젝트 제안 발표",
+      "중간고사",
+      "기말고사"
+     ],
+     "a": 0,
+     "why": "Week 8 is your term-project proposal 이에요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "슬라이드 안에서 휴강 주 표기가 섞여 있어요. 표에는 6주차 칸에 '휴강 → W15 보강', 아래 줄과 15주차 칸에는 'W5' 라고 적혀 있어요.",
+      "녹음 설명: 계획서 기준 5주차, 이 표 기준 6주차가 휴강(개천절 대체 휴일)이고 보강은 15주차예요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 7,
+   "title": "1. Syllabus | Textbooks & Resources",
+   "terms": [
+    "Transformer",
+    "Natural Language Processing (NLP)",
+    "Large Language Model (LLM)",
+    "PyTorch",
+    "Hugging Face"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "교재와 도구 소개 쪽이에요.",
+      "책을 다 살 필요는 없어요. 강의 자료와 실습 자료로 충분하다고 하셨어요."
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "compare",
+     "head": "책 세 권 정리",
+     "cols": [
+      "구분",
+      "책",
+      "한 줄"
+     ],
+     "rows": [
+      [
+       "Main textbook (교재)",
+       "트랜스포머를 활용한 자연어 처리",
+       "허깅 페이스 팀이 직접 쓴 책"
+      ],
+      [
+       "Secondary (부교재)",
+       "밑바닥부터 만들면서 배우는 LLM",
+       "모든 걸 직접 구현하는 정신을 따라요"
+      ],
+      [
+       "Reference (참고)",
+       "자연어 처리를 위한 허깅페이스 트랜스포머 하드 트레이닝",
+       "참고용"
+      ]
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "실습(hands-on)은 어디에서 돌리나요?",
+     "choices": [
+      "Colab (무료 GPU)",
+      "학교 서버",
+      "개인 노트북만"
+     ],
+     "a": 0,
+     "why": "Tools 줄: hands-on work runs in Colab (free GPU) 예요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.071,
+       "y": 0.19,
+       "w": 0.796,
+       "h": 0.082,
+       "say": "주교재: 트랜스포머를 활용한 자연어 처리(Natural Language Processing with Transformers), **허깅 페이스(Hugging Face)** 팀의 책"
+      },
+      {
+       "x": 0.071,
+       "y": 0.292,
+       "w": 0.582,
+       "h": 0.082,
+       "say": "부교재: 밑바닥부터 만들면서 배우는 LLM(Build a Large Language Model From Scratch)"
+      },
+      {
+       "x": 0.071,
+       "y": 0.453,
+       "w": 0.718,
+       "h": 0.042,
+       "say": "무료 고전: Jurafsky & Martin 의 Speech and Language Processing 3판, Stanford CS224N"
+      },
+      {
+       "x": 0.071,
+       "y": 0.514,
+       "w": 0.654,
+       "h": 0.042,
+       "say": "도구: Python, **파이토치(PyTorch)**, Hugging Face transformers, 실습은 Colab"
+      },
+      {
+       "x": 0.071,
+       "y": 0.574,
+       "w": 0.45,
+       "h": 0.042,
+       "say": "슬라이드와 공지: 사이버캠퍼스(LMS), 수업마다 올려요"
+      },
+      {
+       "x": 0.186,
+       "y": 0.865,
+       "w": 0.632,
+       "h": 0.036,
+       "say": "모든 책을 살 필요 없어요. 주교재 + 무료 자료면 충분"
+      }
+     ]
+    },
+    {
+     "kind": "prof",
+     "when": "1주차 월요일 OT",
+     "lines": [
+      "교재 순서대로 나가지 않아요. 올려 주는 강의 자료를 보며 진행해요.",
+      "책을 꼭 살 필요는 없어요. PPT 슬라이드와 실습 자료로 충분하고, 어려울 때 참고하세요.",
+      "파이썬 기본 문법만 알아도 강의와 실습에서 큰 문제 없어요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "강의 슬라이드와 공지는 어디에 올라오나요?",
+     "choices": [
+      "사이버캠퍼스(LMS)",
+      "교수님 연구실 홈페이지",
+      "카카오톡 단톡방"
+     ],
+     "a": 0,
+     "why": "Slides & notices: 사이버캠퍼스(LMS), posted after each class 예요. 출석 체크도 사이버캠퍼스로 한다고 하셨어요."
+    }
+   ]
+  },
+  {
+   "p": 8,
+   "title": "1. Syllabus | Evaluation & Policies",
+   "terms": [
+    "Programming Assignment",
+    "Term Project",
+    "PyTorch",
+    "Transformer",
+    "Retrieval-Augmented Generation (RAG)",
+    "Agent",
+    "ChatGPT"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "성적은 출석 5, 과제 40, 텀 프로젝트 25, 기말고사 30 이에요.",
+      "중간고사는 없어요."
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "성적 막대",
+     "svg": "<svg viewBox=\"0 0 480 270\" xmlns=\"http://www.w3.org/2000/svg\"><text x=\"240\" y=\"40\" font-size=\"16\" text-anchor=\"middle\" class=\"tb\">성적 100점 나누기</text><rect x=\"40\" y=\"80\" width=\"20\" height=\"60\" rx=\"2\" class=\"n\"/><text x=\"50\" y=\"70\" font-size=\"14\" text-anchor=\"middle\" class=\"t\">출석 5</text><rect x=\"60\" y=\"80\" width=\"160\" height=\"60\" rx=\"2\" class=\"n3\"/><text x=\"140\" y=\"116\" font-size=\"15\" text-anchor=\"middle\" class=\"tl\">과제 40</text><rect x=\"220\" y=\"80\" width=\"100\" height=\"60\" rx=\"2\" class=\"n2\"/><text x=\"270\" y=\"116\" font-size=\"15\" text-anchor=\"middle\" class=\"tl\">팀 25</text><rect x=\"320\" y=\"80\" width=\"120\" height=\"60\" rx=\"2\" class=\"n2\"/><text x=\"380\" y=\"116\" font-size=\"15\" text-anchor=\"middle\" class=\"tl\">기말 30</text><line x1=\"220\" y1=\"165\" x2=\"440\" y2=\"165\" class=\"e2 b1\"/><line x1=\"220\" y1=\"155\" x2=\"220\" y2=\"165\" class=\"e2 b1\"/><line x1=\"440\" y1=\"155\" x2=\"440\" y2=\"165\" class=\"e2 b1\"/><text x=\"330\" y=\"192\" font-size=\"15\" text-anchor=\"middle\" class=\"tb b1\">텀 프로젝트 + 기말 = 55</text><text x=\"240\" y=\"240\" font-size=\"14\" text-anchor=\"middle\" class=\"tm b1\">중간고사는 없어요</text></svg>",
+     "caption": "과제가 한 항목으로는 가장 크지만, 팀 프로젝트와 기말을 합치면 55로 더 커요.",
+     "builds": 1
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "compare",
+     "head": "네 칸, 우리말로",
+     "cols": [
+      "영어",
+      "비율",
+      "뜻"
+     ],
+     "rows": [
+      [
+       "Attendance",
+       "5%",
+       "출석(2주차부터 체크)"
+      ],
+      [
+       "Programming assignments",
+       "40%",
+       "**프로그래밍 과제(Programming Assignment)**: 파이썬 코드 과제"
+      ],
+      [
+       "Term project",
+       "25%",
+       "**텀 프로젝트(Term Project)**: 팀 프로젝트, 8주 제안, 학기 말 결과와 보고서"
+      ],
+      [
+       "Final exam",
+       "30%",
+       "기말고사(16주)"
+      ]
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "정책 문장 뜻",
+     "items": [
+      "**declare usage, write in your own words** = AI 도구를 썼으면 밝히고, 글은 자기 말로",
+      "**start assignments early, ask questions earlier** = 과제는 일찍 시작하고, 질문은 더 일찍"
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "한 항목으로 비중이 가장 큰 것은?",
+     "choices": [
+      "Programming assignments",
+      "Final exam",
+      "Term project"
+     ],
+     "a": 0,
+     "why": "**프로그래밍 과제(Programming Assignment)**가 40%로 가장 커요. 기말고사는 30%, 텀 프로젝트는 25%예요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.054,
+       "y": 0.206,
+       "w": 0.209,
+       "h": 0.181,
+       "say": "5% Attendance: 출석"
+      },
+      {
+       "x": 0.286,
+       "y": 0.206,
+       "w": 0.21,
+       "h": 0.181,
+       "say": "40% Programming assignments: 프로그래밍 과제"
+      },
+      {
+       "x": 0.52,
+       "y": 0.206,
+       "w": 0.209,
+       "h": 0.181,
+       "say": "25% Term project: 텀 프로젝트(팀)"
+      },
+      {
+       "x": 0.753,
+       "y": 0.206,
+       "w": 0.21,
+       "h": 0.181,
+       "say": "30% Final exam: 기말고사"
+      },
+      {
+       "x": 0.071,
+       "y": 0.438,
+       "w": 0.696,
+       "h": 0.076,
+       "say": "과제 내용: **파이토치(PyTorch)**와 트랜스포머 구현, PEFT, RAG, 에이전트, 평가. 텀 프로젝트로 이어져요"
+      },
+      {
+       "x": 0.071,
+       "y": 0.591,
+       "w": 0.699,
+       "h": 0.041,
+       "say": "AI 도구(**ChatGPT**, Claude): 배우고 디버그하는 데 쓰되, 사용을 밝히고 자기 말로"
+      }
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "비율 손계산",
+     "steps": [
+      "출석 5 + 과제 40 + 팀 25 + 기말 30 = 100",
+      "팀 25 + 기말 30 = 55",
+      "55 > 과제 40"
+     ],
+     "answer": "합이 100이 맞고, 팀 프로젝트와 기말을 합친 55가 과제 40보다 커요."
+    },
+    {
+     "kind": "prof",
+     "when": "1주차 월요일 OT",
+     "lines": [
+      "출석은 오늘은 없고 다음 주부터 해요.",
+      "과제가 40%지만, 기말고사와 팀 프로젝트를 합친 55%가 더 크니 그쪽을 더 신경 써 주세요.",
+      "ChatGPT, Claude 는 써도 되지만 썼다면 반드시 밝혀 주세요.",
+      "통째로 AI 가 만든 걸 바로 내면 금방 티가 나요. 최대한 자기 언어로 쓰세요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "그 밖의 안내",
+     "items": [
+      "장애학생 지원: 장애학생지원센터(02-2164-4699)",
+      "텀 프로젝트: 8주차 제안 → 학기 말 최종 결과와 보고서"
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "기말고사와 텀 프로젝트 비중을 합치면?",
+     "choices": [
+      "55%",
+      "40%",
+      "70%"
+     ],
+     "a": 0,
+     "why": "30% + 25% = 55% 예요."
+    },
+    {
+     "kind": "check",
+     "q": "AI 도구 정책으로 맞는 것은?",
+     "choices": [
+      "써도 되지만 사용을 밝히고 자기 말로 쓴다",
+      "절대 쓰면 안 된다",
+      "밝히지 않고 써도 된다"
+     ],
+     "a": 0,
+     "why": "AI tools: use them to learn and debug, declare usage, write in your own words 예요."
+    },
+    {
+     "kind": "english",
+     "head": "평가 방식 한 줄",
+     "en": "평가는 출석 5%, 프로그래밍 과제 40%, 텀 프로젝트 25%, 기말고사 30%이며, 중간고사는 없고 8주차 텀 프로젝트 제안 발표로 대신한다.",
+     "ko": "5, 40, 25, 30. 합 100.",
+     "tip": "'오사이오 삼십' 처럼 5-40-25-30 순서로 소리 내 외워요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "한 항목으로는 과제(40%)가 가장 크지만, 교수님은 기말 + 팀(55%)을 더 신경 쓰라고 했어요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 9,
+   "title": "What is NLP? (구분)",
+   "terms": [
+    "Natural Language Processing (NLP)"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "2부: **자연어처리(Natural Language Processing (NLP))**란 무엇인가.",
+      "기계에게 사람 말을 읽고, 이해하고, 쓰게 가르치는 일이에요."
+     ]
+    }
+   ],
+   "pass2": [],
+   "pass3": [],
+   "pass4": []
+  },
+  {
+   "p": 10,
+   "title": "2. What is NLP? | Natural Language & NLP",
+   "terms": [
+    "Natural Language Processing (NLP)",
+    "Natural Language Understanding (NLU)",
+    "Natural Language Generation (NLG)",
+    "Classification",
+    "Named Entity Recognition (NER)"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "자연어는 사람이 자라면서 자연스럽게 배우는 말이에요. 한국어, 영어처럼요.",
+      "파이썬 같은 컴퓨터 언어는 자연어가 아니에요.",
+      "**자연어처리(Natural Language Processing (NLP))**는 컴퓨터가 사람 말을 처리하고, 이해하고, 만들어 내게 하는 분야예요."
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "두 방향, 한 분야",
+     "svg": "<svg viewBox=\"0 0 480 270\" xmlns=\"http://www.w3.org/2000/svg\"><rect x=\"10\" y=\"90\" width=\"120\" height=\"70\" rx=\"2\" class=\"n3\"/><text x=\"70\" y=\"122\" font-size=\"15\" text-anchor=\"middle\" class=\"tl\">사람이 쓴 글</text><text x=\"70\" y=\"146\" font-size=\"14\" text-anchor=\"middle\" class=\"tl\">KTX 몇 시야?</text><line x1=\"132\" y1=\"125\" x2=\"170\" y2=\"125\" class=\"e2 b1\"/><polygon points=\"178,125 169,120 169,130\" class=\"arrow b1\"/><text x=\"155\" y=\"110\" font-size=\"15\" text-anchor=\"middle\" class=\"tb b1\">NLU</text><rect x=\"180\" y=\"90\" width=\"120\" height=\"70\" rx=\"2\" class=\"n2 b1\"/><text x=\"240\" y=\"122\" font-size=\"15\" text-anchor=\"middle\" class=\"tl b1\">의미</text><text x=\"240\" y=\"146\" font-size=\"14\" text-anchor=\"middle\" class=\"tl b1\">의도, 목적지, 날짜</text><line x1=\"302\" y1=\"125\" x2=\"340\" y2=\"125\" class=\"e2 b2\"/><polygon points=\"348,125 339,120 339,130\" class=\"arrow b2\"/><text x=\"325\" y=\"110\" font-size=\"15\" text-anchor=\"middle\" class=\"tb b2\">NLG</text><rect x=\"350\" y=\"90\" width=\"120\" height=\"70\" rx=\"2\" class=\"n b2\"/><text x=\"410\" y=\"122\" font-size=\"15\" text-anchor=\"middle\" class=\"tl b2\">기계가 쓴 글</text><text x=\"410\" y=\"146\" font-size=\"14\" text-anchor=\"middle\" class=\"tl b2\">첫 KTX 05:13</text><text x=\"155\" y=\"200\" font-size=\"14\" text-anchor=\"middle\" class=\"tm b1\">이해: 글 → 뜻</text><text x=\"325\" y=\"225\" font-size=\"14\" text-anchor=\"middle\" class=\"tm b2\">생성: 뜻 → 글</text></svg>",
+     "caption": "글에서 뜻을 뽑는 쪽이 NLU, 뜻에서 글을 만드는 쪽이 NLG 예요.",
+     "builds": 2
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "compare",
+     "head": "NLU 와 NLG 구별",
+     "cols": [
+      "",
+      "**자연어 이해(Natural Language Understanding (NLU))**",
+      "**자연어 생성(Natural Language Generation (NLG))**"
+     ],
+     "rows": [
+      [
+       "방향",
+       "글 → 뜻 (in)",
+       "뜻 → 글 (out)"
+      ],
+      [
+       "하는 일",
+       "classify, extract, search, answer = 분류, 뽑기, 찾기, 답하기",
+       "write, summarize, respond = 쓰기, 요약, 응답"
+      ],
+      [
+       "KTX 예",
+       "의도 = 열차 시간표, 목적지 = 부산, 날짜 = 내일",
+       "'내일 부산행 첫 KTX 는 05:13 입니다'"
+      ]
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "KTX 질문이 처리되는 순서",
+     "steps": [
+      "사람이 씀: '내일 부산 가는 KTX 몇 시야?'",
+      "**자연어 이해(Natural Language Understanding (NLU))**: 의도(Intent) = train_schedule, dest = 부산, date = 내일",
+      "**자연어 생성(Natural Language Generation (NLG))**: '내일 부산행 첫 KTX 는 05:13 입니다' 를 만들어요"
+     ],
+     "answer": "NLU 로 뜻을 뽑고, NLG 로 답을 써요. 둘을 합친 것이 NLP 예요."
+    },
+    {
+     "kind": "check",
+     "q": "'KTX 몇 시야?' 에서 목적지와 날짜를 뽑아내는 일은?",
+     "choices": [
+      "**자연어 이해(Natural Language Understanding (NLU))**",
+      "**자연어 생성(Natural Language Generation (NLG))**"
+     ],
+     "a": 0,
+     "why": "글 → 뜻 방향이라 자연어 이해(NLU)예요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.071,
+       "y": 0.193,
+       "w": 0.689,
+       "h": 0.044,
+       "say": "Natural language = 사람이 자라며 쓰는 말. not Python, not logic = 파이썬도 논리식도 아님"
+      },
+      {
+       "x": 0.071,
+       "y": 0.251,
+       "w": 0.529,
+       "h": 0.043,
+       "say": "NLP: process, understand, and generate = 처리하고, 이해하고, 생성하기"
+      },
+      {
+       "x": 0.049,
+       "y": 0.381,
+       "w": 0.217,
+       "h": 0.387,
+       "say": "TEXT, What people write: 사람이 쓴 질문"
+      },
+      {
+       "x": 0.374,
+       "y": 0.381,
+       "w": 0.217,
+       "h": 0.387,
+       "say": "MEANING: Intent(의도), Entities(개체: 부산, 내일 같은 이름 붙은 것), Facts(사실)"
+      },
+      {
+       "x": 0.706,
+       "y": 0.381,
+       "w": 0.218,
+       "h": 0.387,
+       "say": "TEXT, What machines write: 기계가 쓴 답"
+      },
+      {
+       "x": 0.2,
+       "y": 0.86,
+       "w": 0.604,
+       "h": 0.038,
+       "say": "언어를 잘 다루는 기계는 똑똑해 보여요. 그래서 NLP 가 AI 의 한가운데 있어요"
+      }
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "Entities 와 이어지는 용어",
+     "items": [
+      "부산, 내일처럼 이름 붙은 것을 찾는 일을 **개체명 인식(Named Entity Recognition (NER))**이라고 해요.",
+      "스팸인지 아닌지 가르는 일은 **분류(Classification)**예요. 둘 다 NLU 쪽 일이에요."
+     ]
+    },
+    {
+     "kind": "prof",
+     "when": "1주차 월요일 OT",
+     "lines": [
+      "자연어는 사람이 자라면서 자연스럽게 습득하는 언어로, 컴퓨터 언어와 대치되는 말이에요.",
+      "파이썬이나 수학 기호처럼 사람이 설계한 언어는 문법이 명확해요. 자연어는 정반대예요.",
+      "NLU 와 NLG 를 합쳐서 NLP 라고 해요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "NLP 와 NLU, NLG 의 관계로 맞는 것은?",
+     "choices": [
+      "NLP = NLU(이해) + NLG(생성)",
+      "NLU = NLP + NLG",
+      "NLG 는 NLP 와 관계없다"
+     ],
+     "a": 0,
+     "why": "Two directions, one field: 이해(NLU)가 들어가고 생성(NLG)이 나와요."
+    },
+    {
+     "kind": "english",
+     "head": "NLP 정의",
+     "en": "자연어처리(NLP)는 컴퓨터가 사람의 언어를 처리, 이해, 생성하게 만드는 분야로, 글에서 의미를 뽑는 자연어 이해(NLU)와 의미에서 글을 만드는 자연어 생성(NLG)의 두 방향으로 이루어진다.",
+     "ko": "처리, 이해, 생성 + NLU(in), NLG(out)",
+     "tip": "U 는 Understanding(이해), G 는 Generation(생성)."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "파이썬은 자연어가 아니에요. 사람이 설계한 인공 언어예요(not Python, not logic)."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 11,
+   "title": "2. What is NLP? | NLP Is Already Everywhere",
+   "terms": [
+    "Natural Language Processing (NLP)",
+    "Language Model (LM)",
+    "Classification",
+    "Machine Translation (MT)",
+    "Large Language Model (LLM)",
+    "ChatGPT"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "오늘 하루에도 **자연어처리(Natural Language Processing (NLP))**를 열 번 넘게 썼어요.",
+      "자판 자동 완성, 검색, 스팸 필터, 번역, 음성 비서, 챗봇 전부 NLP 예요."
+     ]
+    },
+    {
+     "kind": "analogy",
+     "head": "휴대폰 자판의 다음 단어 추천",
+     "scene": "문자를 치다 보면 자판이 다음 단어를 미리 띄워 줘요. 앞 글을 보고 다음에 올 말을 맞히는 거예요.",
+     "map": [
+      [
+       "자판의 다음 단어 추천",
+       "**언어 모델(Language Model (LM))**"
+      ],
+      [
+       "추천이 맞는지",
+       "다음 토큰 맞히기"
+      ]
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "compare",
+     "head": "하루 시간표 속 NLP",
+     "cols": [
+      "시각",
+      "장면",
+      "NLP 속 이름"
+     ],
+     "rows": [
+      [
+       "07:30",
+       "자판 자동 완성, 오타 수정",
+       "**언어 모델(Language Model (LM))**"
+      ],
+      [
+       "08:10",
+       "구글, 네이버 검색",
+       "질의 이해, 순위, 요약 문장"
+      ],
+      [
+       "10:00",
+       "스팸 메일 40통 삭제",
+       "텍스트 **분류(Classification)**기"
+      ],
+      [
+       "13:20",
+       "파파고로 외국 메뉴 번역",
+       "신경망 **기계 번역(Machine Translation (MT))**"
+      ],
+      [
+       "19:00",
+       "'시리야', '헤이 구글'",
+       "말 → 글 바꾼 뒤 NLP 가 뜻 파악"
+      ],
+      [
+       "23:00",
+       "**ChatGPT**, Claude 로 과제 도움",
+       "**대규모 언어 모델(Large Language Model (LLM))** (쓰면 밝히기)"
+      ]
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "스팸 필터는 어떤 일을 하는 NLP 인가요?",
+     "choices": [
+      "**분류(Classification)**",
+      "**기계 번역(Machine Translation (MT))**",
+      "음성 합성"
+     ],
+     "a": 0,
+     "why": "a text classifier at work: 글을 '스팸/정상' 라벨로 나누는 분류기예요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.071,
+       "y": 0.193,
+       "w": 0.564,
+       "h": 0.043,
+       "say": "07:30 자판이 다 치기 전에 자동 완성하고 오타를 고쳐요"
+      },
+      {
+       "x": 0.071,
+       "y": 0.258,
+       "w": 0.65,
+       "h": 0.043,
+       "say": "08:10 검색이 질문을 알아듣고 페이지 순위를 매기고 요약을 써요"
+      },
+      {
+       "x": 0.071,
+       "y": 0.322,
+       "w": 0.568,
+       "h": 0.043,
+       "say": "10:00 스팸 필터: a text classifier at work"
+      },
+      {
+       "x": 0.071,
+       "y": 0.388,
+       "w": 0.593,
+       "h": 0.043,
+       "say": "13:20 파파고: neural machine translation in your pocket"
+      },
+      {
+       "x": 0.071,
+       "y": 0.453,
+       "w": 0.8,
+       "h": 0.043,
+       "say": "19:00 음성 비서: speech becomes text, then NLP figures out what you meant"
+      },
+      {
+       "x": 0.071,
+       "y": 0.518,
+       "w": 0.671,
+       "h": 0.043,
+       "say": "23:00 ChatGPT / Claude: a large language model (declare it!)"
+      }
+     ]
+    },
+    {
+     "kind": "prof",
+     "when": "1주차 월요일 OT",
+     "lines": [
+      "5년 전쯤만 해도 먼 기술 같았는데, 지금 여러분은 매일 NLP 를 맞닥뜨려요.",
+      "이 수업은 자연어처리가 어떻게 이루어지는지, 그 블랙박스를 열어 보는 수업이에요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "파파고 번역은 슬라이드에서 무엇이라고 불렀나요?",
+     "choices": [
+      "neural machine translation",
+      "text classifier",
+      "spam filter"
+     ],
+     "a": 0,
+     "why": "신경망 **기계 번역(Machine Translation (MT))**, 주머니 속 번역기예요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "(declare it!) 과제에 LLM 을 썼으면 밝혀야 해요. p.8 AI 도구 정책과 같은 말이에요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 12,
+   "title": "2. What is NLP? | Why Is Language Hard? - Ambiguity",
+   "terms": [
+    "Ambiguity",
+    "Natural Language Processing (NLP)"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "같은 글자가 여러 뜻을 가질 수 있어요. 이게 **중의성(Ambiguity)**이에요.",
+      "'배' 는 먹는 배일까요, 타는 배일까요, 몸의 배일까요?",
+      "사람은 눈치로 바로 알지만, 기계는 글자만 보고는 몰라요."
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "compare",
+     "head": "중의성의 세 수준",
+     "cols": [
+      "수준",
+      "예",
+      "헷갈리는 점"
+     ],
+     "rows": [
+      [
+       "Word level (단어)",
+       "배, bank",
+       "배 = 과일/탈것/신체, bank = 강둑/은행"
+      ],
+      [
+       "Structure level (구조)",
+       "I saw a man with a telescope",
+       "망원경을 든 사람이 누구?"
+      ],
+      [
+       "Spacing (띄어쓰기)",
+       "아버지가방에들어가신다",
+       "아버지가 방에 vs 아버지 가방에"
+      ]
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "슬라이드 문장 뜻",
+     "items": [
+      "**humans disambiguate without noticing** = 사람은 모르는 사이에 중의성을 풀어요",
+      "**Ambiguity is THE core difficulty of NLP** = **중의성(Ambiguity)**이 NLP 의 가장 핵심 난제예요",
+      "**every era is a new answer to it** = 역사의 모든 시대가 이 문제에 대한 새 답이에요"
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "'bank' 가 강둑도 되고 은행도 되는 것은 어느 수준의 중의성?",
+     "choices": [
+      "단어 수준",
+      "구조 수준",
+      "띄어쓰기"
+     ],
+     "a": 0,
+     "why": "한 단어가 여러 뜻을 가지니 Word level 이에요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.071,
+       "y": 0.193,
+       "w": 0.625,
+       "h": 0.044,
+       "say": "같은 문자열이 여러 뜻, 사람은 without noticing 풀어요"
+      },
+      {
+       "x": 0.071,
+       "y": 0.247,
+       "w": 0.646,
+       "h": 0.042,
+       "say": "Word level: 배(pear, boat, stomach), bank(river bank, money bank)"
+      },
+      {
+       "x": 0.071,
+       "y": 0.301,
+       "w": 0.554,
+       "h": 0.042,
+       "say": "Structure level: I saw a man with a telescope"
+      },
+      {
+       "x": 0.071,
+       "y": 0.354,
+       "w": 0.546,
+       "h": 0.042,
+       "say": "Spacing too: 아버지가 방에 vs 아버지 가방에"
+      },
+      {
+       "x": 0.104,
+       "y": 0.47,
+       "w": 0.386,
+       "h": 0.305,
+       "say": "Reading 1: with a telescope 가 동사 saw 에 붙음 → 내가 망원경으로 봤어요"
+      },
+      {
+       "x": 0.52,
+       "y": 0.47,
+       "w": 0.384,
+       "h": 0.305,
+       "say": "Reading 2: with a telescope 가 명사 a man 에 붙음 → 그 남자가 망원경을 들고 있어요"
+      }
+     ]
+    },
+    {
+     "kind": "prof",
+     "when": "1주차 월요일 OT",
+     "lines": [
+      "같은 문자열이 여러 의미를 가질 수 있다는 게 중의성이에요.",
+      "사람은 맥락(context) 속에서 무의식적으로 해소하지만, 기계는 이렇게만 봐서는 해소가 안 돼요.",
+      "중의성이 NLP 의 원래 핵심 난제였고, 70년 역사는 각 시대 천재들의 답변 흐름이에요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "'I saw a man with a telescope' 는 어떤 중의성?",
+     "choices": [
+      "구조 수준",
+      "단어 수준",
+      "띄어쓰기"
+     ],
+     "a": 0,
+     "why": "with a telescope 가 saw 에 붙는지 a man 에 붙는지, 문장 구조가 두 가지로 읽혀요."
+    },
+    {
+     "kind": "english",
+     "head": "중의성 정의",
+     "en": "중의성(Ambiguity)은 같은 문자열이 여러 의미로 해석될 수 있는 성질로, NLP의 핵심 난제다. 단어 수준(배, bank), 구조 수준(I saw a man with a telescope), 띄어쓰기(아버지가방에들어가신다)의 예가 있다.",
+     "ko": "정의 한 줄 + 예 세 개",
+     "tip": "단어, 구조, 띄어쓰기. '배, 망원경, 아버지 가방' 으로 외워요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "중의성은 한 시대의 문제가 아니에요. p.24 에서 '모든 막이 중의성에 대한 새 답' 이라고 다시 나와요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 13,
+   "title": "2. What is NLP? | Why Is Language Hard? - Part 2",
+   "terms": [
+    "Reference",
+    "Winograd Schema",
+    "Pragmatics",
+    "Ellipsis",
+    "Low-resource NLP",
+    "Ambiguity"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "말을 이해하려면 글자만으로는 부족해요.",
+      "앞뒤 맥락과 세상에 대한 상식(세상 지식)이 있어야 해요."
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "compare",
+     "head": "어려움 다섯 가지",
+     "cols": [
+      "이름",
+      "예",
+      "왜 어려운가"
+     ],
+     "rows": [
+      [
+       "**지시 대상(Reference)**",
+       "The trophy didn't fit in the suitcase because it was too big.",
+       "it 이 무엇인지 세상 지식으로 풀어야 해요"
+      ],
+      [
+       "**화용론(Pragmatics)**",
+       "'잘~한다'",
+       "칭찬일까, 비꼼일까? 같은 말, 반대 뜻"
+      ],
+      [
+       "**생략(Ellipsis)**",
+       "'밥 먹었어?'",
+       "주어도 목적어도 없어요. 한국어는 맥락이 주는 건 빼요"
+      ],
+      [
+       "변하는 언어",
+       "갓생, 억텐",
+       "신조어가 매달 생기고 모델이 따라가야 해요"
+      ],
+      [
+       "**저자원 자연어처리(Low-resource NLP)**",
+       "지구의 7,000개 넘는 언어",
+       "대부분 데이터가 거의 없어요"
+      ]
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "'잘~한다' 가 칭찬인지 비꼼인지 가리는 문제는?",
+     "choices": [
+      "**화용론(Pragmatics)**",
+      "**생략(Ellipsis)**",
+      "**지시 대상(Reference)**"
+     ],
+     "a": 0,
+     "why": "같은 말이 상황에 따라 반대 뜻이 되는 건 화용론(Pragmatics) 문제예요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.071,
+       "y": 0.193,
+       "w": 0.643,
+       "h": 0.086,
+       "say": "Reference: it 은 무엇? big → small 로 바꾸면 답이 뒤집혀요. **위노그라드 스키마(Winograd Schema)** 모양"
+      },
+      {
+       "x": 0.071,
+       "y": 0.298,
+       "w": 0.596,
+       "h": 0.042,
+       "say": "Pragmatics: praise or sarcasm = 칭찬 또는 비꼼"
+      },
+      {
+       "x": 0.071,
+       "y": 0.362,
+       "w": 0.645,
+       "h": 0.042,
+       "say": "Ellipsis: no subject, no object = 주어도 목적어도 없음"
+      },
+      {
+       "x": 0.071,
+       "y": 0.425,
+       "w": 0.694,
+       "h": 0.042,
+       "say": "Language never sits still: 신조어가 매달, 모델은 따라가야"
+      },
+      {
+       "x": 0.071,
+       "y": 0.489,
+       "w": 0.55,
+       "h": 0.042,
+       "say": "7,000+ languages: 대부분 데이터가 거의 없음(low-resource NLP)"
+      },
+      {
+       "x": 0.193,
+       "y": 0.86,
+       "w": 0.618,
+       "h": 0.038,
+       "say": "언어 이해에는 맥락과 세상 지식이 필요, 페이지 위 단어만으로는 안 돼요"
+      }
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "트로피 문장 풀어 보기",
+     "steps": [
+      "'트로피가 여행 가방에 안 들어갔다, 그것이 너무 커서' → 그것 = 트로피",
+      "big 을 small 로: '그것이 너무 작아서' → 그것 = 여행 가방",
+      "단어 하나 바뀌었는데 지시 대상이 뒤집혀요",
+      "'큰 것은 안 들어가고, 작은 가방엔 안 들어간다' 는 세상 지식이 있어야 풀려요"
+     ],
+     "answer": "이런 모양의 문제를 **위노그라드 스키마(Winograd Schema)**라고 불러요."
+    },
+    {
+     "kind": "prof",
+     "when": "1주차 월요일 OT",
+     "lines": [
+      "이걸 풀려면 문법만 필요한 게 아니라 세상 지식이 필요해요.",
+      "한국어는 특히 생략이 심해요. '밥 먹었어?' 에는 주어도 목적어도 없어요.",
+      "7천 개가 넘는 언어가 다 데이터가 많지 않아서, 저자원 NLP 라는 연구 분야가 따로 있어요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "'The trophy didn't fit in the suitcase because it was too small.' 에서 it 은?",
+     "choices": [
+      "the suitcase (여행 가방)",
+      "the trophy (트로피)",
+      "알 수 없다"
+     ],
+     "a": 0,
+     "why": "작아서 안 들어간 것은 가방이에요. big 일 때는 트로피예요."
+    },
+    {
+     "kind": "english",
+     "head": "언어 이해에 필요한 것",
+     "en": "언어를 이해하려면 단어뿐 아니라 맥락과 세상 지식이 필요하다. 예: 지시 대상(Reference, 트로피와 가방), 화용론(Pragmatics, 잘~한다), 생략(Ellipsis, 밥 먹었어?), 신조어, 저자원 언어(Low-resource NLP).",
+     "ko": "맥락 + 세상 지식",
+     "tip": "'지시, 화용, 생략, 신조어, 저자원' 다섯 개."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "**위노그라드 스키마(Winograd Schema)**는 big/small 한 단어로 it 이 가리키는 대상이 바뀌는 문장 모양이에요. 문법이 아니라 세상 지식 테스트예요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 14,
+   "title": "2. What is NLP? | Korean NLP Has Its Own Challenges",
+   "terms": [
+    "Agglutinative Language",
+    "Morpheme",
+    "Morphological Analyzer",
+    "Honorifics",
+    "Ellipsis",
+    "Large Language Model (LLM)",
+    "EXAONE"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "한국어는 **교착어(Agglutinative Language)**예요.",
+      "어간에 작은 조각을 착착 붙여 한 단어를 만들어요."
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "먹었겠더라 만들기",
+     "svg": "<svg viewBox=\"0 0 480 270\" xmlns=\"http://www.w3.org/2000/svg\"><text x=\"240\" y=\"36\" font-size=\"16\" text-anchor=\"middle\" class=\"tb\">한국어는 조각을 붙여 한 단어</text><rect x=\"40\" y=\"60\" width=\"80\" height=\"44\" rx=\"2\" class=\"n3\"/><text x=\"80\" y=\"88\" font-size=\"16\" text-anchor=\"middle\" class=\"tl\">먹-</text><rect x=\"150\" y=\"60\" width=\"80\" height=\"44\" rx=\"2\" class=\"n3\"/><text x=\"190\" y=\"88\" font-size=\"16\" text-anchor=\"middle\" class=\"tl\">-었-</text><rect x=\"260\" y=\"60\" width=\"80\" height=\"44\" rx=\"2\" class=\"n3\"/><text x=\"300\" y=\"88\" font-size=\"16\" text-anchor=\"middle\" class=\"tl\">-겠-</text><rect x=\"370\" y=\"60\" width=\"80\" height=\"44\" rx=\"2\" class=\"n3\"/><text x=\"410\" y=\"88\" font-size=\"16\" text-anchor=\"middle\" class=\"tl\">-더라</text><text x=\"135\" y=\"88\" font-size=\"16\" text-anchor=\"middle\" class=\"tb\">+</text><text x=\"245\" y=\"88\" font-size=\"16\" text-anchor=\"middle\" class=\"tb\">+</text><text x=\"355\" y=\"88\" font-size=\"16\" text-anchor=\"middle\" class=\"tb\">+</text><line x1=\"240\" y1=\"110\" x2=\"240\" y2=\"150\" class=\"e2 b1\"/><polygon points=\"240,160 235,150 245,150\" class=\"arrow b1\"/><rect x=\"160\" y=\"165\" width=\"160\" height=\"50\" rx=\"2\" class=\"n2 b1\"/><text x=\"240\" y=\"197\" font-size=\"18\" text-anchor=\"middle\" class=\"tl b1\">먹었겠더라</text><text x=\"240\" y=\"245\" font-size=\"14\" text-anchor=\"middle\" class=\"tm b1\">형태소 4개 → 한 단어</text></svg>",
+     "caption": "뜻을 가진 작은 조각(형태소) 네 개가 붙어 한 단어가 돼요.",
+     "builds": 1
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "points",
+     "head": "슬라이드 문장 뜻",
+     "items": [
+      "**Korean is agglutinative** = 한국어는 교착어예요",
+      "**one word, many morphemes** = 한 단어 안에 **형태소(Morpheme)**가 여러 개",
+      "**morphological analysis matters** = 형태소 분석이 중요해요",
+      "**Korean needs native attention** = 한국어는 한국어에 맞춘 관심이 필요해요"
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "한국어가 어려운 네 가지",
+     "cols": [
+      "어려움",
+      "예"
+     ],
+     "rows": [
+      [
+       "**교착어(Agglutinative Language)**",
+       "먹- + -었- + -겠- + -더라 → 먹었겠더라"
+      ],
+      [
+       "띄어쓰기가 들쭉날쭉",
+       "아버지가방에... 띄어쓰기가 뜻을 바꿔요"
+      ],
+      [
+       "**높임법(Honorifics)**",
+       "먹어 / 드세요 / 잡수세요: 같은 사실, 다른 사회적 뜻"
+      ],
+      [
+       "어순 자유, 주어 자주 생략",
+       "모델이 먼저 보는 영어와 달라요"
+      ]
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "'먹었겠더라' 는 형태소 몇 개가 붙은 단어인가요?",
+     "choices": [
+      "4개",
+      "2개",
+      "1개"
+     ],
+     "a": 0,
+     "why": "먹-, -었-, -겠-, -더라 네 개예요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.071,
+       "y": 0.193,
+       "w": 0.718,
+       "h": 0.043,
+       "say": "**교착어(Agglutinative Language)**: 먹- + -었- + -겠- + -더라 → 먹었겠더라"
+      },
+      {
+       "x": 0.071,
+       "y": 0.241,
+       "w": 0.661,
+       "h": 0.038,
+       "say": "영어 단어는 형태가 몇 개, 한국어 동사는 수천 개 → 형태소 분석이 중요"
+      },
+      {
+       "x": 0.071,
+       "y": 0.298,
+       "w": 0.661,
+       "h": 0.042,
+       "say": "Spacing is unreliable: 실제 글의 띄어쓰기는 믿기 어렵고, 뜻도 바꿔요"
+      },
+      {
+       "x": 0.071,
+       "y": 0.362,
+       "w": 0.564,
+       "h": 0.042,
+       "say": "**높임법(Honorifics)**: 먹어 / 드세요 / 잡수세요"
+      },
+      {
+       "x": 0.071,
+       "y": 0.425,
+       "w": 0.686,
+       "h": 0.042,
+       "say": "어순이 자유롭고 주어를 자주 빼요"
+      },
+      {
+       "x": 0.191,
+       "y": 0.86,
+       "w": 0.621,
+       "h": 0.038,
+       "say": "한국어 LLM(**엑사원(EXAONE)**, HyperCLOVA X)이 따로 있는 이유"
+      }
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "형태소 분석을 누가 하나",
+     "items": [
+      "단어를 **형태소(Morpheme)**로 쪼개는 도구가 **형태소 분석기(Morphological Analyzer)**예요.",
+      "2주차 토큰화 시간에 한국어를 어떻게 자르는지 다시 만나요."
+     ]
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "**형태소(Morpheme)**는 조각, **형태소 분석기(Morphological Analyzer)**는 그 조각으로 쪼개 주는 도구예요."
+     ]
+    },
+    {
+     "kind": "prof",
+     "when": "1주차 월요일 OT",
+     "lines": [
+      "영어는 굴절어라고 하고, 한국어는 교착어예요.",
+      "영어 동사는 변화형이 많지 않은데, 한국어 동사는 수천 가지 형태가 가능해서 형태소 분석이 중요해요. 2주차에 해 볼 예정이에요.",
+      "대부분 모델은 영어부터 배우는데 한국어는 구조가 많이 달라요.",
+      "그래서 네이버 하이퍼클로바, LG 엑사원 같은 한국어 LLM 이 따로 있었어요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "'먹어 / 드세요 / 잡수세요' 가 보여 주는 한국어 특징은?",
+     "choices": [
+      "**높임법(Honorifics)**",
+      "**교착어(Agglutinative Language)**",
+      "띄어쓰기"
+     ],
+     "a": 0,
+     "why": "같은 사실을 말하지만 사회적 뜻(높임)이 달라요."
+    },
+    {
+     "kind": "english",
+     "head": "한국어 NLP 의 어려움",
+     "en": "한국어는 교착어라 한 단어에 형태소가 여럿 붙으므로(먹었겠더라) 형태소 분석이 중요하다. 또 띄어쓰기가 불규칙하고, 높임법이 있고, 주어를 자주 뺀다.",
+     "ko": "교착어, 띄어쓰기, 높임법, 어순과 생략",
+     "tip": "'붙이고, 띄우고, 높이고, 빼고' 네 동작으로 외워요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "교착어(한국어)의 짝은 굴절어(영어)예요. '굴절어' 는 슬라이드가 아니라 교수님 설명에 나온 말이에요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 15,
+   "title": "2. What is NLP? | The NLP Task Landscape",
+   "terms": [
+    "Classification",
+    "Sentiment Analysis",
+    "Sequence Labeling",
+    "Part-of-Speech Tagging (POS)",
+    "Named Entity Recognition (NER)",
+    "Machine Translation (MT)",
+    "Large Language Model (LLM)",
+    "Token"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "NLP 로 하는 일은 크게 다섯 가지 모양이에요.",
+      "요즘은 **대규모 언어 모델(Large Language Model (LLM))** 하나가 프롬프트 한 번으로 이걸 다 해요."
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "compare",
+     "head": "다섯 가지 태스크",
+     "cols": [
+      "태스크",
+      "예",
+      "입력 → 출력"
+     ],
+     "rows": [
+      [
+       "**분류(Classification)**",
+       "스팸, **감성 분석(Sentiment Analysis)**, 주제",
+       "글 → 라벨 하나"
+      ],
+      [
+       "**시퀀스 레이블링(Sequence Labeling)**",
+       "**품사 태깅(Part-of-Speech Tagging (POS))**, **개체명 인식(Named Entity Recognition (NER))**",
+       "**토큰(Token)**마다 → 태그 하나"
+      ],
+      [
+       "Text-to-text",
+       "**기계 번역(Machine Translation (MT))**, 요약",
+       "글 → 새 글"
+      ],
+      [
+       "Retrieval & QA",
+       "맞는 문서 찾기, 답 뽑거나 쓰기",
+       "질문 → 문서 → 답"
+      ],
+      [
+       "Dialogue & generation",
+       "챗봇, 글쓰기 도우미",
+       "맥락 → 응답"
+      ]
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "글 전체에 라벨 하나를 붙이는 태스크는?",
+     "choices": [
+      "**분류(Classification)**",
+      "**시퀀스 레이블링(Sequence Labeling)**",
+      "Text-to-text"
+     ],
+     "a": 0,
+     "why": "text → label 이에요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.071,
+       "y": 0.193,
+       "w": 0.396,
+       "h": 0.043,
+       "say": "Classification: spam, sentiment, topic, text → label"
+      },
+      {
+       "x": 0.071,
+       "y": 0.256,
+       "w": 0.546,
+       "h": 0.043,
+       "say": "Sequence labeling: part-of-speech, named entities, every token → a tag"
+      },
+      {
+       "x": 0.071,
+       "y": 0.32,
+       "w": 0.441,
+       "h": 0.043,
+       "say": "Text-to-text: translation, summarization, text → new text"
+      },
+      {
+       "x": 0.071,
+       "y": 0.382,
+       "w": 0.582,
+       "h": 0.043,
+       "say": "Retrieval & QA: 맞는 문서를 찾고 답을 뽑거나 지어요"
+      },
+      {
+       "x": 0.071,
+       "y": 0.445,
+       "w": 0.551,
+       "h": 0.043,
+       "say": "Dialogue & generation: context → response"
+      },
+      {
+       "x": 0.071,
+       "y": 0.515,
+       "w": 0.504,
+       "h": 0.043,
+       "say": "2026 twist: LLM 하나가 프롬프트 한 번으로 전부"
+      }
+     ]
+    },
+    {
+     "kind": "prof",
+     "when": "1주차 월요일 OT",
+     "lines": [
+      "예전엔 태스크마다 모델을 따로 만들었는데, LLM 시대엔 프롬프트 하나로 '딸깍' 하면 다 돼요.",
+      "그럼 왜 NLP 를 배우나? 엔지니어는 시스템을 만들고, 평가하고, 고장 나면 고치는 사람이에요.",
+      "그러려면 NLP 와 LLM 이 어떻게 동작하고 뭐가 문제인지 알아야 해요. 그걸 위해 이 수업이 있어요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "문장 속 **토큰(Token)**마다 품사를 붙이는 일은?",
+     "choices": [
+      "**시퀀스 레이블링(Sequence Labeling)**",
+      "**분류(Classification)**",
+      "Text-to-text"
+     ],
+     "a": 0,
+     "why": "every token → a tag 가 시퀀스 레이블링이에요. 품사 태깅, 개체명 인식이 여기에 들어가요."
+    },
+    {
+     "kind": "check",
+     "q": "번역과 요약은 어떤 모양?",
+     "choices": [
+      "Text-to-text",
+      "Classification",
+      "Sequence labeling"
+     ],
+     "a": 0,
+     "why": "text → new text 예요."
+    },
+    {
+     "kind": "english",
+     "head": "NLP 태스크 지도",
+     "en": "NLP 태스크는 분류(글 → 라벨), 시퀀스 레이블링(토큰마다 태그: 품사, 개체명), 텍스트-투-텍스트(번역, 요약), 검색과 질의응답, 대화와 생성으로 나뉘며, 지금은 LLM 하나가 프롬프트로 모두 수행한다.",
+     "ko": "입력 → 출력 모양으로 구별",
+     "tip": "라벨 하나, 태그 여러 개, 새 글, 찾아서 답, 응답."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "LLM 이 다 해 줘도 '부품을 아는 엔지니어가 전체를 만들고, 평가하고, 고쳐요' 가 슬라이드 결론이에요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 16,
+   "title": "A Brief History of NLP (구분)",
+   "terms": [
+    "Natural Language Processing (NLP)",
+    "Rule-based Approach",
+    "Statistical Approach",
+    "Neural Network",
+    "Pre-training",
+    "Large Language Model (LLM)"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "3부: **자연어처리(Natural Language Processing (NLP))** 70년 역사, 다섯 막이에요.",
+      "규칙 → 통계 → 신경망 → 사전 학습 → LLM",
+      "이 레슨에서는 여섯 계단 주문으로 외워요.",
+      "규칙 → 통계 → word2vec → seq2seq, 어텐션 → 트랜스포머, 사전 학습 → LLM"
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "NLP 역사 여섯 계단",
+     "svg": "<svg viewBox=\"0 0 480 270\" xmlns=\"http://www.w3.org/2000/svg\"><text x=\"100\" y=\"35\" font-size=\"14\" text-anchor=\"end\" class=\"tm b1\">1950s~80s</text><rect x=\"110\" y=\"14\" width=\"210\" height=\"32\" rx=\"2\" class=\"n b1\"/><text x=\"215\" y=\"35\" font-size=\"14\" text-anchor=\"middle\" class=\"tl b1\">규칙</text><text x=\"100\" y=\"77\" font-size=\"14\" text-anchor=\"end\" class=\"tm b1\">1990s~2000s</text><rect x=\"138\" y=\"56\" width=\"210\" height=\"32\" rx=\"2\" class=\"n b1\"/><text x=\"243\" y=\"77\" font-size=\"14\" text-anchor=\"middle\" class=\"tl b1\">통계</text><text x=\"100\" y=\"119\" font-size=\"14\" text-anchor=\"end\" class=\"tm b2\">2013</text><rect x=\"166\" y=\"98\" width=\"210\" height=\"32\" rx=\"2\" class=\"n b2\"/><text x=\"271\" y=\"119\" font-size=\"14\" text-anchor=\"middle\" class=\"tl b2\">워드투벡(word2vec)</text><text x=\"100\" y=\"161\" font-size=\"14\" text-anchor=\"end\" class=\"tm b2\">2014~16</text><rect x=\"194\" y=\"140\" width=\"210\" height=\"32\" rx=\"2\" class=\"n b2\"/><text x=\"299\" y=\"161\" font-size=\"14\" text-anchor=\"middle\" class=\"tl b2\">seq2seq + 어텐션</text><text x=\"100\" y=\"203\" font-size=\"14\" text-anchor=\"end\" class=\"tm b3\">2017~18</text><rect x=\"222\" y=\"182\" width=\"210\" height=\"32\" rx=\"2\" class=\"n b3\"/><text x=\"327\" y=\"203\" font-size=\"14\" text-anchor=\"middle\" class=\"tl b3\">트랜스포머 + 사전 학습</text><text x=\"100\" y=\"245\" font-size=\"14\" text-anchor=\"end\" class=\"tm b3\">2020~</text><rect x=\"250\" y=\"224\" width=\"210\" height=\"32\" rx=\"2\" class=\"n b3\"/><text x=\"355\" y=\"245\" font-size=\"14\" text-anchor=\"middle\" class=\"tl b3\">LLM</text></svg>",
+     "caption": "여섯 계단을 한 번에 외워요. 아래로 갈수록 데이터에서 배우는 몫이 커져요.",
+     "builds": 3
+    }
+   ],
+   "pass2": [],
+   "pass3": [],
+   "pass4": []
+  },
+  {
+   "p": 17,
+   "title": "3. History of NLP | The Very Beginning (1947-1956)",
+   "terms": [
+    "Machine Translation (MT)",
+    "Turing Test",
+    "Georgetown-IBM Experiment",
+    "Dartmouth Workshop",
+    "Artificial Intelligence (AI)",
+    "Natural Language Processing (NLP)"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "NLP 이야기는 2차 대전 직후 암호 해독에서 시작해요.",
+      "다른 나라 말을 '이상한 기호로 적힌 암호' 처럼 보고 풀려고 했어요.",
+      "역사 주문: 규칙 → 통계 → word2vec → seq2seq, 어텐션 → 트랜스포머, 사전 학습 → LLM"
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "steps",
+     "head": "시작 네 장면 (1947 → 1956)",
+     "steps": [
+      "1947 워런 위버(Warren Weaver): 번역 = 암호 풀기. **기계 번역(Machine Translation (MT))**의 출발점",
+      "1950 앨런 튜링(Alan Turing): '기계가 생각할 수 있나?' → 대화로 지능을 시험, **튜링 테스트(Turing Test)**",
+      "1954 **조지타운-IBM 시연(Georgetown-IBM Experiment)**: 러시아어 60문장 → 영어",
+      "1956 **다트머스 워크숍(Dartmouth Workshop)**: 이 분야 이름 **인공지능(Artificial Intelligence (AI))**이 생겨요"
+     ],
+     "answer": "암호 해독 → 대화 시험 → 번역 시연 → 인공지능이라는 이름."
+    },
+    {
+     "kind": "points",
+     "head": "슬라이드 영어 뜻",
+     "items": [
+      "**This is really written in English, but coded in strange symbols** = 사실 영어로 쓰였는데 이상한 기호로 암호화됐을 뿐",
+      "**machine translation imagined as code-breaking** = 기계 번역을 암호 풀기로 상상",
+      "**conversation becomes the test of intelligence** = 대화가 지능의 시험이 돼요",
+      "**solved within 5 years (...not quite)** = 5년 안에 해결(...은 아니었죠)"
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "1947년 워런 위버는 번역을 무엇처럼 생각했나요?",
+     "choices": [
+      "암호 풀기",
+      "그림 그리기",
+      "계산기 두드리기"
+     ],
+     "a": 0,
+     "why": "machine translation imagined as code-breaking 이에요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.071,
+       "y": 0.193,
+       "w": 0.566,
+       "h": 0.08,
+       "say": "1947 Warren Weaver: 암호 풀기로서의 기계 번역"
+      },
+      {
+       "x": 0.071,
+       "y": 0.286,
+       "w": 0.618,
+       "h": 0.042,
+       "say": "1950 Alan Turing, 'Can machines think?': **튜링 테스트(Turing Test)**"
+      },
+      {
+       "x": 0.071,
+       "y": 0.339,
+       "w": 0.707,
+       "h": 0.042,
+       "say": "1954 Georgetown-IBM demo: 60 Russian sentences → English, '5년 안에 해결'"
+      },
+      {
+       "x": 0.071,
+       "y": 0.392,
+       "w": 0.579,
+       "h": 0.042,
+       "say": "1956 Dartmouth summer workshop: 이름이 **인공지능(Artificial Intelligence (AI))**으로"
+      },
+      {
+       "x": 0.152,
+       "y": 0.492,
+       "w": 0.274,
+       "h": 0.326,
+       "say": "1954 뉴스 영상: 'ELECTRONIC BRAIN Translates RUSSIAN to ENGLISH'"
+      },
+      {
+       "x": 0.514,
+       "y": 0.492,
+       "w": 0.231,
+       "h": 0.326,
+       "say": "1956 다트머스 워크숍 사람들. 맨 오른쪽이 섀넌(Shannon)"
+      }
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "연도, 사람, 기억할 말",
+     "cols": [
+      "연도",
+      "누가 / 무엇",
+      "기억할 말"
+     ],
+     "rows": [
+      [
+       "1947",
+       "Warren Weaver",
+       "번역 = 암호 해독"
+      ],
+      [
+       "1950",
+       "Alan Turing",
+       "Can machines think? 대화 = 지능 시험"
+      ],
+      [
+       "1954",
+       "Georgetown-IBM 시연",
+       "러시아어 60문장, 5년 장담"
+      ],
+      [
+       "1956",
+       "Dartmouth 워크숍",
+       "Artificial Intelligence 라는 이름"
+      ]
+     ]
+    },
+    {
+     "kind": "prof",
+     "when": "1주차 월요일 OT",
+     "lines": [
+      "2차 대전 때 암호 해독에 많은 수학자가 활약했어요. 47년 워런 위버가 러시아어는 이상한 기호로 암호화된 영어라고 했어요.",
+      "튜링 테스트도 사람과의 대화로 지능을 평가하니, 이것도 자연어처리에 대한 평가예요.",
+      "54년 연구자들은 5년이면 번역이 다 풀린다고 장담했지만, 70년 지난 지금도 번역은 완벽하지 않아요.",
+      "다트머스 사진 맨 오른쪽이 섀넌이에요. 뒤(2막)에서 다시 나와요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "1954년 조지타운-IBM 시연에서 번역한 것은?",
+     "choices": [
+      "러시아어 60문장을 영어로",
+      "영어 60문장을 프랑스어로",
+      "러시아어 600문장을 영어로"
+     ],
+     "a": 0,
+     "why": "**조지타운-IBM 시연(Georgetown-IBM Experiment)**: 60 Russian sentences → English 예요."
+    },
+    {
+     "kind": "check",
+     "q": "'Artificial Intelligence' 라는 이름이 생긴 사건은?",
+     "choices": [
+      "1956 다트머스 워크숍",
+      "1950 튜링의 논문",
+      "1966 ALPAC 보고서"
+     ],
+     "a": 0,
+     "why": "1956 **다트머스 워크숍(Dartmouth Workshop)**에서 이 분야가 이름을 얻었어요."
+    },
+    {
+     "kind": "english",
+     "head": "시작 네 장면",
+     "en": "1947 위버(번역 = 암호 해독), 1950 튜링(Can machines think?, 튜링 테스트), 1954 조지타운-IBM 시연(러시아어 60문장 → 영어), 1956 다트머스 워크숍(인공지능이라는 이름).",
+     "ko": "47, 50, 54, 56",
+     "tip": "'암호, 대화, 번역, 이름' 순서예요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "'5년 안에 해결' 장담은 틀렸어요(not quite). 연도는 47 → 50 → 54 → 56 오름차순."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 18,
+   "title": "3. History of NLP | Act 1 - Rules (1950s-1980s)",
+   "terms": [
+    "Rule-based Approach",
+    "ELIZA",
+    "ALPAC Report",
+    "Machine Translation (MT)",
+    "Artificial Intelligence (AI)"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "1막은 **규칙 기반 방법(Rule-based Approach)**이에요.",
+      "사람이 '이런 말이 오면 이렇게 답해' 라는 규칙을 손으로 써요.",
+      "하지만 말은 너무 다양해서 규칙집은 끝없이 늘어나고, 그래도 깨져요."
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "NLP 역사 여섯 계단",
+     "svg": "<svg viewBox=\"0 0 480 270\" xmlns=\"http://www.w3.org/2000/svg\"><text x=\"100\" y=\"35\" font-size=\"14\" text-anchor=\"end\" class=\"tm b1\">1950s~80s</text><rect x=\"110\" y=\"14\" width=\"210\" height=\"32\" rx=\"2\" class=\"n2 b1\"/><text x=\"215\" y=\"35\" font-size=\"14\" text-anchor=\"middle\" class=\"tl b1\">규칙</text><text x=\"100\" y=\"77\" font-size=\"14\" text-anchor=\"end\" class=\"tm b1\">1990s~2000s</text><rect x=\"138\" y=\"56\" width=\"210\" height=\"32\" rx=\"2\" class=\"n b1\"/><text x=\"243\" y=\"77\" font-size=\"14\" text-anchor=\"middle\" class=\"tl b1\">통계</text><text x=\"100\" y=\"119\" font-size=\"14\" text-anchor=\"end\" class=\"tm b2\">2013</text><rect x=\"166\" y=\"98\" width=\"210\" height=\"32\" rx=\"2\" class=\"n b2\"/><text x=\"271\" y=\"119\" font-size=\"14\" text-anchor=\"middle\" class=\"tl b2\">워드투벡(word2vec)</text><text x=\"100\" y=\"161\" font-size=\"14\" text-anchor=\"end\" class=\"tm b2\">2014~16</text><rect x=\"194\" y=\"140\" width=\"210\" height=\"32\" rx=\"2\" class=\"n b2\"/><text x=\"299\" y=\"161\" font-size=\"14\" text-anchor=\"middle\" class=\"tl b2\">seq2seq + 어텐션</text><text x=\"100\" y=\"203\" font-size=\"14\" text-anchor=\"end\" class=\"tm b3\">2017~18</text><rect x=\"222\" y=\"182\" width=\"210\" height=\"32\" rx=\"2\" class=\"n b3\"/><text x=\"327\" y=\"203\" font-size=\"14\" text-anchor=\"middle\" class=\"tl b3\">트랜스포머 + 사전 학습</text><text x=\"100\" y=\"245\" font-size=\"14\" text-anchor=\"end\" class=\"tm b3\">2020~</text><rect x=\"250\" y=\"224\" width=\"210\" height=\"32\" rx=\"2\" class=\"n b3\"/><text x=\"355\" y=\"245\" font-size=\"14\" text-anchor=\"middle\" class=\"tl b3\">LLM</text></svg>",
+     "caption": "지금 보는 곳: 1막, 규칙. 아래로 갈수록 사람 손 규칙은 줄고, 데이터에서 배우는 몫이 커져요.",
+     "builds": 3
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "points",
+     "head": "슬라이드 영어 뜻",
+     "items": [
+      "**the first chatbot** = 최초의 챗봇",
+      "**~200 pattern-matching rules playing a psychotherapist** = 약 200개 패턴 규칙으로 심리 상담사 흉내",
+      "**MT far harder than promised** = 기계 번역은 약속보다 훨씬 어려웠다",
+      "**you cannot write language down by hand** = 언어를 손으로 다 적을 수는 없다"
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "**엘리자(ELIZA)**의 비밀(the whole trick)",
+     "steps": [
+      "YOU: Men are all alike. → ELIZA: IN WHAT WAY",
+      "키워드 찾기(keyword spotting): 'alike' 가 보이면 정해진 답 'IN WHAT WAY'",
+      "되돌려 주기(reflection template): my ___ → YOUR ___",
+      "규칙 약 200개, 뜻도 기억도 없음(no meaning, no memory)"
+     ],
+     "answer": "그런데도 사람들은 ELIZA 에게 속마음을 털어놨어요."
+    },
+    {
+     "kind": "check",
+     "q": "**엘리자(ELIZA)**는 문장의 뜻을 이해했나요?",
+     "choices": [
+      "아니요, 패턴 규칙으로 답했을 뿐이에요",
+      "네, 뜻을 이해했어요"
+     ],
+     "a": 0,
+     "why": "~200 rules, no meaning, no memory 예요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.071,
+       "y": 0.193,
+       "w": 0.632,
+       "h": 0.043,
+       "say": "1966 **엘리자(ELIZA)** (MIT): 최초의 챗봇, 약 200개 패턴 규칙"
+      },
+      {
+       "x": 0.071,
+       "y": 0.247,
+       "w": 0.573,
+       "h": 0.042,
+       "say": "1966 **ALPAC 보고서(ALPAC Report)**: 기계 번역이 훨씬 어렵다, 미국 지원 10년 동결"
+      },
+      {
+       "x": 0.071,
+       "y": 0.301,
+       "w": 0.743,
+       "h": 0.042,
+       "say": "1970s~80s: 손으로 만든 문법과 지식 체계(SHRDLU, unification grammars)"
+      },
+      {
+       "x": 0.1,
+       "y": 0.434,
+       "w": 0.481,
+       "h": 0.363,
+       "say": "ELIZA 대화: Well, my boyfriend made me come here. → YOUR BOYFRIEND MADE YOU COME HERE"
+      },
+      {
+       "x": 0.606,
+       "y": 0.459,
+       "w": 0.305,
+       "h": 0.298,
+       "say": "the whole trick: 키워드, 되돌려 주기, 규칙 200개, 그래도 사람들이 털어놓음"
+      },
+      {
+       "x": 0.179,
+       "y": 0.865,
+       "w": 0.647,
+       "h": 0.036,
+       "say": "1막의 교훈: 규칙집은 끝없이 자라고 그래도 깨져요"
+      }
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "1막 연표",
+     "cols": [
+      "연도",
+      "이름",
+      "무엇",
+      "결과"
+     ],
+     "rows": [
+      [
+       "1966",
+       "ELIZA (MIT)",
+       "패턴 규칙 약 200개 챗봇, 심리 상담사 역할",
+       "사람들이 진지하게 고민을 털어놓음"
+      ],
+      [
+       "1966",
+       "ALPAC report",
+       "기계 번역 평가 보고서",
+       "미국 연구 지원 10년 동결"
+      ],
+      [
+       "1970s~80s",
+       "SHRDLU, unification grammars",
+       "손으로 만든 문법과 지식 체계",
+       "점점 더 형식적, 그래도 한계"
+      ]
+     ]
+    },
+    {
+     "kind": "prof",
+     "when": "1주차 월요일 OT",
+     "lines": [
+      "신기하게도 사람들이 엘리자에게 굉장히 진지하게 고민을 털어놨대요.",
+      "연구자에겐 정부 과제 펀딩이 가장 중요한데, ALPAC 보고서로 미국 정부 펀딩이 10년 동안 끊겨 거의 AI 겨울이 왔어요.",
+      "언어는 살아 있어서 규칙집은 끊임없이 자라고, 예외는 항상 더 많아요. 그래서 규칙의 시대는 저물어요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "1966년 ALPAC 보고서의 결과는?",
+     "choices": [
+      "미국의 기계 번역 연구 지원이 약 10년 동결",
+      "최초의 챗봇 탄생",
+      "Transformer 발표"
+     ],
+     "a": 0,
+     "why": "MT far harder than promised, US funding frozen for a decade 예요."
+    },
+    {
+     "kind": "check",
+     "q": "**엘리자(ELIZA)**가 쓴 규칙은 약 몇 개?",
+     "choices": [
+      "약 200개",
+      "약 2개",
+      "약 200만 개"
+     ],
+     "a": 0,
+     "why": "~200 pattern-matching rules 예요."
+    },
+    {
+     "kind": "english",
+     "head": "1막 요약",
+     "en": "1막 규칙(1950s~80s): 1966 ELIZA(규칙 약 200개 챗봇), 1966 ALPAC 보고서(지원 10년 동결), 70~80년대 SHRDLU. 교훈: 언어는 손으로 다 못 적는다.",
+     "ko": "1966 두 개 + 70~80년대 문법",
+     "tip": "ELIZA 와 ALPAC 은 같은 해 1966."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "ELIZA 와 ALPAC 은 둘 다 1966년이에요.",
+      "ELIZA 는 이해가 아니라 흉내예요. '사람들이 믿었다' 와 '이해했다' 는 달라요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 19,
+   "title": "3. History of NLP | Act 2 - Statistics (1990s-2000s)",
+   "terms": [
+    "Statistical Approach",
+    "Noisy Channel Model",
+    "Corpus",
+    "n-gram",
+    "Language Model (LM)",
+    "Machine Translation (MT)",
+    "Part-of-Speech Tagging (POS)"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "2막은 **통계 기반 방법(Statistical Approach)**이에요.",
+      "규칙을 쓰지 말고, 아주 많은 글(**말뭉치(Corpus)**)에서 패턴을 세요."
+     ]
+    },
+    {
+     "kind": "analogy",
+     "head": "바로 앞 몇 단어만 보고 맞히기",
+     "scene": "'나는 밥을' 다음에 올 말을 맞힐 때, 많은 글에서 '나는 밥을' 뒤에 무엇이 자주 왔는지 세어 봐요.",
+     "map": [
+      [
+       "바로 앞 몇 단어",
+       "**엔그램(n-gram)**"
+      ],
+      [
+       "다음 말 맞히기",
+       "**언어 모델(Language Model (LM))**"
+      ],
+      [
+       "많이 세어 본 글",
+       "**말뭉치(Corpus)**"
+      ]
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "NLP 역사 여섯 계단",
+     "svg": "<svg viewBox=\"0 0 480 270\" xmlns=\"http://www.w3.org/2000/svg\"><text x=\"100\" y=\"35\" font-size=\"14\" text-anchor=\"end\" class=\"tm b1\">1950s~80s</text><rect x=\"110\" y=\"14\" width=\"210\" height=\"32\" rx=\"2\" class=\"n b1\"/><text x=\"215\" y=\"35\" font-size=\"14\" text-anchor=\"middle\" class=\"tl b1\">규칙</text><text x=\"100\" y=\"77\" font-size=\"14\" text-anchor=\"end\" class=\"tm b1\">1990s~2000s</text><rect x=\"138\" y=\"56\" width=\"210\" height=\"32\" rx=\"2\" class=\"n2 b1\"/><text x=\"243\" y=\"77\" font-size=\"14\" text-anchor=\"middle\" class=\"tl b1\">통계</text><text x=\"100\" y=\"119\" font-size=\"14\" text-anchor=\"end\" class=\"tm b2\">2013</text><rect x=\"166\" y=\"98\" width=\"210\" height=\"32\" rx=\"2\" class=\"n b2\"/><text x=\"271\" y=\"119\" font-size=\"14\" text-anchor=\"middle\" class=\"tl b2\">워드투벡(word2vec)</text><text x=\"100\" y=\"161\" font-size=\"14\" text-anchor=\"end\" class=\"tm b2\">2014~16</text><rect x=\"194\" y=\"140\" width=\"210\" height=\"32\" rx=\"2\" class=\"n b2\"/><text x=\"299\" y=\"161\" font-size=\"14\" text-anchor=\"middle\" class=\"tl b2\">seq2seq + 어텐션</text><text x=\"100\" y=\"203\" font-size=\"14\" text-anchor=\"end\" class=\"tm b3\">2017~18</text><rect x=\"222\" y=\"182\" width=\"210\" height=\"32\" rx=\"2\" class=\"n b3\"/><text x=\"327\" y=\"203\" font-size=\"14\" text-anchor=\"middle\" class=\"tl b3\">트랜스포머 + 사전 학습</text><text x=\"100\" y=\"245\" font-size=\"14\" text-anchor=\"end\" class=\"tm b3\">2020~</text><rect x=\"250\" y=\"224\" width=\"210\" height=\"32\" rx=\"2\" class=\"n b3\"/><text x=\"355\" y=\"245\" font-size=\"14\" text-anchor=\"middle\" class=\"tl b3\">LLM</text></svg>",
+     "caption": "지금 보는 곳: 2막, 통계. 아래로 갈수록 사람 손 규칙은 줄고, 데이터에서 배우는 몫이 커져요.",
+     "builds": 3
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "points",
+     "head": "슬라이드 영어 뜻",
+     "items": [
+      "**communication as probability** = 통신을 확률로 보기",
+      "**Stop writing rules, count patterns in large corpora** = 규칙 그만 쓰고 큰 말뭉치에서 패턴을 세라",
+      "**Every time I fire a linguist, the performance goes up** = 언어학자를 해고할 때마다 성능이 오른다",
+      "**counts cannot see that cat and kitten are related** = 세기만 해서는 cat 과 kitten 이 비슷한 줄 몰라요"
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "2막의 흐름",
+     "steps": [
+      "뿌리: 1948 섀넌(Shannon)의 **잡음 채널 모델(Noisy Channel Model)**, 정보 이론",
+      "방법: 말뭉치에서 세기, **엔그램(n-gram)** LM = P(다음 단어 | 앞 단어들)",
+      "IBM: 의회 회의록 수백만 문장 쌍으로 프랑스어-영어 번역을 배움",
+      "성과: 스팸 필터, 품사 태거, 음성 인식, 검색",
+      "벽: 뜻(meaning)이라는 개념이 없음"
+     ],
+     "answer": "데이터가 규칙을 이겼지만, 단어를 세는 것은 이해가 아니었어요."
+    },
+    {
+     "kind": "check",
+     "q": "2막(통계)이 부딪힌 벽은?",
+     "choices": [
+      "cat 과 kitten 이 비슷하다는 걸 모름",
+      "규칙이 너무 적음",
+      "GPU 가 없음"
+     ],
+     "a": 0,
+     "why": "counts cannot see that 'cat' and 'kitten' are related, no notion of meaning 이에요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.071,
+       "y": 0.193,
+       "w": 0.72,
+       "h": 0.043,
+       "say": "뿌리: Shannon 1948, **잡음 채널 모델(Noisy Channel Model)**(정보 이론)"
+      },
+      {
+       "x": 0.071,
+       "y": 0.244,
+       "w": 0.671,
+       "h": 0.043,
+       "say": "count patterns in large corpora: n-gram LM = P(next word | previous words)"
+      },
+      {
+       "x": 0.071,
+       "y": 0.294,
+       "w": 0.586,
+       "h": 0.082,
+       "say": "IBM 의 프랑스어-영어 통계 번역, Jelinek 의 악명 높은 한마디"
+      },
+      {
+       "x": 0.071,
+       "y": 0.387,
+       "w": 0.711,
+       "h": 0.082,
+       "say": "스팸 필터, POS 태거, 음성 인식, 검색으로 조용히 퍼짐. 벽: 뜻 개념 없음"
+      },
+      {
+       "x": 0.311,
+       "y": 0.571,
+       "w": 0.376,
+       "h": 0.241,
+       "say": "잡음 채널: 정보원 → 송신기 → (잡음) → 수신기 → 목적지"
+      },
+      {
+       "x": 0.234,
+       "y": 0.871,
+       "w": 0.536,
+       "h": 0.036,
+       "say": "2막의 교훈: 데이터가 규칙을 이긴다, 하지만 세기는 이해가 아니다"
+      }
+     ]
+    },
+    {
+     "kind": "formula",
+     "head": "**엔그램(n-gram)** 언어 모델",
+     "tex": "P(\\text{next word} \\mid \\text{previous words})",
+     "parts": [
+      {
+       "sym": "P(\\cdot)",
+       "say": "확률, 0~1 사이 숫자"
+      },
+      {
+       "sym": "\\text{next word}",
+       "say": "다음에 올 단어"
+      },
+      {
+       "sym": "\\mid",
+       "say": "'~이 주어졌을 때'"
+      },
+      {
+       "sym": "\\text{previous words}",
+       "say": "바로 앞 단어 몇 개"
+      }
+     ],
+     "whole": "앞 단어 몇 개를 보고 다음 단어가 나올 확률을 세어서 정해요."
+    },
+    {
+     "kind": "steps",
+     "head": "아주 작은 말뭉치로 세어 보기",
+     "steps": [
+      "말뭉치 3문장: '나는 밥을 먹었다', '나는 밥을 샀다', '나는 빵을 먹었다'",
+      "'나는' 다음 단어: 밥을, 밥을, 빵을 (3번)",
+      "그중 '밥을' 은 2번",
+      "P(밥을 | 나는) = 2 / 3"
+     ],
+     "answer": "P(밥을 | 나는) = 2/3, 약 0.67 이에요. 이것이 2-gram 세기예요.",
+     "given": "연습용으로 만든 예예요."
+    },
+    {
+     "kind": "bg",
+     "src": "기초 다지기 5단원",
+     "lines": [
+      "P(A | B) 는 'B 가 주어졌을 때 A 의 확률' 이에요.",
+      "빈도로 세어서 확률을 구하는 법은 기초 다지기 5단원에 있어요."
+     ]
+    },
+    {
+     "kind": "prof",
+     "when": "1주차 월요일 OT",
+     "lines": [
+      "n-gram 은 n 개씩 붙어 있는 단어 묶음이에요. 1-gram 은 단어 하나, 2-gram 은 두 단어예요.",
+      "n-gram 으로 빈도를 세서 확률을 구하는 건 3주차에 직접 만들어 볼게요.",
+      "IBM 은 불어와 영어를 같이 쓰는 캐나다 의회 회의록으로 번역을 학습시켰어요.",
+      "통계에는 벽이 있어요. cat 과 kitty 가 비슷한 말이라는 개념 자체가 없어요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "2막의 뿌리가 된 섀넌(1948)의 아이디어는?",
+     "choices": [
+      "**잡음 채널 모델(Noisy Channel Model)**",
+      "최초의 챗봇",
+      "단어 벡터"
+     ],
+     "a": 0,
+     "why": "communication as probability, the noisy channel model 이에요. 통계 번역과 음성 인식의 설계도예요."
+    },
+    {
+     "kind": "check",
+     "q": "Jelinek 의 말 'Every time I fire a linguist, the performance goes up' 이 뜻하는 것은?",
+     "choices": [
+      "사람이 쓴 규칙보다 데이터 통계가 더 잘 된다",
+      "언어학자가 꼭 필요하다",
+      "규칙을 더 많이 써야 한다"
+     ],
+     "a": 0,
+     "why": "통계 시대의 분위기(데이터가 규칙을 이긴다)를 보여 주는 악명 높은 말이에요."
+    },
+    {
+     "kind": "english",
+     "head": "2막 요약",
+     "en": "2막 통계(1990s~2000s): 섀넌(1948) 잡음 채널이 뿌리, 말뭉치에서 세는 n-gram LM 과 IBM 통계 번역. 한계: 뜻을 모른다(cat, kitten).",
+     "ko": "섀넌 1948 + 세기 + IBM + 벽",
+     "tip": "교훈: data beats rules, but counting is not understanding."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "섀넌 1948 은 2막의 '뿌리' 예요. 2막 자체는 1990s~2000s 예요.",
+      "1956 다트머스 사진 맨 오른쪽의 그 섀넌이에요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 20,
+   "title": "3. History of NLP | Act 3 - word2vec (2013)",
+   "terms": [
+    "word2vec",
+    "Word Vector",
+    "Distributional Hypothesis",
+    "Statistical Approach"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "3막의 첫 장면은 **워드투벡(word2vec)**(2013)이에요.",
+      "모든 단어를 숫자 목록(벡터), 곧 지도 위 좌표로 바꿔요."
+     ]
+    },
+    {
+     "kind": "analogy",
+     "head": "단어의 지도 좌표",
+     "scene": "뜻이 비슷한 단어는 지도에서 가까이 살아요. 개, 고양이는 동물 동네에, 피자, 김치는 음식 동네에 모여요.",
+     "map": [
+      [
+       "지도 위 좌표",
+       "**단어 벡터(Word Vector)**"
+      ],
+      [
+       "가까이 사는 이웃",
+       "뜻이 비슷한 단어"
+      ]
+     ]
+    },
+    {
+     "kind": "analogy",
+     "head": "친구를 보면 그 사람을 안다",
+     "scene": "어떤 단어 옆에 늘 어떤 단어들이 오는지 보면, 그 단어의 뜻을 짐작할 수 있어요.",
+     "map": [
+      [
+       "친구들",
+       "주변 단어(문맥)"
+      ],
+      [
+       "그 사람을 안다",
+       "**분포 가설(Distributional Hypothesis)**"
+      ]
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "points",
+     "head": "슬라이드 영어 뜻",
+     "items": [
+      "**every word becomes a vector, learned from raw text** = 모든 단어가 벡터가 되고, 날 글에서 배워요",
+      "**no labels needed** = 사람이 정답표를 달 필요가 없어요",
+      "**You shall know a word by the company it keeps** = 단어는 어울리는 친구로 안다 (Firth, 1957)",
+      "**Directions carry meaning** = 방향이 뜻을 담아요"
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "2막 통계 vs 3막 word2vec",
+     "cols": [
+      "",
+      "**통계 기반 방법(Statistical Approach)**",
+      "**워드투벡(word2vec)**"
+     ],
+     "rows": [
+      [
+       "단어를 다루는 법",
+       "횟수를 셈",
+       "벡터(좌표)로 바꿈"
+      ],
+      [
+       "cat 과 kitten",
+       "관계를 모름",
+       "드디어 이웃이 됨"
+      ],
+      [
+       "라벨",
+       "필요 없음(세기)",
+       "필요 없음(날 글로 학습)"
+      ]
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "**분포 가설(Distributional Hypothesis)**을 한 문장으로 말하면?",
+     "choices": [
+      "단어는 어울리는 친구(주변 단어)로 안다",
+      "단어는 글자 수로 안다",
+      "단어는 사전 순서로 안다"
+     ],
+     "a": 0,
+     "why": "You shall know a word by the company it keeps (Firth, 1957) 예요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.071,
+       "y": 0.193,
+       "w": 0.629,
+       "h": 0.043,
+       "say": "**워드투벡(word2vec)** (2013): 모든 단어가 벡터, 라벨 없이 날 글에서"
+      },
+      {
+       "x": 0.071,
+       "y": 0.246,
+       "w": 0.607,
+       "h": 0.043,
+       "say": "Distributional hypothesis: Firth, 1957 의 한 문장"
+      },
+      {
+       "x": 0.071,
+       "y": 0.299,
+       "w": 0.62,
+       "h": 0.043,
+       "say": "king - man + woman ≈ queen, Seoul - Korea + Japan ≈ Tokyo"
+      },
+      {
+       "x": 0.149,
+       "y": 0.431,
+       "w": 0.371,
+       "h": 0.36,
+       "say": "similar meaning → nearby vectors: 동물, 음식, 감정끼리 모여요"
+      },
+      {
+       "x": 0.529,
+       "y": 0.431,
+       "w": 0.323,
+       "h": 0.36,
+       "say": "man → king 과 woman → queen 화살표가 나란해요(royalty direction)"
+      },
+      {
+       "x": 0.289,
+       "y": 0.865,
+       "w": 0.425,
+       "h": 0.036,
+       "say": "통계의 벽이 무너짐: cat 과 kitten 이 드디어 이웃"
+      }
+     ]
+    },
+    {
+     "kind": "formula",
+     "head": "뜻의 덧셈 뺄셈",
+     "tex": "\\vec{king} - \\vec{man} + \\vec{woman} \\approx \\vec{queen}",
+     "parts": [
+      {
+       "sym": "\\vec{king}",
+       "say": "king 의 좌표(벡터)"
+      },
+      {
+       "sym": "- \\vec{man}",
+       "say": "남자 쪽 성질을 빼고"
+      },
+      {
+       "sym": "+ \\vec{woman}",
+       "say": "여자 쪽 성질을 더하면"
+      },
+      {
+       "sym": "\\approx \\vec{queen}",
+       "say": "queen 좌표 근처에 도착"
+      }
+     ],
+     "whole": "방향이 뜻을 담아서, 좌표를 빼고 더하면 뜻의 산수가 돼요."
+    },
+    {
+     "kind": "bg",
+     "src": "기초 다지기 1단원",
+     "lines": [
+      "벡터는 숫자 목록이고, 화살표나 지도 좌표로 그릴 수 있어요.",
+      "두 좌표를 빼면 '어느 쪽으로 얼마나' 라는 방향이 나와요."
+     ]
+    },
+    {
+     "kind": "prof",
+     "when": "1주차 월요일 OT",
+     "lines": [
+      "모든 단어를 벡터로 표현해 보자는 아이디어가 대성공을 해요. 라벨 없이 날 텍스트만 학습해요.",
+      "비슷한 맥락에 나타나는 단어가 비슷한 벡터를 갖게 하자는 거예요.",
+      "항상 다 되는 건 아니지만, 의미에 대한 산수가 가능해졌어요.",
+      "벡터를 직접 만들어 보는 건 2주차 word2vec 시간에 해요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "과제와 이어지는 부분",
+     "items": [
+      "word2vec 은 2주차 강의(N2)와 실습(Lab 0-1)에서 자세히 배우고, 과제 1과 이어져요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "'Seoul - Korea + Japan' 은 무엇에 가까울까요?",
+     "choices": [
+      "Tokyo",
+      "Seoul",
+      "Korea"
+     ],
+     "a": 0,
+     "why": "나라의 수도 방향이 같아서 Tokyo 근처에 도착해요."
+    },
+    {
+     "kind": "check",
+     "q": "분포 가설 문장을 말한 사람과 연도는?",
+     "choices": [
+      "Firth, 1957",
+      "Shannon, 1948",
+      "Turing, 1950"
+     ],
+     "a": 0,
+     "why": "Firth 1957 이에요. word2vec(2013)보다 훨씬 오래된 생각이에요."
+    },
+    {
+     "kind": "english",
+     "head": "3막 word2vec 요약",
+     "en": "word2vec(2013)은 라벨 없이 단어를 벡터로 배운다. 분포 가설(Firth 1957)에 따라 문맥이 비슷하면 가깝고, king - man + woman ≈ queen 처럼 방향이 뜻을 담는다.",
+     "ko": "벡터 + 분포 가설 + 뜻의 산수",
+     "tip": "통계의 벽(cat, kitten)을 넘었다고 이어서 외워요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "word2vec 은 2013년, 분포 가설 문장은 Firth 1957년이에요. 두 연도를 섞지 마세요.",
+      "≈ 는 '딱 같다' 가 아니라 '가장 가깝다' 예요. 교수님도 '항상 다 되는 건 아니다' 라고 했어요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 21,
+   "title": "3. History of NLP | Act 3 - seq2seq & Attention (2014-16)",
+   "terms": [
+    "Recurrent Neural Network (RNN)",
+    "LSTM",
+    "Hidden State",
+    "seq2seq",
+    "Encoder",
+    "Decoder",
+    "Attention",
+    "Machine Translation (MT)",
+    "Neural Network"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "3막 두 번째 장면: 문장을 한 단어씩 읽는 **신경망(Neural Network)**이에요.",
+      "번역기는 **인코더(Encoder)**가 원문을 읽고, **디코더(Decoder)**가 번역문을 써요."
+     ]
+    },
+    {
+     "kind": "analogy",
+     "head": "한 단어씩 읽으며 메모장을 고쳐 쓰는 사람",
+     "scene": "책을 한 단어씩 읽으면서, 지금까지 내용을 메모장에 짧게 요약해 고쳐 써요. 다 읽으면 메모장 하나가 남아요.",
+     "map": [
+      [
+       "한 단어씩 읽는 사람",
+       "**순환 신경망(Recurrent Neural Network (RNN))**"
+      ],
+      [
+       "메모장",
+       "**은닉 상태(Hidden State)**"
+      ]
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "NLP 역사 여섯 계단",
+     "svg": "<svg viewBox=\"0 0 480 270\" xmlns=\"http://www.w3.org/2000/svg\"><text x=\"100\" y=\"35\" font-size=\"14\" text-anchor=\"end\" class=\"tm b1\">1950s~80s</text><rect x=\"110\" y=\"14\" width=\"210\" height=\"32\" rx=\"2\" class=\"n b1\"/><text x=\"215\" y=\"35\" font-size=\"14\" text-anchor=\"middle\" class=\"tl b1\">규칙</text><text x=\"100\" y=\"77\" font-size=\"14\" text-anchor=\"end\" class=\"tm b1\">1990s~2000s</text><rect x=\"138\" y=\"56\" width=\"210\" height=\"32\" rx=\"2\" class=\"n b1\"/><text x=\"243\" y=\"77\" font-size=\"14\" text-anchor=\"middle\" class=\"tl b1\">통계</text><text x=\"100\" y=\"119\" font-size=\"14\" text-anchor=\"end\" class=\"tm b2\">2013</text><rect x=\"166\" y=\"98\" width=\"210\" height=\"32\" rx=\"2\" class=\"n b2\"/><text x=\"271\" y=\"119\" font-size=\"14\" text-anchor=\"middle\" class=\"tl b2\">워드투벡(word2vec)</text><text x=\"100\" y=\"161\" font-size=\"14\" text-anchor=\"end\" class=\"tm b2\">2014~16</text><rect x=\"194\" y=\"140\" width=\"210\" height=\"32\" rx=\"2\" class=\"n2 b2\"/><text x=\"299\" y=\"161\" font-size=\"14\" text-anchor=\"middle\" class=\"tl b2\">seq2seq + 어텐션</text><text x=\"100\" y=\"203\" font-size=\"14\" text-anchor=\"end\" class=\"tm b3\">2017~18</text><rect x=\"222\" y=\"182\" width=\"210\" height=\"32\" rx=\"2\" class=\"n b3\"/><text x=\"327\" y=\"203\" font-size=\"14\" text-anchor=\"middle\" class=\"tl b3\">트랜스포머 + 사전 학습</text><text x=\"100\" y=\"245\" font-size=\"14\" text-anchor=\"end\" class=\"tm b3\">2020~</text><rect x=\"250\" y=\"224\" width=\"210\" height=\"32\" rx=\"2\" class=\"n b3\"/><text x=\"355\" y=\"245\" font-size=\"14\" text-anchor=\"middle\" class=\"tl b3\">LLM</text></svg>",
+     "caption": "지금 보는 곳: 3막, seq2seq 와 어텐션. 아래로 갈수록 사람 손 규칙은 줄고, 데이터에서 배우는 몫이 커져요.",
+     "builds": 3
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "points",
+     "head": "용어 하나씩",
+     "items": [
+      "**순환 신경망(Recurrent Neural Network (RNN))**, **장단기 메모리(LSTM)**: 단어를 하나씩 읽으며 기억(memory)을 들고 가는 신경망",
+      "그 기억(메모장)을 **은닉 상태(Hidden State)**라고 해요",
+      "**시퀀스-투-시퀀스(seq2seq)**(2014): 문장(순서열)을 받아 다른 문장을 내놓는 구조",
+      "**인코더(Encoder)**: 원문을 읽고 압축해요(reads & compresses the source)",
+      "**디코더(Decoder)**: 번역문을 한 단어씩 써요(writes the target word by word)",
+      "**어텐션(Attention)**(2015): 디코더가 필요할 때 원문을 다시 흘끗 봐요(glance back)"
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "'나는 너를 사랑해' → 'I love you'",
+     "steps": [
+      "인코더가 나는, 너를, 사랑해 를 읽으며 h1, h2, h3 를 만들어요",
+      "요약(context)이 디코더로 넘어가요",
+      "디코더가 s1 에서 I, s2 에서 love, s3 에서 you 를 써요",
+      "love 를 쓸 때 어텐션이 원문 중 어디를 볼지 정해요"
+     ],
+     "answer": "원문 전체를 한 번에 외우지 않고, 필요할 때 다시 봐요."
+    },
+    {
+     "kind": "check",
+     "q": "**어텐션(Attention)**이 하는 일은?",
+     "choices": [
+      "디코더가 원문 중 지금 중요한 단어를 다시 보게 함",
+      "문장을 한 단어씩 읽음",
+      "단어를 셈"
+     ],
+     "a": 0,
+     "why": "which source word matters right now? 가 어텐션의 질문이에요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.071,
+       "y": 0.193,
+       "w": 0.543,
+       "h": 0.043,
+       "say": "RNN / LSTM: 한 단어씩 읽으며 기억을 들고 가는 신경망"
+      },
+      {
+       "x": 0.071,
+       "y": 0.247,
+       "w": 0.539,
+       "h": 0.08,
+       "say": "seq2seq (2014): 인코더가 압축, 디코더가 씀. attention (2015): 원문을 다시 봄"
+      },
+      {
+       "x": 0.354,
+       "y": 0.442,
+       "w": 0.286,
+       "h": 0.03,
+       "say": "attention: 'which source word matters right now?' 지금 어느 원문 단어가 중요?"
+      },
+      {
+       "x": 0.179,
+       "y": 0.539,
+       "w": 0.275,
+       "h": 0.209,
+       "say": "인코더 h1 나는, h2 너를, h3 사랑해. 위 숫자 0.06, 0.10, 0.84 는 주목 비율"
+      },
+      {
+       "x": 0.543,
+       "y": 0.501,
+       "w": 0.275,
+       "h": 0.247,
+       "say": "디코더 s1, s2, s3 가 I, love, you 를 한 단어씩"
+      },
+      {
+       "x": 0.264,
+       "y": 0.822,
+       "w": 0.475,
+       "h": 0.03,
+       "say": "2016: 구글 번역이 하룻밤에 신경망으로, 사용자가 느낄 만큼 품질 점프"
+      }
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "어텐션 숫자 읽기",
+     "steps": [
+      "love 를 쓰는 s2 에서 원문 세 단어에 비율을 나눠 줘요",
+      "나는 0.06, 너를 0.10, 사랑해 0.84",
+      "0.06 + 0.10 + 0.84 = 1.00",
+      "가장 큰 0.84 → 사랑해 에 가장 주목"
+     ],
+     "answer": "love 를 쓸 때 '사랑해' 를 가장 많이 봐요. 비율을 다 더하면 1 이에요."
+    },
+    {
+     "kind": "prof",
+     "when": "1주차 월요일 OT",
+     "lines": [
+      "RNN, LSTM 도 사실 1990년대 논문이지만 한동안 크게 성공하지 못했어요.",
+      "2014년 구글에서 기계 번역을 위해 seq2seq 가 나와요.",
+      "예전엔 문장 전체를 벡터 하나에 우겨 넣다 보니, 다음 토큰을 만들 때 앞을 기억하기 어려웠어요.",
+      "어텐션은 다음 토큰을 만들 때 앞 문장에 다시 접근해 어디에 주목할지 봐요. 그래서 이름이 attention 이에요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "다음에 어디서 다시 만나나",
+     "items": [
+      "RNN 과 언어 모델은 3주차(N3), 어텐션은 4주차에 자세히 배워요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "2016년에 일어난 일은?",
+     "choices": [
+      "구글 번역이 신경망 방식으로 바뀜",
+      "word2vec 발표",
+      "ChatGPT 공개"
+     ],
+     "a": 0,
+     "why": "Google Translate switches to neural overnight 이에요."
+    },
+    {
+     "kind": "check",
+     "q": "seq2seq 에서 원문을 읽고 압축하는 쪽은?",
+     "choices": [
+      "**인코더(Encoder)**",
+      "**디코더(Decoder)**",
+      "**어텐션(Attention)**"
+     ],
+     "a": 0,
+     "why": "encoder, reads & compresses the source 예요."
+    },
+    {
+     "kind": "english",
+     "head": "3막 seq2seq 와 어텐션 요약",
+     "en": "RNN/LSTM 은 한 단어씩 읽는 신경망이다. seq2seq(2014)는 인코더가 압축, 디코더가 쓰고, 어텐션(2015)은 원문을 다시 보게 한다. 2016 구글 번역 전환.",
+     "ko": "2014 seq2seq, 2015 attention, 2016 구글 번역",
+     "tip": "교훈: 단어를 벡터로 두고, 규칙은 신경망이 배우게 하라."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "슬라이드에서 3막은 두 쪽이에요(word2vec, seq2seq 와 어텐션).",
+      "seq2seq 2014, 어텐션 2015, 구글 번역 전환 2016. 한 해씩 차례로 외워요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 22,
+   "title": "3. History of NLP | Act 4 - Transformers & Pretraining",
+   "terms": [
+    "Transformer",
+    "Attention",
+    "Recurrent Neural Network (RNN)",
+    "Pre-training",
+    "Fine-tuning",
+    "Language Model (LM)",
+    "BERT",
+    "GPT",
+    "Sentiment Analysis",
+    "Named Entity Recognition (NER)"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "4막: 2017년 **트랜스포머(Transformer)**가 나와요. 어텐션만으로 만든 신경망이에요.",
+      "그리고 새 요리법: 웹 전체로 한 번 **사전 학습(Pre-training)**하고, 일마다 싸게 맞춰 써요."
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "NLP 역사 여섯 계단",
+     "svg": "<svg viewBox=\"0 0 480 270\" xmlns=\"http://www.w3.org/2000/svg\"><text x=\"100\" y=\"35\" font-size=\"14\" text-anchor=\"end\" class=\"tm b1\">1950s~80s</text><rect x=\"110\" y=\"14\" width=\"210\" height=\"32\" rx=\"2\" class=\"n b1\"/><text x=\"215\" y=\"35\" font-size=\"14\" text-anchor=\"middle\" class=\"tl b1\">규칙</text><text x=\"100\" y=\"77\" font-size=\"14\" text-anchor=\"end\" class=\"tm b1\">1990s~2000s</text><rect x=\"138\" y=\"56\" width=\"210\" height=\"32\" rx=\"2\" class=\"n b1\"/><text x=\"243\" y=\"77\" font-size=\"14\" text-anchor=\"middle\" class=\"tl b1\">통계</text><text x=\"100\" y=\"119\" font-size=\"14\" text-anchor=\"end\" class=\"tm b2\">2013</text><rect x=\"166\" y=\"98\" width=\"210\" height=\"32\" rx=\"2\" class=\"n b2\"/><text x=\"271\" y=\"119\" font-size=\"14\" text-anchor=\"middle\" class=\"tl b2\">워드투벡(word2vec)</text><text x=\"100\" y=\"161\" font-size=\"14\" text-anchor=\"end\" class=\"tm b2\">2014~16</text><rect x=\"194\" y=\"140\" width=\"210\" height=\"32\" rx=\"2\" class=\"n b2\"/><text x=\"299\" y=\"161\" font-size=\"14\" text-anchor=\"middle\" class=\"tl b2\">seq2seq + 어텐션</text><text x=\"100\" y=\"203\" font-size=\"14\" text-anchor=\"end\" class=\"tm b3\">2017~18</text><rect x=\"222\" y=\"182\" width=\"210\" height=\"32\" rx=\"2\" class=\"n2 b3\"/><text x=\"327\" y=\"203\" font-size=\"14\" text-anchor=\"middle\" class=\"tl b3\">트랜스포머 + 사전 학습</text><text x=\"100\" y=\"245\" font-size=\"14\" text-anchor=\"end\" class=\"tm b3\">2020~</text><rect x=\"250\" y=\"224\" width=\"210\" height=\"32\" rx=\"2\" class=\"n b3\"/><text x=\"355\" y=\"245\" font-size=\"14\" text-anchor=\"middle\" class=\"tl b3\">LLM</text></svg>",
+     "caption": "지금 보는 곳: 4막, 트랜스포머와 사전 학습. 아래로 갈수록 사람 손 규칙은 줄고, 데이터에서 배우는 몫이 커져요.",
+     "builds": 3
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "points",
+     "head": "슬라이드 영어 뜻",
+     "items": [
+      "**Attention Is All You Need** = 어텐션만 있으면 된다 (2017 논문 제목)",
+      "**no recurrence** = RNN 처럼 한 단어씩 돌지 않아요",
+      "**processes all words in parallel → scales beautifully on GPUs** = 모든 단어를 한꺼번에 처리 → GPU 로 크게 키우기 좋아요",
+      "**pretrain once, adapt cheaply** = 한 번 사전 학습, 싸게 맞춰 쓰기"
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "새 요리법 순서",
+     "steps": [
+      "재료: 웹 전체(책, 위키, 코드), 라벨 필요 없음",
+      "**사전 학습(Pre-training)**: 빠진 단어 맞히기(predict the missing word)",
+      "결과: 사전 학습된 언어 모델(Pretrained Language Model) 하나",
+      "**미세 조정(Fine-tuning)**: 작은 데이터(+ small data)로 일마다 맞추기"
+     ],
+     "answer": "모델 하나 → 모든 일(one model → every task)."
+    },
+    {
+     "kind": "check",
+     "q": "**트랜스포머(Transformer)**가 크게 키우기 좋은 까닭은?",
+     "choices": [
+      "모든 단어를 병렬로 처리해서 GPU 에 잘 맞음",
+      "단어를 하나씩 순서대로 읽어서",
+      "규칙을 손으로 써서"
+     ],
+     "a": 0,
+     "why": "processes all words in parallel, that is the whole trick 이에요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.071,
+       "y": 0.193,
+       "w": 0.621,
+       "h": 0.08,
+       "say": "2017 'Attention Is All You Need': 어텐션만, 순환 없음, 병렬 처리가 비결"
+      },
+      {
+       "x": 0.071,
+       "y": 0.286,
+       "w": 0.606,
+       "h": 0.044,
+       "say": "새 요리법: 라벨 없는 웹 전체로 pretrain once → adapt cheaply"
+      },
+      {
+       "x": 0.107,
+       "y": 0.495,
+       "w": 0.182,
+       "h": 0.239,
+       "say": "the whole web: books, wiki, code. no labels needed"
+      },
+      {
+       "x": 0.395,
+       "y": 0.52,
+       "w": 0.194,
+       "h": 0.171,
+       "say": "Pretrained Language Model: 빠진 단어 맞히기로 배운 모델"
+      },
+      {
+       "x": 0.543,
+       "y": 0.419,
+       "w": 0.351,
+       "h": 0.315,
+       "say": "fine-tuning: 감성 분석, 질의응답, 번역, 개체명 각각 + small data"
+      },
+      {
+       "x": 0.154,
+       "y": 0.86,
+       "w": 0.696,
+       "h": 0.038,
+       "say": "2018 BERT & GPT: 한 아이디어의 두 반쪽. NLP 의 ImageNet moment"
+      }
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "**순환 신경망(Recurrent Neural Network (RNN))** vs **트랜스포머(Transformer)**",
+     "cols": [
+      "",
+      "RNN / LSTM",
+      "**트랜스포머(Transformer)**"
+     ],
+     "rows": [
+      [
+       "읽는 법",
+       "한 단어씩 순서대로",
+       "모든 단어를 한꺼번에(병렬)"
+      ],
+      [
+       "핵심 부품",
+       "순환(recurrence)",
+       "**어텐션(Attention)**만"
+      ],
+      [
+       "GPU 로 키우기",
+       "어려움",
+       "아주 잘 됨"
+      ]
+     ]
+    },
+    {
+     "kind": "prof",
+     "when": "1주차 월요일 OT",
+     "lines": [
+      "2017년에 제목부터 도발적인 논문이 나와요. 어텐션만 있으면 된다는 뜻이죠.",
+      "하나씩 보던 어텐션을 셀프 어텐션으로 확장했어요.",
+      "꽤 중요하고 오래 다뤄야 할 내용이라 4주차나 5주차쯤 다룰게요.",
+      "2017년이면 공학에서 아주 오래된 건 아니지만, 우리에겐 꽤 오래된 논문처럼 느껴져요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "ImageNet moment 란",
+     "items": [
+      "2018 **BERT**와 **GPT**: 언어를 한 번 배워 두고 어디서나 다시 써요(learn language once, reuse it everywhere).",
+      "예: **감성 분석(Sentiment Analysis)**, 질의응답, 번역, **개체명 인식(Named Entity Recognition (NER))**을 작은 데이터로 맞춰요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "BERT 와 GPT 가 나온 해는?",
+     "choices": [
+      "2018",
+      "2013",
+      "2022"
+     ],
+     "a": 0,
+     "why": "2018 BERT & GPT, two halves of one idea 예요."
+    },
+    {
+     "kind": "check",
+     "q": "사전 학습 데이터에 필요한 것은?",
+     "choices": [
+      "라벨 없는 많은 글",
+      "사람이 단 정답 라벨",
+      "손으로 쓴 규칙"
+     ],
+     "a": 0,
+     "why": "pretrain once on the whole unlabeled web, no labels needed 예요."
+    },
+    {
+     "kind": "english",
+     "head": "4막 요약",
+     "en": "4막: 트랜스포머(2017)는 순환 없이 어텐션만 써서 병렬 처리한다. 라벨 없는 웹으로 사전 학습, 작은 데이터로 미세 조정하는 방식이 BERT, GPT(2018)로 자리 잡았다.",
+     "ko": "2017 트랜스포머 + 2018 사전 학습(BERT, GPT)",
+     "tip": "'한 번 배워 어디서나' 가 ImageNet moment."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "사전 학습은 라벨이 없고, 미세 조정은 작은 라벨 데이터를 써요.",
+      "p.16 부제목과 p.24 표에서는 트랜스포머를 '4막 Pretraining' 에 넣어요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 23,
+   "title": "3. History of NLP | Act 5 - LLMs (2020-now)",
+   "terms": [
+    "Large Language Model (LLM)",
+    "Scaling Laws",
+    "Parameter",
+    "GPT",
+    "In-context Learning",
+    "ChatGPT",
+    "Instruction Tuning",
+    "RLHF",
+    "EXAONE",
+    "BERT",
+    "Classification"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "5막: **대규모 언어 모델(Large Language Model (LLM))**의 시대예요(2020~지금).",
+      "크게 키울수록 좋아진다는 걸 알고, 계속 키웠어요.",
+      "그러자 예시 몇 개만 보여 줘도 일을 해내는 모델이 나왔어요."
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "NLP 역사 여섯 계단",
+     "svg": "<svg viewBox=\"0 0 480 270\" xmlns=\"http://www.w3.org/2000/svg\"><text x=\"100\" y=\"35\" font-size=\"14\" text-anchor=\"end\" class=\"tm b1\">1950s~80s</text><rect x=\"110\" y=\"14\" width=\"210\" height=\"32\" rx=\"2\" class=\"n b1\"/><text x=\"215\" y=\"35\" font-size=\"14\" text-anchor=\"middle\" class=\"tl b1\">규칙</text><text x=\"100\" y=\"77\" font-size=\"14\" text-anchor=\"end\" class=\"tm b1\">1990s~2000s</text><rect x=\"138\" y=\"56\" width=\"210\" height=\"32\" rx=\"2\" class=\"n b1\"/><text x=\"243\" y=\"77\" font-size=\"14\" text-anchor=\"middle\" class=\"tl b1\">통계</text><text x=\"100\" y=\"119\" font-size=\"14\" text-anchor=\"end\" class=\"tm b2\">2013</text><rect x=\"166\" y=\"98\" width=\"210\" height=\"32\" rx=\"2\" class=\"n b2\"/><text x=\"271\" y=\"119\" font-size=\"14\" text-anchor=\"middle\" class=\"tl b2\">워드투벡(word2vec)</text><text x=\"100\" y=\"161\" font-size=\"14\" text-anchor=\"end\" class=\"tm b2\">2014~16</text><rect x=\"194\" y=\"140\" width=\"210\" height=\"32\" rx=\"2\" class=\"n b2\"/><text x=\"299\" y=\"161\" font-size=\"14\" text-anchor=\"middle\" class=\"tl b2\">seq2seq + 어텐션</text><text x=\"100\" y=\"203\" font-size=\"14\" text-anchor=\"end\" class=\"tm b3\">2017~18</text><rect x=\"222\" y=\"182\" width=\"210\" height=\"32\" rx=\"2\" class=\"n b3\"/><text x=\"327\" y=\"203\" font-size=\"14\" text-anchor=\"middle\" class=\"tl b3\">트랜스포머 + 사전 학습</text><text x=\"100\" y=\"245\" font-size=\"14\" text-anchor=\"end\" class=\"tm b3\">2020~</text><rect x=\"250\" y=\"224\" width=\"210\" height=\"32\" rx=\"2\" class=\"n2 b3\"/><text x=\"355\" y=\"245\" font-size=\"14\" text-anchor=\"middle\" class=\"tl b3\">LLM</text></svg>",
+     "caption": "지금 보는 곳: 5막, LLM. 아래로 갈수록 사람 손 규칙은 줄고, 데이터에서 배우는 몫이 커져요.",
+     "builds": 3
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "points",
+     "head": "용어 하나씩",
+     "items": [
+      "**스케일링 법칙(Scaling Laws)**: **파라미터(Parameter)** + 데이터 + 계산량을 늘리면 예측 가능하게 좋아져요",
+      "**문맥 내 학습(In-context Learning)**: 프롬프트에 예시 몇 개만 넣으면 그 일을 해요(**GPT**-3, 2020)",
+      "**지시 학습(Instruction Tuning)**: '이렇게 해 줘' 같은 지시를 따르게 학습",
+      "**인간 피드백 강화 학습(RLHF)**: 사람이 더 좋다고 고른 답 쪽으로 다듬기"
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "5막 흐름",
+     "steps": [
+      "**스케일링 법칙(Scaling Laws)**: 크게 키우면 좋아진다",
+      "GPT-3 (2020): 문맥 내 학습",
+      "**ChatGPT** (2022): + 지시 학습 + RLHF → 두 달 만에 사용자 1억 명",
+      "2023~26: GPT-4, Claude, Gemini, Llama, 한국어 LLM(**엑사원(EXAONE)**, HyperCLOVA X, SKT-A.X, SOLAR)"
+     ],
+     "answer": "NLP 가 연구실 주제에서 사회의 기반 시설(infrastructure)이 됐어요."
+    },
+    {
+     "kind": "check",
+     "q": "GPT-3 가 보여 준 '프롬프트에 예시 몇 개만 넣으면 일을 한다' 는 능력은?",
+     "choices": [
+      "**문맥 내 학습(In-context Learning)**",
+      "**인간 피드백 강화 학습(RLHF)**",
+      "**스케일링 법칙(Scaling Laws)**"
+     ],
+     "a": 0,
+     "why": "show a few examples in the prompt and it does the task, in-context learning 이에요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.071,
+       "y": 0.193,
+       "w": 0.6,
+       "h": 0.043,
+       "say": "Scaling laws: 파라미터 + 데이터 + 계산 → 예측 가능하게 좋아짐"
+      },
+      {
+       "x": 0.071,
+       "y": 0.244,
+       "w": 0.637,
+       "h": 0.043,
+       "say": "GPT-3 (2020): in-context learning"
+      },
+      {
+       "x": 0.071,
+       "y": 0.296,
+       "w": 0.618,
+       "h": 0.042,
+       "say": "ChatGPT (2022): + instruction tuning + RLHF → 두 달에 1억 명, 역대 최고 속도"
+      },
+      {
+       "x": 0.071,
+       "y": 0.348,
+       "w": 0.747,
+       "h": 0.042,
+       "say": "2023~26: GPT-4, Claude, Gemini, Llama, 한국어 LLM EXAONE, HyperCLOVA X, SKT-A.X, SOLAR"
+      },
+      {
+       "x": 0.129,
+       "y": 0.482,
+       "w": 0.457,
+       "h": 0.33,
+       "say": "파라미터 그래프(로그 눈금): ELMo 0.094B → PaLM 540B, 4년에 약 5,700배"
+      },
+      {
+       "x": 0.586,
+       "y": 0.482,
+       "w": 0.28,
+       "h": 0.325,
+       "say": "2023~: 최전선 모델 크기는 비공개, 계산량은 계속 늘어요"
+      }
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "그래프 속 모델 크기",
+     "cols": [
+      "모델",
+      "해",
+      "**파라미터(Parameter)** 수"
+     ],
+     "rows": [
+      [
+       "ELMo",
+       "2018",
+       "0.094B (약 9,400만)"
+      ],
+      [
+       "**BERT**-Large",
+       "2018",
+       "0.34B"
+      ],
+      [
+       "GPT-2",
+       "2019",
+       "1.5B"
+      ],
+      [
+       "T5-11B",
+       "2019",
+       "11B"
+      ],
+      [
+       "GPT-3",
+       "2020",
+       "175B"
+      ],
+      [
+       "Gopher / PaLM",
+       "2021 / 2022",
+       "280B / 540B"
+      ]
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "'약 5,700배' 확인",
+     "steps": [
+      "B 는 billion, 10억이에요",
+      "PaLM 540B / ELMo 0.094B = 약 5,745",
+      "2018 → 2022 = 4년"
+     ],
+     "answer": "4년 만에 약 5,700배 커졌어요(~5,700x in 4 years)."
+    },
+    {
+     "kind": "bg",
+     "src": "기초 다지기 4단원",
+     "lines": [
+      "그래프 세로축은 로그 눈금이에요. 한 칸 올라갈 때마다 10배예요.",
+      "그래서 직선처럼 보여도 실제로는 엄청 빠르게 커지는 거예요."
+     ]
+    },
+    {
+     "kind": "prof",
+     "when": "1주차 월요일 OT",
+     "lines": [
+      "ChatGPT 가 2022년 11월에 나와요. 두 달 만에 1억 명, 역사상 가장 빠른 서비스 성장이에요.",
+      "예전엔 스팸 필터를 만들려면 스팸 데이터를 모아 학습시켰는데, GPT-3 부터는 프롬프트에 예시 몇 개만 주면 돼요. 퓨샷 러닝, 인컨텍스트 러닝이라고 해요.",
+      "왜 이런 능력이 갑자기 생겼는지는 아직 완벽한 해석이 없어요.",
+      "네이버 하이퍼클로바 X, LG 엑사원, 업스테이지 솔라 등이 발전했고, 요즘은 에이전트로 확장 중이에요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "ChatGPT(2022)에 더해진 두 가지는?",
+     "choices": [
+      "지시 학습과 RLHF",
+      "규칙과 사전",
+      "n-gram 과 word2vec"
+     ],
+     "a": 0,
+     "why": "+ instruction tuning + RLHF 예요. **지시 학습(Instruction Tuning)**과 **인간 피드백 강화 학습(RLHF)**으로 사람 말을 잘 따르게 했어요."
+    },
+    {
+     "kind": "check",
+     "q": "ChatGPT 가 사용자 1억 명을 모은 기간은?",
+     "choices": [
+      "두 달",
+      "두 해",
+      "두 주"
+     ],
+     "a": 0,
+     "why": "100M users in two months, fastest ever 예요."
+    },
+    {
+     "kind": "english",
+     "head": "5막 요약",
+     "en": "5막 LLM: 스케일링 법칙으로 모델을 키웠고, GPT-3(2020)는 문맥 내 학습을, ChatGPT(2022)는 지시 학습과 RLHF 로 두 달에 1억 명을 보였다.",
+     "ko": "스케일링 → GPT-3 → ChatGPT → 2023~26",
+     "tip": "20 GPT-3, 22 ChatGPT 두 해 차이."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "GPT-3 는 2020, ChatGPT 는 2022 예요.",
+      "문맥 내 학습은 모델을 다시 학습시키지 않고 프롬프트의 예시만으로 해요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 24,
+   "title": "3. History of NLP | 70 Years on One Slide",
+   "terms": [
+    "Rule-based Approach",
+    "Statistical Approach",
+    "Neural Network",
+    "Pre-training",
+    "Large Language Model (LLM)",
+    "Ambiguity",
+    "Turing Test",
+    "ELIZA",
+    "word2vec",
+    "seq2seq",
+    "Attention",
+    "Transformer",
+    "BERT",
+    "GPT",
+    "ChatGPT",
+    "Agent"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "70년을 한 장에 담은 쪽이에요.",
+      "막이 갈수록 사람이 손으로 넣는 지식은 줄고, 데이터에서 배우는 건 늘어요.",
+      "그리고 모든 막은 중의성에 대한 새 답이에요."
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "NLP 역사 여섯 계단",
+     "svg": "<svg viewBox=\"0 0 480 270\" xmlns=\"http://www.w3.org/2000/svg\"><text x=\"100\" y=\"35\" font-size=\"14\" text-anchor=\"end\" class=\"tm b1\">1950s~80s</text><rect x=\"110\" y=\"14\" width=\"210\" height=\"32\" rx=\"2\" class=\"n b1\"/><text x=\"215\" y=\"35\" font-size=\"14\" text-anchor=\"middle\" class=\"tl b1\">규칙</text><text x=\"100\" y=\"77\" font-size=\"14\" text-anchor=\"end\" class=\"tm b1\">1990s~2000s</text><rect x=\"138\" y=\"56\" width=\"210\" height=\"32\" rx=\"2\" class=\"n b1\"/><text x=\"243\" y=\"77\" font-size=\"14\" text-anchor=\"middle\" class=\"tl b1\">통계</text><text x=\"100\" y=\"119\" font-size=\"14\" text-anchor=\"end\" class=\"tm b2\">2013</text><rect x=\"166\" y=\"98\" width=\"210\" height=\"32\" rx=\"2\" class=\"n b2\"/><text x=\"271\" y=\"119\" font-size=\"14\" text-anchor=\"middle\" class=\"tl b2\">워드투벡(word2vec)</text><text x=\"100\" y=\"161\" font-size=\"14\" text-anchor=\"end\" class=\"tm b2\">2014~16</text><rect x=\"194\" y=\"140\" width=\"210\" height=\"32\" rx=\"2\" class=\"n b2\"/><text x=\"299\" y=\"161\" font-size=\"14\" text-anchor=\"middle\" class=\"tl b2\">seq2seq + 어텐션</text><text x=\"100\" y=\"203\" font-size=\"14\" text-anchor=\"end\" class=\"tm b3\">2017~18</text><rect x=\"222\" y=\"182\" width=\"210\" height=\"32\" rx=\"2\" class=\"n b3\"/><text x=\"327\" y=\"203\" font-size=\"14\" text-anchor=\"middle\" class=\"tl b3\">트랜스포머 + 사전 학습</text><text x=\"100\" y=\"245\" font-size=\"14\" text-anchor=\"end\" class=\"tm b3\">2020~</text><rect x=\"250\" y=\"224\" width=\"210\" height=\"32\" rx=\"2\" class=\"n b3\"/><text x=\"355\" y=\"245\" font-size=\"14\" text-anchor=\"middle\" class=\"tl b3\">LLM</text></svg>",
+     "caption": "여섯 계단을 한 번에 외워요. 아래로 갈수록 데이터에서 배우는 몫이 커져요.",
+     "builds": 3
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "points",
+     "head": "슬라이드 영어 뜻",
+     "items": [
+      "**hard-codes less human knowledge and learns more from data** = 사람 지식은 덜 박아 넣고, 데이터에서 더 배워요",
+      "**Every act is a new answer to ambiguity** = 모든 막이 **중의성(Ambiguity)**에 대한 새 답",
+      "**this course walks the whole arc** = 이 수업은 이 흐름 전체를 걸어가요"
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "다섯 막 한눈에",
+     "cols": [
+      "막",
+      "이름",
+      "대표 장면"
+     ],
+     "rows": [
+      [
+       "1막",
+       "**규칙 기반 방법(Rule-based Approach)**",
+       "1950 **튜링 테스트(Turing Test)**, 1966 **엘리자(ELIZA)**"
+      ],
+      [
+       "2막",
+       "**통계 기반 방법(Statistical Approach)**",
+       "1990s IBM 통계 번역, n-gram LM, 2003 Neural LM (Bengio)"
+      ],
+      [
+       "3막",
+       "**신경망(Neural Network)**",
+       "2013 **워드투벡(word2vec)**, 2014~15 **시퀀스-투-시퀀스(seq2seq)** + **어텐션(Attention)**"
+      ],
+      [
+       "4막",
+       "**사전 학습(Pre-training)**",
+       "2017 **트랜스포머(Transformer)**, 2018 **BERT** / **GPT**"
+      ],
+      [
+       "5막",
+       "**대규모 언어 모델(Large Language Model (LLM))**",
+       "2020 GPT-3, 2022 **ChatGPT**, 2024~26 멀티모달, 추론, **에이전트(Agent)**"
+      ]
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "막이 갈수록 어떻게 바뀌나요?",
+     "choices": [
+      "사람 손 지식은 줄고 데이터 학습은 늘어요",
+      "사람 손 규칙이 늘어요",
+      "데이터가 줄어요"
+     ],
+     "a": 0,
+     "why": "Each act hard-codes less human knowledge and learns more from data 예요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "타임라인 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.083,
+       "y": 0.326,
+       "w": 0.146,
+       "h": 0.407,
+       "say": "Act 1 Rules: 1950 **튜링 테스트(Turing Test)**, 1966 **엘리자(ELIZA)**(first chatbot)"
+      },
+      {
+       "x": 0.233,
+       "y": 0.326,
+       "w": 0.146,
+       "h": 0.407,
+       "say": "Act 2 Statistics: 1990s IBM statistical MT, n-gram LMs, 2003 Neural LM (Bengio)"
+      },
+      {
+       "x": 0.384,
+       "y": 0.326,
+       "w": 0.146,
+       "h": 0.407,
+       "say": "Act 3 Neural nets: 2013 **워드투벡(word2vec)**, 2014~15 seq2seq + attention"
+      },
+      {
+       "x": 0.534,
+       "y": 0.326,
+       "w": 0.146,
+       "h": 0.407,
+       "say": "Act 4 Pretraining: 2017 **트랜스포머(Transformer)**, 2018 BERT / GPT"
+      },
+      {
+       "x": 0.684,
+       "y": 0.326,
+       "w": 0.221,
+       "h": 0.407,
+       "say": "Act 5 LLMs: 2020 GPT-3(in-context), 2022 **ChatGPT**, 2024~26 multimodal, reasoning, agents"
+      },
+      {
+       "x": 0.071,
+       "y": 0.793,
+       "w": 0.518,
+       "h": 0.042,
+       "say": "Every act is a new answer to ambiguity: 핵심 난제는 그대로"
+      }
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "연표 전체 (연도 → 사건)",
+     "cols": [
+      "연도",
+      "사건"
+     ],
+     "rows": [
+      [
+       "1947 / 1950 / 1954 / 1956",
+       "위버 번역 = 암호, 튜링 테스트, 조지타운-IBM, 다트머스(AI 이름)"
+      ],
+      [
+       "1966",
+       "ELIZA, ALPAC 보고서"
+      ],
+      [
+       "1948 뿌리 / 1990s / 2003",
+       "섀넌 잡음 채널, IBM 통계 번역과 n-gram, Bengio 신경망 LM"
+      ],
+      [
+       "2013 / 2014 / 2015 / 2016",
+       "word2vec, seq2seq, attention, 구글 번역 신경망 전환"
+      ],
+      [
+       "2017 / 2018",
+       "Transformer, BERT 와 GPT"
+      ],
+      [
+       "2020 / 2022 / 2023~26",
+       "GPT-3, ChatGPT, GPT-4, Claude, Gemini, Llama, EXAONE, 에이전트"
+      ]
+     ]
+    },
+    {
+     "kind": "prof",
+     "when": "1주차 월요일 OT",
+     "lines": [
+      "처음에는 규칙으로 처리하려다 이건 아니다 싶어 통계로 넘어왔고, 이후에는 데이터 기반으로 쭉 왔어요.",
+      "NLP 뿐 아니라 모든 인공지능이 패턴을 통해 기계가 인간 지능을 따라 하게 하자는 것이고, 데이터 드리븐으로 해결한 역사예요.",
+      "다음 주는 토큰화와 단어 벡터예요. ChatGPT 같은 모델이 문장을 어떤 단위로 쪼개 보는지, 한국어와 영어가 뭐가 다른지 배워요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "exam",
+     "src": "예상 문제",
+     "q": "다음 사건을 일어난 순서대로 나열하시오. (가) ChatGPT (나) ELIZA (다) word2vec (라) Transformer (마) IBM 통계 번역",
+     "qko": "다섯 사건의 연도를 떠올려 옛날부터 줄 세우기",
+     "solve": [
+      "ELIZA = 1966 (1막)",
+      "IBM 통계 번역 = 1990s (2막)",
+      "word2vec = 2013 (3막)",
+      "Transformer = 2017 (4막)",
+      "ChatGPT = 2022 (5막)"
+     ],
+     "answer": "(나) → (마) → (다) → (라) → (가)"
+    },
+    {
+     "kind": "check",
+     "q": "2017 Transformer 는 p.24 표에서 몇 막에 있나요?",
+     "choices": [
+      "4막 Pretraining",
+      "3막 Neural nets",
+      "5막 LLMs"
+     ],
+     "a": 0,
+     "why": "Act 4 Pretraining 칸에 Transformer(2017)와 BERT / GPT(2018)가 있어요."
+    },
+    {
+     "kind": "check",
+     "q": "2003년 'Neural LM (Bengio)' 는 표에서 어느 칸?",
+     "choices": [
+      "2막 Statistics",
+      "3막 Neural nets",
+      "1막 Rules"
+     ],
+     "a": 0,
+     "why": "이름엔 Neural 이 있지만 표에서는 2막 Statistics 칸의 2003 이에요."
+    },
+    {
+     "kind": "english",
+     "head": "70년 한 줄 주문",
+     "en": "NLP 역사는 규칙 → 통계 → word2vec → seq2seq, 어텐션 → 트랜스포머, 사전 학습 → LLM 으로 흘러왔고, 막이 갈수록 사람이 넣는 지식은 줄고 데이터에서 배우는 몫은 늘었으며, 모든 막은 중의성에 대한 새 답이다.",
+     "ko": "여섯 계단 + 공통점 두 개",
+     "tip": "여섯 계단을 소리 내서 세 번 읽어요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "p.16 은 다섯 막(규칙 → 통계 → 신경망 → 사전 학습 → LLM), 이 레슨의 주문은 여섯 계단이에요. 3막 신경망을 word2vec 과 seq2seq 두 계단으로 나눴을 뿐이에요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 25,
+   "title": "MINT Lab (구분)",
+   "terms": [],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "4부: 교수님 연구실 MINT Lab 소개예요.",
+      "시험과는 거리가 멀어요. 가볍게 넘어가요."
+     ]
+    }
+   ],
+   "pass2": [],
+   "pass3": [],
+   "pass4": []
+  },
+  {
+   "p": 26,
+   "title": "4. MINT Lab | What We Do",
+   "terms": [
+    "Large Language Model (LLM)",
+    "Retrieval-Augmented Generation (RAG)",
+    "EXAONE"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "MINT 는 Machine Intelligence, Natural language, Trustworthiness 의 앞 글자예요.",
+      "2026년에 새로 생긴 인공지능학과 연구실이에요."
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "points",
+     "head": "연구 주제 네 칸",
+     "items": [
+      "**대규모 언어 모델(Large Language Model (LLM))**: 긴 문맥에서도 안정적인 최전선 한국어 LLM",
+      "**검색 증강 생성(Retrieval-Augmented Generation (RAG))**: 찾아 온 근거를 모델이 정말 쓰게 하기, 한국어 RAG",
+      "LLM 평가와 견고성: LLM-as-a-judge 의 숨은 편향, 믿을 수 있는 평가 설계",
+      "개인화와 기억: 모델이 내 취향을 언제 적용하고 언제 참아야 하나"
+     ]
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.071,
+       "y": 0.193,
+       "w": 0.711,
+       "h": 0.043,
+       "say": "MINT = Machine Intelligence, Natural language, Trustworthiness"
+      },
+      {
+       "x": 0.054,
+       "y": 0.372,
+       "w": 0.898,
+       "h": 0.379,
+       "say": "네 칸: LLM, RAG, LLM 평가와 견고성, 개인화와 기억"
+      },
+      {
+       "x": 0.199,
+       "y": 0.797,
+       "w": 0.607,
+       "h": 0.036,
+       "say": "최근 성과: EMNLP 2026, CIKM 2026, EACL 2026 Findings, **엑사원(EXAONE)** 기술 보고서"
+      },
+      {
+       "x": 0.33,
+       "y": 0.86,
+       "w": 0.344,
+       "h": 0.036,
+       "say": "이 수업 9~14주 = 연구실의 매일 연구 주제"
+      }
+     ]
+    },
+    {
+     "kind": "prof",
+     "when": "1주차 월요일 OT",
+     "lines": [
+      "LLM 을 다루고 개발하던 쪽에서 와서 LLM 연구를 많이 해 볼 생각이에요.",
+      "RAG(검색 증강 생성), 신뢰할 수 있는 AI 평가와 벤치마크, 한국어 중심 AI, 에이전트 연구도 하려고 해요."
+     ]
+    }
+   ],
+   "pass4": []
+  },
+  {
+   "p": 27,
+   "title": "4. MINT Lab | 함께할 학생을 찾습니다",
+   "terms": [],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "대학원생과 학부연구생을 찾는다는 안내예요.",
+      "9~14주 내용이 재밌다면 이메일로 연락하라고 하셨어요. 준비 없이 커피챗 환영이에요."
+     ]
+    }
+   ],
+   "pass2": [],
+   "pass3": [
+    {
+     "kind": "prof",
+     "when": "1주차 월요일 OT",
+     "lines": [
+      "신임이라 지금 당장은 인건비와 장비가 넉넉하지 않아서, 9월에 바로 연구를 시작하긴 어려워요.",
+      "연구실(N223)은 정리 중이라 추석 이후쯤 입주할 것 같아요. 그때까지는 카페 같은 데서 얘기해요.",
+      "저학년이어도 괜찮아요. 관심과 열정이 제일 중요해요.",
+      "수업 질문, 진로 상담(기업에 가고 싶다 등)도 언제든 이메일로 환영해요."
+     ]
+    }
+   ],
+   "pass4": []
+  }
+ ]
+}

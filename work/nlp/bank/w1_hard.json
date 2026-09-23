@@ -1,0 +1,632 @@
+[
+ {
+  "id": "w1h-mcq-001",
+  "type": "mcq",
+  "part": "1",
+  "level": "hard",
+  "unit": "1-1 강의 운영과 평가",
+  "slides": "N1 p.8, OT 녹음",
+  "q": "교수님이 OT 에서 '더 신경 써 달라' 고 한 쪽과 그 까닭은?",
+  "c": [
+   "기말고사와 팀 프로젝트, 합치면 55% 로 과제 40% 보다 커서",
+   "과제, 한 항목으로 가장 커서",
+   "출석, 매주 있어서",
+   "중간고사, 가장 먼저라서"
+  ],
+  "a": 0,
+  "e": "OT 녹음: 과제는 40% 지만 기말고사와 팀 프로젝트 합 55% 가 더 크니 그쪽을 더 신경 써 달라.",
+  "src": "강조"
+ },
+ {
+  "id": "w1h-mcq-002",
+  "type": "mcq",
+  "part": "1",
+  "level": "hard",
+  "unit": "1-2 자연어처리란",
+  "slides": "N1 p.10",
+  "q": "'내일 부산 가는 KTX 몇 시야?' 에 답하는 시스템의 흐름으로 옳은 것은?",
+  "c": [
+   "NLU 로 의도와 목적지, 날짜를 뽑고 NLG 로 안내문을 쓴다",
+   "NLG 로 의도를 뽑고 NLU 로 안내문을 쓴다",
+   "번역만 한다",
+   "분류만 한다"
+  ],
+  "a": 0,
+  "e": "글 → 뜻(NLU), 뜻 → 글(NLG)."
+ },
+ {
+  "id": "w1h-mcq-003",
+  "type": "mcq",
+  "part": "1",
+  "level": "hard",
+  "unit": "1-2 자연어처리란",
+  "slides": "N1 p.15",
+  "q": "슬라이드가 LLM 시대에도 부품을 이해하는 엔지니어가 필요하다고 한 까닭은?",
+  "c": [
+   "전체 시스템을 만들고, 평가하고, 고치는 사람이 그들이라서",
+   "LLM 이 과제를 못 해서",
+   "규칙이 필요해서",
+   "GPU 가 부족해서"
+  ],
+  "a": 0,
+  "e": "p.15: the engineers who understand the parts are the ones who build, evaluate, and fix the whole."
+ },
+ {
+  "id": "w1h-mcq-004",
+  "type": "mcq",
+  "part": "1",
+  "level": "hard",
+  "unit": "1-3 언어가 어려운 이유",
+  "slides": "N1 p.13",
+  "q": "트로피-가방 문장(Winograd)이 보여 주는 가장 중요한 점은?",
+  "c": [
+   "단어만으로 부족하고 세상 지식이 필요하다",
+   "띄어쓰기가 중요하다",
+   "번역은 불가능하다",
+   "영어는 쉽다"
+  ],
+  "a": 0,
+  "e": "big/small 하나로 답이 뒤집혀서, 크기에 대한 세상 지식이 있어야 풀려요."
+ },
+ {
+  "id": "w1h-mcq-005",
+  "type": "mcq",
+  "part": "1",
+  "level": "hard",
+  "unit": "1-3 언어가 어려운 이유",
+  "slides": "N1 p.12-13",
+  "q": "다음 중 '같은 글자, 다른 의도' 에 가장 가까운 것은?",
+  "c": [
+   "잘~한다 (칭찬 / 비꼼)",
+   "배 (과일 / 배)",
+   "아버지가방에",
+   "밥 먹었어?"
+  ],
+  "a": 0,
+  "e": "글자 뜻은 같은데 상황 속 의도가 반대인 것은 화용론이에요. 배는 단어 중의성이에요."
+ },
+ {
+  "id": "w1h-mcq-006",
+  "type": "mcq",
+  "part": "1",
+  "level": "hard",
+  "unit": "1-4 한국어 NLP",
+  "slides": "N1 p.14",
+  "q": "영어 중심 모델로 한국어를 다룰 때 형태소 분석이 특히 중요한 까닭은?",
+  "c": [
+   "한 어절에 형태소가 여러 개 붙어 동사 모양이 수천 가지라서",
+   "한국어는 단어가 적어서",
+   "한국어는 띄어쓰기가 완벽해서",
+   "높임법이 없어서"
+  ],
+  "a": 0,
+  "e": "교착어라서 한 어절이 여러 형태소로 이뤄져요."
+ },
+ {
+  "id": "w1h-mcq-007",
+  "type": "mcq",
+  "part": "1",
+  "level": "hard",
+  "unit": "1-5 역사: 시작, 규칙, 통계",
+  "slides": "N1 p.17-18",
+  "q": "시간 순서로 옳은 것은?",
+  "c": [
+   "Weaver 메모 → Turing → Georgetown-IBM → Dartmouth → ELIZA",
+   "Turing → Weaver → Dartmouth → Georgetown-IBM → ELIZA",
+   "ELIZA → Weaver → Turing → Dartmouth → Georgetown-IBM",
+   "Georgetown-IBM → Weaver → Turing → ELIZA → Dartmouth"
+  ],
+  "a": 0,
+  "e": "1947, 1950, 1954, 1956, 1966 순서예요."
+ },
+ {
+  "id": "w1h-mcq-008",
+  "type": "mcq",
+  "part": "1",
+  "level": "hard",
+  "unit": "1-5 역사: 시작, 규칙, 통계",
+  "slides": "N1 p.19",
+  "q": "통계 기계 번역이 IBM 에서 배운 데이터는?",
+  "c": [
+   "의회 문장 쌍 수백만 개",
+   "사람이 쓴 규칙 200개",
+   "위키 문서 한 개",
+   "음성 파일"
+  ],
+  "a": 0,
+  "e": "p.19: millions of parliament sentence pairs."
+ },
+ {
+  "id": "w1h-mcq-009",
+  "type": "mcq",
+  "part": "1",
+  "level": "hard",
+  "unit": "1-5 역사: 시작, 규칙, 통계",
+  "slides": "N1 p.18-20",
+  "q": "각 시대의 벽과 다음 시대의 답이 바르게 짝지어진 것은?",
+  "c": [
+   "통계는 뜻을 모름 → word2vec 이 cat 과 kitten 을 이웃으로",
+   "규칙이 너무 적음 → 통계",
+   "벡터가 너무 큼 → 규칙",
+   "데이터가 너무 많음 → ELIZA"
+  ],
+  "a": 0,
+  "e": "p.19 의 벽(no notion of meaning)을 p.20 에서 'The statistical wall falls' 라고 해요."
+ },
+ {
+  "id": "w1h-mcq-010",
+  "type": "mcq",
+  "part": "1",
+  "level": "hard",
+  "unit": "1-6 역사: 신경망에서 LLM 까지",
+  "slides": "N1 p.21-22",
+  "q": "RNN seq2seq 와 트랜스포머의 차이로 옳은 것은?",
+  "c": [
+   "RNN 은 단어를 차례로 읽고, 트랜스포머는 순환 없이 병렬로 처리한다",
+   "트랜스포머가 단어를 하나씩 읽는다",
+   "둘 다 규칙 기반이다",
+   "RNN 은 어텐션만 쓴다"
+  ],
+  "a": 0,
+  "e": "p.21 RNN read word by word, p.22 no recurrence, parallel."
+ },
+ {
+  "id": "w1h-mcq-011",
+  "type": "mcq",
+  "part": "1",
+  "level": "hard",
+  "unit": "1-6 역사: 신경망에서 LLM 까지",
+  "slides": "N1 p.22",
+  "q": "'NLP 의 ImageNet 순간' 이 뜻하는 것은?",
+  "c": [
+   "언어를 한 번 배우고 어디서나 다시 쓴다(사전 학습 후 적응)",
+   "이미지 처리로 넘어갔다",
+   "라벨 데이터가 더 필요해졌다",
+   "번역이 끝났다"
+  ],
+  "a": 0,
+  "e": "learn language once, reuse it everywhere."
+ },
+ {
+  "id": "w1h-mcq-012",
+  "type": "mcq",
+  "part": "1",
+  "level": "hard",
+  "unit": "1-6 역사: 신경망에서 LLM 까지",
+  "slides": "N1 p.23",
+  "q": "5막 LLM 의 흐름을 바르게 이은 것은?",
+  "c": [
+   "스케일링 법칙 → GPT-3 in-context learning → ChatGPT 의 instruction tuning 과 RLHF",
+   "RLHF → n-gram → ELIZA",
+   "word2vec → ELIZA → GPT-3",
+   "SHRDLU → BERT → ALPAC"
+  ],
+  "a": 0,
+  "e": "p.23 순서예요."
+ },
+ {
+  "id": "w1h-mcq-013",
+  "type": "mcq",
+  "part": "1",
+  "level": "hard",
+  "unit": "1-6 역사: 신경망에서 LLM 까지",
+  "slides": "N1 p.24",
+  "q": "Neural LM(Bengio 2003)처럼 막의 경계에 걸친 사건이 보여 주는 것은?",
+  "c": [
+   "시대 구분은 대략적인 흐름이고 기술은 겹쳐 발전한다",
+   "슬라이드가 틀렸다",
+   "Bengio 는 규칙 시대 사람이다",
+   "신경망은 2013 년에 처음 나왔다"
+  ],
+  "a": 0,
+  "e": "p.24 표에서 2003 년 신경망 LM 이 통계 막 칸에 있어요. 흐름은 겹쳐요."
+ },
+ {
+  "id": "w1h-mcq-014",
+  "type": "mcq",
+  "part": "1",
+  "level": "hard",
+  "unit": "1-1 강의 운영과 평가",
+  "slides": "N1 p.6",
+  "q": "슬라이드 p.6 의 휴강 표시에서 헷갈리는 점은?",
+  "c": [
+   "표는 6주차에 휴강을, 아래 문구와 15주차는 W5 보강을 적었다",
+   "휴강이 없다",
+   "보강이 16주차다",
+   "8주차가 휴강이다"
+  ],
+  "a": 0,
+  "e": "표(6주차 휴강 → W15 보강)와 아래 문구(W5)가 달라요. 공지를 확인해요."
+ },
+ {
+  "id": "w1h-mcq-015",
+  "type": "mcq",
+  "part": "1",
+  "level": "hard",
+  "unit": "1-2 자연어처리란",
+  "slides": "N1 p.11",
+  "q": "음성 비서(시리야, 헤이 구글)에서 NLP 가 맡는 부분은?",
+  "c": [
+   "말을 글로 바꾼 뒤 무슨 뜻인지 알아내는 부분",
+   "마이크 하드웨어",
+   "배터리 관리",
+   "화면 밝기"
+  ],
+  "a": 0,
+  "e": "p.11: speech becomes text, then NLP figures out what you meant."
+ },
+ {
+  "id": "w1h-ox-001",
+  "type": "ox",
+  "part": "1",
+  "level": "hard",
+  "unit": "1-1 강의 운영과 평가",
+  "slides": "N1 p.8",
+  "q": "한 항목만 보면 과제가 가장 크지만, 기말고사와 텀 프로젝트를 합치면 과제보다 크다.",
+  "a": true,
+  "e": "40% < 25% + 30% = 55%.",
+  "src": "강조"
+ },
+ {
+  "id": "w1h-ox-002",
+  "type": "ox",
+  "part": "1",
+  "level": "hard",
+  "unit": "1-2 자연어처리란",
+  "slides": "N1 p.10",
+  "q": "번역은 NLU 만 필요하고 NLG 는 필요 없다.",
+  "a": false,
+  "e": "원문을 이해(NLU)하고 새 글을 써야(NLG) 해요."
+ },
+ {
+  "id": "w1h-ox-003",
+  "type": "ox",
+  "part": "1",
+  "level": "hard",
+  "unit": "1-3 언어가 어려운 이유",
+  "slides": "N1 p.13",
+  "q": "Winograd 문장에서 big 을 small 로 바꿔도 'it' 이 가리키는 대상은 같다.",
+  "a": false,
+  "e": "답이 뒤집혀요."
+ },
+ {
+  "id": "w1h-ox-004",
+  "type": "ox",
+  "part": "1",
+  "level": "hard",
+  "unit": "1-3 언어가 어려운 이유",
+  "slides": "N1 p.12",
+  "q": "중의성은 트랜스포머가 나오면서 완전히 해결되었다.",
+  "a": false,
+  "e": "p.24: the core difficulty never changed. 모든 막이 새 답일 뿐이에요."
+ },
+ {
+  "id": "w1h-ox-005",
+  "type": "ox",
+  "part": "1",
+  "level": "hard",
+  "unit": "1-4 한국어 NLP",
+  "slides": "N1 p.14",
+  "q": "높임법은 같은 사실에 다른 사회적 뜻을 담는다.",
+  "a": true,
+  "e": "same fact, different social meaning."
+ },
+ {
+  "id": "w1h-ox-006",
+  "type": "ox",
+  "part": "1",
+  "level": "hard",
+  "unit": "1-5 역사: 시작, 규칙, 통계",
+  "slides": "N1 p.17",
+  "q": "Georgetown-IBM 시연 때 '5년 안에 해결' 이라던 기계 번역은 실제로 5년 안에 해결되었다.",
+  "a": false,
+  "e": "…not quite. 1966 ALPAC 보고서가 어렵다고 했어요."
+ },
+ {
+  "id": "w1h-ox-007",
+  "type": "ox",
+  "part": "1",
+  "level": "hard",
+  "unit": "1-5 역사: 시작, 규칙, 통계",
+  "slides": "N1 p.19",
+  "q": "통계 시대에도 스팸 필터, 품사 태거, 음성 인식, 검색 같은 제품이 조용히 쓰였다.",
+  "a": true,
+  "e": "Statistics quietly ships."
+ },
+ {
+  "id": "w1h-ox-008",
+  "type": "ox",
+  "part": "1",
+  "level": "hard",
+  "unit": "1-6 역사: 신경망에서 LLM 까지",
+  "slides": "N1 p.20",
+  "q": "Seoul - Korea + Japan ≈ Tokyo 는 단어 벡터의 방향에 뜻이 담긴다는 예이다.",
+  "a": true,
+  "e": "Directions carry meaning."
+ },
+ {
+  "id": "w1h-ox-009",
+  "type": "ox",
+  "part": "1",
+  "level": "hard",
+  "unit": "1-6 역사: 신경망에서 LLM 까지",
+  "slides": "N1 p.24",
+  "q": "역사가 흐를수록 사람이 손으로 적어 넣는 지식이 늘었다.",
+  "a": false,
+  "e": "줄었어요. 데이터에서 배우는 것이 늘었어요."
+ },
+ {
+  "id": "w1h-ox-010",
+  "type": "ox",
+  "part": "1",
+  "level": "hard",
+  "unit": "1-6 역사: 신경망에서 LLM 까지",
+  "slides": "N1 p.23",
+  "q": "EXAONE, HyperCLOVA X 는 슬라이드가 든 한국어 LLM 이다.",
+  "a": true,
+  "e": "p.23."
+ },
+ {
+  "id": "w1h-short-001",
+  "type": "short",
+  "part": "1",
+  "level": "hard",
+  "unit": "1-1 강의 운영과 평가",
+  "slides": "N1 p.8",
+  "q": "과제 비율(%)에서 기말고사 비율(%)을 빼면? (숫자)",
+  "a": [
+   "10"
+  ],
+  "e": "40 - 30 = 10.",
+  "num": true,
+  "tol": 0.01
+ },
+ {
+  "id": "w1h-short-002",
+  "type": "short",
+  "part": "1",
+  "level": "hard",
+  "unit": "1-3 언어가 어려운 이유",
+  "slides": "N1 p.13",
+  "q": "트로피-가방처럼 대명사가 가리키는 대상을 세상 지식으로 풀어야 하는 문장 모음의 이름(사람 이름)은?",
+  "a": [
+   "Winograd",
+   "위노그라드",
+   "Winograd Schema"
+  ],
+  "e": "p.13."
+ },
+ {
+  "id": "w1h-short-003",
+  "type": "short",
+  "part": "1",
+  "level": "hard",
+  "unit": "1-3 언어가 어려운 이유",
+  "slides": "N1 p.13",
+  "q": "데이터가 거의 없는 언어를 다루는 NLP 를 영어로 무엇이라 하나요?",
+  "a": [
+   "low-resource NLP",
+   "low-resource",
+   "저자원 NLP",
+   "저자원"
+  ],
+  "e": "p.13."
+ },
+ {
+  "id": "w1h-short-004",
+  "type": "short",
+  "part": "1",
+  "level": "hard",
+  "unit": "1-5 역사: 시작, 규칙, 통계",
+  "slides": "N1 p.19",
+  "q": "통신을 확률로 본 Shannon 의 1948 년 모델 이름은?",
+  "a": [
+   "잡음 채널 모델",
+   "noisy channel model",
+   "noisy channel"
+  ],
+  "e": "p.19."
+ },
+ {
+  "id": "w1h-short-005",
+  "type": "short",
+  "part": "1",
+  "level": "hard",
+  "unit": "1-5 역사: 시작, 규칙, 통계",
+  "slides": "N1 p.18",
+  "q": "기계 번역 지원을 10년 동결시킨 1966 년 보고서는?",
+  "a": [
+   "ALPAC",
+   "ALPAC report",
+   "알팩"
+  ],
+  "e": "p.18."
+ },
+ {
+  "id": "w1h-short-006",
+  "type": "short",
+  "part": "1",
+  "level": "hard",
+  "unit": "1-6 역사: 신경망에서 LLM 까지",
+  "slides": "N1 p.23",
+  "q": "GPT-3 에서 프롬프트에 예시 몇 개를 보여 주어 과제를 하게 하는 능력은?",
+  "a": [
+   "in-context learning",
+   "인컨텍스트 학습",
+   "문맥 내 학습"
+  ],
+  "e": "p.23."
+ },
+ {
+  "id": "w1h-short-007",
+  "type": "short",
+  "part": "1",
+  "level": "hard",
+  "unit": "1-6 역사: 신경망에서 LLM 까지",
+  "slides": "N1 p.23",
+  "q": "ChatGPT 에 더해진, 사람 피드백으로 하는 강화 학습의 줄임말은?",
+  "a": [
+   "RLHF"
+  ],
+  "e": "p.23."
+ },
+ {
+  "id": "w1h-short-008",
+  "type": "short",
+  "part": "1",
+  "level": "hard",
+  "unit": "1-6 역사: 신경망에서 LLM 까지",
+  "slides": "N1 p.20",
+  "q": "'단어는 함께 다니는 단어로 안다' 는 생각의 이름은?",
+  "a": [
+   "분포 가설",
+   "distributional hypothesis"
+  ],
+  "e": "p.20."
+ },
+ {
+  "id": "w1h-essay-001",
+  "type": "essay",
+  "part": "1",
+  "level": "hard",
+  "unit": "1-3 언어가 어려운 이유",
+  "slides": "N1 p.12-13, p.24",
+  "q": "'모든 시대가 중의성에 대한 새 답이었다' 는 말을 규칙, 통계, 신경망 시대를 예로 들어 설명하시오.",
+  "answer": "중의성은 NLP 의 핵심 어려움이고 시대마다 다르게 답했다. 규칙 시대는 사람이 규칙으로 뜻을 정하려 했지만 예외가 끝없었다. 통계 시대는 말뭉치에서 앞뒤 단어를 세어 가장 그럴듯한 뜻을 골랐지만 뜻 자체는 몰랐다. 신경망 시대는 단어를 벡터로 나타내고 문맥에서 뜻을 배우게 해 비슷한 단어를 이웃으로 만들었고, 트랜스포머와 LLM 은 더 넓은 문맥을 보게 했다.",
+  "points": [
+   "중의성이 핵심 어려움",
+   "규칙의 답과 한계",
+   "통계의 답과 한계",
+   "신경망: 벡터와 문맥",
+   "트랜스포머, LLM 은 넓은 문맥"
+  ],
+  "model": "중의성과 역사",
+  "src": "강조"
+ },
+ {
+  "id": "w1h-essay-002",
+  "type": "essay",
+  "part": "1",
+  "level": "hard",
+  "unit": "1-6 역사: 신경망에서 LLM 까지",
+  "slides": "N1 p.21-22",
+  "q": "RNN 기반 seq2seq 와 트랜스포머를 비교하시오.",
+  "answer": "RNN 기반 seq2seq(2014)는 인코더가 원문을 단어 하나씩 읽어 압축하고 디코더가 번역문을 쓰며, 2015 년 어텐션으로 디코더가 원문을 다시 볼 수 있게 되었다. 트랜스포머(2017)는 순환을 없애고 어디서나 어텐션을 써서 모든 단어를 병렬로 처리하므로 GPU 에서 크게 키우기 좋다. 이것이 사전 학습 시대를 열었다.",
+  "points": [
+   "seq2seq 인코더 디코더",
+   "RNN 은 차례로 읽음",
+   "어텐션 2015",
+   "트랜스포머 순환 없음",
+   "병렬 처리, GPU 확장",
+   "사전 학습으로 이어짐"
+  ],
+  "model": "seq2seq 와 트랜스포머"
+ },
+ {
+  "id": "w1h-essay-003",
+  "type": "essay",
+  "part": "1",
+  "level": "hard",
+  "unit": "1-4 한국어 NLP",
+  "slides": "N1 p.14, p.23",
+  "q": "한국어 LLM 이 따로 개발되는 까닭을 한국어의 특징과 연결해 서술하시오.",
+  "answer": "한국어는 교착어라서 한 어절에 형태소가 여러 개 붙고 동사 모양이 수천 가지이며, 띄어쓰기가 불안정하고 높임법, 자유 어순, 주어 생략이 많다. 영어 중심으로 학습한 모델은 이런 특징을 잘 다루지 못하므로 한국어에 맞춘 주의가 필요하다. 그래서 EXAONE, HyperCLOVA X 같은 한국어 LLM 이 만들어진다.",
+  "points": [
+   "교착어와 형태소",
+   "띄어쓰기",
+   "높임법",
+   "어순과 생략",
+   "영어 중심 모델의 한계",
+   "EXAONE, HyperCLOVA X"
+  ],
+  "model": "한국어 LLM"
+ },
+ {
+  "id": "w1h-essay-004",
+  "type": "essay",
+  "part": "1",
+  "level": "hard",
+  "unit": "1-1 강의 운영과 평가",
+  "slides": "N1 p.4-8",
+  "q": "이 과목의 목표와 평가 방식을 요약하고, 시험 준비에서 우선할 것을 쓰시오.",
+  "answer": "이 과목은 토큰화부터 트랜스포머, LLM 학습, RAG, 에이전트까지 다루며 NLP 기본 개념, 어텐션과 트랜스포머, 구현과 미세 조정, 한국어 NLP 시스템 설계와 평가를 목표로 한다. 평가는 출석 5%, 프로그래밍 과제 40%, 텀 프로젝트 25%, 기말고사 30% 이고 중간고사는 없다. 교수님은 텀 프로젝트와 기말고사 합 55% 를 더 신경 쓰라고 했다.",
+  "points": [
+   "다루는 범위",
+   "목표",
+   "비율 네 가지",
+   "중간고사 없음",
+   "55% 강조"
+  ],
+  "model": "과목 운영",
+  "src": "강조"
+ },
+ {
+  "id": "w1h-essay-005",
+  "type": "essay",
+  "part": "1",
+  "level": "hard",
+  "unit": "1-2 자연어처리란",
+  "slides": "N1 p.15",
+  "q": "NLP 과제 다섯 가지를 입력과 출력 모양과 함께 쓰시오.",
+  "answer": "분류는 글 → 라벨(스팸, 감정), 시퀀스 라벨링은 토큰마다 → 태그(품사, 개체명), 텍스트-투-텍스트는 글 → 새 글(번역, 요약), 검색과 질의응답은 알맞은 문서를 찾아 답을 뽑거나 쓰고, 대화와 생성은 문맥 → 응답(챗봇, 글쓰기 도우미)이다.",
+  "points": [
+   "분류",
+   "시퀀스 라벨링",
+   "텍스트-투-텍스트",
+   "검색과 QA",
+   "대화와 생성",
+   "입출력 모양"
+  ],
+  "model": "NLP 과제"
+ },
+ {
+  "id": "w1h-calc-001",
+  "type": "calc",
+  "part": "1",
+  "level": "hard",
+  "unit": "1-5 역사: 시작, 규칙, 통계",
+  "slides": "N1 p.17, p.23",
+  "q": "Weaver 의 기계 번역 메모(1947)부터 ChatGPT(2022)까지 몇 년인가?",
+  "qko": "두 연도의 차를 구해요.",
+  "blanks": [
+   {
+    "label": "햇수",
+    "ans": 75,
+    "tol": 0
+   }
+  ],
+  "steps": [
+   "ChatGPT 2022",
+   "Weaver 메모 1947",
+   "2022 - 1947 = 75"
+  ],
+  "answer": "75년",
+  "e": "Turing(1950)과 헷갈리지 않게 해요.",
+  "model": "연도 계산"
+ },
+ {
+  "id": "w1h-calc-002",
+  "type": "calc",
+  "part": "1",
+  "level": "hard",
+  "unit": "1-6 역사: 신경망에서 LLM 까지",
+  "slides": "N1 p.20, p.22",
+  "q": "word2vec(2013)에서 트랜스포머(2017)까지 몇 년인가?",
+  "qko": "두 연도의 차.",
+  "blanks": [
+   {
+    "label": "햇수",
+    "ans": 4,
+    "tol": 0
+   }
+  ],
+  "steps": [
+   "트랜스포머 2017",
+   "word2vec 2013",
+   "2017 - 2013 = 4"
+  ],
+  "answer": "4년",
+  "e": "seq2seq(2014)와 어텐션(2015)이 그 사이에 있어요.",
+  "model": "연도 계산"
+ }
+]

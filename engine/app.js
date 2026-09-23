@@ -154,14 +154,14 @@ let TERM_RE = null, KO_RE = null;
 })();
 function fmt(s, terms) {
   const maths = [];
-  s = String(s == null ? '' : s).replace(/\$\$[\s\S]+?\$\$|\$[^$\n]+?\$/g, m => ' ' + (maths.push(m) - 1) + ' ');
+  s = String(s == null ? '' : s).replace(/\$\$[\s\S]+?\$\$|\$[^$\n]+?\$/g, m => '\uE000' + (maths.push(m) - 1) + '\uE001');   // 수식 자리표: 본문에 없는 사용자 영역 글자 (예전에는 NUL 글자라 파일이 바이너리로 보였다)
   let h = esc(s);
   if (terms !== false) {
     if (TERM_RE) h = h.replace(TERM_RE, (m, pre, t) => pre + '<span class="term" data-t="' + esc(t.toLowerCase()) + '">' + t + '</span>');
     if (KO_RE) h = h.replace(/(<span class="term"[^>]*>[^<]*<\/span>)|([^<]+)/g, (m, span, text) => span ? span : text.replace(KO_RE, k => '<span class="term" data-t="' + esc(KO_RE.map[k]) + '">' + k + '</span>'));
   }
   h = h.replace(/\*\*([\s\S]+?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
-  return h.replace(/ (\d+) /g, (m, i) => esc(maths[+i]));
+  return h.replace(/\uE000(\d+)\uE001/g, (m, i) => esc(maths[+i]));
 }
 function countTerms(el) {
   const seen = {};
@@ -226,7 +226,7 @@ const routes = [
   [/^#\/tips$/, () => pageStatic('tips')],
   [/^#\/note(?:\/([\w-]+))?$/, pageNote],
   [/^#\/time$/, pageTime],
-  [/^#\/recall\/([A-Za-z]+\d+)(?:\/([1-4])(?:\/(\d+))?)?$/, pageRecall],   // 가리고 설명하기
+  [/^#\/recall\/([A-Za-z]+\d+)(?:\/([1-5])(?:\/(\d+))?)?$/, pageRecall],   // 가리고 설명하기 (4단계 데이터가 있으면 5가 마지막 단계)
 ];
 let cleanup = null, qInk = null;
 function route() {
@@ -372,8 +372,8 @@ function pageHome() {
     + (gPool('all').length ? '<a class="tool" href="#/game"><b>용어 게임</b><span>짝 맞추기, 뜻 고르기, 60초 스피드 퀴즈</span></a>' : '')
     + '<a class="tool" href="#/mock"><b>모의고사</b><span>시험지처럼 섞어서</span></a>'
     + '<a class="tool" href="#/wrong"><b>오답노트</b><span>틀린 문제만 다시</span></a>'
-    + (PAGES.exams ? '<a class="tool" href="#/exams"><b>기출 분석</b><span>' + esc(META.examsDesc || '시험 모양과 자주 나온 주제') + '</span></a>' : '')
-    + (PAGES.tips ? '<a class="tool" href="#/tips"><b>답안 팁</b><span>' + esc(META.tipsDesc || '외우는 요령, 답안 쓰는 틀') + '</span></a>' : '')
+    + (PAGES.exams ? '<a class="tool" href="#/exams"><b>' + esc(META.examsNav || '기출 분석') + '</b><span>' + esc(META.examsDesc || '시험 모양과 자주 나온 주제') + '</span></a>' : '')
+    + (PAGES.tips ? '<a class="tool" href="#/tips"><b>' + esc(META.tipsNav || '답안 팁') + '</b><span>' + esc(META.tipsDesc || '외우는 요령, 답안 쓰는 틀') + '</span></a>' : '')
     + '<a class="tool" href="#/settings"><b>설정</b><span>로그인, 보기 설정</span></a>'
     + '<a class="tool" href="../../index.html"><b>다른 과목</b><span>과목 선택 화면으로</span></a></div>';
   APP().innerHTML = h;
@@ -1980,34 +1980,42 @@ function renderWrongList() {
 }
 
 /* ---------- 가리고 설명하기 (RECALL 블록 시작): 슬라이드의 중요한 말을 단계별로 가리고 혼자 설명하기.
-   데이터는 data/recall_<덱>.js (tools/recall_build.py -> build_site.py). 기록은 store.recall[덱] = { s1: {i, max, done}, s2, s3, secs: {번호: 시각} }
+   데이터는 data/recall_<덱>.js (tools/recall_build.py -> build_site.py). 기록은 store.recall[덱] = { s1: {i, max, done}, s2, s3, (4단계 데이터가 있으면 s4), secs: {번호: 시각} }
    바깥에 붙인 곳: routes 의 #/recall, weekSteps 끝의 recallStep, pageWeek 끝의 recallTiles, renderFrame 의 case 'recall', schedule 의 자동 넘김 제외 ---------- */
-const RC_NAME = ['', '1단계', '2단계', '3단계', '마지막 단계'];
-const RC_TITLE = ['', '핵심 말만 가리기', '더 가리기', '많이 가리기', '소단원 이름만'];
-const RC_DESC = ['', '정말 중요한 말만 쪽마다 몇 개씩 가렸어요.', '1단계의 두 배쯤 가렸어요.', '세 배쯤 가렸어요. 제목 속 말도 가려요.', '소단원 이름만 보고 흐름 전체를 설명해요.'];
+/* 4단계(다 가리기) 블록 시작: 가린 칸 단계 수 L 은 데이터에서 (info.n 길이, 3 또는 4). 마지막 단계(소단원 이름만)는 L + 1.
+   3단계 과목은 예전처럼 1~3 + 마지막(4). 4단계 데이터(tools/recall_build.py 의 all_lines)가 있으면 1~4 + 마지막(5) */
+const RC3 = { name: ['', '1단계', '2단계', '3단계', '마지막 단계'], title: ['', '핵심 말만 가리기', '더 가리기', '많이 가리기', '소단원 이름만'],
+  desc: ['', '정말 중요한 말만 쪽마다 몇 개씩 가렸어요.', '1단계의 두 배쯤 가렸어요.', '세 배쯤 가렸어요. 제목 속 말도 가려요.', '소단원 이름만 보고 흐름 전체를 설명해요.'] };
+const RC4 = { name: ['', '1단계', '2단계', '3단계', '4단계', '마지막 단계'], title: ['', '조금 가리기', '더 가리기', '많이 가리기', '다 가리기', '소단원 이름만'],
+  desc: ['', '핵심 말만 쪽마다 몇 개씩 가렸어요.', '1단계의 두 배쯤 가렸어요.', '세 배쯤 가렸어요. 제목 속 말도 가려요.', '작은 글씨와 그림 속 글까지 모든 글 줄을 가렸어요. 슬라이드 하나를 통째로 떠올려요.', '소단원 이름만 보고 흐름 전체를 설명해요.'] };
 const recallInfo = deck => ((META.decks || {})[deck] || {}).recall || null;
 const recallData = deck => (window.SDT_RECALL || window.GNN_RECALL || {})[deck] || null;
+const rcLevels = deck => { const i = recallInfo(deck); return i && i.n && i.n.length >= 4 ? 4 : 3; };   // 가린 칸 단계 수
+const rcFinal = deck => rcLevels(deck) + 1;                                                        // 소단원 이름만 단계 번호
+const rcText = deck => rcLevels(deck) === 4 ? RC4 : RC3;
+const rcStages = deck => Array.from({ length: rcFinal(deck) }, (_, i) => i + 1);
+/* 4단계(다 가리기) 블록 끝 */
 function recallRec(deck) { store.recall = store.recall || {}; return (store.recall[deck] = store.recall[deck] || {}); }
 function recallDone(deck, n) {
   const r = (store.recall || {})[deck] || {}, info = recallInfo(deck);
-  if (n === 4) return !!(info && info.secs && Object.keys(r.secs || {}).length >= info.secs);
+  if (n === rcFinal(deck)) return !!(info && info.secs && Object.keys(r.secs || {}).length >= info.secs);
   return !!(r['s' + n] || {}).done;
 }
-function recallNext(deck) { return [1, 2, 3, 4].find(n => !recallDone(deck, n)) || 1; }
+function recallNext(deck) { return rcStages(deck).find(n => !recallDone(deck, n)) || 1; }
 /* 길잡이 마지막 순서 (잠그지 않고 기출 다음에 둔다) */
 function recallStep(w, steps) {
   const info = w && w.deck ? recallInfo(w.deck) : null; if (!info) return;
-  const got = [1, 2, 3, 4].filter(n => recallDone(w.deck, n)).length;
-  steps.push({ t: '가리고 설명하기', d: '기출까지 풀고 나서 해요. 슬라이드의 중요한 말을 가려 두고 혼자 설명해 봐요. 마지막에는 소단원 이름만 보고 설명해요.', done: got === 4, href: '#/recall/' + w.deck + '/' + recallNext(w.deck), meta: got + ' / 4단계' });
+  const F = rcFinal(w.deck), got = rcStages(w.deck).filter(n => recallDone(w.deck, n)).length;
+  steps.push({ t: '가리고 설명하기', d: F === 5 ? '문제까지 풀고 나서 해요. 슬라이드 글을 조금, 더, 많이, 다 가려 두고 혼자 설명해 봐요. 마지막에는 소단원 이름만 보고 설명해요.' : '기출까지 풀고 나서 해요. 슬라이드의 중요한 말을 가려 두고 혼자 설명해 봐요. 마지막에는 소단원 이름만 보고 설명해요.', done: got === F, href: '#/recall/' + w.deck + '/' + recallNext(w.deck), meta: got + ' / ' + F + '단계' });
 }
 /* 주차 페이지의 단계 타일 */
 function recallTiles(week) {
   const w = weekOf(week), info = w && w.deck ? recallInfo(w.deck) : null; if (!info) return '';
-  const r = (store.recall || {})[w.deck] || {};
-  return '<h2 class="sec">가리고 설명하기 <small>기출까지 풀고 나서 해요</small></h2><div class="ptiles rctiles">' + [1, 2, 3, 4].map(n => {
+  const r = (store.recall || {})[w.deck] || {}, F = rcFinal(w.deck), T = rcText(w.deck);
+  return '<h2 class="sec">가리고 설명하기 <small>' + (F === 5 ? '문제까지 풀고 나서 해요' : '기출까지 풀고 나서 해요') + '</small></h2><div class="ptiles rctiles">' + rcStages(w.deck).map(n => {
     const dn = recallDone(w.deck, n), s = r['s' + n] || {}, said = Object.keys(r.secs || {}).length;
-    const state = dn ? '다 했어요' : n < 4 ? (s.max ? s.max + '쪽까지 봤어요' : '가린 말 ' + info.n[n - 1] + '개') : (said ? said + ' / ' + info.secs + ' 설명했어요' : '소단원 ' + info.secs + '개');
-    return '<a class="ptile' + (dn ? ' done' : '') + '" href="#/recall/' + w.deck + '/' + n + '"><span class="pn">' + RC_NAME[n] + '</span><span class="pt">' + RC_TITLE[n] + '</span><span class="pd">' + RC_DESC[n] + '</span><span class="pf"><span class="num">' + esc(state) + '</span></span></a>';
+    const state = dn ? '다 했어요' : n < F ? (s.max ? s.max + '쪽까지 봤어요' : (n === 4 ? '가린 줄 ' : '가린 말 ') + info.n[n - 1] + '개') : (said ? said + ' / ' + info.secs + ' 설명했어요' : '소단원 ' + info.secs + '개');
+    return '<a class="ptile' + (dn ? ' done' : '') + '" href="#/recall/' + w.deck + '/' + n + '"><span class="pn">' + T.name[n] + '</span><span class="pt">' + T.title[n] + '</span><span class="pd">' + T.desc[n] + '</span><span class="pf"><span class="num">' + esc(state) + '</span></span></a>';
   }).join('') + '</div>';
 }
 async function pageRecall(deck, stageStr, subStr) {
@@ -2024,30 +2032,31 @@ async function pageRecall(deck, stageStr, subStr) {
   }
   const R = recallData(deck);
   if (!R) { APP().innerHTML = '<div class="empty"><b>아직 준비되지 않았어요</b><a class="btn" href="' + back + '">돌아가기</a></div>'; return; }
-  const stage = +stageStr, rec = recallRec(deck);
-  const chips = [1, 2, 3, 4].map(n => '<a class="chip' + (n === stage ? ' on' : '') + '" href="#/recall/' + deck + '/' + n + '">' + RC_NAME[n] + '</a>').join('');
+  const stage = +stageStr, rec = recallRec(deck), F = rcFinal(deck), T = rcText(deck);
+  if (stage > F) { location.replace('#/recall/' + deck + '/' + F); return; }
+  const chips = rcStages(deck).map(n => '<a class="chip' + (n === stage ? ' on' : '') + '" href="#/recall/' + deck + '/' + n + '">' + T.name[n] + '</a>').join('');
   const secs = [];
   (R.sections || []).forEach(c => (c.items || []).forEach(it => secs.push(it)));
-  if (stage === 4 && !subStr) { recallList(deck, d, R, chips, back); return; }
+  if (stage === F && !subStr) { recallList(deck, d, R, chips, back); return; }
   let from = 1, to = R.pages.length, sec = null, k = 0;
-  if (stage === 4) {
+  if (stage === F) {
     k = +subStr; sec = secs[k - 1];
-    if (!sec) { location.replace('#/recall/' + deck + '/4'); return; }
+    if (!sec) { location.replace('#/recall/' + deck + '/' + F); return; }
     from = sec.p[0]; to = sec.p[1]; rec.lastSec = k; save();
   }
   const frames = [];
-  for (let p = from; p <= to; p++) frames.push({ kind: 'recall', deck, ar: R.ar, _p: p, lv: stage < 4 ? stage : 0, masks: stage < 4 ? (R.pages[p - 1] || []).filter(m => m[4] <= stage) : [] });
-  if (stage < 4) frames.push({ kind: 'end', big: '가리고 설명하기 ' + RC_NAME[stage] + ' 끝', sub: stage < 3 ? '가린 말을 떠올리며 설명이 됐나요? 다음 단계는 더 많이 가려요.' : '이제 소단원 이름만 보고 흐름 전체를 설명해 봐요.', links: [[RC_NAME[stage + 1] + ' 시작', '#/recall/' + deck + '/' + (stage + 1)], ['길잡이로 돌아가기', back]] });
-  else frames.push({ kind: 'end', big: sec.t, sub: '내가 설명한 흐름과 맞았나요? 목록에서 "설명했어요"를 눌러 표시해요.', links: [['소단원 목록으로', '#/recall/' + deck + '/4'], secs[k] ? ['다음 소단원 원래 슬라이드', '#/recall/' + deck + '/4/' + (k + 1)] : ['길잡이로 돌아가기', back]] });
-  const r = stage < 4 ? (rec['s' + stage] = rec['s' + stage] || {}) : null;
+  for (let p = from; p <= to; p++) frames.push({ kind: 'recall', deck, ar: R.ar, _p: p, lv: stage < F ? stage : 0, masks: stage < F ? rcMasks(R.pages[p - 1] || [], stage) : [] });
+  if (stage < F) frames.push({ kind: 'end', big: '가리고 설명하기 ' + T.name[stage] + ' 끝', sub: stage < F - 1 ? '가린 말을 떠올리며 설명이 됐나요? 다음 단계는 더 많이 가려요.' : '이제 소단원 이름만 보고 흐름 전체를 설명해 봐요.', links: [[T.name[stage + 1] + ' 시작', '#/recall/' + deck + '/' + (stage + 1)], ['길잡이로 돌아가기', back]] });
+  else frames.push({ kind: 'end', big: sec.t, sub: '내가 설명한 흐름과 맞았나요? 목록에서 "설명했어요"를 눌러 표시해요.', links: [['소단원 목록으로', '#/recall/' + deck + '/' + F], secs[k] ? ['다음 소단원 원래 슬라이드', '#/recall/' + deck + '/' + F + '/' + (k + 1)] : ['길잡이로 돌아가기', back]] });
+  const r = stage < F ? (rec['s' + stage] = rec['s' + stage] || {}) : null;
   const start = r && r.i && r.i < frames.length - 1 ? r.i : 0;
   startPlayer({
     frames, groups: frames.map((f, i) => ({ start: i, end: i })), start,
-    backHref: stage === 4 ? '#/recall/' + deck + '/4' : back,
+    backHref: stage === F ? '#/recall/' + deck + '/' + F : back,
     chips,
     imgOf: () => '',
     inkKey: () => null,
-    title: f => esc(d.title) + ' <small>가리고 설명하기 ' + RC_NAME[stage] + (sec ? ', ' + esc(sec.t) : '') + (f._p ? ', p.' + f._p : '') + '</small>',
+    title: f => esc(d.title) + ' <small>가리고 설명하기 ' + T.name[stage] + (sec ? ', ' + esc(sec.t) : '') + (f._p ? ', p.' + f._p : '') + '</small>',
     onProgress: i => {
       if (!r) return;
       const f = frames[i];
@@ -2060,7 +2069,7 @@ async function pageRecall(deck, stageStr, subStr) {
   });
   const ac = $('#autoChip'); if (ac) ac.hidden = true;
   const hint = $('#phint');
-  if (hint) hint.textContent = stage < 4 ? '가린 칸을 누르면 말이 보이고, 한 번 더 누르면 다시 가려요. 쪽은 아래 버튼, 옆으로 밀기, 방향키로 넘겨요. 가운데 쪽 번호를 누르면 원하는 쪽으로 가요.' : '가리지 않은 원래 슬라이드예요. 내가 설명한 흐름과 맞는지 확인해요.';
+  if (hint) hint.textContent = stage < F ? (stage === 4 ? '슬라이드의 모든 글 줄을 가렸어요. 제목부터 작은 글씨까지 소리 내어 떠올린 다음 칸을 눌러 한 줄씩 맞춰 봐요. ' : '') + '가린 칸을 누르면 말이 보이고, 한 번 더 누르면 다시 가려요. 쪽은 아래 버튼, 옆으로 밀기, 방향키로 넘겨요. 가운데 쪽 번호를 누르면 원하는 쪽으로 가요.' : '가리지 않은 원래 슬라이드예요. 내가 설명한 흐름과 맞는지 확인해요.';
   if (start > 0) toast('지난번 본 곳(p.' + frames[start]._p + ')부터 이어서 봐요');
 }
 /* 마지막 단계: 소단원 이름만 */
@@ -2076,7 +2085,7 @@ function recallList(deck, d, R, chips, back) {
       k++;
       const on = !!rec.secs[k], pr = 'p.' + it.p[0] + (it.p[1] > it.p[0] ? '~' + it.p[1] : '');
       h += '<li class="rcsec' + (on ? ' done' : '') + '" id="rcs' + k + '"><span class="rcno num">' + k + '</span><span class="rcname">' + esc(it.t) + '</span><span class="rcact">'
-        + '<a class="btn sm" href="#/recall/' + deck + '/4/' + k + '">원래 슬라이드 <span class="num">' + pr + '</span></a>'
+        + '<a class="btn sm" href="#/recall/' + deck + '/' + rcFinal(deck) + '/' + k + '">원래 슬라이드 <span class="num">' + pr + '</span></a>'
         + '<button class="chip rcsaid' + (on ? ' on' : '') + '" type="button" data-k="' + k + '" aria-pressed="' + on + '">' + (on ? '설명했어요' : '설명했으면 눌러요') + '</button></span></li>';
     });
     h += '</ol></section>';
@@ -2094,13 +2103,19 @@ function recallList(deck, d, R, chips, back) {
   const last = rec.lastSec && $('#rcs' + rec.lastSec);
   if (last && last.scrollIntoView) { try { last.scrollIntoView({ block: 'center' }); } catch (e) { /* 무시 */ } }
 }
+/* 4단계 블록: 한 단계에서 보일 칸은 그 단계까지의 칸. 다만 더 높은 단계 칸(4단계 줄 칸) 안에 쏙 들어가는 낮은 단계 칸은 겹치지 않게 뺀다 */
+function rcMasks(list, stage) {
+  const on = list.filter(m => m[4] <= stage);
+  const inside = (a, b) => a[0] >= b[0] - 0.002 && a[1] >= b[1] - 0.002 && a[0] + a[2] <= b[0] + b[2] + 0.002 && a[1] + a[3] <= b[1] + b[3] + 0.002;
+  return on.filter(m => !on.some(o => o !== m && o[4] > m[4] && inside(m, o)));
+}
 /* 플레이어 장면: 슬라이드 그림 위에 가린 칸 */
 function recallFrame(f) {
   const ms = f.masks || [];
   const pct = x => (Math.round(x * 100000) / 1000) + '%';
   const html = '<div class="rcwrap" style="--ar:' + (+f.ar || 1.414) + '"><div class="rcimg"><img src="img/' + esc(f.deck) + '/p' + pad3(f._p) + '.jpg" alt="p.' + f._p + ' 슬라이드" decoding="async" draggable="false">'
-    + ms.map(m => '<button type="button" class="rcm" style="left:' + pct(m[0]) + ';top:' + pct(m[1]) + ';width:' + pct(m[2]) + ';height:' + pct(m[3]) + '" aria-pressed="false" aria-label="가린 말, 누르면 보여요" data-t="' + esc(m[5] || '') + '"></button>').join('')
-    + '</div><div class="rcbar"><span class="rccap num">p.' + f._p + (f.lv ? (ms.length ? ', 가린 말 ' + ms.length + '개 중 <b class="rcopen">0</b>개 봤어요' : ', 이 쪽은 가린 말이 없어요') : '') + '</span>'
+    + ms.map(m => '<button type="button" class="rcm' + (m[4] >= 4 ? ' l4' : '') + '" style="left:' + pct(m[0]) + ';top:' + pct(m[1]) + ';width:' + pct(m[2]) + ';height:' + pct(m[3]) + '" aria-pressed="false" aria-label="가린 말, 누르면 보여요" data-t="' + esc(m[5] || '') + '"></button>').join('')
+    + '</div><div class="rcbar"><span class="rccap num">p.' + f._p + (f.lv ? (ms.length ? ', 가린 ' + (f.lv >= 4 ? '줄 ' : '말 ') + ms.length + '개 중 <b class="rcopen">0</b>개 봤어요' : ', 이 쪽은 가린 말이 없어요') : '') + '</span>'
     + (ms.length ? '<button type="button" class="btn sm rcall">전부 보기</button>' : '') + '</div></div>';
   return {
     html, steps: 0,

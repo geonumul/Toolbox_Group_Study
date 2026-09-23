@@ -1,0 +1,5058 @@
+{
+ "deck": "S2",
+ "from": 61,
+ "to": 88,
+ "glossary": [
+  {
+   "ko": "시스템",
+   "en": "System",
+   "say": "신호를 받아서 다른 신호로 바꿔 내보내는 상자",
+   "more": "입력 신호 x가 들어가면 출력 신호 y가 나와요. 회로, 필터, 귀, 신경망 모두 시스템이에요."
+  },
+  {
+   "ko": "입력 신호",
+   "en": "Input Signal",
+   "say": "시스템에 들어가는 신호, 보통 x",
+   "more": "x(t) 또는 x[n]으로 써요."
+  },
+  {
+   "ko": "연속시간 신호",
+   "en": "Continuous-Time Signal",
+   "say": "모든 순간에 값이 있는 신호, 둥근 괄호 x(t)로 써요",
+   "more": "t는 실수라서 0.5초, 0.51초 어디서든 값이 있어요. 줄여서 CT 신호라고 해요."
+  },
+  {
+   "ko": "이산시간 신호",
+   "en": "Discrete-Time Signal",
+   "say": "정수 번째 칸에서만 값이 있는 신호, 대괄호 x[n]으로 써요",
+   "more": "n은 정수만 돼요(..., -1, 0, 1, 2, ...). 수열(시퀀스)이라고도 해요. 줄여서 DT 신호예요."
+  },
+  {
+   "ko": "미분방정식",
+   "en": "Differential Equation",
+   "say": "변화율(미분)이 들어 있는 방정식, 연속시간 시스템을 설명해요",
+   "more": "RC 회로는 1차 선형 미분방정식 dv/dt + v/RC = vs/RC 로 설명돼요."
+  },
+  {
+   "ko": "차분방정식",
+   "en": "Difference Equation",
+   "say": "앞 칸의 값이 들어 있는 방정식, 이산시간 시스템을 설명해요",
+   "more": "은행 잔고 y[n]=1.01 y[n-1] + x[n] 이 대표 예예요."
+  },
+  {
+   "ko": "RC 회로",
+   "en": "RC Circuit",
+   "say": "저항 R과 축전기 C로 만든 간단한 회로",
+   "more": "입력 전압 vs(t)를 넣으면 축전기 전압 vc(t)가 천천히 차올라요. 이 과목의 첫 예제 시스템이에요."
+  },
+  {
+   "ko": "시스템 차수",
+   "en": "Order",
+   "say": "미분(또는 지연)이 가장 깊게 들어간 횟수",
+   "more": "1차는 RC 회로, 2차는 용수철과 댐퍼, RLC 회로예요."
+  },
+  {
+   "ko": "단위 계단",
+   "en": "Unit Step",
+   "say": "0 이전에는 0, 0부터는 계속 1인 신호",
+   "more": "u[n], u(t)로 써요. 스위치를 켜는 순간과 같아요. u[n]은 n=0 에서 1이에요."
+  },
+  {
+   "ko": "직렬 연결",
+   "en": "Series Interconnection",
+   "say": "한 시스템의 출력을 다음 시스템의 입력으로 잇는 것",
+   "more": "cascade 연결이라고도 해요. LTI 끼리는 순서를 바꿔도 같아요(결합, 교환 법칙)."
+  },
+  {
+   "ko": "병렬 연결",
+   "en": "Parallel Interconnection",
+   "say": "같은 입력을 두 시스템에 넣고 출력을 더하는 것",
+   "more": "LTI 에서는 임펄스 응답을 더한 h1 + h2 하나와 같아요(분배 법칙)."
+  },
+  {
+   "ko": "되먹임 연결",
+   "en": "Feedback Interconnection",
+   "say": "출력을 다시 입력 쪽으로 돌려보내는 연결",
+   "more": "크루즈 컨트롤, RC 회로 자체도 되먹임 연결로 볼 수 있어요."
+  },
+  {
+   "ko": "기억성",
+   "en": "Memory",
+   "say": "지금 출력을 내려면 지난(또는 앞으로의) 입력이 필요한 성질",
+   "more": "y[n] = x[n-1] 은 기억이 있어요. 지금 입력만 쓰면 무기억 시스템이에요."
+  },
+  {
+   "ko": "무기억 시스템",
+   "en": "Memoryless System",
+   "say": "출력이 같은 순간의 입력에만 달린 시스템",
+   "more": "y(t)=2x(t), y = x² 처럼요. LTI 라면 h[n] = kδ[n] 일 때만 무기억이에요."
+  },
+  {
+   "ko": "누산기",
+   "en": "Accumulator",
+   "say": "지금까지 들어온 입력을 모두 더해 내보내는 시스템",
+   "more": "y[n] = Σ_{k≤n} x[k], 임펄스 응답은 u[n]이에요. 인과적이지만 불안정해요."
+  },
+  {
+   "ko": "지연",
+   "en": "Delay",
+   "say": "신호를 오른쪽으로 옮겨 늦게 나오게 하는 것",
+   "more": "x(t - t0), t0>0. 빼기인데 오른쪽으로 간다는 점이 시험 단골이에요."
+  },
+  {
+   "ko": "가역성",
+   "en": "Invertibility",
+   "say": "출력만 보고 입력을 다시 알아낼 수 있는 성질",
+   "more": "서로 다른 입력이 늘 서로 다른 출력을 내면 가역 시스템이에요. y = x² 는 가역이 아니에요."
+  },
+  {
+   "ko": "역시스템",
+   "en": "Inverse System",
+   "say": "원래 시스템 뒤에 이어 붙이면 입력을 그대로 돌려주는 시스템",
+   "more": "직렬로 이으면 항등 시스템이 돼요. 누산기의 역시스템은 1차 차분이에요."
+  },
+  {
+   "ko": "선형성",
+   "en": "Linearity",
+   "say": "더해서 넣으면 더해서 나오고, k배 넣으면 k배 나오는 성질",
+   "more": "가산성과 동차성을 함께 만족해야 해요. 0을 넣으면 0이 나와야 해요."
+  },
+  {
+   "ko": "인과성",
+   "en": "Causality",
+   "say": "출력이 지금과 과거 입력에만 달려 있고 미래 입력은 쓰지 않는 성질",
+   "more": "y[n] = x[n+1] 은 인과가 아니에요. LTI 라면 n<0 에서 h[n]=0 이 조건이에요."
+  },
+  {
+   "ko": "이동 평균",
+   "en": "Moving Average",
+   "say": "앞뒤 몇 칸의 입력을 평균 내는 시스템",
+   "more": "가운데를 기준으로 앞뒤를 평균 내면 미래 값이 필요해서 인과적이지 않아요."
+  },
+  {
+   "ko": "안정성",
+   "en": "Stability",
+   "say": "크기가 제한된 입력을 넣으면 출력도 크기가 제한되는 성질",
+   "more": "BIBO 안정성이라고 해요. LTI 라면 임펄스 응답이 절대 합 가능할 때 안정해요."
+  },
+  {
+   "ko": "BIBO 안정",
+   "en": "Bounded-Input Bounded-Output",
+   "say": "유한한 입력에는 늘 유한한 출력이 나오는 것",
+   "more": "|x| < B 이면 |y| < 어떤 유한한 값 이 되어야 해요. 누산기는 여기서 실패해요."
+  },
+  {
+   "ko": "시불변성",
+   "en": "Time Invariance",
+   "say": "입력을 늦게 넣으면 출력도 모양 그대로 그만큼 늦게 나오는 성질",
+   "more": "x(t - t0) → y(t - t0) 이면 시불변이에요. y(t) = t x(t) 처럼 시간 t가 따로 곱해지면 시변이에요."
+  },
+  {
+   "ko": "시간 이동",
+   "en": "Time Shift",
+   "say": "신호 모양은 그대로 두고 시간 축에서 옆으로 옮기는 것",
+   "more": "x(t - t0)는 t0>0 이면 오른쪽(늦게), t0<0 이면 왼쪽(빨리)으로 가요."
+  },
+  {
+   "ko": "단위 임펄스",
+   "en": "Unit Impulse",
+   "say": "딱 한 순간(n=0)에만 1인 아주 짧은 톡 신호",
+   "more": "이산시간 δ[n]은 n=0 에서 1, 나머지 0이에요. 연속시간 δ(t)는 폭 0, 넓이 1인 이상적인 펄스예요."
+  },
+  {
+   "ko": "시간 척도 변환",
+   "en": "Time Scaling",
+   "say": "신호를 시간 축에서 줄이거나 늘리는 것",
+   "more": "x(ct)에서 c>1 이면 압축(빨리 재생), 0< c<1 이면 늘림(느리게 재생)이에요. 점 t는 t/c 로 옮겨가요."
+  },
+  {
+   "ko": "가산성",
+   "en": "Additivity",
+   "say": "x1 + x2 를 넣으면 y1 + y2 가 나오는 성질",
+   "more": "선형성의 첫째 조건이에요. y = x² 는 교차항 2x1x2 때문에 깨져요."
+  },
+  {
+   "ko": "동차성",
+   "en": "Homogeneity",
+   "say": "k 배 넣으면 k 배 나오는 성질, 스케일링 성질",
+   "more": "선형성의 둘째 조건이에요. y=3x+2 는 0을 넣어도 2가 나와서 깨져요."
+  },
+  {
+   "ko": "복소수",
+   "en": "Complex Number",
+   "say": "실수 부분과 허수 부분을 함께 가진 수, a + jb",
+   "more": "복소평면 위의 점 하나로 그릴 수 있어요. 가로가 실수, 세로가 허수예요."
+  },
+  {
+   "ko": "컨볼루션",
+   "en": "Convolution",
+   "say": "입력과 임펄스 응답으로 출력을 만드는 계산, x * h",
+   "more": "뒤집고, 밀고, 곱하고, 더하는(적분하는) 네 단계예요. CNN 층 안의 연산도 이거예요."
+  },
+  {
+   "ko": "중첩 원리",
+   "en": "Superposition",
+   "say": "여러 입력의 합에 대한 출력은 각 입력 출력의 합이라는 원리",
+   "more": "선형 시스템은 a x1 + b x2 → a y1 + b y2 예요. 컨볼루션이 성립하는 이유예요."
+  },
+  {
+   "ko": "LTI 시스템",
+   "en": "Linear Time-Invariant System",
+   "say": "선형성과 시불변성을 모두 가진 시스템",
+   "more": "임펄스 응답 하나만 알면 어떤 입력의 출력이든 컨볼루션으로 구할 수 있어요."
+  },
+  {
+   "ko": "허수 단위",
+   "en": "Imaginary Unit",
+   "say": "제곱하면 -1 이 되는 수",
+   "more": "수학에서는 i, 이 과목(전기 공학)에서는 전류 i와 헷갈리지 않게 j 로 써요."
+  },
+  {
+   "ko": "시간 반전",
+   "en": "Time Reversal",
+   "say": "t=0 을 기준으로 신호를 좌우로 뒤집는 것",
+   "more": "x(-t)는 거울에 비친 모습이에요. 영상을 거꾸로 재생하는 것과 같아요."
+  },
+  {
+   "ko": "증분 선형 시스템",
+   "en": "Incrementally Linear System",
+   "say": "선형 시스템에 늘 같은 값을 더해 준 시스템",
+   "more": "y[n]=2x[n]+3 처럼 생긴 시스템이에요. 그 자체는 선형이 아니지만, 두 입력에 대한 출력의 차이는 선형처럼 움직여요."
+  },
+  {
+   "ko": "영입력 응답",
+   "en": "Zero-Input Response",
+   "say": "입력을 0으로 넣어도 나오는 출력",
+   "more": "y[n]=2x[n]+3 에서는 입력이 0이어도 3이 나와요. 이 3을 영입력 응답 y0 라고 불러요."
+  },
+  {
+   "ko": "주기 신호",
+   "en": "Periodic Signal",
+   "say": "일정한 간격마다 똑같은 모양이 반복되는 신호",
+   "more": "모든 t에서 x(t) = x(t + T) 이면 주기 신호예요. 한동안만 반복하면 주기 신호가 아니에요."
+  },
+  {
+   "ko": "기본 주기",
+   "en": "Fundamental Period",
+   "say": "반복 간격 중 가장 작은 양수 값",
+   "more": "연속시간은 T0, 이산시간은 N0 로 써요. sin(t)의 기본 주기는 2π 예요."
+  },
+  {
+   "ko": "복소 지수 신호",
+   "en": "Complex Exponential Signal",
+   "say": "C e^{at}에서 C나 a가 복소수인 신호",
+   "more": "실수 지수(커지거나 줄기)에 회전(진동)이 더해진 신호예요. 이 과목에서 가장 중요한 신호예요."
+  },
+  {
+   "ko": "각주파수",
+   "en": "Angular Frequency",
+   "say": "1초에 몇 라디안만큼 도는지 나타내는 값, ω",
+   "more": "ω0=2π f0=2π / T0 예요. 단위는 rad/s 예요."
+  },
+  {
+   "ko": "오일러 공식",
+   "en": "Euler's Formula",
+   "say": "e^{jθ} = cos θ + j sin θ 라는 공식",
+   "more": "교수님이 꼭 외우라고 한 식이에요. 지수와 사인파를 이어 주는 다리예요."
+  }
+ ],
+ "slides": [
+  {
+   "p": 61,
+   "title": "시스템 차수와 2차 시스템",
+   "terms": [
+    "System",
+    "Input Signal",
+    "Continuous-Time Signal",
+    "Discrete-Time Signal",
+    "Differential Equation",
+    "Difference Equation",
+    "RC Circuit",
+    "Order"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "앞에서 시스템을 식으로 적는 법을 봤어요. 이번 쪽은 그 식의 '등급' 이야기예요.",
+      "신호는 시간에 따라 변하는 값, 시스템은 신호를 바꾸는 상자.",
+      "상자 안의 식이 얼마나 복잡한지를 **시스템 차수(Order)**라고 불러요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "이 쪽의 한 가지",
+     "items": [
+      "**시스템(System)**은 **차수**와 **매개변수**(식 속 숫자 a, b, c)로 설명해요.",
+      "차수가 높을수록 출력이 더 다양하게 움직일 수 있어요.",
+      "용수철에 매단 추, RLC 회로, 자동차 정속 주행 장치가 모두 2차예요. **RC 회로(RC Circuit)**는 1차예요."
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "formula",
+     "head": "2차 시스템 식 읽기",
+     "tex": "a\\frac{d^2y(t)}{dt^2}+b\\frac{dy(t)}{dt}+c\\,y(t)=x(t)",
+     "parts": [
+      {
+       "sym": "\\frac{d^2y(t)}{dt^2}",
+       "say": "디 투 와이 디 티 제곱: 출력을 두 번 미분한 것, 변화의 변화"
+      },
+      {
+       "sym": "\\frac{dy(t)}{dt}",
+       "say": "디 와이 디 티: 출력이 얼마나 빨리 변하는지(기울기)"
+      },
+      {
+       "sym": "c\\,y(t)",
+       "say": "출력 그 자체에 숫자 c 를 곱한 것"
+      },
+      {
+       "sym": "x(t)",
+       "say": "오른쪽은 **입력 신호(Input Signal)**"
+      },
+      {
+       "sym": "a,\\ b,\\ c",
+       "say": "매개변수: 이 시스템의 성격을 정하는 숫자"
+      }
+     ],
+     "whole": "가장 많이 미분한 횟수가 2번이라서 2차 **미분방정식(Differential Equation)**, 즉 **시스템 차수(Order)**가 2예요."
+    },
+    {
+     "kind": "compare",
+     "head": "**시스템 차수(Order)**를 세는 법",
+     "cols": [
+      "종류",
+      "무엇을 세나요",
+      "예"
+     ],
+     "rows": [
+      [
+       "**연속시간 신호(Continuous-Time Signal)**",
+       "가장 많이 미분한 횟수",
+       "두 번 미분이 있으면 2차"
+      ],
+      [
+       "**이산시간 신호(Discrete-Time Signal)**",
+       "가장 멀리 거슬러 간 칸(지연)",
+       "y[n-2] 까지 있으면 2차"
+      ]
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "**시스템 차수(Order)**는 무엇으로 정하나요?",
+     "choices": [
+      "식에 나온 숫자 a, b, c 의 크기",
+      "가장 높은 미분 횟수(또는 가장 깊은 지연)",
+      "입력 신호의 크기"
+     ],
+     "a": 1,
+     "why": "슬라이드: order = highest derivative (or deepest delay). 숫자 a, b, c 는 매개변수예요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.061,
+       "y": 0.184,
+       "w": 0.807,
+       "h": 0.057,
+       "say": "**시스템(System)**은 차수(order)와 매개변수(parameters)로 설명한다는 문장이에요."
+      },
+      {
+       "x": 0.314,
+       "y": 0.327,
+       "w": 0.368,
+       "h": 0.129,
+       "say": "2차 **미분방정식(Differential Equation)**예요. 두 번 미분한 항이 가장 높아요."
+      },
+      {
+       "x": 0.061,
+       "y": 0.527,
+       "w": 0.732,
+       "h": 0.047,
+       "say": "차수 = 가장 높은 미분(또는 가장 깊은 지연). 움직임이 얼마나 풍부할 수 있는지 정해요."
+      },
+      {
+       "x": 0.061,
+       "y": 0.586,
+       "w": 0.593,
+       "h": 0.046,
+       "say": "용수철-추-댐퍼, RLC 회로, 정속 주행 장치가 모두 2차라는 예시예요."
+      }
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "**시스템 차수(Order)** 세기 연습",
+     "steps": [
+      "$\\frac{dy}{dt}+2y=x$: 가장 높은 미분이 1번이에요. 그래서 1차.",
+      "$3\\frac{d^2y}{dt^2}+\\frac{dy}{dt}+y=x$: 두 번 미분이 있어요. 그래서 2차.",
+      "$y[n]-0.5y[n-1]=x[n]$: 한 칸 전 $y[n-1]$ 까지 가요. 그래서 1차.",
+      "$y[n]+y[n-1]+y[n-2]=x[n]$: 두 칸 전까지 가요. 그래서 2차."
+     ],
+     "answer": "**미분방정식(Differential Equation)**는 미분 횟수, **차분방정식(Difference Equation)**은 가장 먼 과거 칸 수를 세요."
+    },
+    {
+     "kind": "prof",
+     "when": "2주차 목요일 수업",
+     "lines": [
+      "RC 회로, RL 회로는 1차 미분방정식이고 RLC 회로는 2차라고 했어요.",
+      "웬만한 물리 시스템은 1차 미분방정식을 따른다고 했어요.",
+      "2차 시스템도 나중에 굉장히 중요하게 다룰 거라고 했어요."
+     ]
+    },
+    {
+     "kind": "bg",
+     "src": "기초 다지기 b-8 적분은 넓이, 미분은 기울기",
+     "lines": [
+      "미분 $\\frac{dy}{dt}$ 는 그래프의 기울기, 즉 얼마나 빨리 변하는지예요.",
+      "두 번 미분은 기울기가 또 얼마나 변하는지, 자동차로 치면 가속도예요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "$y[n]-y[n-1]+0.25y[n-2]=x[n]$ 의 차수는?",
+     "choices": [
+      "1차",
+      "2차",
+      "3차"
+     ],
+     "a": 1,
+     "why": "가장 먼 과거가 $y[n-2]$ 라서 두 칸 지연, 2차예요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "차수는 식에 나온 숫자(a, b, c)의 크기가 아니에요. 미분 횟수 또는 지연 칸 수예요.",
+      "$y^2$ 처럼 제곱이 있다고 2차가 되는 게 아니에요. **시스템 차수(Order)**는 미분 횟수로 세요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 62,
+   "title": "입력은 스위치, 모양은 시스템이 만든다",
+   "terms": [
+    "System",
+    "Discrete-Time Signal",
+    "Differential Equation",
+    "Difference Equation",
+    "Unit Step"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "스위치를 탁 켜면 입력은 바로 1이 돼요.",
+      "그런데 출력은 곡선을 그리며 천천히 1에 다가가요.",
+      "이 곡선 모양은 입력이 아니라 **시스템(System)**이 만든 거예요."
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "입력은 한 번에, 출력은 천천히",
+     "svg": "<svg viewBox=\"0 0 480 270\" xmlns=\"http://www.w3.org/2000/svg\"><text x=\"20\" y=\"22\" font-size=\"15\" text-anchor=\"start\" class=\"tb\">입력: 스위치를 켠 모양</text><line x1=\"54\" y1=\"112\" x2=\"448\" y2=\"112\" class=\"e\"/><line x1=\"81.1\" y1=\"116\" x2=\"81.1\" y2=\"24\" class=\"e\"/><text x=\"452\" y=\"117\" font-size=\"14\" text-anchor=\"start\" class=\"tm\">n</text><circle cx=\"81.1\" cy=\"112\" r=\"4\" class=\"n3\"/><line x1=\"123.3\" y1=\"112\" x2=\"123.3\" y2=\"43.7\" class=\"e2\"/><circle cx=\"123.3\" cy=\"43.7\" r=\"4\" class=\"n3\"/><line x1=\"165.6\" y1=\"112\" x2=\"165.6\" y2=\"43.7\" class=\"e2\"/><circle cx=\"165.6\" cy=\"43.7\" r=\"4\" class=\"n3\"/><line x1=\"207.8\" y1=\"112\" x2=\"207.8\" y2=\"43.7\" class=\"e2\"/><circle cx=\"207.8\" cy=\"43.7\" r=\"4\" class=\"n3\"/><line x1=\"250\" y1=\"112\" x2=\"250\" y2=\"43.7\" class=\"e2\"/><circle cx=\"250\" cy=\"43.7\" r=\"4\" class=\"n3\"/><line x1=\"292.2\" y1=\"112\" x2=\"292.2\" y2=\"43.7\" class=\"e2\"/><circle cx=\"292.2\" cy=\"43.7\" r=\"4\" class=\"n3\"/><line x1=\"334.4\" y1=\"112\" x2=\"334.4\" y2=\"43.7\" class=\"e2\"/><circle cx=\"334.4\" cy=\"43.7\" r=\"4\" class=\"n3\"/><line x1=\"376.7\" y1=\"112\" x2=\"376.7\" y2=\"43.7\" class=\"e2\"/><circle cx=\"376.7\" cy=\"43.7\" r=\"4\" class=\"n3\"/><line x1=\"418.9\" y1=\"112\" x2=\"418.9\" y2=\"43.7\" class=\"e2\"/><circle cx=\"418.9\" cy=\"43.7\" r=\"4\" class=\"n3\"/><line x1=\"78.1\" y1=\"43.7\" x2=\"84.1\" y2=\"43.7\" class=\"e\"/><text x=\"75.1\" y=\"48.7\" font-size=\"14\" text-anchor=\"end\" class=\"tm\">1</text><text x=\"20\" y=\"150\" font-size=\"15\" text-anchor=\"start\" class=\"tb b1\">출력: 천천히 따라가요</text><line x1=\"54\" y1=\"245\" x2=\"448\" y2=\"245\" class=\"e b1\"/><line x1=\"81.1\" y1=\"249\" x2=\"81.1\" y2=\"149\" class=\"e b1\"/><text x=\"452\" y=\"250\" font-size=\"14\" text-anchor=\"start\" class=\"tm b1\">n</text><circle cx=\"81.1\" cy=\"245\" r=\"4\" class=\"n2 b1\"/><line x1=\"123.3\" y1=\"245\" x2=\"123.3\" y2=\"207.5\" class=\"e2 b1\"/><circle cx=\"123.3\" cy=\"207.5\" r=\"4\" class=\"n2 b1\"/><line x1=\"165.6\" y1=\"245\" x2=\"165.6\" y2=\"188.8\" class=\"e2 b1\"/><circle cx=\"165.6\" cy=\"188.8\" r=\"4\" class=\"n2 b1\"/><line x1=\"207.8\" y1=\"245\" x2=\"207.8\" y2=\"179.4\" class=\"e2 b1\"/><circle cx=\"207.8\" cy=\"179.4\" r=\"4\" class=\"n2 b1\"/><line x1=\"250\" y1=\"245\" x2=\"250\" y2=\"174.7\" class=\"e2 b1\"/><circle cx=\"250\" cy=\"174.7\" r=\"4\" class=\"n2 b1\"/><line x1=\"292.2\" y1=\"245\" x2=\"292.2\" y2=\"172.3\" class=\"e2 b1\"/><circle cx=\"292.2\" cy=\"172.3\" r=\"4\" class=\"n2 b1\"/><line x1=\"334.4\" y1=\"245\" x2=\"334.4\" y2=\"171.2\" class=\"e2 b1\"/><circle cx=\"334.4\" cy=\"171.2\" r=\"4\" class=\"n2 b1\"/><line x1=\"376.7\" y1=\"245\" x2=\"376.7\" y2=\"170.6\" class=\"e2 b1\"/><circle cx=\"376.7\" cy=\"170.6\" r=\"4\" class=\"n2 b1\"/><line x1=\"418.9\" y1=\"245\" x2=\"418.9\" y2=\"170.3\" class=\"e2 b1\"/><circle cx=\"418.9\" cy=\"170.3\" r=\"4\" class=\"n2 b1\"/><line x1=\"78.1\" y1=\"170\" x2=\"84.1\" y2=\"170\" class=\"e b1\"/><text x=\"75.1\" y=\"175\" font-size=\"14\" text-anchor=\"end\" class=\"tm b1\">1</text><line x1=\"81.1\" y1=\"242\" x2=\"81.1\" y2=\"248\" class=\"e b1\"/><text x=\"81.1\" y=\"265\" font-size=\"14\" text-anchor=\"middle\" class=\"tm b1\">0</text><line x1=\"123.3\" y1=\"242\" x2=\"123.3\" y2=\"248\" class=\"e b1\"/><text x=\"123.3\" y=\"265\" font-size=\"14\" text-anchor=\"middle\" class=\"tm b1\">1</text><line x1=\"165.6\" y1=\"242\" x2=\"165.6\" y2=\"248\" class=\"e b1\"/><text x=\"165.6\" y=\"265\" font-size=\"14\" text-anchor=\"middle\" class=\"tm b1\">2</text><line x1=\"250\" y1=\"242\" x2=\"250\" y2=\"248\" class=\"e b1\"/><text x=\"250\" y=\"265\" font-size=\"14\" text-anchor=\"middle\" class=\"tm b1\">4</text><line x1=\"418.9\" y1=\"242\" x2=\"418.9\" y2=\"248\" class=\"e b1\"/><text x=\"418.9\" y=\"265\" font-size=\"14\" text-anchor=\"middle\" class=\"tm b1\">8</text><line x1=\"68.4\" y1=\"170\" x2=\"435.8\" y2=\"170\" class=\"hl b2\"/><text x=\"300\" y=\"146\" font-size=\"14\" text-anchor=\"start\" class=\"tm b2\">끝값 1에 가까워져요</text></svg>",
+     "caption": "**단위 계단(Unit Step)** 입력(위)과 1차 **이산시간 신호(Discrete-Time Signal)** 시스템의 출력(아래)",
+     "builds": 2
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "points",
+     "head": "문장 풀어 읽기",
+     "items": [
+      "The dynamics of the output: 출력이 시간에 따라 움직이는 모양",
+      "are determined by the dynamics of the system: 시스템의 성질이 정해요",
+      "if the input signal has no dynamics: 입력에 움직임이 없다면(켠 뒤 계속 1)"
+     ]
+    },
+    {
+     "kind": "formula",
+     "head": "연속시간 1차 시스템",
+     "tex": "\\frac{dy(t)}{dt}+a\\,y(t)=u(t-1)",
+     "parts": [
+      {
+       "sym": "\\frac{dy(t)}{dt}",
+       "say": "출력의 기울기"
+      },
+      {
+       "sym": "a",
+       "say": "시스템의 성격을 정하는 숫자"
+      },
+      {
+       "sym": "u(t-1)",
+       "say": "**단위 계단(Unit Step)**을 1만큼 늦춘 입력: $t=1$ 에 스위치를 켜요"
+      }
+     ],
+     "whole": "1차 **미분방정식(Differential Equation)**예요. 입력은 $t=1$ 부터 늘 1이에요."
+    },
+    {
+     "kind": "formula",
+     "head": "이산시간 1차 시스템",
+     "tex": "(1+ak)\\,y[n]-y[n-1]=k\\,u[n-1]",
+     "parts": [
+      {
+       "sym": "y[n-1]",
+       "say": "한 칸 전 출력(기억)"
+      },
+      {
+       "sym": "u[n-1]",
+       "say": "한 칸 늦춘 **단위 계단(Unit Step)**"
+      },
+      {
+       "sym": "a,\\ k",
+       "say": "시스템 숫자"
+      }
+     ],
+     "whole": "1차 **차분방정식(Difference Equation)**예요. 한 칸 전 출력을 보며 조금씩 따라가요."
+    },
+    {
+     "kind": "check",
+     "q": "그래프에서 출력이 곡선으로 천천히 오르는 이유는?",
+     "choices": [
+      "입력이 천천히 올라서",
+      "시스템이 그렇게 반응해서",
+      "그래프를 잘못 그려서"
+     ],
+     "a": 1,
+     "why": "입력은 한 번에 1이 돼요. 곡선 모양은 시스템의 성질이에요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.061,
+       "y": 0.19,
+       "w": 0.879,
+       "h": 0.109,
+       "say": "입력에 움직임이 없으면 출력의 움직임은 시스템이 정한다는 문장이에요."
+      },
+      {
+       "x": 0.223,
+       "y": 0.32,
+       "w": 0.199,
+       "h": 0.08,
+       "say": "연속시간 1차 **시스템(System)**. 입력은 $u(t-1)$ 이에요."
+      },
+      {
+       "x": 0.482,
+       "y": 0.32,
+       "w": 0.294,
+       "h": 0.08,
+       "say": "이산시간 1차 **시스템(System)**. 입력은 $u[n-1]$ 이에요."
+      },
+      {
+       "x": 0.132,
+       "y": 0.457,
+       "w": 0.361,
+       "h": 0.415,
+       "say": "파랑은 입력 계단, 주황은 출력. 출력이 곡선으로 1에 다가가요."
+      },
+      {
+       "x": 0.5,
+       "y": 0.457,
+       "w": 0.367,
+       "h": 0.415,
+       "say": "이산시간 출력. 점들이 한 칸씩 1에 다가가요."
+      }
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "이산시간 식을 쉬운 숫자로 손계산 ($a=1$, $k=1$)",
+     "given": "$(1+ak)y[n]-y[n-1]=k\\,u[n-1]$",
+     "steps": [
+      "식을 $y[n]$ 에 대해 풀면 $y[n]=\\frac{y[n-1]+k\\,u[n-1]}{1+ak}=\\frac{y[n-1]+u[n-1]}{2}$ 예요.",
+      "$n=0$: 아직 스위치 전이라 $y[0]=0$.",
+      "$n=1$: $y[1]=\\frac{0+1}{2}=0.5$",
+      "$n=2$: $y[2]=\\frac{0.5+1}{2}=0.75$",
+      "$n=3$: $y[3]=\\frac{0.75+1}{2}=0.875$, $n=4$ 이면 $0.9375$"
+     ],
+     "answer": "0, 0.5, 0.75, 0.875, 0.9375 ... 이렇게 1에 점점 가까워져요."
+    },
+    {
+     "kind": "steps",
+     "head": "끝값은 왜 1일까요?",
+     "steps": [
+      "오래 지나면 출력이 더 변하지 않아요. 그 값을 $y$ 라고 해요.",
+      "그러면 $y[n]=y[n-1]=y$, $u=1$ 이라서 $(1+ak)y-y=k$ 예요.",
+      "정리하면 $ak\\,y=k$, 즉 $y=\\frac{1}{a}$ 예요.",
+      "$a=1$ 이면 끝값 1, $a=2$ 이면 끝값 0.5예요."
+     ],
+     "answer": "끝값 $1/a$ 도 시스템 숫자 a 가 정해요. 입력은 그냥 1일 뿐이에요."
+    },
+    {
+     "kind": "bg",
+     "src": "기초 다지기 b-9 단위 계단과 단위 임펄스",
+     "lines": [
+      "$u(t)$ 는 $t=0$ 에서 켜져서 계속 1인 스위치 신호예요.",
+      "$u(t-1)$ 은 오른쪽으로 1만큼 밀려서 $t=1$ 에 켜져요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "그래프의 이산시간 점은 $n=2$ 부터 올라가는 것처럼 그려져 있어요.",
+      "식대로 손계산하면 $y[1]=k/(1+ak)$ 라서 $n=1$ 부터 값이 생겨요. 그림과 식이 한 칸 어긋나 보이니 식을 따르세요.",
+      "시험에서는 모양(천천히 1/a 로 다가감)과 손계산 방법을 기억하면 돼요."
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "$a=1$, $k=1$ 일 때 $y[2]$ 는? (시작 $y[0]=0$)",
+     "choices": [
+      "0.5",
+      "0.75",
+      "1"
+     ],
+     "a": 1,
+     "why": "$y[1]=0.5$, $y[2]=(0.5+1)/2=0.75$ 예요."
+    }
+   ]
+  },
+  {
+   "p": 63,
+   "title": "시스템 연결: 직렬, 병렬, 되먹임",
+   "terms": [
+    "RC Circuit",
+    "Series Interconnection",
+    "Parallel Interconnection",
+    "Feedback Interconnection"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "복잡한 시스템도 알고 보면 간단한 상자들을 이어 붙인 거예요.",
+      "줄줄이 잇거나, 나란히 놓거나, 뒤로 돌려 이어요.",
+      "신호는 시간에 따라 변하는 값, 시스템은 신호를 바꾸는 상자."
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "상자 잇는 두 가지 기본 방법",
+     "svg": "<svg viewBox=\"0 0 480 270\" xmlns=\"http://www.w3.org/2000/svg\"><text x=\"20\" y=\"24\" font-size=\"16\" text-anchor=\"start\" class=\"tb\">직렬</text><text x=\"40\" y=\"72\" font-size=\"16\" text-anchor=\"middle\" class=\"t\">x</text><line x1=\"52\" y1=\"67\" x2=\"83\" y2=\"67\" class=\"e2\"/><polygon points=\"92,67 83,72 83,62\" class=\"arrow\"/><rect x=\"94\" y=\"47\" width=\"70\" height=\"40\" rx=\"2\" class=\"box\"/><text x=\"129\" y=\"73\" font-size=\"16\" text-anchor=\"middle\" class=\"tb\">×2</text><line x1=\"164\" y1=\"67\" x2=\"195\" y2=\"67\" class=\"e2\"/><polygon points=\"204,67 195,72 195,62\" class=\"arrow\"/><rect x=\"206\" y=\"47\" width=\"70\" height=\"40\" rx=\"2\" class=\"box\"/><text x=\"241\" y=\"73\" font-size=\"16\" text-anchor=\"middle\" class=\"tb\">×3</text><line x1=\"276\" y1=\"67\" x2=\"307\" y2=\"67\" class=\"e2\"/><polygon points=\"316,67 307,72 307,62\" class=\"arrow\"/><text x=\"322\" y=\"73\" font-size=\"16\" text-anchor=\"start\" class=\"tb\">6x</text><text x=\"390\" y=\"73\" font-size=\"14\" text-anchor=\"start\" class=\"tm\">곱해져요</text><text x=\"20\" y=\"128\" font-size=\"16\" text-anchor=\"start\" class=\"tb b1\">병렬</text><text x=\"40\" y=\"196\" font-size=\"16\" text-anchor=\"middle\" class=\"t b1\">x</text><line x1=\"52\" y1=\"191\" x2=\"80\" y2=\"191\" class=\"e2 b1\"/><line x1=\"80\" y1=\"160\" x2=\"80\" y2=\"222\" class=\"e2 b1\"/><line x1=\"80\" y1=\"160\" x2=\"109\" y2=\"160\" class=\"e2 b1\"/><polygon points=\"118,160 109,165 109,155\" class=\"arrow b1\"/><line x1=\"80\" y1=\"222\" x2=\"109\" y2=\"222\" class=\"e2 b1\"/><polygon points=\"118,222 109,227 109,217\" class=\"arrow b1\"/><rect x=\"120\" y=\"140\" width=\"70\" height=\"40\" rx=\"2\" class=\"box b1\"/><text x=\"155\" y=\"166\" font-size=\"16\" text-anchor=\"middle\" class=\"tb b1\">×2</text><rect x=\"120\" y=\"202\" width=\"70\" height=\"40\" rx=\"2\" class=\"box b1\"/><text x=\"155\" y=\"228\" font-size=\"16\" text-anchor=\"middle\" class=\"tb b1\">×3</text><line x1=\"190\" y1=\"160\" x2=\"230\" y2=\"182\" class=\"e2 b1\"/><polygon points=\"238,186 228,186 232,177\" class=\"arrow b1\"/><line x1=\"190\" y1=\"222\" x2=\"230\" y2=\"200\" class=\"e2 b1\"/><polygon points=\"238,196 232,205 228,196\" class=\"arrow b1\"/><circle cx=\"252\" cy=\"191\" r=\"14\" class=\"n b1\"/><text x=\"252\" y=\"197\" font-size=\"18\" text-anchor=\"middle\" class=\"tl b1\">+</text><line x1=\"266\" y1=\"191\" x2=\"297\" y2=\"191\" class=\"e2 b1\"/><polygon points=\"306,191 297,196 297,186\" class=\"arrow b1\"/><text x=\"312\" y=\"197\" font-size=\"16\" text-anchor=\"start\" class=\"tb b1\">5x</text><text x=\"360\" y=\"197\" font-size=\"14\" text-anchor=\"start\" class=\"tm b1\">더해져요</text></svg>",
+     "caption": "**직렬 연결(Series Interconnection)**은 차례로 거치고, **병렬 연결(Parallel Interconnection)**은 나눠 갔다가 더해요.",
+     "builds": 1
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "compare",
+     "head": "세 가지 연결",
+     "cols": [
+      "연결",
+      "모양",
+      "쉬운 말"
+     ],
+     "rows": [
+      [
+       "**직렬 연결(Series Interconnection)**",
+       "상자1 → 상자2",
+       "앞 상자 출력이 뒤 상자 입력(cascade)"
+      ],
+      [
+       "**병렬 연결(Parallel Interconnection)**",
+       "둘로 나눠 → 각자 → 더하기",
+       "같은 입력을 두 상자가 받고 결과를 더함"
+      ],
+      [
+       "**되먹임 연결(Feedback Interconnection)**",
+       "출력이 다시 입력 쪽으로",
+       "내 결과가 다음 계산에 다시 들어옴"
+      ]
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "슬라이드 그림 네 개",
+     "items": [
+      "series (cascade): 직렬",
+      "parallel: 병렬, 동그라미 + 는 더하기",
+      "series-parallel: 직렬과 병렬을 섞은 것",
+      "feedback: 되먹임. System $2$ 가 출력을 다시 앞으로 보내요"
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "출력이 다시 입력 쪽으로 돌아와 더해지는 연결은?",
+     "choices": [
+      "**직렬 연결(Series Interconnection)**",
+      "**병렬 연결(Parallel Interconnection)**",
+      "**되먹임 연결(Feedback Interconnection)**"
+     ],
+     "a": 2,
+     "why": "출력이 되돌아오는 길이 있으면 되먹임(feedback)이에요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.107,
+       "y": 0.332,
+       "w": 0.293,
+       "h": 0.131,
+       "say": "**직렬 연결(Series Interconnection)**. 입력이 System 1, System $2$ 를 차례로 지나요."
+      },
+      {
+       "x": 0.125,
+       "y": 0.539,
+       "w": 0.257,
+       "h": 0.209,
+       "say": "**병렬 연결(Parallel Interconnection)**. 둘로 나뉘어 각자 지나고 + 에서 더해져요."
+      },
+      {
+       "x": 0.457,
+       "y": 0.332,
+       "w": 0.411,
+       "h": 0.22,
+       "say": "직렬과 병렬을 섞은 연결이에요. 1, $2$ 직렬과 $3$ 이 병렬, 그 뒤에 4."
+      },
+      {
+       "x": 0.471,
+       "y": 0.596,
+       "w": 0.268,
+       "h": 0.239,
+       "say": "**되먹임 연결(Feedback Interconnection)**. System $2$ 가 출력을 앞으로 되돌려 보내요."
+      },
+      {
+       "x": 0.061,
+       "y": 0.848,
+       "w": 0.675,
+       "h": 0.047,
+       "say": "**RC 회로(RC Circuit)** 자체도 저항과 축전기의 되먹임 연결이라는 문장이에요."
+      }
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "쉬운 숫자로 직렬과 병렬",
+     "steps": [
+      "상자1은 '2배', 상자2는 '3배' 하는 시스템이라고 해요.",
+      "직렬: $x=1$ 이 상자1을 지나 2, 다시 상자2를 지나 6이 돼요. 곱해져요.",
+      "병렬: $x=1$ 이 상자1에서 2, 상자2에서 3. 더하면 5예요.",
+      "그래서 직렬은 $6x$, 병렬은 $5x$ 인 상자 하나와 똑같아요."
+     ],
+     "answer": "**직렬 연결(Series Interconnection)**은 곱, **병렬 연결(Parallel Interconnection)**은 합으로 합쳐져요(곱하기 상자일 때)."
+    },
+    {
+     "kind": "figure",
+     "head": "**되먹임 연결(Feedback Interconnection)** 예: $y[n]=x[n]+0.5\\,y[n-1]$",
+     "svg": "<svg viewBox=\"0 0 480 270\" xmlns=\"http://www.w3.org/2000/svg\"><text x=\"30\" y=\"86\" font-size=\"16\" text-anchor=\"middle\" class=\"t\">x[n]</text><line x1=\"52\" y1=\"80\" x2=\"95\" y2=\"80\" class=\"e2\"/><polygon points=\"104,80 95,85 95,75\" class=\"arrow\"/><circle cx=\"120\" cy=\"80\" r=\"15\" class=\"n\"/><text x=\"120\" y=\"86\" font-size=\"18\" text-anchor=\"middle\" class=\"tl\">+</text><line x1=\"135\" y1=\"80\" x2=\"321\" y2=\"80\" class=\"e2\"/><polygon points=\"330,80 321,85 321,75\" class=\"arrow\"/><text x=\"360\" y=\"86\" font-size=\"16\" text-anchor=\"middle\" class=\"tb\">y[n]</text><line x1=\"260\" y1=\"80\" x2=\"260\" y2=\"190\" class=\"e2 b1\"/><line x1=\"260\" y1=\"190\" x2=\"235\" y2=\"190\" class=\"e2 b1\"/><polygon points=\"226,190 235,185 235,195\" class=\"arrow b1\"/><rect x=\"120\" y=\"168\" width=\"104\" height=\"44\" rx=\"2\" class=\"box2 b1\"/><text x=\"172\" y=\"195\" font-size=\"14\" text-anchor=\"middle\" class=\"tb b1\">×0.5, 한 칸 늦게</text><line x1=\"120\" y1=\"168\" x2=\"120\" y2=\"106\" class=\"e2 b1\"/><polygon points=\"120,97 125,106 115,106\" class=\"arrow b1\"/><text x=\"240\" y=\"248\" font-size=\"14\" text-anchor=\"middle\" class=\"tm b1\">출력이 한 칸 늦게 다시 입력 쪽으로 돌아와요</text></svg>",
+     "caption": "출력의 절반이 한 칸 늦게 다시 더해져요.",
+     "builds": 1
+    },
+    {
+     "kind": "steps",
+     "head": "되먹임 손계산 (입력은 $n=0$ 에 한 번 톡, 1)",
+     "steps": [
+      "$n=0$: $y[0]=1+0.5\\times 0=1$",
+      "$n=1$: 입력 0. $y[1]=0+0.5\\times 1=0.5$",
+      "$n=2$: $y[2]=0.5\\times 0.5=0.25$",
+      "$n=3$: $y[3]=0.125$"
+     ],
+     "answer": "한 번 톡 친 입력이 되먹임 때문에 1, 0.5, 0.25, 0.125 로 계속 울려요."
+    },
+    {
+     "kind": "prof",
+     "when": "2주차 목요일 수업",
+     "lines": [
+      "우리가 회로를 직렬 연결, 병렬 연결로 표현하듯 시스템도 그렇게 된다고 했어요.",
+      "주의해서 볼 것은 피드백이라고 했어요. 이번 시간 값에 직전 시간의 값이 들어올 수 있다는 뜻이에요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "상자1 '2배', 상자2 '3배' 를 병렬로 이으면 $x=4$ 의 출력은?",
+     "choices": [
+      "24",
+      "20",
+      "7"
+     ],
+     "a": 1,
+     "why": "$2\\times4+3\\times4=8+12=20$ 이에요. 직렬이면 24예요."
+    },
+    {
+     "kind": "english",
+     "head": "답안 문장",
+     "en": "직렬 연결은 앞 시스템의 출력이 뒤 시스템의 입력이 되고, 병렬 연결은 같은 입력을 받은 두 시스템의 출력을 더하며, 되먹임 연결은 출력이 다시 입력 쪽으로 돌아와 더해진다.",
+     "ko": "직렬은 차례로, 병렬은 나눠서 더하기, 되먹임은 되돌아오기.",
+     "tip": "직렬 = 줄 서기, 병렬 = 나란히, 되먹임 = 돌아오기"
+    }
+   ]
+  },
+  {
+   "p": 64,
+   "title": "기억성: 무기억 시스템과 기억 있는 시스템",
+   "terms": [
+    "Memory",
+    "Memoryless System",
+    "Accumulator",
+    "Delay"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "이제 1.6절, 시스템의 성질 여섯 가지를 봐요.",
+      "첫째는 **기억성(Memory)**이에요. 시스템이 지난 일을 기억하느냐예요.",
+      "지금 입력만 보고 답하면 기억이 없고, 지난 입력도 쓰면 기억이 있어요."
+     ]
+    },
+    {
+     "kind": "analogy",
+     "head": "통장 잔고",
+     "scene": "통장 잔고는 오늘 입금만이 아니라 지난 입금이 모두 쌓인 값이에요.",
+     "map": [
+      [
+       "지난 입금이 쌓인 잔고",
+       "기억 있는 시스템(**누산기(Accumulator)**)"
+      ],
+      [
+       "지금 넣은 돈만 보는 계산",
+       "**무기억 시스템(Memoryless System)**"
+      ]
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "compare",
+     "head": "기억 있나, 없나",
+     "cols": [
+      "시스템",
+      "출력이 보는 입력",
+      "판정"
+     ],
+     "rows": [
+      [
+       "$y[n]=(2x[n]-x^2[n])^2$",
+       "지금 칸 x[n] 만",
+       "**무기억 시스템(Memoryless System)**"
+      ],
+      [
+       "$y[n]=\\sum_{k=-\\infty}^{n}x[k]$",
+       "처음부터 지금까지 전부",
+       "기억 있음(**누산기(Accumulator)**)"
+      ],
+      [
+       "$y[n]=x[n-1]$",
+       "한 칸 전 x[n-1]",
+       "기억 있음(**지연(Delay)**)"
+      ]
+     ]
+    },
+    {
+     "kind": "formula",
+     "head": "**누산기(Accumulator)** 식 읽기",
+     "tex": "y[n]=\\sum_{k=-\\infty}^{n}x[k]",
+     "parts": [
+      {
+       "sym": "\\sum",
+       "say": "시그마: 다 더하라는 기호"
+      },
+      {
+       "sym": "k=-\\infty",
+       "say": "아주 먼 과거 칸부터"
+      },
+      {
+       "sym": "n",
+       "say": "지금 칸까지"
+      },
+      {
+       "sym": "x[k]",
+       "say": "각 칸의 입력"
+      }
+     ],
+     "whole": "처음부터 지금까지 입력을 모두 더한 값이 출력이에요. 적분기(integrator), 합산기(summer)라고도 해요."
+    },
+    {
+     "kind": "figure",
+     "head": "출력이 어느 칸을 보나요?",
+     "svg": "<svg viewBox=\"0 0 480 270\" xmlns=\"http://www.w3.org/2000/svg\"><line x1=\"40\" y1=\"120\" x2=\"440\" y2=\"120\" class=\"e\"/><circle cx=\"70\" cy=\"120\" r=\"16\" class=\"n\"/><text x=\"70\" y=\"158\" font-size=\"14\" text-anchor=\"middle\" class=\"tm\">n-3</text><circle cx=\"150\" cy=\"120\" r=\"16\" class=\"n\"/><text x=\"150\" y=\"158\" font-size=\"14\" text-anchor=\"middle\" class=\"tm\">n-2</text><circle cx=\"230\" cy=\"120\" r=\"16\" class=\"n\"/><text x=\"230\" y=\"158\" font-size=\"14\" text-anchor=\"middle\" class=\"tm\">n-1</text><circle cx=\"310\" cy=\"120\" r=\"16\" class=\"n\"/><text x=\"310\" y=\"158\" font-size=\"14\" text-anchor=\"middle\" class=\"tm\">n</text><circle cx=\"390\" cy=\"120\" r=\"16\" class=\"n\"/><text x=\"390\" y=\"158\" font-size=\"14\" text-anchor=\"middle\" class=\"tm\">n+1</text><text x=\"240\" y=\"34\" font-size=\"15\" text-anchor=\"middle\" class=\"tb\">출력 y[n] 을 만들 때 어느 칸을 보나요?</text><circle cx=\"310\" cy=\"120\" r=\"16\" class=\"n2 b1\"/><text x=\"310\" y=\"82\" font-size=\"15\" text-anchor=\"middle\" class=\"tb b1\">지금 칸만</text><text x=\"240\" y=\"205\" font-size=\"15\" text-anchor=\"middle\" class=\"t b1\">지금 칸만 보면 무기억</text><rect x=\"52\" y=\"98\" width=\"276\" height=\"44\" rx=\"2\" class=\"hl b2\"/><circle cx=\"70\" cy=\"120\" r=\"16\" class=\"n3 b2\"/><circle cx=\"150\" cy=\"120\" r=\"16\" class=\"n3 b2\"/><circle cx=\"230\" cy=\"120\" r=\"16\" class=\"n3 b2\"/><text x=\"240\" y=\"240\" font-size=\"15\" text-anchor=\"middle\" class=\"t b2\">지난 칸도 보면 기억이 있어요(누산기, 지연)</text></svg>",
+     "caption": "지금 칸만 보면 무기억, 지난 칸도 보면 기억 있음",
+     "builds": 2
+    },
+    {
+     "kind": "check",
+     "q": "$y[n]=x[n-1]$ 은 **무기억 시스템(Memoryless System)**인가요?",
+     "choices": [
+      "예",
+      "아니요"
+     ],
+     "a": 1,
+     "why": "한 칸 전 입력을 기억해 두었다가 내보내야 해서 기억이 있어요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.079,
+       "y": 0.19,
+       "w": 0.371,
+       "h": 0.057,
+       "say": "기억이 있는 시스템과 없는 시스템(Systems with and without Memory)."
+      },
+      {
+       "x": 0.139,
+       "y": 0.273,
+       "w": 0.793,
+       "h": 0.108,
+       "say": "**무기억 시스템(Memoryless System)**의 정의: 같은 시각의 값에만 의존해요."
+      },
+      {
+       "x": 0.146,
+       "y": 0.409,
+       "w": 0.211,
+       "h": 0.058,
+       "say": "무기억 예. 복잡해 보여도 전부 지금 칸 x[n] 뿐이에요."
+      },
+      {
+       "x": 0.139,
+       "y": 0.492,
+       "w": 0.589,
+       "h": 0.135,
+       "say": "기억 있는 예: **누산기(Accumulator)**. 과거 입력을 모두 더해요."
+      },
+      {
+       "x": 0.139,
+       "y": 0.641,
+       "w": 0.468,
+       "h": 0.121,
+       "say": "또 다른 기억 있는 예: **지연(Delay)** $y[n]=x[n-1]$."
+      }
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "무기억 식에 숫자 넣기: $y[n]=(2x[n]-x^2[n])^2$",
+     "steps": [
+      "$x[n]=3$: $2\\times3-3^2=6-9=-3$, 제곱하면 9.",
+      "$x[n]=1$: $2-1=1$, 제곱하면 1.",
+      "$x[n]=2$: $4-4=0$, 제곱하면 0.",
+      "어느 경우든 지금 칸의 값 하나만 있으면 답이 나와요."
+     ],
+     "answer": "그래서 식이 복잡해도 **무기억 시스템(Memoryless System)**이에요."
+    },
+    {
+     "kind": "steps",
+     "head": "**누산기(Accumulator)** 손계산 (입력 1, 2, $3$ 이 $n=0,1,2$ 에)",
+     "steps": [
+      "$y[0]=x[0]=1$",
+      "$y[1]=x[0]+x[1]=1+2=3$",
+      "$y[2]=1+2+3=6$",
+      "$y[2]$ 를 구하려면 $x[0]$, $x[1]$ 을 기억하고 있어야 해요."
+     ],
+     "answer": "출력 1, 3, 6. 지난 입력이 쌓이니까 기억이 있어요."
+    },
+    {
+     "kind": "prof",
+     "when": "2주차 목요일 수업",
+     "lines": [
+      "y[n] 의 오른쪽에 x[n] 만 나오면 메모리리스, 과거가 나오면 메모리가 있는 거라고 했어요.",
+      "식이 굉장히 복잡해 보여도 현재 값만으로 정해지면 메모리가 없다고 했어요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "warn",
+     "head": "슬라이드 문장 주의",
+     "items": [
+      "정의 문장에 'dependent on the output at only that same time' 이라고 적혀 있어요.",
+      "뜻으로는 output(출력)이 아니라 **input(입력)** 이에요. 같은 시각의 입력에만 의존하면 무기억이에요.",
+      "교재도 입력으로 정의해요. 답안에는 '같은 시각의 입력' 이라고 쓰세요."
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "다음 중 **무기억 시스템(Memoryless System)**은?",
+     "choices": [
+      "$y[n]=x[n]+x[n-1]$",
+      "$y(t)=5x(t)^3$",
+      "$y[n]=\\sum_{k=-\\infty}^{n}x[k]$"
+     ],
+     "a": 1,
+     "why": "$5x(t)^3$ 은 지금 시각의 x 만 써요. 나머지는 지난 입력을 써요."
+    },
+    {
+     "kind": "english",
+     "head": "답안 문장",
+     "en": "시스템의 출력이 각 시각에서 그 시각의 입력에만 의존하면 무기억 시스템이고, 다른 시각(과거)의 입력이 필요하면 기억이 있는 시스템이다.",
+     "ko": "지금 입력만 → 무기억, 지난 입력도 → 기억 있음.",
+     "tip": "오른쪽에 x[n] 만 있나 보기"
+    }
+   ]
+  },
+  {
+   "p": 65,
+   "title": "기억이 뜻하는 것, 그리고 RNN",
+   "terms": [
+    "Input Signal",
+    "Difference Equation",
+    "Feedback Interconnection",
+    "Memory",
+    "Memoryless System"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "**기억성(Memory)**을 한 번 더 봐요.",
+      "기억이란 지금이 아닌 다른 시각의 입력 정보를 시스템 안에 잡아 두는 장치예요.",
+      "AI 에서도 같은 생각이 나와요. 앞 내용을 기억하는 신경망이 있어요."
+     ]
+    },
+    {
+     "kind": "analogy",
+     "head": "통장 잔고 다시",
+     "scene": "이번 달 잔고는 지난달 잔고에 이번 입금을 더한 값이에요.",
+     "map": [
+      [
+       "지난달 잔고 y[n-1]",
+       "시스템이 기억하는 과거 출력"
+      ],
+      [
+       "이번 달 입금 x[n]",
+       "지금 **입력 신호(Input Signal)**"
+      ]
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "compare",
+     "head": "두 신경망",
+     "cols": [
+      "",
+      "순환 신경망(RNN)",
+      "순전파 신경망(Feed-Forward)"
+     ],
+     "rows": [
+      [
+       "그림",
+       "동그라미에 자기 자신으로 돌아오는 화살표",
+       "왼쪽에서 오른쪽으로만"
+      ],
+      [
+       "기억",
+       "있음(앞 결과가 다시 들어옴)",
+       "없음"
+      ],
+      [
+       "닮은 시스템",
+       "**되먹임 연결(Feedback Interconnection)**, 기억 있는 시스템",
+       "**무기억 시스템(Memoryless System)**"
+      ]
+     ]
+    },
+    {
+     "kind": "formula",
+     "head": "기억 있는 시스템 예",
+     "tex": "y[n]=y[n-1]+2x[n-1]+x[n]",
+     "parts": [
+      {
+       "sym": "y[n-1]",
+       "say": "한 칸 전 출력(기억)"
+      },
+      {
+       "sym": "x[n-1]",
+       "say": "한 칸 전 입력(기억)"
+      },
+      {
+       "sym": "x[n]",
+       "say": "지금 입력"
+      }
+     ],
+     "whole": "지난 출력과 지난 입력을 써서 기억이 있어요. 이런 식을 **차분방정식(Difference Equation)**이라고 해요."
+    },
+    {
+     "kind": "check",
+     "q": "RNN 그림에서 동그라미로 되돌아오는 작은 화살표는 무엇을 뜻하나요?",
+     "choices": [
+      "기억(앞 결과를 다시 씀)",
+      "더하기",
+      "잡음"
+     ],
+     "a": 0,
+     "why": "자기 자신으로 돌아오는 길이 기억 역할을 해요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.139,
+       "y": 0.273,
+       "w": 0.789,
+       "h": 0.108,
+       "say": "기억이란 현재가 아닌 시각의 입력 정보를 잡아 두는 장치라는 정의예요."
+      },
+      {
+       "x": 0.064,
+       "y": 0.425,
+       "w": 0.171,
+       "h": 0.425,
+       "say": "순환 신경망(Recurrent Neural Network). 동그라미 위 화살표가 자기에게 돌아와요."
+      },
+      {
+       "x": 0.261,
+       "y": 0.508,
+       "w": 0.168,
+       "h": 0.343,
+       "say": "순전파 신경망(Feed-Forward). 돌아오는 길이 없어요."
+      },
+      {
+       "x": 0.496,
+       "y": 0.571,
+       "w": 0.4,
+       "h": 0.057,
+       "say": "기억 있는 시스템의 식이에요."
+      }
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "$y[n]=y[n-1]+2x[n-1]+x[n]$ 손계산 (입력은 $n=0$ 에만 1)",
+     "steps": [
+      "$n=0$: $y[0]=0+2\\times0+1=1$",
+      "$n=1$: $y[1]=y[0]+2x[0]+x[1]=1+2+0=3$",
+      "$n=2$: $y[2]=3+0+0=3$",
+      "입력은 끝났는데 출력은 3을 계속 기억해요."
+     ],
+     "answer": "출력 1, 3, 3, 3. 과거를 기억하는 시스템이에요."
+    },
+    {
+     "kind": "prof",
+     "when": "2주차 목요일 수업",
+     "lines": [
+      "리커런트(순환) 신경망은 메모리가 필요하고 피드포워드는 필요 없다고 했어요.",
+      "어려운 건 없다고, 과거 입력이 필요하냐 아니냐로 쉽게 판단한다고 했어요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "$y[n]=0.9\\,y[n-1]+x[n]$ 은 기억이 있나요?",
+     "choices": [
+      "있다",
+      "없다"
+     ],
+     "a": 0,
+     "why": "지난 출력 y[n-1] 을 써서 기억이 있어요. 이 모양은 **되먹임 연결(Feedback Interconnection)**이기도 해요."
+    }
+   ]
+  },
+  {
+   "p": 66,
+   "title": "가역성과 역시스템",
+   "terms": [
+    "System",
+    "Invertibility",
+    "Inverse System"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "둘째 성질은 **가역성(Invertibility)**이에요.",
+      "출력만 보고 원래 입력을 되찾을 수 있으면 가역이에요.",
+      "되찾아 주는 상자를 **역시스템(Inverse System)**이라고 불러요."
+     ]
+    },
+    {
+     "kind": "analogy",
+     "head": "되돌리기 버튼",
+     "scene": "글을 고친 뒤 Ctrl+Z 를 누르면 고치기 전으로 돌아가요.",
+     "map": [
+      [
+       "글 고치기",
+       "**시스템(System)** T"
+      ],
+      [
+       "Ctrl+Z",
+       "**역시스템(Inverse System)**"
+      ],
+      [
+       "원래 글로 돌아옴",
+       "z(t) = x(t)"
+      ]
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "points",
+     "head": "정의 두 줄",
+     "items": [
+      "가역(invertible): 서로 다른 입력은 서로 다른 출력을 만든다.",
+      "가역이면, 원래 시스템 뒤에 직렬로 이어서 처음 입력을 그대로 돌려주는 **역시스템(Inverse System)**이 있다.",
+      "행렬의 역행렬과 비슷한 생각이라고 적혀 있어요."
+     ]
+    },
+    {
+     "kind": "formula",
+     "head": "역시스템 식 읽기",
+     "tex": "z(t)=\\mathbf{T}^{-1}y(t)=\\mathbf{T}^{-1}\\mathbf{T}x(t)=x(t)",
+     "parts": [
+      {
+       "sym": "\\mathbf{T}",
+       "say": "원래 **시스템(System)**"
+      },
+      {
+       "sym": "\\mathbf{T}^{-1}",
+       "say": "티 인버스: 역시스템"
+      },
+      {
+       "sym": "y(t)=\\mathbf{T}x(t)",
+       "say": "원래 시스템의 출력"
+      },
+      {
+       "sym": "z(t)=x(t)",
+       "say": "최종 출력이 처음 입력과 같다"
+      }
+     ],
+     "whole": "T 를 지나고 T 인버스를 지나면 처음 입력으로 돌아와요."
+    },
+    {
+     "kind": "check",
+     "q": "**가역성(Invertibility)**의 조건은?",
+     "choices": [
+      "모든 입력이 같은 출력을 낸다",
+      "서로 다른 입력은 서로 다른 출력을 낸다",
+      "출력이 항상 0이다"
+     ],
+     "a": 1,
+     "why": "출력이 겹치지 않아야 거꾸로 따라갈 수 있어요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.129,
+       "y": 0.273,
+       "w": 0.764,
+       "h": 0.108,
+       "say": "가역의 정의: 다른 입력은 다른 출력으로(distinct inputs lead to distinct outputs)."
+      },
+      {
+       "x": 0.129,
+       "y": 0.404,
+       "w": 0.764,
+       "h": 0.104,
+       "say": "가역이면 **역시스템(Inverse System)**이 있어서 직렬로 이으면 처음 입력이 나와요."
+      },
+      {
+       "x": 0.132,
+       "y": 0.584,
+       "w": 0.204,
+       "h": 0.254,
+       "say": "식으로: T 인버스에 T 를 곱하면 원래 x(t)."
+      },
+      {
+       "x": 0.414,
+       "y": 0.635,
+       "w": 0.468,
+       "h": 0.165,
+       "say": "그림으로: x(t) → System T → y(t) → System T 인버스 → z(t)=x(t)."
+      }
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "2배 상자와 역시스템",
+     "svg": "<svg viewBox=\"0 0 480 270\" xmlns=\"http://www.w3.org/2000/svg\"><text x=\"36\" y=\"106\" font-size=\"16\" text-anchor=\"middle\" class=\"tb\">x = 3</text><line x1=\"66\" y1=\"100\" x2=\"91\" y2=\"100\" class=\"e2\"/><polygon points=\"100,100 91,105 91,95\" class=\"arrow\"/><rect x=\"102\" y=\"76\" width=\"90\" height=\"48\" rx=\"2\" class=\"box\"/><text x=\"147\" y=\"106\" font-size=\"17\" text-anchor=\"middle\" class=\"tb\">×2</text><line x1=\"192\" y1=\"100\" x2=\"227\" y2=\"100\" class=\"e2\"/><polygon points=\"236,100 227,105 227,95\" class=\"arrow\"/><text x=\"262\" y=\"106\" font-size=\"16\" text-anchor=\"middle\" class=\"tb\">y = 6</text><line x1=\"290\" y1=\"100\" x2=\"307\" y2=\"100\" class=\"e2 b1\"/><polygon points=\"316,100 307,105 307,95\" class=\"arrow b1\"/><rect x=\"318\" y=\"76\" width=\"90\" height=\"48\" rx=\"2\" class=\"box2 b1\"/><text x=\"363\" y=\"106\" font-size=\"17\" text-anchor=\"middle\" class=\"tb b1\">×0.5</text><line x1=\"408\" y1=\"100\" x2=\"431\" y2=\"100\" class=\"e2 b1\"/><polygon points=\"440,100 431,105 431,95\" class=\"arrow b1\"/><text x=\"456\" y=\"106\" font-size=\"17\" text-anchor=\"middle\" class=\"tb b1\">3</text><text x=\"147\" y=\"150\" font-size=\"14\" text-anchor=\"middle\" class=\"tm\">시스템 T</text><text x=\"363\" y=\"150\" font-size=\"14\" text-anchor=\"middle\" class=\"tm b1\">역시스템</text><text x=\"240\" y=\"214\" font-size=\"16\" text-anchor=\"middle\" class=\"t b2\">처음 넣은 값 3이 그대로 돌아와요</text></svg>",
+     "caption": "2배 한 것을 0.5배 하면 처음 값으로 돌아와요.",
+     "builds": 2
+    },
+    {
+     "kind": "prof",
+     "when": "2주차 목요일 수업",
+     "lines": [
+      "역시스템이 되려면 1대1 대응이 돼야 한다고 했어요.",
+      "입력과 출력이 1대1 이어야 다시 돌려서 원래 입력을 복원할 수 있다는 뜻이에요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "english",
+     "head": "답안 문장",
+     "en": "서로 다른 입력이 항상 서로 다른 출력을 만들면 그 시스템은 가역이며, 원래 시스템 뒤에 직렬로 연결했을 때 처음 입력을 그대로 내놓는 역시스템이 존재한다.",
+     "ko": "1대1 이면 가역, 역시스템을 직렬로 붙이면 z = x.",
+     "tip": "다른 입력 → 다른 출력"
+    }
+   ]
+  },
+  {
+   "p": 67,
+   "title": "가역인 예와 가역이 아닌 예",
+   "terms": [
+    "Invertibility",
+    "Linearity"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "2배 하는 상자는 0.5배 하면 되돌릴 수 있어요.",
+      "제곱하는 상자는 되돌릴 수 없어요. 부호를 잃어버리거든요.",
+      "그래서 앞은 **가역성(Invertibility)**이 있고, 뒤는 없어요."
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "제곱은 부호를 지워요",
+     "svg": "<svg viewBox=\"0 0 480 270\" xmlns=\"http://www.w3.org/2000/svg\"><line x1=\"84\" y1=\"240\" x2=\"398\" y2=\"240\" class=\"e\"/><line x1=\"240\" y1=\"244\" x2=\"240\" y2=\"24\" class=\"e\"/><text x=\"402\" y=\"245\" font-size=\"14\" text-anchor=\"start\" class=\"tm\">x</text><polyline points=\"98.7,36.7 103.4,50 108.1,62.9 112.8,75.3 117.5,87.3 122.2,98.8 126.9,109.9 131.6,120.5 136.3,130.7 141.1,140.4 145.8,149.6 150.5,158.4 155.2,166.8 159.9,174.7 164.6,182.2 169.3,189.2 174,195.7 178.8,201.8 183.5,207.5 188.2,212.7 192.9,217.4 197.6,221.7 202.3,225.5 207,228.9 211.7,231.9 216.4,234.4 221.2,236.4 225.9,238 230.6,239.1 235.3,239.8 240,240 244.7,239.8 249.4,239.1 254.1,238 258.8,236.4 263.6,234.4 268.3,231.9 273,228.9 277.7,225.5 282.4,221.7 287.1,217.4 291.8,212.7 296.5,207.5 301.2,201.8 306,195.7 310.7,189.2 315.4,182.2 320.1,174.7 324.8,166.8 329.5,158.4 334.2,149.6 338.9,140.4 343.7,130.7 348.4,120.5 353.1,109.9 357.8,98.8 362.5,87.3 367.2,75.3 371.9,62.9 376.6,50 381.3,36.7\" fill=\"none\" class=\"e2\"/><line x1=\"124.6\" y1=\"104.5\" x2=\"355.4\" y2=\"104.5\" class=\"e b1\"/><line x1=\"124.6\" y1=\"240\" x2=\"124.6\" y2=\"104.5\" class=\"e b1\"/><line x1=\"355.4\" y1=\"240\" x2=\"355.4\" y2=\"104.5\" class=\"e b1\"/><circle cx=\"124.6\" cy=\"104.5\" r=\"6\" class=\"n4 b1\"/><circle cx=\"355.4\" cy=\"104.5\" r=\"6\" class=\"n4 b1\"/><line x1=\"124.6\" y1=\"237\" x2=\"124.6\" y2=\"243\" class=\"e b1\"/><text x=\"124.6\" y=\"258\" font-size=\"14\" text-anchor=\"middle\" class=\"tm b1\">-2</text><line x1=\"355.4\" y1=\"237\" x2=\"355.4\" y2=\"243\" class=\"e b1\"/><text x=\"355.4\" y=\"258\" font-size=\"14\" text-anchor=\"middle\" class=\"tm b1\">2</text><text x=\"248\" y=\"94.5\" font-size=\"15\" text-anchor=\"start\" class=\"tb b1\">출력 4</text><text x=\"240\" y=\"22\" font-size=\"15\" text-anchor=\"middle\" class=\"tb\">y = x 제곱</text><text x=\"420\" y=\"150\" font-size=\"14\" text-anchor=\"middle\" class=\"tm b2\">4만 보고는</text><text x=\"420\" y=\"170\" font-size=\"14\" text-anchor=\"middle\" class=\"tm b2\">2인지 -2인지</text><text x=\"420\" y=\"190\" font-size=\"14\" text-anchor=\"middle\" class=\"tm b2\">몰라요</text></svg>",
+     "caption": "2를 넣어도, -2를 넣어도 출력은 4예요.",
+     "builds": 2
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "compare",
+     "head": "세 시스템",
+     "cols": [
+      "시스템",
+      "되돌릴 수 있나",
+      "이유"
+     ],
+     "rows": [
+      [
+       "$y(t)=2x(t)$",
+       "예",
+       "$w(t)=0.5\\,y(t)$ 로 원래 x 복원"
+      ],
+      [
+       "$y(t)=x^2(t)$",
+       "아니요",
+       "출력만 보고 입력의 부호를 알 수 없음"
+      ],
+      [
+       "$y[n]=0$",
+       "아니요",
+       "어떤 입력이든 출력이 0이라 구별 불가"
+      ]
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "**가역성(Invertibility)**이 쓰이는 곳",
+     "items": [
+      "암호화와 복호화: 잠근 것을 정확히 되풀어야 해요.",
+      "시스템 제어: 원하는 기준 신호를 입력으로 삼아요."
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "$y(t)=x^2(t)$ 가 가역이 아닌 이유는?",
+     "choices": [
+      "출력이 너무 커서",
+      "입력의 부호를 알 수 없어서",
+      "미분이 있어서"
+     ],
+     "a": 1,
+     "why": "3과 -3 모두 9가 돼서 9만 보고는 둘 중 무엇인지 몰라요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.132,
+       "y": 0.273,
+       "w": 0.425,
+       "h": 0.171,
+       "say": "가역 예: $y(t)=2x(t)$. $w(t)=0.5y(t)$ 가 x(t) 를 되찾아요."
+      },
+      {
+       "x": 0.132,
+       "y": 0.47,
+       "w": 0.625,
+       "h": 0.241,
+       "say": "가역이 아닌 예: $x^2(t)$ 와 $y[n]=0$."
+      },
+      {
+       "x": 0.132,
+       "y": 0.736,
+       "w": 0.404,
+       "h": 0.171,
+       "say": "가역성이 설계 원리로 쓰이는 곳: 암호화, 제어."
+      },
+      {
+       "x": 0.596,
+       "y": 0.298,
+       "w": 0.336,
+       "h": 0.235,
+       "say": "왼쪽 직선은 한 출력에 한 입력, 오른쪽 포물선은 한 출력(점선)에 입력 둘."
+      }
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "숫자로 확인",
+     "steps": [
+      "$y=2x$: $x=3$ 이면 $y=6$. 0.5배 하면 3. 되돌아와요.",
+      "$y=x^2$: $x=2$ 이면 4, $x=-2$ 여도 4.",
+      "출력 4만 받은 역시스템은 2와 -2 중 무엇을 내야 할지 몰라요.",
+      "$y[n]=0$: 무엇을 넣어도 0이니 더 몰라요."
+     ],
+     "answer": "1대1 이 깨지면 가역이 아니에요."
+    },
+    {
+     "kind": "prof",
+     "when": "2주차 목요일 수업",
+     "lines": [
+      "y(t)=2x(t) 에 1/2 을 곱하는 시스템을 이으면 x 로 돌아오니 가역성이 있다고 했어요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "다음 중 가역인 시스템은?",
+     "choices": [
+      "$y(t)=x^2(t)$",
+      "$y[n]=0$",
+      "$y(t)=3x(t)+2$"
+     ],
+     "a": 2,
+     "why": "$x=(y-2)/3$ 으로 되돌릴 수 있어요. 3x+2 는 선형은 아니지만 가역이에요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "가역이 아닌 것을 보이려면 '같은 출력을 내는 서로 다른 두 입력' 하나만 찾으면 돼요(예: 2와 -2).",
+      "**가역성(Invertibility)**과 **선형성(Linearity)**은 다른 성질이에요. 3x+2 는 가역이지만 선형이 아니에요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 68,
+   "title": "역시스템 그림 세 가지 (Figure 1.45)",
+   "terms": [
+    "Inverse System",
+    "Accumulator"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "이 쪽은 **역시스템(Inverse System)**을 그림으로 다시 보여 줘요.",
+      "시스템 뒤에 역시스템을 이으면 처음 신호가 그대로 나와요.",
+      "특히 **누산기(Accumulator)**의 역시스템이 무엇인지가 핵심이에요."
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "compare",
+     "head": "Figure 1.45 세 줄",
+     "cols": [
+      "",
+      "시스템",
+      "역시스템"
+     ],
+     "rows": [
+      [
+       "(a)",
+       "일반 시스템",
+       "일반 역시스템, $w[n]=x[n]$"
+      ],
+      [
+       "(b)",
+       "$y(t)=2x(t)$",
+       "$w(t)=\\frac{1}{2}y(t)$"
+      ],
+      [
+       "(c)",
+       "**누산기(Accumulator)**",
+       "$w[n]=y[n]-y[n-1]$"
+      ]
+     ]
+    },
+    {
+     "kind": "formula",
+     "head": "**누산기(Accumulator)**의 역시스템",
+     "tex": "w[n]=y[n]-y[n-1]",
+     "parts": [
+      {
+       "sym": "y[n]",
+       "say": "지금까지의 합"
+      },
+      {
+       "sym": "y[n-1]",
+       "say": "한 칸 전까지의 합"
+      },
+      {
+       "sym": "w[n]",
+       "say": "차이 = 지금 칸의 입력"
+      }
+     ],
+     "whole": "지금까지 합에서 어제까지 합을 빼면 오늘 들어온 값만 남아요. 이것을 1차 차분이라고 해요."
+    },
+    {
+     "kind": "check",
+     "q": "**누산기(Accumulator)**의 역시스템은?",
+     "choices": [
+      "$w[n]=y[n]+y[n-1]$",
+      "$w[n]=y[n]-y[n-1]$",
+      "$w[n]=2y[n]$"
+     ],
+     "a": 1,
+     "why": "누적 합에서 한 칸 전 누적 합을 빼면 원래 입력이에요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.164,
+       "y": 0.228,
+       "w": 0.639,
+       "h": 0.114,
+       "say": "위쪽 큰 그림: System T 뒤에 **역시스템(Inverse System)** T 인버스, 끝은 z(t)=x(t)."
+      },
+      {
+       "x": 0.3,
+       "y": 0.463,
+       "w": 0.261,
+       "h": 0.102,
+       "say": "(a) 일반적인 모양."
+      },
+      {
+       "x": 0.304,
+       "y": 0.596,
+       "w": 0.254,
+       "h": 0.089,
+       "say": "(b) 2배와 1/2배."
+      },
+      {
+       "x": 0.3,
+       "y": 0.73,
+       "w": 0.339,
+       "h": 0.095,
+       "say": "(c) **누산기(Accumulator)**와 그 역시스템(1차 차분)."
+      }
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "(c) 를 숫자로 확인 (입력 1, 2, 3)",
+     "steps": [
+      "**누산기(Accumulator)** 출력: $y[0]=1$, $y[1]=3$, $y[2]=6$",
+      "$w[0]=y[0]-y[-1]=1-0=1$",
+      "$w[1]=3-1=2$",
+      "$w[2]=6-3=3$"
+     ],
+     "answer": "w 가 1, 2, $3$ 으로 처음 입력과 똑같아요."
+    },
+    {
+     "kind": "analogy",
+     "head": "통장으로 보면",
+     "scene": "잔고 기록만 있어도 이번 달 잔고에서 지난달 잔고를 빼면 이번 달 입금액을 알 수 있어요.",
+     "map": [
+      [
+       "잔고",
+       "누산기 출력 y[n]"
+      ],
+      [
+       "이번 달 - 지난달",
+       "역시스템 w[n]"
+      ],
+      [
+       "이번 달 입금",
+       "원래 입력 x[n]"
+      ]
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "exam",
+     "src": "교재 Figure 1.45 (p.68)",
+     "q": "Find the inverse of the accumulator y[n] = sum_{k=-inf}^{n} x[k].",
+     "qko": "누산기의 역시스템을 구하고 숫자로 확인하세요.",
+     "solve": [
+      "누산기는 $y[n]=y[n-1]+x[n]$ 과 같아요(어제까지 합 + 오늘).",
+      "그래서 $x[n]=y[n]-y[n-1]$ 이에요.",
+      "입력 1, 2, $3$ → y 는 1, 3, $6$ → 차분하면 1, 2, 3."
+     ],
+     "answer": "$w[n]=y[n]-y[n-1]$ (1차 차분)"
+    }
+   ]
+  },
+  {
+   "p": 69,
+   "title": "인과성: 미래를 미리 보지 않는 시스템",
+   "terms": [
+    "Memory",
+    "Causality"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "셋째 성질은 **인과성(Causality)**이에요.",
+      "지금의 출력이 지금과 과거의 입력만으로 정해지면 인과 시스템이에요.",
+      "미래 입력을 미리 봐야 하면 비인과예요."
+     ]
+    },
+    {
+     "kind": "analogy",
+     "head": "내일 주가를 모르는 사람",
+     "scene": "오늘 투자를 정할 때 우리는 어제와 오늘 주가만 알고 내일 주가는 몰라요.",
+     "map": [
+      [
+       "어제, 오늘 주가",
+       "과거와 현재 입력"
+      ],
+      [
+       "내일 주가",
+       "미래 입력"
+      ],
+      [
+       "내일을 모르고 결정하는 사람",
+       "인과 시스템"
+      ]
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "points",
+     "head": "정의 풀어 읽기",
+     "items": [
+      "causal(인과): 어느 시각의 출력이든 현재와 과거 값에만 의존해요.",
+      "non-anticipative(미리 보지 않는): 출력이 입력의 미래 값을 미리 알지 않아요.",
+      "그림의 $w(t)=x(t+3)$ 은 3초 뒤 입력이 지금 필요해서 비인과예요."
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "과거, 지금, 미래",
+     "svg": "<svg viewBox=\"0 0 480 270\" xmlns=\"http://www.w3.org/2000/svg\"><line x1=\"30\" y1=\"130\" x2=\"446\" y2=\"130\" class=\"e\"/><polygon points=\"455,130 446,135 446,125\" class=\"arrow\"/><text x=\"455\" y=\"156\" font-size=\"14\" text-anchor=\"end\" class=\"tm\">시간</text><circle cx=\"240\" cy=\"130\" r=\"9\" class=\"n2\"/><text x=\"240\" y=\"104\" font-size=\"15\" text-anchor=\"middle\" class=\"tb\">지금</text><text x=\"120\" y=\"170\" font-size=\"15\" text-anchor=\"middle\" class=\"tm\">과거</text><text x=\"360\" y=\"170\" font-size=\"15\" text-anchor=\"middle\" class=\"tm\">미래</text><rect x=\"40\" y=\"116\" width=\"190\" height=\"28\" rx=\"2\" class=\"hl b1\"/><text x=\"135\" y=\"212\" font-size=\"15\" text-anchor=\"middle\" class=\"t b1\">과거와 지금만 보면 인과</text><circle cx=\"330\" cy=\"130\" r=\"9\" class=\"n4 b2\"/><line x1=\"250\" y1=\"60\" x2=\"315\" y2=\"112\" class=\"e2 b2\"/><polygon points=\"322,118 312,116 318,108\" class=\"arrow b2\"/><text x=\"250\" y=\"50\" font-size=\"15\" text-anchor=\"middle\" class=\"tb b2\">w(t)=x(t+3): 3초 뒤를 봐야 해요</text><text x=\"360\" y=\"245\" font-size=\"15\" text-anchor=\"middle\" class=\"t b2\">미래를 보면 비인과</text></svg>",
+     "caption": "과거와 지금만 보면 인과, 미래를 보면 비인과",
+     "builds": 2
+    },
+    {
+     "kind": "compare",
+     "head": "**기억성(Memory)**과 **인과성(Causality)** 구별",
+     "cols": [
+      "성질",
+      "묻는 것",
+      "예"
+     ],
+     "rows": [
+      [
+       "**기억성(Memory)**",
+       "지금 말고 다른 시각을 보나?",
+       "$x[n-1]$ 을 보면 기억 있음"
+      ],
+      [
+       "**인과성(Causality)**",
+       "미래를 보나?",
+       "$x[n+1]$ 을 보면 비인과"
+      ]
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "$w(t)=x(t+3)$ 은 인과인가요?",
+     "choices": [
+      "인과",
+      "비인과"
+     ],
+     "a": 1,
+     "why": "$t=0$ 의 출력에 $x(3)$, 즉 3초 뒤 입력이 필요해요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.104,
+       "y": 0.254,
+       "w": 0.7,
+       "h": 0.095,
+       "say": "인과의 정의: 출력이 현재와 과거 값에만 의존해요."
+      },
+      {
+       "x": 0.104,
+       "y": 0.368,
+       "w": 0.7,
+       "h": 0.102,
+       "say": "미리 보지 않는(non-anticipative) 시스템이라고도 불러요."
+      },
+      {
+       "x": 0.239,
+       "y": 0.489,
+       "w": 0.582,
+       "h": 0.178,
+       "say": "위: 입력 x(t)."
+      },
+      {
+       "x": 0.239,
+       "y": 0.673,
+       "w": 0.582,
+       "h": 0.203,
+       "say": "아래: $w(t)=x(t+3)$. 빨간 글씨 '3초 뒤 미래 입력이 필요해요'."
+      }
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "$w(t)=x(t+3)$ 을 한 시각씩 확인",
+     "steps": [
+      "$t=0$ 일 때 $w(0)=x(3)$: 3초 뒤 값이 필요해요.",
+      "$t=5$ 일 때 $w(5)=x(8)$: 역시 3초 뒤.",
+      "어느 시각이든 미래를 봐야 하니 비인과예요.",
+      "반대로 $x(t-3)$ 이면 3초 전 값이라 인과예요."
+     ],
+     "answer": "괄호 안이 $t$ 보다 크면 미래를 보는 거예요."
+    },
+    {
+     "kind": "prof",
+     "when": "2주차 목요일 수업",
+     "lines": [
+      "인과성은 내 시스템이 미래는 안 보고 현재 혹은 과거에만 의존하는 것이라고 했어요.",
+      "대부분의 시스템은 인과성이 있다고 했어요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "warn",
+     "head": "슬라이드 문장 주의",
+     "items": [
+      "정의 문장에 'values of the output at only the present and past' 라고 적혀 있어요.",
+      "뜻으로는 **입력(input)** 의 현재와 과거 값이에요. 바로 아래 문장도 '입력의 미래 값을 미리 알지 않는다' 고 해요.",
+      "답안에는 '출력이 현재와 과거의 입력에만 의존' 이라고 쓰세요."
+     ]
+    },
+    {
+     "kind": "english",
+     "head": "답안 문장",
+     "en": "인과 시스템은 어느 시각의 출력이 그 시각과 그 이전의 입력에만 의존하고 미래의 입력에는 의존하지 않는 시스템이다.",
+     "ko": "현재 + 과거 입력만 → 인과. 미래 입력 필요 → 비인과.",
+     "tip": "괄호 안 시각이 t(또는 n)보다 큰 적이 있나 보기"
+    }
+   ]
+  },
+  {
+   "p": 70,
+   "title": "누산기는 인과, 중심 이동 평균은 비인과",
+   "terms": [
+    "Accumulator",
+    "Moving Average"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "**누산기(Accumulator)**는 처음부터 지금까지 더하니 미래를 보지 않아요. 인과예요.",
+      "**이동 평균(Moving Average)**은 내 양옆을 같이 보고 평균 내요.",
+      "오른쪽 옆은 미래 칸이라서 비인과예요."
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "창문 3칸 평균",
+     "svg": "<svg viewBox=\"0 0 480 270\" xmlns=\"http://www.w3.org/2000/svg\"><line x1=\"34\" y1=\"200\" x2=\"448\" y2=\"200\" class=\"e\"/><line x1=\"62.2\" y1=\"204\" x2=\"62.2\" y2=\"34\" class=\"e\"/><text x=\"452\" y=\"205\" font-size=\"14\" text-anchor=\"start\" class=\"tm\">n</text><line x1=\"62.2\" y1=\"200\" x2=\"62.2\" y2=\"163.1\" class=\"e2\"/><circle cx=\"62.2\" cy=\"163.1\" r=\"4\" class=\"n\"/><line x1=\"106.7\" y1=\"200\" x2=\"106.7\" y2=\"126.2\" class=\"e2\"/><circle cx=\"106.7\" cy=\"126.2\" r=\"4\" class=\"n\"/><line x1=\"151.1\" y1=\"200\" x2=\"151.1\" y2=\"89.2\" class=\"e2\"/><circle cx=\"151.1\" cy=\"89.2\" r=\"4\" class=\"n\"/><line x1=\"195.6\" y1=\"200\" x2=\"195.6\" y2=\"52.3\" class=\"e2\"/><circle cx=\"195.6\" cy=\"52.3\" r=\"4\" class=\"n\"/><line x1=\"240\" y1=\"200\" x2=\"240\" y2=\"113.8\" class=\"e2\"/><circle cx=\"240\" cy=\"113.8\" r=\"4\" class=\"n\"/><line x1=\"284.4\" y1=\"200\" x2=\"284.4\" y2=\"138.5\" class=\"e2\"/><circle cx=\"284.4\" cy=\"138.5\" r=\"4\" class=\"n\"/><line x1=\"328.9\" y1=\"200\" x2=\"328.9\" y2=\"101.5\" class=\"e2\"/><circle cx=\"328.9\" cy=\"101.5\" r=\"4\" class=\"n\"/><line x1=\"373.3\" y1=\"200\" x2=\"373.3\" y2=\"76.9\" class=\"e2\"/><circle cx=\"373.3\" cy=\"76.9\" r=\"4\" class=\"n\"/><line x1=\"417.8\" y1=\"200\" x2=\"417.8\" y2=\"126.2\" class=\"e2\"/><circle cx=\"417.8\" cy=\"126.2\" r=\"4\" class=\"n\"/><rect x=\"173.3\" y=\"30\" width=\"133.3\" height=\"176\" rx=\"2\" class=\"hl b1\"/><text x=\"240\" y=\"226\" font-size=\"15\" text-anchor=\"middle\" class=\"tb b1\">n</text><text x=\"195.6\" y=\"226\" font-size=\"14\" text-anchor=\"middle\" class=\"tm b1\">n-1</text><text x=\"284.4\" y=\"226\" font-size=\"14\" text-anchor=\"middle\" class=\"tm b1\">n+1</text><text x=\"240\" y=\"258\" font-size=\"15\" text-anchor=\"middle\" class=\"t b2\">창문 3칸의 평균: 오른쪽 n+1 은 미래 칸이에요</text><circle cx=\"284.4\" cy=\"138.5\" r=\"7\" class=\"n4 b2\"/></svg>",
+     "caption": "가운데 n 을 구하려면 오른쪽 n+1(미래)도 필요해요.",
+     "builds": 2
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "formula",
+     "head": "중심 **이동 평균(Moving Average)** 식 읽기",
+     "tex": "y[n]=\\frac{1}{2M+1}\\sum_{k=-M}^{M}x[n-k]",
+     "parts": [
+      {
+       "sym": "2M+1",
+       "say": "창문의 칸 수: 왼쪽 M칸 + 가운데 1칸 + 오른쪽 M칸"
+      },
+      {
+       "sym": "\\sum_{k=-M}^{M}",
+       "say": "k 를 -M 부터 M 까지 바꾸며 더해요"
+      },
+      {
+       "sym": "x[n-k]",
+       "say": "k=-M 이면 x[n+M] (미래), k=M 이면 x[n-M] (과거)"
+      },
+      {
+       "sym": "\\frac{1}{2M+1}",
+       "say": "칸 수로 나눠서 평균"
+      }
+     ],
+     "whole": "내 앞뒤 M칸씩, 모두 2M+1 칸의 평균이에요."
+    },
+    {
+     "kind": "compare",
+     "head": "두 시스템",
+     "cols": [
+      "시스템",
+      "보는 칸",
+      "인과?"
+     ],
+     "rows": [
+      [
+       "**누산기(Accumulator)**",
+       "처음부터 지금 n 까지",
+       "인과"
+      ],
+      [
+       "중심 **이동 평균(Moving Average)**",
+       "n-M 부터 n+M 까지",
+       "비인과(x[n+1] ... x[n+M] 필요)"
+      ]
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "$M=1$ 인 중심 이동 평균은 몇 칸의 평균인가요?",
+     "choices": [
+      "2칸",
+      "3칸",
+      "4칸"
+     ],
+     "a": 1,
+     "why": "$2M+1=3$, 즉 n-1, n, n+1 세 칸이에요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.061,
+       "y": 0.19,
+       "w": 0.625,
+       "h": 0.053,
+       "say": "**누산기(Accumulator)**: 인과(과거와 현재만)."
+      },
+      {
+       "x": 0.061,
+       "y": 0.251,
+       "w": 0.689,
+       "h": 0.06,
+       "say": "중심 **이동 평균(Moving Average)**: 비인과(x[n+1] 부터 x[n+M] 까지 필요)."
+      },
+      {
+       "x": 0.104,
+       "y": 0.355,
+       "w": 0.439,
+       "h": 0.102,
+       "say": "왼쪽은 누산기 식, 오른쪽은 이동 평균 식."
+      },
+      {
+       "x": 0.696,
+       "y": 0.412,
+       "w": 0.264,
+       "h": 0.146,
+       "say": "왼쪽 화살표는 과거(Past), 가운데 x[n] 이 현재(Present), 오른쪽이 미래(Future)."
+      },
+      {
+       "x": 0.061,
+       "y": 0.514,
+       "w": 0.643,
+       "h": 0.362,
+       "say": "파랑은 들쭉날쭉한 원래 데이터, 주황은 M=3 이동 평균. 부드러워졌어요."
+      }
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "$M=1$ 중심 이동 평균 손계산 (입력 3, 6, 9, $12$ 가 $n=0,1,2,3$)",
+     "steps": [
+      "$y[1]=\\frac{x[0]+x[1]+x[2]}{3}=\\frac{3+6+9}{3}=6$",
+      "$y[2]=\\frac{6+9+12}{3}=9$",
+      "$y[1]$ 을 구하는 순간 $x[2]$ 가 필요해요. $n=1$ 에서 보면 미래 값이에요.",
+      "실시간으로는 못 하고, 이미 다 녹화된 데이터에서는 할 수 있어요."
+     ],
+     "answer": "평균은 부드럽게 만들지만 미래 칸이 필요해서 비인과예요."
+    },
+    {
+     "kind": "steps",
+     "head": "슬라이드 그래프의 M=3",
+     "steps": [
+      "$2M+1=2\\times3+1=7$ 칸의 평균이에요.",
+      "내 앞 3칸, 나, 내 뒤 3칸을 더해 7로 나눠요.",
+      "칸이 많을수록 더 부드러워지고, 미래도 3칸이나 봐요."
+     ],
+     "answer": "M=3 이면 창문 7칸이에요."
+    },
+    {
+     "kind": "prof",
+     "when": "2주차 목요일 수업",
+     "lines": [
+      "이미 찍힌 영상을 부드럽게 만들 때는 내가 보는 점 양쪽 점을 보고 처리할 수 있다고 했어요.",
+      "무빙 에버리지처럼 양옆 윈도우를 보고 미래 n+1 값까지 끌어오면 넌코절(비인과)이라고 했어요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "$y[n]=\\frac{1}{3}(x[n]+x[n-1]+x[n-2])$ 는 인과인가요?",
+     "choices": [
+      "인과",
+      "비인과"
+     ],
+     "a": 0,
+     "why": "지금과 과거 두 칸만 봐요. 창문을 과거 쪽에만 두면 인과 이동 평균이 돼요."
+    },
+    {
+     "kind": "exam",
+     "src": "슬라이드 예제 정리 (p.70)",
+     "q": "Is the centered moving average causal? Is the accumulator causal?",
+     "qko": "중심 이동 평균과 누산기가 인과인지 판단하세요.",
+     "solve": [
+      "누산기: $y[n]$ 에 $x[k]$, $k\\le n$ 만 들어가요. 미래 없음 → 인과.",
+      "중심 이동 평균: $k=-M$ 일 때 $x[n+M]$ 이 들어가요.",
+      "$M\\ge1$ 이면 미래 입력이 필요 → 비인과."
+     ],
+     "answer": "누산기는 인과, 중심 이동 평균은 비인과"
+    }
+   ]
+  },
+  {
+   "p": 71,
+   "title": "안정성: BIBO 안정",
+   "terms": [
+    "Stability",
+    "Bounded-Input Bounded-Output"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "넷째 성질은 **안정성(Stability)**이에요.",
+      "적당한 크기의 입력을 넣었을 때 출력도 적당한 크기에 머물면 안정이에요.",
+      "조금 넣었는데 출력이 끝없이 커지면 불안정이에요."
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "그릇 속 공과 언덕 위 공",
+     "svg": "<svg viewBox=\"0 0 480 270\" xmlns=\"http://www.w3.org/2000/svg\"><text x=\"120\" y=\"30\" font-size=\"16\" text-anchor=\"middle\" class=\"tb\">안정</text><polyline points=\"200,90 199.7,97 198.8,103.9 197.3,110.7 195.2,117.4 192.5,123.8 189.3,130 185.5,135.9 181.3,141.4 176.6,146.6 171.4,151.3 165.9,155.5 160,159.3 153.8,162.5 147.4,165.2 140.7,167.3 133.9,168.8 127,169.7 120,170 113,169.7 106.1,168.8 99.3,167.3 92.6,165.2 86.2,162.5 80,159.3 74.1,155.5 68.6,151.3 63.4,146.6 58.7,141.4 54.5,135.9 50.7,130 47.5,123.8 44.8,117.4 42.7,110.7 41.2,103.9 40.3,97 40,90\" fill=\"none\" class=\"e\"/><circle cx=\"120\" cy=\"160\" r=\"10\" class=\"n2\"/><text x=\"120\" y=\"210\" font-size=\"14\" text-anchor=\"middle\" class=\"t\">톡 쳐도 바닥으로 돌아와요</text><text x=\"360\" y=\"30\" font-size=\"16\" text-anchor=\"middle\" class=\"tb b1\">불안정</text><polyline points=\"440,180 439.7,173 438.8,166.1 437.3,159.3 435.2,152.6 432.5,146.2 429.3,140 425.5,134.1 421.3,128.6 416.6,123.4 411.4,118.7 405.9,114.5 400,110.7 393.8,107.5 387.4,104.8 380.7,102.7 373.9,101.2 367,100.3 360,100 353,100.3 346.1,101.2 339.3,102.7 332.6,104.8 326.2,107.5 320,110.7 314.1,114.5 308.6,118.7 303.4,123.4 298.7,128.6 294.5,134.1 290.7,140 287.5,146.2 284.8,152.6 282.7,159.3 281.2,166.1 280.3,173 280,180\" fill=\"none\" class=\"e b1\"/><circle cx=\"360\" cy=\"90\" r=\"10\" class=\"n4 b1\"/><line x1=\"372\" y1=\"96\" x2=\"434\" y2=\"163\" class=\"e2 b2\"/><polygon points=\"440,170 430,167 438,160\" class=\"arrow b2\"/><text x=\"360\" y=\"222\" font-size=\"14\" text-anchor=\"middle\" class=\"t b1\">톡 치면 굴러떨어져요</text><text x=\"240\" y=\"258\" font-size=\"14\" text-anchor=\"middle\" class=\"tm b2\">입력(톡)이 작아도 출력이 끝없이 커지면 불안정</text></svg>",
+     "caption": "톡 쳐도 돌아오면 안정, 굴러떨어지면 불안정",
+     "builds": 2
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "points",
+     "head": "**BIBO 안정(Bounded-Input Bounded-Output)** 이름 풀기",
+     "items": [
+      "Bounded Input: 크기에 한계가 있는 입력(유계 입력)",
+      "Bounded Output: 크기에 한계가 있는 출력(유계 출력)",
+      "유계 입력이면 언제나 유계 출력이 나오는 시스템이 안정이에요."
+     ]
+    },
+    {
+     "kind": "formula",
+     "head": "안정의 식",
+     "tex": "\\forall x:\\ |x|<U\\ \\rightarrow\\ |y|<V",
+     "parts": [
+      {
+       "sym": "\\forall x",
+       "say": "포 올 엑스: 모든 입력 x 에 대해"
+      },
+      {
+       "sym": "|x|<U",
+       "say": "입력의 크기가 어떤 한계 U 보다 작으면"
+      },
+      {
+       "sym": "\\rightarrow",
+       "say": "그러면"
+      },
+      {
+       "sym": "|y|<V",
+       "say": "출력의 크기도 어떤 한계 V 보다 작다"
+      }
+     ],
+     "whole": "모든 유계 입력에 대해 출력도 유계면 BIBO 안정이에요."
+    },
+    {
+     "kind": "check",
+     "q": "**BIBO 안정(Bounded-Input Bounded-Output)**의 뜻은?",
+     "choices": [
+      "출력이 항상 0이다",
+      "유계 입력이면 출력도 유계다",
+      "입력이 없으면 출력도 없다"
+     ],
+     "a": 1,
+     "why": "Bounded-Input Bounded-Output: 한계 있는 입력이면 한계 있는 출력."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.104,
+       "y": 0.19,
+       "w": 0.454,
+       "h": 0.051,
+       "say": "**BIBO 안정(Bounded-Input Bounded-Output)**(Bounded Input-Bounded Output) Stability."
+      },
+      {
+       "x": 0.139,
+       "y": 0.26,
+       "w": 0.75,
+       "h": 0.102,
+       "say": "안정 시스템은 작은 입력에 대한 응답이 발산하지 않아요."
+      },
+      {
+       "x": 0.139,
+       "y": 0.387,
+       "w": 0.75,
+       "h": 0.108,
+       "say": "입력이 유계면 출력도 유계여야 안정이라는 문장이에요."
+      },
+      {
+       "x": 0.139,
+       "y": 0.514,
+       "w": 0.193,
+       "h": 0.06,
+       "say": "기호로 쓴 정의: 모든 x 에 대해 |x|<U 이면 |y|<V."
+      },
+      {
+       "x": 0.389,
+       "y": 0.476,
+       "w": 0.182,
+       "h": 0.431,
+       "say": "안정: 그릇 바닥의 공은 톡 쳐도 흔들리다 제자리로(시간은 아래로)."
+      },
+      {
+       "x": 0.614,
+       "y": 0.476,
+       "w": 0.2,
+       "h": 0.431,
+       "say": "불안정: 언덕 꼭대기 공은 톡 치면 무한히 멀어져요."
+      }
+     ]
+    },
+    {
+     "kind": "prof",
+     "when": "2주차 목요일 수업",
+     "lines": [
+      "그릇 안의 공은 톡 쳐도 위치가 그 안에서 바운드된다고 했어요.",
+      "언덕 위 공은 톡 치면 위치가 계속 떨어져 무한히 가니 언스테이블이라고 했어요.",
+      "안정성은 정의에 따라 여러 가지인데 이 수업은 BIBO 안정을 본다고 했어요."
+     ]
+    },
+    {
+     "kind": "bg",
+     "src": "기초 다지기 b-1 함수와 그래프 읽기",
+     "lines": [
+      "|x| 는 절댓값, 부호를 떼고 크기만 본 값이에요. $|-3|=3$.",
+      "'유계' 는 그래프가 위아래로 어떤 선을 넘지 않는다는 뜻이에요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "english",
+     "head": "답안 문장",
+     "en": "BIBO 안정 시스템은 크기가 유한한(유계인) 모든 입력에 대해 출력의 크기도 유한하게(유계로) 유지되는 시스템이다.",
+     "ko": "유계 입력 → 유계 출력.",
+     "tip": "B-I-B-O: 입력 한계 있으면 출력 한계 있음"
+    }
+   ]
+  },
+  {
+   "p": 72,
+   "title": "안정은 모든 입력, 불안정은 반례 하나",
+   "terms": [
+    "Feedback Interconnection",
+    "Stability"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "**안정성(Stability)**을 보이는 일과 불안정을 보이는 일은 무게가 달라요.",
+      "안정이라고 하려면 모든 입력에 대해 따져야 해요.",
+      "불안정이라고 하려면 출력이 폭주하는 입력 하나만 찾으면 돼요."
+     ]
+    },
+    {
+     "kind": "analogy",
+     "head": "복리 통장",
+     "scene": "매달 잔고에 1%가 붙는 통장은 입금을 조금만 해도 잔고가 끝없이 불어나요.",
+     "map": [
+      [
+       "매달 붙는 1% 이자",
+       "1.01 을 곱하는 되먹임"
+      ],
+      [
+       "끝없이 커지는 잔고",
+       "유계가 아닌 출력"
+      ],
+      [
+       "조금씩 하는 입금",
+       "유계 입력"
+      ]
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "formula",
+     "head": "통장 시스템",
+     "tex": "y[n]=x[n]+1.01\\,y[n-1]",
+     "parts": [
+      {
+       "sym": "y[n]",
+       "say": "이번 달 잔고"
+      },
+      {
+       "sym": "x[n]",
+       "say": "이번 달 입금"
+      },
+      {
+       "sym": "1.01\\,y[n-1]",
+       "say": "지난달 잔고에 1% 이자를 붙인 것"
+      }
+     ],
+     "whole": "1.01 을 곱하는 **되먹임 연결(Feedback Interconnection)** 때문에 출력이 끝없이 커져요. 불안정이에요."
+    },
+    {
+     "kind": "compare",
+     "head": "보이는 방법",
+     "cols": [
+      "보이고 싶은 것",
+      "해야 할 일"
+     ],
+     "rows": [
+      [
+       "안정",
+       "모든 유계 입력에 대해 출력이 유계임을 보이기"
+      ],
+      [
+       "불안정",
+       "출력이 무한히 커지는 유계 입력 하나(반례) 찾기"
+      ]
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "불안정을 보이려면 무엇이 필요한가요?",
+     "choices": [
+      "모든 입력으로 실험",
+      "반례 하나",
+      "입력이 없을 때의 출력"
+     ],
+     "a": 1,
+     "why": "출력이 폭주하는 유계 입력 하나면 충분해요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.175,
+       "y": 0.286,
+       "w": 0.611,
+       "h": 0.051,
+       "say": "안정을 보이려면 모든 입력 신호에 대해 해야 해요."
+      },
+      {
+       "x": 0.175,
+       "y": 0.372,
+       "w": 0.582,
+       "h": 0.053,
+       "say": "불안정을 보이려면 반례 하나만 찾으면 돼요."
+      },
+      {
+       "x": 0.175,
+       "y": 0.457,
+       "w": 0.696,
+       "h": 0.152,
+       "say": "은행 통장 이산시간 시스템 식이에요."
+      },
+      {
+       "x": 0.175,
+       "y": 0.635,
+       "w": 0.696,
+       "h": 0.057,
+       "say": "1.01 곱 때문에 한없이 커져요. 불안정해요."
+      }
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "매달 1씩 입금하면 (유계 입력: 늘 1)",
+     "steps": [
+      "$y[0]=1$",
+      "$y[1]=1+1.01\\times1=2.01$",
+      "$y[2]=1+1.01\\times2.01=3.0301$",
+      "입력은 늘 1인데 출력은 멈추지 않고 커져요."
+     ],
+     "answer": "유계 입력인데 출력은 한계 없이 커져요. 반례 하나로 불안정 확인."
+    },
+    {
+     "kind": "steps",
+     "head": "한 번만 1을 입금해도 (입력은 $n=0$ 에만 1)",
+     "steps": [
+      "$y[n]=1.01^n$ 이 돼요. 매달 1.01배.",
+      "$1.01^{100}\\approx2.705$",
+      "$1.01^{500}\\approx145$",
+      "$1.01^{1000}\\approx20959$"
+     ],
+     "answer": "천천히지만 끝없이 커지니 불안정이에요."
+    },
+    {
+     "kind": "prof",
+     "when": "2주차 목요일 수업",
+     "lines": [
+      "통장 예는 돈이 계속 늘어나서 인풋이 바운드되어도 아웃풋은 바운드되지 않는다고 했어요.",
+      "그래서 언스테이블한 시스템이라고 했어요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "$y[n]=x[n]+0.5\\,y[n-1]$ 에 늘 1을 넣으면 출력은?",
+     "choices": [
+      "끝없이 커진다",
+      "2에 가까워지며 유계",
+      "0이 된다"
+     ],
+     "a": 1,
+     "why": "1, 1.5, 1.75, ... 로 2에 다가가요. 곱하는 수가 1보다 작으면 폭주하지 않아요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "통장 출력이 '천천히' 커진다고 안정이 아니에요. 한계 없이 커지면 불안정이에요.",
+      "안정을 보일 때 입력 몇 개로 실험해 보는 것만으로는 부족해요. 모든 유계 입력을 다뤄야 해요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 73,
+   "title": "여섯 가지 응답 모양과 퀵 퀴즈",
+   "terms": [
+    "Accumulator",
+    "Unit Step",
+    "Delay"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "같은 계단 입력을 넣었을 때 시스템마다 출력 모양이 달라요.",
+      "제자리를 찾으면 안정, 끝없이 커지면 불안정이에요.",
+      "아래 퀵 퀴즈로 여러 시스템의 안정성을 판정해 봐요."
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "여섯 칸 그림",
+     "cols": [
+      "이름",
+      "모양",
+      "판정"
+     ],
+     "rows": [
+      [
+       "settles",
+       "곡선으로 올라가 멈춤",
+       "안정"
+      ],
+      [
+       "damped",
+       "흔들리다 잦아듦",
+       "안정"
+      ],
+      [
+       "oscillates",
+       "같은 크기로 계속 흔들림",
+       "경계(marginal)"
+      ],
+      [
+       "grows",
+       "끝없이 커짐",
+       "불안정"
+      ],
+      [
+       "grows + osc.",
+       "흔들리며 점점 커짐",
+       "불안정"
+      ]
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "compare",
+     "head": "퀵 퀴즈 답과 이유",
+     "cols": [
+      "시스템",
+      "판정",
+      "이유"
+     ],
+     "rows": [
+      [
+       "**지연(Delay)** $y[n]=x[n-1]$",
+       "안정",
+       "입력 크기 그대로 한 칸 늦게"
+      ],
+      [
+       "**누산기(Accumulator)**",
+       "불안정",
+       "늘 1을 넣으면 1, 2, 3, ... 끝없이"
+      ],
+      [
+       "$y=\\cos(x)$",
+       "안정",
+       "cos 는 늘 -1 과 $1$ 사이"
+      ],
+      [
+       "$y=\\ln(x)$",
+       "불안정",
+       "x 가 0에 다가가면 끝없이 작아짐"
+      ],
+      [
+       "$y=e^x$",
+       "안정",
+       "입력이 유계면 출력도 유계"
+      ]
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "**누산기(Accumulator)**에 **단위 계단(Unit Step)**을 넣으면",
+     "svg": "<svg viewBox=\"0 0 480 270\" xmlns=\"http://www.w3.org/2000/svg\"><text x=\"20\" y=\"26\" font-size=\"15\" text-anchor=\"start\" class=\"tb\">입력: 단위 계단(늘 1, 유계)</text><line x1=\"54\" y1=\"95\" x2=\"448\" y2=\"95\" class=\"e\"/><line x1=\"79\" y1=\"99\" x2=\"79\" y2=\"34\" class=\"e\"/><text x=\"452\" y=\"100\" font-size=\"14\" text-anchor=\"start\" class=\"tm\">n</text><line x1=\"79\" y1=\"95\" x2=\"79\" y2=\"52.7\" class=\"e2\"/><circle cx=\"79\" cy=\"52.7\" r=\"4\" class=\"n3\"/><line x1=\"117\" y1=\"95\" x2=\"117\" y2=\"52.7\" class=\"e2\"/><circle cx=\"117\" cy=\"52.7\" r=\"4\" class=\"n3\"/><line x1=\"155\" y1=\"95\" x2=\"155\" y2=\"52.7\" class=\"e2\"/><circle cx=\"155\" cy=\"52.7\" r=\"4\" class=\"n3\"/><line x1=\"193\" y1=\"95\" x2=\"193\" y2=\"52.7\" class=\"e2\"/><circle cx=\"193\" cy=\"52.7\" r=\"4\" class=\"n3\"/><line x1=\"231\" y1=\"95\" x2=\"231\" y2=\"52.7\" class=\"e2\"/><circle cx=\"231\" cy=\"52.7\" r=\"4\" class=\"n3\"/><line x1=\"269\" y1=\"95\" x2=\"269\" y2=\"52.7\" class=\"e2\"/><circle cx=\"269\" cy=\"52.7\" r=\"4\" class=\"n3\"/><line x1=\"307\" y1=\"95\" x2=\"307\" y2=\"52.7\" class=\"e2\"/><circle cx=\"307\" cy=\"52.7\" r=\"4\" class=\"n3\"/><line x1=\"345\" y1=\"95\" x2=\"345\" y2=\"52.7\" class=\"e2\"/><circle cx=\"345\" cy=\"52.7\" r=\"4\" class=\"n3\"/><line x1=\"383\" y1=\"95\" x2=\"383\" y2=\"52.7\" class=\"e2\"/><circle cx=\"383\" cy=\"52.7\" r=\"4\" class=\"n3\"/><line x1=\"421\" y1=\"95\" x2=\"421\" y2=\"52.7\" class=\"e2\"/><circle cx=\"421\" cy=\"52.7\" r=\"4\" class=\"n3\"/><text x=\"20\" y=\"124\" font-size=\"15\" text-anchor=\"start\" class=\"tb b1\">누산기 출력: 1, 2, 3, ... 끝없이</text><line x1=\"54\" y1=\"245\" x2=\"448\" y2=\"245\" class=\"e b1\"/><line x1=\"79\" y1=\"249\" x2=\"79\" y2=\"124\" class=\"e b1\"/><text x=\"452\" y=\"250\" font-size=\"14\" text-anchor=\"start\" class=\"tm b1\">n</text><line x1=\"79\" y1=\"245\" x2=\"79\" y2=\"234\" class=\"e2 b1\"/><circle cx=\"79\" cy=\"234\" r=\"4\" class=\"n4 b1\"/><line x1=\"117\" y1=\"245\" x2=\"117\" y2=\"223.1\" class=\"e2 b1\"/><circle cx=\"117\" cy=\"223.1\" r=\"4\" class=\"n4 b1\"/><line x1=\"155\" y1=\"245\" x2=\"155\" y2=\"212.1\" class=\"e2 b1\"/><circle cx=\"155\" cy=\"212.1\" r=\"4\" class=\"n4 b1\"/><line x1=\"193\" y1=\"245\" x2=\"193\" y2=\"201.2\" class=\"e2 b1\"/><circle cx=\"193\" cy=\"201.2\" r=\"4\" class=\"n4 b1\"/><line x1=\"231\" y1=\"245\" x2=\"231\" y2=\"190.2\" class=\"e2 b1\"/><circle cx=\"231\" cy=\"190.2\" r=\"4\" class=\"n4 b1\"/><line x1=\"269\" y1=\"245\" x2=\"269\" y2=\"179.3\" class=\"e2 b1\"/><circle cx=\"269\" cy=\"179.3\" r=\"4\" class=\"n4 b1\"/><line x1=\"307\" y1=\"245\" x2=\"307\" y2=\"168.3\" class=\"e2 b1\"/><circle cx=\"307\" cy=\"168.3\" r=\"4\" class=\"n4 b1\"/><line x1=\"345\" y1=\"245\" x2=\"345\" y2=\"157.4\" class=\"e2 b1\"/><circle cx=\"345\" cy=\"157.4\" r=\"4\" class=\"n4 b1\"/><line x1=\"383\" y1=\"245\" x2=\"383\" y2=\"146.4\" class=\"e2 b1\"/><circle cx=\"383\" cy=\"146.4\" r=\"4\" class=\"n4 b1\"/><line x1=\"421\" y1=\"245\" x2=\"421\" y2=\"135.5\" class=\"e2 b1\"/><circle cx=\"421\" cy=\"135.5\" r=\"4\" class=\"n4 b1\"/></svg>",
+     "caption": "입력은 늘 1인데 출력은 끝없이 커져요.",
+     "builds": 1
+    },
+    {
+     "kind": "check",
+     "q": "늘 1인 입력을 누산기에 넣었을 때 $n=99$ 의 출력은?",
+     "choices": [
+      "1",
+      "99",
+      "100"
+     ],
+     "a": 2,
+     "why": "$y[n]=n+1$ 이라 $y[99]=100$. 계속 커지니 불안정이에요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.121,
+       "y": 0.247,
+       "w": 0.243,
+       "h": 0.216,
+       "say": "입력: 유계 계단(bounded step)."
+      },
+      {
+       "x": 0.379,
+       "y": 0.247,
+       "w": 0.496,
+       "h": 0.216,
+       "say": "안정: 제자리를 찾거나(settles) 흔들리다 잦아들어요(damped)."
+      },
+      {
+       "x": 0.121,
+       "y": 0.482,
+       "w": 0.243,
+       "h": 0.213,
+       "say": "경계(marginal): 같은 크기로 계속 흔들려요."
+      },
+      {
+       "x": 0.379,
+       "y": 0.482,
+       "w": 0.496,
+       "h": 0.213,
+       "say": "불안정: 커지거나(grows), 흔들리며 커져요."
+      },
+      {
+       "x": 0.061,
+       "y": 0.787,
+       "w": 0.861,
+       "h": 0.114,
+       "say": "퀵 퀴즈: 지연 안정, 누산기 불안정, cos 안정, ln 불안정, e 의 x제곱은 생각해 보기!"
+      }
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "$y=e^x$ 는 안정일까? (think! 의 답)",
+     "steps": [
+      "입력이 유계라고 해요. 예를 들어 늘 $-2<x<2$.",
+      "$e^x$ 는 x 가 클수록 커지는 함수라서 $e^{-2}<y<e^{2}$ 예요.",
+      "$e^{-2}\\approx0.135$, $e^{2}\\approx7.389$",
+      "출력도 이 사이에 갇혀 있어요. 유계예요."
+     ],
+     "answer": "유계 입력 → 유계 출력이라서 $e^x$ 는 안정이에요."
+    },
+    {
+     "kind": "steps",
+     "head": "$y=\\ln(x)$ 가 불안정한 이유",
+     "steps": [
+      "입력 $x=0.001$ 이면 $\\ln(0.001)\\approx-6.9$",
+      "$x=0.000001$ 이면 $\\ln\\approx-13.8$",
+      "입력은 0과 $1$ 사이로 작게 갇혀 있는데 출력은 아래로 끝없이 내려가요."
+     ],
+     "answer": "유계 입력인데 출력이 유계가 아니라 불안정이에요."
+    },
+    {
+     "kind": "prof",
+     "when": "2주차 목요일 수업",
+     "lines": [
+      "y 가 e 의 x(t) 제곱인 시스템은 스테이블하다고 했어요.",
+      "x 를 -B 에서 B 사이로 바운드시키면 y 는 e 의 -B 제곱과 e 의 B 제곱 사이에서 바운드된다고 설명했어요."
+     ]
+    },
+    {
+     "kind": "bg",
+     "src": "기초 다지기 b-4 지수함수와 e",
+     "lines": [
+      "$e\\approx2.718$ 이에요. $e^x$ 는 x 가 커지면 커지고, 작아지면 0에 다가가요.",
+      "ln 은 e 의 지수를 거꾸로 찾는 함수예요. $\\ln(e^2)=2$."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "$y(t)=\\cos(x(t))$ 는 BIBO 안정인가요?",
+     "choices": [
+      "안정",
+      "불안정"
+     ],
+     "a": 0,
+     "why": "어떤 입력이든 cos 값은 -1 과 $1$ 사이라서 출력이 늘 유계예요."
+    },
+    {
+     "kind": "check",
+     "q": "누산기가 불안정한 이유로 알맞은 것은?",
+     "choices": [
+      "입력이 유계가 아니라서",
+      "늘 1인 유계 입력에도 출력이 끝없이 커져서",
+      "미래를 봐서"
+     ],
+     "a": 1,
+     "why": "단위 계단 하나가 반례예요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "$e^x$ 는 '끝없이 커지는 함수' 라서 불안정이라고 착각하기 쉬워요. 입력이 유계면 출력도 유계라서 안정이에요.",
+      "안정은 함수 모양이 아니라 '유계 입력 → 유계 출력' 인지로 판정해요."
+     ]
+    },
+    {
+     "kind": "prof",
+     "when": "2주차 목요일 수업",
+     "lines": [
+      "여기까지 성질 1, 2, 3, 4(기억, 가역, 인과, 안정)는 시스템이 이런 특성을 가질 수 있다 정도로 보면 된다고 했어요.",
+      "어렵지 않고 중요하지는 않다고, 뒤의 시불변성과 선형성이 주요하다고 했어요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 74,
+   "title": "시불변성: 언제 해도 같은 결과",
+   "terms": [
+    "System",
+    "Time Invariance",
+    "Time Shift"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "다섯째 성질은 **시불변성(Time Invariance)**이에요. 교수님이 주요하다고 한 성질이에요.",
+      "같은 입력을 오늘 넣든 내일 넣든 결과가 같은 모양으로 나오면 시불변이에요.",
+      "입력을 늦게 넣으면 출력도 그만큼 늦게 나올 뿐이에요."
+     ]
+    },
+    {
+     "kind": "analogy",
+     "head": "같은 레시피",
+     "scene": "같은 레시피로 월요일에 요리해도, 금요일에 요리해도 맛이 똑같아요.",
+     "map": [
+      [
+       "레시피",
+       "**시스템(System)**"
+      ],
+      [
+       "요리하는 요일",
+       "입력을 넣는 시각"
+      ],
+      [
+       "똑같은 맛",
+       "같은 모양의 출력(시각만 밀림)"
+      ]
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "월요일과 금요일",
+     "svg": "<svg viewBox=\"0 0 480 270\" xmlns=\"http://www.w3.org/2000/svg\"><line x1=\"34\" y1=\"78\" x2=\"448\" y2=\"78\" class=\"e\"/><line x1=\"40\" y1=\"114\" x2=\"40\" y2=\"24\" class=\"e\"/><text x=\"452\" y=\"83\" font-size=\"14\" text-anchor=\"start\" class=\"tm\">t</text><polyline points=\"40,78 80,78 80,38 92,38 92,78 440,78\" fill=\"none\" class=\"e\"/><polyline points=\"40,78 43.3,78 46.7,78 50,78 53.3,78 56.7,78 60,78 63.3,78 66.7,78 70,78 73.3,78 76.7,78 80,78 83.3,78 86.7,78 90,78 93.3,73.9 96.7,64.9 100,58 103.3,53.6 106.7,51.5 110,51.5 113.3,53.5 116.7,56.9 120,61.3 123.3,66.3 126.7,71.4 130,76.3 133.3,80.6 136.7,84.1 140,86.7 143.3,88.4 146.7,89 150,88.8 153.3,87.9 156.7,86.4 160,84.5 163.3,82.4 166.7,80.3 170,78.3 173.3,76.6 176.7,75.2 180,74.2 183.3,73.6 186.7,73.4 190,73.6 193.3,74 196.7,74.7 200,75.5 203.3,76.4 206.7,77.2 210,78 213.3,78.7 216.7,79.3 220,79.6 223.3,79.8 226.7,79.9 230,79.8 233.3,79.6 236.7,79.3 240,79 243.3,78.6 246.7,78.2 250,77.9 253.3,77.6 256.7,77.4 260,77.3 263.3,77.2 266.7,77.2 270,77.3 273.3,77.4 276.7,77.5 280,77.6 283.3,77.8 286.7,77.9 290,78.1 293.3,78.2 296.7,78.2 300,78.3 303.3,78.3 306.7,78.3 310,78.3 313.3,78.3 316.7,78.2 320,78.1 323.3,78.1 326.7,78 330,78 333.3,77.9 336.7,77.9 340,77.9 343.3,77.9 346.7,77.9 350,77.9 353.3,77.9 356.7,77.9 360,77.9 363.3,78 366.7,78 370,78 373.3,78 376.7,78 380,78.1 383.3,78.1 386.7,78.1 390,78 393.3,78 396.7,78 400,78 403.3,78 406.7,78 410,78 413.3,78 416.7,78 420,78 423.3,78 426.7,78 430,78 433.3,78 436.7,78 440,78\" fill=\"none\" class=\"e2\"/><text x=\"470\" y=\"40\" font-size=\"15\" text-anchor=\"end\" class=\"tb\">월요일</text><line x1=\"34\" y1=\"208\" x2=\"448\" y2=\"208\" class=\"e b1\"/><line x1=\"40\" y1=\"244\" x2=\"40\" y2=\"154\" class=\"e b1\"/><text x=\"452\" y=\"213\" font-size=\"14\" text-anchor=\"start\" class=\"tm b1\">t</text><polyline points=\"40,208 240,208 240,168 252,168 252,208 440,208\" fill=\"none\" class=\"e b1\"/><polyline points=\"40,208 43.3,208 46.7,208 50,208 53.3,208 56.7,208 60,208 63.3,208 66.7,208 70,208 73.3,208 76.7,208 80,208 83.3,208 86.7,208 90,208 93.3,208 96.7,208 100,208 103.3,208 106.7,208 110,208 113.3,208 116.7,208 120,208 123.3,208 126.7,208 130,208 133.3,208 136.7,208 140,208 143.3,208 146.7,208 150,208 153.3,208 156.7,208 160,208 163.3,208 166.7,208 170,208 173.3,208 176.7,208 180,208 183.3,208 186.7,208 190,208 193.3,208 196.7,208 200,208 203.3,208 206.7,208 210,208 213.3,208 216.7,208 220,208 223.3,208 226.7,208 230,208 233.3,208 236.7,208 240,208 243.3,208 246.7,208 250,208 253.3,203.9 256.7,194.9 260,188 263.3,183.6 266.7,181.5 270,181.5 273.3,183.5 276.7,186.9 280,191.3 283.3,196.3 286.7,201.4 290,206.3 293.3,210.6 296.7,214.1 300,216.7 303.3,218.4 306.7,219 310,218.8 313.3,217.9 316.7,216.4 320,214.5 323.3,212.4 326.7,210.3 330,208.3 333.3,206.6 336.7,205.2 340,204.2 343.3,203.6 346.7,203.4 350,203.6 353.3,204 356.7,204.7 360,205.5 363.3,206.4 366.7,207.2 370,208 373.3,208.7 376.7,209.3 380,209.6 383.3,209.8 386.7,209.9 390,209.8 393.3,209.6 396.7,209.3 400,209 403.3,208.6 406.7,208.2 410,207.9 413.3,207.6 416.7,207.4 420,207.3 423.3,207.2 426.7,207.2 430,207.3 433.3,207.4 436.7,207.5 440,207.6\" fill=\"none\" class=\"e2 b1\"/><text x=\"470\" y=\"170\" font-size=\"15\" text-anchor=\"end\" class=\"tb b1\">금요일</text><text x=\"240\" y=\"144\" font-size=\"14\" text-anchor=\"middle\" class=\"tm b1\">입력을 늦게 넣으면 출력도 똑같은 모양으로 늦게</text></svg>",
+     "caption": "입력이 밀리면 출력도 똑같이 밀려요.",
+     "builds": 1
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "formula",
+     "head": "시불변의 식",
+     "tex": "x(t)\\rightarrow y(t)\\ \\Longrightarrow\\ x(t-t_0)\\rightarrow y(t-t_0)",
+     "parts": [
+      {
+       "sym": "x(t)\\rightarrow y(t)",
+       "say": "입력 x 를 넣으면 출력 y 가 나온다"
+      },
+      {
+       "sym": "x(t-t_0)",
+       "say": "입력을 $t_0$ 만큼 늦춰 넣으면(**시간 이동(Time Shift)**)"
+      },
+      {
+       "sym": "y(t-t_0)",
+       "say": "출력도 똑같이 $t_0$ 만큼 늦게 나온다"
+      }
+     ],
+     "whole": "이산시간도 같아요: $x[n-n_0]\\rightarrow y[n-n_0]$."
+    },
+    {
+     "kind": "points",
+     "head": "정의 두 줄",
+     "items": [
+      "시스템의 동작과 특성이 시간에 따라 고정되어 있다(fixed over time).",
+      "같은 입력을 다른 시각에 넣어도 입출력 실험 결과가 같아야 한다."
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "**시불변성(Time Invariance)**의 뜻은?",
+     "choices": [
+      "출력이 시간에 따라 변하지 않는다",
+      "입력을 밀면 출력도 같은 만큼 밀린다",
+      "입력이 없으면 출력도 없다"
+     ],
+     "a": 1,
+     "why": "출력이 일정하다는 뜻이 아니라, 시스템의 규칙이 시간에 따라 안 바뀐다는 뜻이에요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.107,
+       "y": 0.235,
+       "w": 0.529,
+       "h": 0.047,
+       "say": "시불변: 동작과 특성이 시간에 대해 고정."
+      },
+      {
+       "x": 0.125,
+       "y": 0.292,
+       "w": 0.589,
+       "h": 0.082,
+       "say": "같은 입력을 다른 시각에 넣어도 같은 결과를 기대해요."
+      },
+      {
+       "x": 0.364,
+       "y": 0.406,
+       "w": 0.271,
+       "h": 0.152,
+       "say": "연속시간, 이산시간 식. 입력이 밀리면 출력도 같은 만큼 밀려요."
+      },
+      {
+       "x": 0.175,
+       "y": 0.489,
+       "w": 0.646,
+       "h": 0.197,
+       "say": "위: 입력 펄스(파랑)와 출력(주황)."
+      },
+      {
+       "x": 0.175,
+       "y": 0.692,
+       "w": 0.646,
+       "h": 0.197,
+       "say": "아래: 입력을 $t_0$ 만큼 밀었더니 출력도 똑같은 $t_0$ 만큼 밀렸어요."
+      }
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "시불변 확인하는 순서 (시험에서 늘 이 순서)",
+     "steps": [
+      "1단계: 입력을 먼저 밀어서 시스템에 넣어요. $x(t-t_0)$ 를 넣은 출력을 구해요.",
+      "2단계: 원래 출력 $y(t)$ 를 구한 뒤 그 결과를 밀어요. $y(t-t_0)$.",
+      "3단계: 두 결과를 비교해요.",
+      "같으면 시불변, 하나라도 다르면 시변(time-varying)이에요."
+     ],
+     "answer": "'먼저 밀고 넣기' 와 '넣고 나서 밀기' 가 같으면 시불변."
+    },
+    {
+     "kind": "prof",
+     "when": "2주차 목요일 수업",
+     "lines": [
+      "앞으로 계속 LTI 시스템을 볼 텐데 그중 TI 를 담당하는 게 타임 인베리언트라고 했어요.",
+      "인풋이 시프트됐을 때 아웃풋도 그대로 시프트돼야 타임 인베리언트라고 했어요."
+     ]
+    },
+    {
+     "kind": "bg",
+     "src": "기초 다지기 b-2 그래프 옮기기, 뒤집기, 늘이기",
+     "lines": [
+      "$x(t-2)$ 는 그래프를 오른쪽으로 2만큼 옮긴 거예요.",
+      "빼기인데 오른쪽으로 간다는 점, 교수님이 꼭 기억하라고 한 부분이에요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "english",
+     "head": "답안 문장",
+     "en": "시불변 시스템은 입력을 시간 t0 만큼 이동시키면 출력도 똑같이 t0 만큼 이동할 뿐 모양이 변하지 않는 시스템이다. 즉 x(t) → y(t) 이면 x(t - t0) → y(t - t0) 이다.",
+     "ko": "입력 이동 → 출력도 같은 만큼 이동.",
+     "tip": "먼저 밀고 넣기 = 넣고 나서 밀기"
+    }
+   ]
+  },
+  {
+   "p": 75,
+   "title": "시불변 예 sin(x(t)), 시변 예 n x[n]",
+   "terms": [
+    "Time Invariance",
+    "Unit Impulse"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "두 시스템을 비교해요.",
+      "$y(t)=\\sin(x(t))$ 는 언제 넣어도 같은 규칙이라 시불변이에요.",
+      "$y[n]=n\\,x[n]$ 은 시각 n 에 따라 곱하는 수가 바뀌어서 시변이에요."
+     ]
+    },
+    {
+     "kind": "analogy",
+     "head": "레시피가 바뀌는 식당",
+     "scene": "요일마다 소금 양이 바뀌는 레시피라면 같은 재료도 요일마다 맛이 달라요.",
+     "map": [
+      [
+       "요일마다 바뀌는 소금 양",
+       "시각 n 을 곱하는 부분"
+      ],
+      [
+       "맛이 달라짐",
+       "시변, **시불변성(Time Invariance)** 없음"
+      ]
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "compare",
+     "head": "두 시스템",
+     "cols": [
+      "시스템",
+      "곱하는 수",
+      "판정"
+     ],
+     "rows": [
+      [
+       "$y(t)=\\sin(x(t))$",
+       "시각과 상관없이 같은 규칙",
+       "시불변"
+      ],
+      [
+       "$y[n]=n\\,x[n]$",
+       "시각 n 자체(시스템 매개변수가 시간에 따라 변함)",
+       "시변"
+      ]
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "슬라이드의 대입 확인",
+     "items": [
+      "$x_1[n]=\\delta[n]$ (**단위 임펄스(Unit Impulse)**)을 넣으면 $y_1[n]=0$",
+      "$x_2[n]=\\delta[n-1]$ 을 넣으면 $y_2[n]=\\delta[n-1]$",
+      "입력은 한 칸 밀렸는데 출력은 0을 민 0이 아니에요. 그래서 시변."
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "$y[n]=n\\,x[n]$ 이 시변인 이유는?",
+     "choices": [
+      "입력을 제곱해서",
+      "입력에 곱하는 수가 시각 n 에 따라 바뀌어서",
+      "미래를 봐서"
+     ],
+     "a": 1,
+     "why": "슬라이드: 입력에 곱해지는 시스템 매개변수가 시간에 따라 변해요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.107,
+       "y": 0.273,
+       "w": 0.35,
+       "h": 0.108,
+       "say": "시불변인 연속시간 시스템 $y(t)=\\sin(x(t))$."
+      },
+      {
+       "x": 0.107,
+       "y": 0.412,
+       "w": 0.457,
+       "h": 0.047,
+       "say": "시간 이동에 대해 변하지 않아요. $x_2(t)=x_1(t-t_0)$ 로 확인."
+      },
+      {
+       "x": 0.107,
+       "y": 0.482,
+       "w": 0.339,
+       "h": 0.108,
+       "say": "시변인 이산시간 시스템 $y[n]=n\\,x[n]$."
+      },
+      {
+       "x": 0.107,
+       "y": 0.622,
+       "w": 0.746,
+       "h": 0.095,
+       "say": "입력에 곱하는 매개변수가 시간에 따라 변한다는 설명."
+      },
+      {
+       "x": 0.129,
+       "y": 0.742,
+       "w": 0.293,
+       "h": 0.102,
+       "say": "대입 확인: **단위 임펄스(Unit Impulse)**과 한 칸 민 임펄스."
+      }
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "$y(t)=\\sin(x(t))$ 시불변 확인",
+     "steps": [
+      "1단계(먼저 밀고 넣기): $x_2(t)=x_1(t-t_0)$ 를 넣으면 $y_2(t)=\\sin(x_1(t-t_0))$",
+      "2단계(넣고 나서 밀기): $y_1(t)=\\sin(x_1(t))$ 를 밀면 $y_1(t-t_0)=\\sin(x_1(t-t_0))$",
+      "3단계: 두 식이 똑같아요."
+     ],
+     "answer": "그래서 시불변이에요."
+    },
+    {
+     "kind": "steps",
+     "head": "$y[n]=n\\,x[n]$ 시변 확인 (슬라이드의 대입)",
+     "steps": [
+      "$x_1[n]=\\delta[n]$: 1은 $n=0$ 에만 있어요. $y_1[n]=n\\delta[n]$ 이고 $n=0$ 에서 $0\\times1=0$. 그래서 $y_1[n]=0$.",
+      "먼저 밀고 넣기: $x_2[n]=\\delta[n-1]$, 1은 $n=1$ 에. $y_2[n]=1\\times\\delta[n-1]=\\delta[n-1]$.",
+      "넣고 나서 밀기: $y_1[n-1]=0$.",
+      "$\\delta[n-1]\\ne0$ 이라 두 결과가 달라요."
+     ],
+     "answer": "먼저 밀고 넣기와 넣고 나서 밀기가 달라서 시변이에요."
+    },
+    {
+     "kind": "prof",
+     "when": "2주차 목요일 수업",
+     "lines": [
+      "y[n]=n x[n] 에서 x[n-n0] 를 넣으면 n x[n-n0] 인데, y[n-n0] 는 (n-n0) x[n-n0] 라서 둘이 다르다고 했어요.",
+      "그래서 타임 인베리언트가 아니라 타임 베링(시변) 시스템이라고 했어요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "exam",
+     "src": "슬라이드 예제 (p.75)",
+     "q": "Show that y[n] = n x[n] is time-varying.",
+     "qko": "y[n]=n x[n] 이 시변임을 보이세요.",
+     "solve": [
+      "입력을 $n_0$ 밀어 넣으면 출력은 $n\\,x[n-n_0]$.",
+      "원래 출력을 $n_0$ 밀면 $(n-n_0)\\,x[n-n_0]$.",
+      "$n_0\\ne0$ 이면 두 식이 달라요.",
+      "반례: $\\delta[n]\\rightarrow0$, $\\delta[n-1]\\rightarrow\\delta[n-1]\\ne0$."
+     ],
+     "answer": "시변(time-varying)"
+    },
+    {
+     "kind": "check",
+     "q": "$y(t)=\\sin(x(t))$ 에 대해 맞는 것은?",
+     "choices": [
+      "시불변",
+      "시변"
+     ],
+     "a": 0,
+     "why": "t 가 식 밖에 따로 나오지 않고 입력에만 규칙을 적용해요."
+    }
+   ]
+  },
+  {
+   "p": 76,
+   "title": "시간 척도 변환 y(t)=x(2t) 는 시불변일까?",
+   "terms": [
+    "Time Invariance",
+    "Linearity",
+    "Time Scaling"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "2배속 재생 시스템 $y(t)=x(2t)$ 를 봐요. **시간 척도 변환(Time Scaling)**이에요.",
+      "영상을 2배속으로 틀면 모든 장면이 반으로 짧아지죠.",
+      "늦게 튼 영상도 2배속 하면 시작 시각까지 반으로 당겨져서 모양이 어긋나요."
+     ]
+    },
+    {
+     "kind": "analogy",
+     "head": "2배속 재생",
+     "scene": "10초에 시작하는 장면을 2배속으로 틀면 5초에 시작해요. 늦춘 만큼이 절반만 남아요.",
+     "map": [
+      [
+       "2배속 재생",
+       "$y(t)=x(2t)$"
+      ],
+      [
+       "장면 시작을 늦추기",
+       "입력 이동 $x(t-2)$"
+      ],
+      [
+       "늦춘 시간도 반으로 줄어듦",
+       "**시불변성(Time Invariance)**이 깨짐"
+      ]
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "points",
+     "head": "슬라이드 그림 다섯 개",
+     "items": [
+      "(a) $x_1(t)$: -2 부터 $2$ 까지 높이 1인 사각형",
+      "(b) $y_1(t)=x_1(2t)$: -1 부터 $1$ 까지로 줄어요",
+      "(c) $x_2(t)=x_1(t-2)$: 입력을 $2$ 밀어서 $0$ 부터 4",
+      "(d) $y_2(t)=x_2(2t)$: $0$ 부터 2",
+      "(e) $y_1(t-2)$: 출력을 $2$ 밀어서 $1$ 부터 3"
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "(d) 와 (e) 비교",
+     "svg": "<svg viewBox=\"0 0 480 270\" xmlns=\"http://www.w3.org/2000/svg\"><line x1=\"34\" y1=\"220\" x2=\"448\" y2=\"220\" class=\"e\"/><line x1=\"77.7\" y1=\"224\" x2=\"77.7\" y2=\"64\" class=\"e\"/><text x=\"452\" y=\"225\" font-size=\"14\" text-anchor=\"start\" class=\"tm\">t</text><line x1=\"77.7\" y1=\"217\" x2=\"77.7\" y2=\"223\" class=\"e\"/><text x=\"77.7\" y=\"238\" font-size=\"14\" text-anchor=\"middle\" class=\"tm\">0</text><line x1=\"153.2\" y1=\"217\" x2=\"153.2\" y2=\"223\" class=\"e\"/><text x=\"153.2\" y=\"238\" font-size=\"14\" text-anchor=\"middle\" class=\"tm\">1</text><line x1=\"228.7\" y1=\"217\" x2=\"228.7\" y2=\"223\" class=\"e\"/><text x=\"228.7\" y=\"238\" font-size=\"14\" text-anchor=\"middle\" class=\"tm\">2</text><line x1=\"304.2\" y1=\"217\" x2=\"304.2\" y2=\"223\" class=\"e\"/><text x=\"304.2\" y=\"238\" font-size=\"14\" text-anchor=\"middle\" class=\"tm\">3</text><line x1=\"379.6\" y1=\"217\" x2=\"379.6\" y2=\"223\" class=\"e\"/><text x=\"379.6\" y=\"238\" font-size=\"14\" text-anchor=\"middle\" class=\"tm\">4</text><polyline points=\"77.7,220 77.7,126.2 228.7,126.2 228.7,220\" fill=\"none\" class=\"e2 b1\"/><text x=\"115.5\" y=\"177.8\" font-size=\"15\" text-anchor=\"middle\" class=\"tb b1\">y2</text><text x=\"20\" y=\"26\" font-size=\"14\" text-anchor=\"start\" class=\"tb b1\">실선: 입력을 먼저 민 출력 y2</text><polyline points=\"153.2,220 153.2,98.1 304.2,98.1 304.2,220\" fill=\"none\" class=\"hl b2\"/><text x=\"315.5\" y=\"163.8\" font-size=\"15\" text-anchor=\"start\" class=\"tb b2\">y1(t-2)</text><text x=\"20\" y=\"48\" font-size=\"14\" text-anchor=\"start\" class=\"tb b2\">점선: 출력을 민 y1(t-2)</text><text x=\"240\" y=\"262\" font-size=\"14\" text-anchor=\"middle\" class=\"t b3\">구간 [0, 2] 와 [1, 3]: 다르니까 시불변이 아니에요</text></svg>",
+     "caption": "먼저 밀고 넣기 [0, 2] 와 넣고 나서 밀기 [1, 3] 이 달라요.",
+     "builds": 3
+    },
+    {
+     "kind": "check",
+     "q": "(d) $y_2(t)$ 와 (e) $y_1(t-2)$ 가 다르다는 것은?",
+     "choices": [
+      "시불변이다",
+      "시불변이 아니다",
+      "선형이 아니다"
+     ],
+     "a": 1,
+     "why": "입력을 민 결과와 출력을 민 결과가 다르면 시불변이 아니에요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.096,
+       "y": 0.228,
+       "w": 0.375,
+       "h": 0.266,
+       "say": "질문: 시간 척도 시스템 $y(t)=x(2t)$ 는 시불변인가?"
+      },
+      {
+       "x": 0.582,
+       "y": 0.228,
+       "w": 0.296,
+       "h": 0.184,
+       "say": "(a) 입력 -2~2, (b) 출력 -1~1."
+      },
+      {
+       "x": 0.582,
+       "y": 0.451,
+       "w": 0.296,
+       "h": 0.184,
+       "say": "(c) 입력을 $2$ 민 x2 는 0~4, (d) 그 출력 y2 는 0~2."
+      },
+      {
+       "x": 0.661,
+       "y": 0.673,
+       "w": 0.139,
+       "h": 0.184,
+       "say": "(e) 원래 출력을 $2$ 민 것은 1~3. (d) 와 달라요."
+      }
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "구간 끝점을 직접 계산",
+     "steps": [
+      "(d) $y_2(t)=x_2(2t)=x_1(2t-2)$. $x_1$ 은 괄호 안이 -2~2 일 때 1.",
+      "$2t-2=-2$ 에서 $t=0$, $2t-2=2$ 에서 $t=2$. 그래서 $y_2$ 는 0~2.",
+      "(e) $y_1(t-2)=x_1(2(t-2))=x_1(2t-4)$. $2t-4=-2$ 에서 $t=1$, $2t-4=2$ 에서 $t=3$.",
+      "그래서 $y_1(t-2)$ 는 1~3.",
+      "핵심 차이: $x_1(2t-2)$ 와 $x_1(2t-4)$. 입력의 $2$ 밀기가 출력에서는 $1$ 밀기로 줄었어요."
+     ],
+     "answer": "0~2 와 1~3 이 달라서 $y(t)=x(2t)$ 는 시불변이 아니에요."
+    },
+    {
+     "kind": "prof",
+     "when": "2주차 목요일 수업",
+     "lines": [
+      "타임 스케일링을 하면 폭이 두 배 좁아져서 -2~2 가 -1~1 이 된다고 했어요.",
+      "x1 을 $2$ 만큼 옮기면 0~4 가 되고, 그걸 시스템에 넣으면 0~2 인데 y1(t-2) 는 1~3 이라 둘이 다르다고 했어요.",
+      "표정들이 안 좋다며 한 번 더 설명했을 만큼 헷갈리는 예제예요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "exam",
+     "src": "교재 예제, 슬라이드 (p.76)",
+     "q": "Is the time scaling system y(t) = x(2t) time-invariant?",
+     "qko": "y(t)=x(2t) 가 시불변인지 판정하세요.",
+     "solve": [
+      "먼저 밀고 넣기: $x(t-t_0)$ 를 넣으면 $x(2t-t_0)$.",
+      "넣고 나서 밀기: $y(t-t_0)=x(2(t-t_0))=x(2t-2t_0)$.",
+      "$t_0\\ne0$ 이면 $2t-t_0\\ne2t-2t_0$.",
+      "슬라이드 반례: 사각형 입력에서 0~2 와 1~3 으로 달라요."
+     ],
+     "answer": "시불변이 아니다(시변)"
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "$x(2t)$ 에 $t_0$ 밀기를 넣을 때 $x(2t-t_0)$ 와 $x(2t-2t_0)$ 를 헷갈리지 마세요. t 자리에 $t-t_0$ 를 넣는 쪽은 출력 밀기예요.",
+      "**시간 척도 변환(Time Scaling)** 시스템은 **선형성(Linearity)**은 만족해요. 선형인데 시불변은 아닌 예로도 쓸 수 있어요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 77,
+   "title": "선형성: 가장 중요한 성질",
+   "terms": [
+    "Linearity",
+    "Additivity",
+    "Homogeneity",
+    "Complex Number",
+    "Convolution"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "여섯째, 마지막 성질은 **선형성(Linearity)**이에요.",
+      "슬라이드는 시스템이 가질 수 있는 가장 중요한 성질이라고 해요.",
+      "선형이면 복잡한 응답을 쉬운 응답들의 합으로 나눠 풀 수 있어요."
+     ]
+    },
+    {
+     "kind": "analogy",
+     "head": "정직한 계산기",
+     "scene": "두 배 넣으면 두 배가 나오고, 둘을 섞어 넣으면 결과도 섞여 나오는 정직한 계산기예요.",
+     "map": [
+      [
+       "두 배 넣으면 두 배",
+       "척도(**동차성(Homogeneity)**)"
+      ],
+      [
+       "섞어 넣으면 섞여 나옴",
+       "**가산성(Additivity)**"
+      ],
+      [
+       "정직한 계산기",
+       "**선형성(Linearity)**이 있는 시스템"
+      ]
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "formula",
+     "head": "선형의 두 조건",
+     "tex": "a\\,x_1(t)+b\\,x_2(t)\\ \\rightarrow\\ a\\,y_1(t)+b\\,y_2(t)",
+     "parts": [
+      {
+       "sym": "x_1\\rightarrow y_1,\\ x_2\\rightarrow y_2",
+       "say": "각각 넣었을 때의 출력을 알고 있을 때"
+      },
+      {
+       "sym": "x_1+x_2\\rightarrow y_1+y_2",
+       "say": "**가산성(Additivity)**: 합을 넣으면 출력도 합"
+      },
+      {
+       "sym": "a\\,x_1\\rightarrow a\\,y_1",
+       "say": "척도, **동차성(Homogeneity)**: a 배 넣으면 a 배. a 는 **복소수(Complex Number)**도 돼요"
+      },
+      {
+       "sym": "a,\\ b",
+       "say": "아무 상수"
+      }
+     ],
+     "whole": "두 조건을 합친 것이 이 식이에요. 둘 다 만족해야 선형이에요."
+    },
+    {
+     "kind": "compare",
+     "head": "선형처럼 보이는 그래프와 아닌 그래프",
+     "cols": [
+      "그래프",
+      "선형?"
+     ],
+     "rows": [
+      [
+       "원점을 지나는 직선(오른쪽 위 점선)",
+       "선형"
+      ],
+      [
+       "끝에서 꺾여 평평해짐(포화)",
+       "아님"
+      ],
+      [
+       "곡선으로 휘어짐",
+       "아님"
+      ],
+      [
+       "평행사변형 고리(오갈 때 다른 길)",
+       "아님"
+      ]
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "**선형성(Linearity)**의 두 조건은?",
+     "choices": [
+      "가산성과 척도(동차성)",
+      "인과성과 안정성",
+      "기억성과 가역성"
+     ],
+     "a": 0,
+     "why": "Additive 와 Scaling, 둘 다 만족해야 해요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.132,
+       "y": 0.241,
+       "w": 0.475,
+       "h": 0.044,
+       "say": "시스템이 가질 수 있는 가장 중요한 성질이 선형성."
+      },
+      {
+       "x": 0.132,
+       "y": 0.298,
+       "w": 0.611,
+       "h": 0.082,
+       "say": "응답을 더 쉬운 응답들의 합으로 분석할 수 있게 해 줘요(**컨볼루션(Convolution)**)."
+      },
+      {
+       "x": 0.132,
+       "y": 0.406,
+       "w": 0.611,
+       "h": 0.178,
+       "say": "단순하게는 직선(원점을 지나는)으로 상상할 수 있어요."
+      },
+      {
+       "x": 0.161,
+       "y": 0.527,
+       "w": 0.404,
+       "h": 0.171,
+       "say": "가산(Additive), 척도(Scaling, a 는 복소수), 합친 식(Combined)."
+      },
+      {
+       "x": 0.4,
+       "y": 0.736,
+       "w": 0.343,
+       "h": 0.152,
+       "say": "선형이 아닌 입출력 그래프 세 개."
+      }
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "$y=3x$ 로 두 조건 확인 ($x_1=1$, $x_2=2$)",
+     "steps": [
+      "각각: $y_1=3$, $y_2=6$",
+      "가산: $x_1+x_2=3$ 을 넣으면 $9$. $y_1+y_2=3+6=9$. 같아요.",
+      "척도: $a=2$ 배 한 $2x_1=2$ 를 넣으면 6. $2y_1=6$. 같아요.",
+      "둘 다 통과."
+     ],
+     "answer": "$y=3x$ 는 선형이에요."
+    },
+    {
+     "kind": "bg",
+     "src": "기초 다지기 b-10 손으로 하는 컨볼루션",
+     "lines": [
+      "슬라이드의 '(convolution)' 은 다음 주 2장의 **컨볼루션(Convolution)**를 미리 말한 거예요.",
+      "선형이면 입력을 작은 조각으로 나눠 조각별 응답을 더하면 돼요. 이게 **컨볼루션(Convolution)**의 출발점이에요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "english",
+     "head": "답안 문장",
+     "en": "선형 시스템은 가산성(x1+x2 → y1+y2)과 동차성(ax → ay)을 모두 만족하는 시스템이며, 합쳐서 ax1+bx2 → ay1+by2 로 쓴다.",
+     "ko": "가산성 + 동차성 = 선형성(중첩).",
+     "tip": "더하면 더해지고, 곱하면 곱해진다"
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "그래프로 보면 선형은 '원점을 지나는' 직선이에요. 직선이어도 원점을 안 지나면(3x+2) 선형이 아니에요.",
+      "척도의 a 는 실수뿐 아니라 복소수도 포함해요($a\\in\\mathbb{C}$). p.84 예제에서 중요해요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 78,
+   "title": "가산성과 동차성 그림",
+   "terms": [
+    "Linearity",
+    "Additivity",
+    "Homogeneity"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "**선형성(Linearity)**을 이루는 두 조건을 그림으로 봐요.",
+      "왼쪽은 **가산성(Additivity)**: 따로 넣은 결과를 더한 것 = 합쳐 넣은 결과.",
+      "오른쪽은 **동차성(Homogeneity)**: k 배 넣으면 출력도 k 배."
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "compare",
+     "head": "두 그림",
+     "cols": [
+      "",
+      "가산성(FIGURE 5-3)",
+      "동차성(FIGURE 5-2)"
+     ],
+     "rows": [
+      [
+       "IF",
+       "$x_1[n]\\rightarrow y_1[n]$, $x_2[n]\\rightarrow y_2[n]$",
+       "$x[n]\\rightarrow y[n]$"
+      ],
+      [
+       "THEN",
+       "$x_1[n]+x_2[n]\\rightarrow y_1[n]+y_2[n]$",
+       "$k\\,x[n]\\rightarrow k\\,y[n]$"
+      ],
+      [
+       "한 줄 뜻",
+       "더한 신호가 서로 간섭 없이 통과",
+       "크기를 바꾸면 출력 크기도 똑같이"
+      ]
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "**동차성(Homogeneity)**을 뜻하는 것은?",
+     "choices": [
+      "$x_1+x_2\\rightarrow y_1+y_2$",
+      "$k\\,x\\rightarrow k\\,y$",
+      "$x(t-t_0)\\rightarrow y(t-t_0)$"
+     ],
+     "a": 1,
+     "why": "세 번째는 시불변이에요. 헷갈리지 마세요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.061,
+       "y": 0.19,
+       "w": 0.861,
+       "h": 0.057,
+       "say": "x1 → y1, x2 → y2 이면 합은 합으로, k 배는 k 배로 가야 한다는 문장."
+      },
+      {
+       "x": 0.111,
+       "y": 0.273,
+       "w": 0.336,
+       "h": 0.539,
+       "say": "**가산성(Additivity)**: 위 두 줄이 IF, 아래 줄이 THEN."
+      },
+      {
+       "x": 0.111,
+       "y": 0.822,
+       "w": 0.336,
+       "h": 0.081,
+       "say": "그림 설명: 더한 신호가 서로 간섭하지 않고 통과하면 가산적."
+      },
+      {
+       "x": 0.486,
+       "y": 0.336,
+       "w": 0.382,
+       "h": 0.412,
+       "say": "**동차성(Homogeneity)**: 입력을 k 배 하면 출력도 k 배."
+      },
+      {
+       "x": 0.486,
+       "y": 0.755,
+       "w": 0.382,
+       "h": 0.114,
+       "say": "그림 설명: 입력의 크기 변화가 출력에 똑같이 나타나면 동차적."
+      }
+     ]
+    },
+    {
+     "kind": "prof",
+     "when": "3주차 목요일 수업",
+     "lines": [
+      "3주차 복습: 리니어는 슈퍼 포지션이 되는 것이고, 에디티비티와 스케일링 두 가지를 모두 가져야 한다고 했어요.",
+      "ax1 + bx2 가 같은 시스템에서 ay1 + by2 로 가면 슈퍼 포지션이 되고 이게 리니어라고 했어요."
+     ]
+    },
+    {
+     "kind": "prof",
+     "when": "2주차 목요일 수업",
+     "lines": [
+      "스케일링은 호모지니어티(동차성)라고도 부른다고 했어요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "**가산성(Additivity)**만 만족하고 동차성이 깨지면 선형인가요?",
+     "choices": [
+      "선형이다",
+      "선형이 아니다"
+     ],
+     "a": 1,
+     "why": "둘 다 만족해야 선형이에요. p.84 의 Re{x} 가 그런 예예요."
+    }
+   ]
+  },
+  {
+   "p": 79,
+   "title": "선형 판정 예: 3x, 3x제곱, 3x+2",
+   "terms": [
+    "Linearity"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "세 시스템 중 선형은 하나뿐이에요.",
+      "$y=3x$ 는 정직한 계산기, 선형이에요.",
+      "제곱이 들어가거나, 늘 2를 더해 주면 선형이 깨져요."
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "세 그래프",
+     "svg": "<svg viewBox=\"0 0 480 270\" xmlns=\"http://www.w3.org/2000/svg\"><line x1=\"64\" y1=\"161.5\" x2=\"418\" y2=\"161.5\" class=\"e\"/><line x1=\"240\" y1=\"254\" x2=\"240\" y2=\"14\" class=\"e\"/><text x=\"422\" y=\"166.5\" font-size=\"14\" text-anchor=\"start\" class=\"tm\">x</text><polyline points=\"70,246.5 240,161.5 410,76.6\" fill=\"none\" class=\"e2\"/><text x=\"394.1\" y=\"106.6\" font-size=\"15\" text-anchor=\"start\" class=\"tb\">3x</text><polyline points=\"70,211.1 240,126.2 410,41.2\" fill=\"none\" class=\"e b1\"/><text x=\"351.6\" y=\"62.4\" font-size=\"15\" text-anchor=\"end\" class=\"tb b1\">3x+2</text><circle cx=\"240\" cy=\"126.2\" r=\"6\" class=\"n4 b1\"/><text x=\"230\" y=\"112.2\" font-size=\"14\" text-anchor=\"end\" class=\"tm b1\">0 넣어도 2</text><polyline points=\"70,25.7 75.7,34.6 81.3,43.2 87,51.5 92.7,59.5 98.3,67.2 104,74.6 109.7,81.7 115.3,88.5 121,95 126.7,101.1 132.3,107 138,112.6 143.7,117.9 149.3,122.9 155,127.6 160.7,131.9 166.3,136 172,139.8 177.7,143.3 183.3,146.4 189,149.3 194.7,151.9 200.3,154.1 206,156.1 211.7,157.8 217.3,159.1 223,160.2 228.7,160.9 234.3,161.4 240,161.5 245.7,161.4 251.3,160.9 257,160.2 262.7,159.1 268.3,157.8 274,156.1 279.7,154.1 285.3,151.9 291,149.3 296.7,146.4 302.3,143.3 308,139.8 313.7,136 319.3,131.9 325,127.6 330.7,122.9 336.3,117.9 342,112.6 347.7,107 353.3,101.1 359,95 364.7,88.5 370.3,81.7 376,74.6 381.7,67.2 387.3,59.5 393,51.5 398.7,43.2 404.3,34.6 410,25.7\" fill=\"none\" class=\"hl b2\"/><text x=\"75.3\" y=\"34.2\" font-size=\"15\" text-anchor=\"start\" class=\"tb b2\">3x 제곱</text><circle cx=\"240\" cy=\"161.5\" r=\"5\" class=\"n2\"/></svg>",
+     "caption": "원점을 지나는 직선 3x 만 선형이에요.",
+     "builds": 2
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "compare",
+     "head": "세 시스템 한눈에",
+     "cols": [
+      "시스템",
+      "판정",
+      "슬라이드의 이유"
+     ],
+     "rows": [
+      [
+       "$y=3x(t)$",
+       "선형",
+       "가산성과 척도 모두 성립"
+      ],
+      [
+       "$y=3x^2(t)$",
+       "비선형",
+       "제곱이 가산성을 깨요"
+      ],
+      [
+       "$y=3x(t)+2$",
+       "비선형",
+       "척도가 깨져요: 0을 넣으면 0이 나와야 하는데 2가 나와요"
+      ]
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "0 넣어 보기 요령",
+     "items": [
+      "**선형성(Linearity)**이 있으면 0을 넣었을 때 반드시 0이 나와요(0배 척도).",
+      "$3x+2$ 는 0을 넣으면 2. 그 자리에서 탈락이에요.",
+      "단, 0이 나온다고 선형이 확정되진 않아요($3x^2$ 도 0을 넣으면 0)."
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "$y(t)=3x(t)+2$ 는?",
+     "choices": [
+      "선형",
+      "비선형"
+     ],
+     "a": 1,
+     "why": "직선처럼 보여도 +2 때문에 $0$ 입력에 0이 안 나와요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.156,
+       "y": 0.247,
+       "w": 0.68,
+       "h": 0.07,
+       "say": "세 시스템: 3x 는 체크, 나머지 둘은 X."
+      },
+      {
+       "x": 0.061,
+       "y": 0.374,
+       "w": 0.618,
+       "h": 0.057,
+       "say": "3x: 가산성과 척도 모두 성립, 선형."
+      },
+      {
+       "x": 0.061,
+       "y": 0.451,
+       "w": 0.589,
+       "h": 0.057,
+       "say": "3x제곱: 제곱이 가산성을 깨서 비선형."
+      },
+      {
+       "x": 0.061,
+       "y": 0.527,
+       "w": 0.882,
+       "h": 0.057,
+       "say": "3x+2: $0$ 입력에 2가 나와 척도가 깨져서 비선형."
+      }
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "$x_1=1$, $x_2=2$ 로 가산성 시험",
+     "steps": [
+      "$y=3x$: $y_1=3$, $y_2=6$. 합 입력 $3$ → 9. $3+6=9$ 같음.",
+      "$y=3x^2$: $y_1=3$, $y_2=12$. 합 입력 $3$ → $3\\times9=27$. $3+12=15$ 달라요.",
+      "$y=3x+2$: $y_1=5$, $y_2=8$. 합 입력 $3$ → 11. $5+8=13$ 달라요.",
+      "$3x+2$ 에서 차이 2는 '+2' 가 두 번 더해져서 생겨요."
+     ],
+     "answer": "가산성은 3x 만 통과해요."
+    },
+    {
+     "kind": "steps",
+     "head": "$y=3x+2$ 의 다른 성질도 확인",
+     "steps": [
+      "기억: 지금 x 만 써요 → 무기억.",
+      "인과: 미래 안 봄 → 인과.",
+      "안정: $|x|<U$ 이면 $|y|\\le3U+2$ → 안정.",
+      "시불변: $x(t-t_0)$ 넣으면 $3x(t-t_0)+2=y(t-t_0)$ → 시불변.",
+      "선형: 위처럼 탈락 → 비선형."
+     ],
+     "answer": "시불변이지만 선형이 아니에요. 두 성질은 따로 봐야 해요."
+    },
+    {
+     "kind": "prof",
+     "when": "2주차 목요일 수업",
+     "lines": [
+      "3x 는 x1+x2 를 넣으면 y1+y2 와 같고, a 를 곱해도 ay1 이 되니 리니어라고 했어요.",
+      "3x+2 는 둘을 더하면 3x1+3x2+4 가 돼서 2가 더 붙으니 가산성에서 탈락이라고 했어요.",
+      "선형식처럼 생겨서 리니어일 것 같지만 실제로는 논리니어라고 강조했어요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "exam",
+     "src": "슬라이드 예제 (p.79)",
+     "q": "Determine whether y = 3x(t), y = 3x^2(t), y = 3x(t) + $2$ are linear.",
+     "qko": "세 시스템이 선형인지 판정하세요.",
+     "solve": [
+      "$3x$: $3(ax_1+bx_2)=a(3x_1)+b(3x_2)$ → 선형.",
+      "$3x^2$: $3(x_1+x_2)^2=3x_1^2+6x_1x_2+3x_2^2\\ne3x_1^2+3x_2^2$ → 비선형.",
+      "$3x+2$: $3(x_1+x_2)+2\\ne(3x_1+2)+(3x_2+2)$, 또 $0$ 입력 → $2$ → 비선형."
+     ],
+     "answer": "3x 만 선형, 3x제곱과 3x+2 는 비선형"
+    },
+    {
+     "kind": "warn",
+     "head": "시험 함정",
+     "items": [
+      "$y=3x+2$ 는 선형이 아니에요. 그래프가 직선이라 선형이라고 쓰기 쉬워요.",
+      "빠른 판별: 0을 넣어 0이 안 나오면 바로 비선형."
+     ]
+    },
+    {
+     "kind": "english",
+     "head": "답안 문장",
+     "en": "y(t) = 3x(t) + $2$ 는 입력이 0일 때 출력이 2가 되어 동차성이 성립하지 않으므로(가산성도 성립하지 않음) 선형 시스템이 아니다.",
+     "ko": "0 입력 → $0$ 출력이 아니면 비선형.",
+     "tip": "상수를 더하면 비선형"
+    }
+   ]
+  },
+  {
+   "p": 80,
+   "title": "중첩 원리: 쉬운 조각으로 나눠 풀기",
+   "terms": [
+    "Superposition",
+    "Linear Time-Invariant System",
+    "Convolution"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "복잡한 입력도 쉬운 신호 여러 개를 더한 것으로 볼 수 있어요.",
+      "선형 시스템이면 조각마다 출력을 구해서 똑같이 더하면 끝이에요.",
+      "이것을 **중첩 원리(Superposition)**라고 해요."
+     ]
+    },
+    {
+     "kind": "analogy",
+     "head": "정직한 계산기로 나눠 계산",
+     "scene": "큰 계산을 작은 계산 여러 개로 나눠 하고 결과를 더해도 같은 답이 나와요.",
+     "map": [
+      [
+       "작은 계산들",
+       "쉬운 입력 조각 $x_k[n]$"
+      ],
+      [
+       "작은 답을 더하기",
+       "출력 조각 $y_k[n]$ 의 합"
+      ]
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "formula",
+     "head": "입력을 조각으로",
+     "tex": "x[n]=\\sum_k a_k x_k[n]=a_1x_1[n]+a_2x_2[n]+a_3x_3[n]+\\cdots",
+     "parts": [
+      {
+       "sym": "x_k[n]",
+       "say": "쉬운 기본 신호(basis) 조각"
+      },
+      {
+       "sym": "a_k",
+       "say": "각 조각에 곱한 크기"
+      },
+      {
+       "sym": "\\sum_k",
+       "say": "조각을 모두 더함"
+      }
+     ],
+     "whole": "입력을 쉬운 조각들의 선형 합으로 써요."
+    },
+    {
+     "kind": "formula",
+     "head": "출력도 조각으로",
+     "tex": "y[n]=\\sum_k a_k y_k[n]=a_1y_1[n]+a_2y_2[n]+\\cdots",
+     "parts": [
+      {
+       "sym": "y_k[n]",
+       "say": "조각 $x_k$ 하나를 넣었을 때의 출력"
+      },
+      {
+       "sym": "a_k",
+       "say": "입력과 똑같은 크기를 곱함"
+      }
+     ],
+     "whole": "선형이면 출력도 같은 크기로 더한 것. 이것이 **중첩 원리(Superposition)**예요."
+    },
+    {
+     "kind": "check",
+     "q": "**중첩 원리(Superposition)**가 성립하는 시스템은?",
+     "choices": [
+      "모든 시스템",
+      "선형 시스템",
+      "인과 시스템"
+     ],
+     "a": 1,
+     "why": "연속시간, 이산시간 모두 선형 시스템에서 성립해요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.089,
+       "y": 0.292,
+       "w": 0.839,
+       "h": 0.057,
+       "say": "입력 x[n] 이 더 쉬운 신호 $x_k[n]$ 들의 선형 합이라고 하면"
+      },
+      {
+       "x": 0.114,
+       "y": 0.368,
+       "w": 0.511,
+       "h": 0.063,
+       "say": "입력 식."
+      },
+      {
+       "x": 0.114,
+       "y": 0.527,
+       "w": 0.514,
+       "h": 0.063,
+       "say": "선형 시스템의 응답: 같은 크기로 출력 조각들을 더한 것."
+      },
+      {
+       "x": 0.114,
+       "y": 0.609,
+       "w": 0.814,
+       "h": 0.114,
+       "say": "쉬운 신호에 대한 반응을 알면 복잡한 신호의 반응을 선형 합으로 구할 수 있다는 기본 생각."
+      },
+      {
+       "x": 0.114,
+       "y": 0.749,
+       "w": 0.807,
+       "h": 0.051,
+       "say": "이것이 중첩 원리. 연속시간과 이산시간 선형 시스템 모두 성립."
+      }
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "쉬운 숫자로 중첩 ($y=3x$, 조각 $x_1=1$, $x_2=2$, $a_1=4$, $a_2=5$)",
+     "steps": [
+      "입력 $x=4\\times1+5\\times2=14$",
+      "조각 출력: $y_1=3$, $y_2=6$",
+      "중첩: $4\\times3+5\\times6=12+30=42$",
+      "직접 계산: $3\\times14=42$. 같아요."
+     ],
+     "answer": "조각별로 풀어 더해도 한 번에 푼 것과 같아요."
+    },
+    {
+     "kind": "bg",
+     "src": "기초 다지기 b-7 시그마로 더하기",
+     "lines": [
+      "$\\sum_k$ 는 k 를 바꿔 가며 모두 더하라는 기호예요.",
+      "$\\sum_{k=1}^{3}k=1+2+3=6$ 처럼 읽어요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "prof",
+     "when": "3주차 목요일 수업",
+     "lines": [
+      "3주차에 모든 이산시간 신호를 시프트된 임펄스들의 선형 합으로 표현할 수 있다고 했어요.",
+      "그래서 선형 시스템의 출력이 임펄스 응답들의 합으로 표현된다고 했어요. 이 쪽의 중첩이 그 출발점이에요."
+     ]
+    },
+    {
+     "kind": "say",
+     "lines": [
+      "다음 주 2장에서 이 생각이 **LTI 시스템(Linear Time-Invariant System)**와 **컨볼루션(Convolution)**로 이어져요.",
+      "LTI 시스템은 임펄스 응답 하나만 알면 된다. 출력은 뒤집고, 밀고, 곱하고, 더해서(컨볼루션) 구한다."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 81,
+   "title": "연속시간과 이산시간의 중첩 원리",
+   "terms": [
+    "Superposition",
+    "Linear Time-Invariant System",
+    "Unit Impulse"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "짧은 펄스 두 개를 따로 넣으면 메아리가 하나씩 생겨요.",
+      "두 펄스를 한꺼번에 넣으면 두 메아리가 그대로 더해져 나와요.",
+      "선형 시스템에서는 연속시간이든 이산시간이든 이렇게 돼요."
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "펄스 둘, 메아리 둘",
+     "svg": "<svg viewBox=\"0 0 480 270\" xmlns=\"http://www.w3.org/2000/svg\"><polyline points=\"60,50 83.3,50 83.3,25 90.3,25 90.3,50 200,50\" fill=\"none\" class=\"e\"/><polyline points=\"290,50 291.3,50 292.7,50 294,50 295.3,50 296.7,50 298,50 299.3,50 300.7,50 302,50 303.3,50 304.7,50 306,50 307.3,50 308.7,50 310,50 311.3,50 312.7,50 314,50 315.3,50 316.7,50 318,50 319.3,50 320.7,50 322,50 323.3,50 324.7,50 326,46.2 327.3,42.8 328.7,39.9 330,37.5 331.3,35.7 332.7,34.4 334,33.6 335.3,33.3 336.7,33.5 338,34.1 339.3,35 340.7,36.3 342,37.8 343.3,39.6 344.7,41.4 346,43.3 347.3,45.2 348.7,47.1 350,48.9 351.3,50.6 352.7,52.1 354,53.4 355.3,54.6 356.7,55.5 358,56.1 359.3,56.6 360.7,56.9 362,56.9 363.3,56.8 364.7,56.5 366,56 367.3,55.4 368.7,54.8 370,54 371.3,53.3 372.7,52.5 374,51.7 375.3,50.9 376.7,50.2 378,49.5 379.3,48.9 380.7,48.4 382,48 383.3,47.6 384.7,47.4 386,47.2 387.3,47.2 388.7,47.2 390,47.2 391.3,47.4 392.7,47.6 394,47.8 395.3,48.1 396.7,48.4 398,48.8 399.3,49.1 400.7,49.4 402,49.7 403.3,50 404.7,50.3 406,50.5 407.3,50.7 408.7,50.9 410,51 411.3,51.1 412.7,51.2 414,51.2 415.3,51.2 416.7,51.1 418,51 419.3,51 420.7,50.8 422,50.7 423.3,50.6 424.7,50.5 426,50.3 427.3,50.2 428.7,50.1 430,49.9 431.3,49.8 432.7,49.7 434,49.7 435.3,49.6 436.7,49.6 438,49.5 439.3,49.5 440.7,49.5 442,49.5 443.3,49.5 444.7,49.6 446,49.6 447.3,49.7 448.7,49.7 450,49.8\" fill=\"none\" class=\"e2\"/><text x=\"24\" y=\"56\" font-size=\"14\" text-anchor=\"middle\" class=\"tb\">x1</text><line x1=\"215\" y1=\"50\" x2=\"266\" y2=\"50\" class=\"e\"/><polygon points=\"275,50 266,55 266,45\" class=\"arrow\"/><polyline points=\"60,130 141.7,130 141.7,105 148.7,105 148.7,130 200,130\" fill=\"none\" class=\"e b1\"/><polyline points=\"290,130 291.3,130 292.7,130 294,130 295.3,130 296.7,130 298,130 299.3,130 300.7,130 302,130 303.3,130 304.7,130 306,130 307.3,130 308.7,130 310,130 311.3,130 312.7,130 314,130 315.3,130 316.7,130 318,130 319.3,130 320.7,130 322,130 323.3,130 324.7,130 326,130 327.3,130 328.7,130 330,130 331.3,130 332.7,130 334,130 335.3,130 336.7,130 338,130 339.3,130 340.7,130 342,130 343.3,130 344.7,130 346,130 347.3,130 348.7,130 350,130 351.3,130 352.7,130 354,130 355.3,130 356.7,130 358,130 359.3,130 360.7,130 362,130 363.3,130 364.7,130 366,130 367.3,130 368.7,130 370,130 371.3,130 372.7,130 374,130 375.3,130 376.7,130 378,130 379.3,130 380.7,130 382,130 383.3,130 384.7,130 386,130 387.3,130 388.7,130 390,130 391.3,130 392.7,126.2 394,122.8 395.3,119.9 396.7,117.5 398,115.7 399.3,114.4 400.7,113.6 402,113.3 403.3,113.5 404.7,114.1 406,115 407.3,116.3 408.7,117.8 410,119.6 411.3,121.4 412.7,123.3 414,125.2 415.3,127.1 416.7,128.9 418,130.6 419.3,132.1 420.7,133.4 422,134.6 423.3,135.5 424.7,136.1 426,136.6 427.3,136.9 428.7,136.9 430,136.8 431.3,136.5 432.7,136 434,135.4 435.3,134.8 436.7,134 438,133.3 439.3,132.5 440.7,131.7 442,130.9 443.3,130.2 444.7,129.5 446,128.9 447.3,128.4 448.7,128 450,127.6\" fill=\"none\" class=\"e2 b1\"/><text x=\"24\" y=\"136\" font-size=\"14\" text-anchor=\"middle\" class=\"tb b1\">x2</text><line x1=\"215\" y1=\"130\" x2=\"266\" y2=\"130\" class=\"e b1\"/><polygon points=\"275,130 266,135 266,125\" class=\"arrow b1\"/><polyline points=\"60,210 83.3,210 83.3,185 90.3,185 90.3,210 141.7,210 141.7,185 148.7,185 148.7,210 200,210\" fill=\"none\" class=\"e b2\"/><polyline points=\"290,210 291.3,210 292.7,210 294,210 295.3,210 296.7,210 298,210 299.3,210 300.7,210 302,210 303.3,210 304.7,210 306,210 307.3,210 308.7,210 310,210 311.3,210 312.7,210 314,210 315.3,210 316.7,210 318,210 319.3,210 320.7,210 322,210 323.3,210 324.7,210 326,206.2 327.3,202.8 328.7,199.9 330,197.5 331.3,195.7 332.7,194.4 334,193.6 335.3,193.3 336.7,193.5 338,194.1 339.3,195 340.7,196.3 342,197.8 343.3,199.6 344.7,201.4 346,203.3 347.3,205.2 348.7,207.1 350,208.9 351.3,210.6 352.7,212.1 354,213.4 355.3,214.6 356.7,215.5 358,216.1 359.3,216.6 360.7,216.9 362,216.9 363.3,216.8 364.7,216.5 366,216 367.3,215.4 368.7,214.8 370,214 371.3,213.3 372.7,212.5 374,211.7 375.3,210.9 376.7,210.2 378,209.5 379.3,208.9 380.7,208.4 382,208 383.3,207.6 384.7,207.4 386,207.2 387.3,207.2 388.7,207.2 390,207.2 391.3,207.4 392.7,203.8 394,200.7 395.3,198 396.7,196 398,194.4 399.3,193.5 400.7,193 402,193 403.3,193.5 404.7,194.4 406,195.6 407.3,197 408.7,198.7 410,200.6 411.3,202.5 412.7,204.5 414,206.4 415.3,208.3 416.7,210 418,211.6 419.3,213.1 420.7,214.3 422,215.3 423.3,216.1 424.7,216.6 426,216.9 427.3,217 428.7,217 430,216.7 431.3,216.3 432.7,215.8 434,215.1 435.3,214.4 436.7,213.6 438,212.8 439.3,212 440.7,211.2 442,210.4 443.3,209.7 444.7,209.1 446,208.5 447.3,208.1 448.7,207.7 450,207.4\" fill=\"none\" class=\"e2 b2\"/><text x=\"24\" y=\"216\" font-size=\"14\" text-anchor=\"middle\" class=\"tb b2\">x1+x2</text><line x1=\"215\" y1=\"210\" x2=\"266\" y2=\"210\" class=\"e b2\"/><polygon points=\"275,210 266,215 266,205\" class=\"arrow b2\"/><text x=\"245\" y=\"262\" font-size=\"15\" text-anchor=\"middle\" class=\"t b2\">합을 넣으면 출력도 두 메아리의 합</text></svg>",
+     "caption": "합을 넣으면 출력도 합",
+     "builds": 2
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "compare",
+     "head": "두 가지 **중첩 원리(Superposition)**",
+     "cols": [
+      "",
+      "연속시간",
+      "이산시간"
+     ],
+     "rows": [
+      [
+       "식",
+       "$ax_1(t)+bx_2(t)\\rightarrow ay_1(t)+by_2(t)$",
+       "$ax_1[n]+bx_2[n]\\rightarrow ay_1[n]+by_2[n]$"
+      ],
+      [
+       "변수",
+       "t (둥근 괄호)",
+       "n (대괄호)"
+      ],
+      [
+       "성립 조건",
+       "선형 시스템",
+       "선형 시스템"
+      ]
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "세 번째 줄 그림에서 출력이 두 메아리의 합인 이유는?",
+     "choices": [
+      "시스템이 선형이라서",
+      "입력이 같아서",
+      "시간이 멈춰서"
+     ],
+     "a": 0,
+     "why": "선형이면 합을 넣은 출력이 출력들의 합이에요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.086,
+       "y": 0.235,
+       "w": 0.382,
+       "h": 0.121,
+       "say": "연속시간 중첩 원리 식."
+      },
+      {
+       "x": 0.507,
+       "y": 0.235,
+       "w": 0.407,
+       "h": 0.121,
+       "say": "이산시간 중첩 원리 식."
+      },
+      {
+       "x": 0.196,
+       "y": 0.4,
+       "w": 0.571,
+       "h": 0.076,
+       "say": "첫째 줄: x1 → y1."
+      },
+      {
+       "x": 0.196,
+       "y": 0.52,
+       "w": 0.571,
+       "h": 0.063,
+       "say": "둘째 줄: x2 → y2."
+      },
+      {
+       "x": 0.196,
+       "y": 0.641,
+       "w": 0.571,
+       "h": 0.07,
+       "say": "셋째 줄: x1+x2 → y1+y2. 두 메아리가 겹쳐 나와요."
+      },
+      {
+       "x": 0.061,
+       "y": 0.749,
+       "w": 0.504,
+       "h": 0.063,
+       "say": "선형 시스템이면 연속, 이산 모두 참."
+      }
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "그림을 시불변과 함께 읽기",
+     "steps": [
+      "짧은 펄스는 **단위 임펄스(Unit Impulse)**(손뼉 한 번)을 닮았어요. x2 는 x1 과 같은 펄스를 늦게 넣은 거예요.",
+      "그림에서 y2 도 y1 과 같은 모양이 늦게 나와요. 시불변 덕분이에요.",
+      "그래서 선형 + 시불변이면 펄스 하나의 메아리만 알면 모든 입력의 출력을 알 수 있어요."
+     ],
+     "answer": "이것이 **LTI 시스템(Linear Time-Invariant System)**가 강력한 이유예요."
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "중첩 원리 식 $ax_1+bx_2\\rightarrow ay_1+by_2$ 가 담고 있는 두 조건은?",
+     "choices": [
+      "가산성과 동차성",
+      "인과성과 기억성",
+      "시불변성과 안정성"
+     ],
+     "a": 0,
+     "why": "더하기(가산)와 상수배(동차)를 한 식에 담았어요."
+    }
+   ]
+  },
+  {
+   "p": 82,
+   "title": "y(t)=t x(t): 선형이지만 시변",
+   "terms": [
+    "Time Invariance",
+    "Linearity",
+    "Superposition"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "$y(t)=t\\,x(t)$ 는 입력에 시각 t 를 곱하는 시스템이에요.",
+      "선형이지만 시불변은 아니에요.",
+      "**선형성(Linearity)**과 **시불변성(Time Invariance)**은 서로 따로 노는 성질이라는 예예요."
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "formula",
+     "head": "선형 확인 식",
+     "tex": "t\\,(ax_1(t)+bx_2(t))=a\\,t x_1(t)+b\\,t x_2(t)=a y_1+b y_2",
+     "parts": [
+      {
+       "sym": "t\\,(ax_1+bx_2)",
+       "say": "섞은 입력을 넣은 출력"
+      },
+      {
+       "sym": "a\\,tx_1+b\\,tx_2",
+       "say": "괄호를 풀어요(분배)"
+      },
+      {
+       "sym": "ay_1+by_2",
+       "say": "각 출력을 같은 비율로 섞은 것"
+      }
+     ],
+     "whole": "양쪽이 같아서 **중첩 원리(Superposition)**가 성립, 선형이에요."
+    },
+    {
+     "kind": "points",
+     "head": "슬라이드 결론",
+     "items": [
+      "LINEAR: 선형이다.",
+      "even though it is time-varying (Non TI): 시변인데도.",
+      "linearity and TI are independent properties: 선형성과 시불변성은 서로 독립."
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "$y(t)=t\\,x(t)$ 에 대해 맞는 것은?",
+     "choices": [
+      "선형, 시불변",
+      "선형, 시변",
+      "비선형, 시불변"
+     ],
+     "a": 1,
+     "why": "곱하는 t 가 시각마다 달라져서 시변, 하지만 중첩은 성립해서 선형이에요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.425,
+       "y": 0.247,
+       "w": 0.146,
+       "h": 0.063,
+       "say": "시스템 $y(t)=t\\,x(t)$."
+      },
+      {
+       "x": 0.061,
+       "y": 0.362,
+       "w": 0.825,
+       "h": 0.076,
+       "say": "섞은 입력을 넣고 풀면 $ay_1+by_2$ 가 돼서 체크."
+      },
+      {
+       "x": 0.061,
+       "y": 0.451,
+       "w": 0.854,
+       "h": 0.121,
+       "say": "선형이다. 시변인데도. 선형성과 시불변성은 독립."
+      }
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "숫자로 선형 확인 ($t=4$, $x_1(4)=1$, $x_2(4)=2$, $a=2$, $b=3$)",
+     "steps": [
+      "섞은 입력: $2\\times1+3\\times2=8$. 출력 $4\\times8=32$.",
+      "따로: $y_1=4\\times1=4$, $y_2=4\\times2=8$.",
+      "섞은 출력: $2\\times4+3\\times8=8+24=32$.",
+      "같아요. 선형."
+     ],
+     "answer": "어느 t 에서든 이렇게 맞아요."
+    },
+    {
+     "kind": "steps",
+     "head": "숫자로 시변 확인 (입력 $u(t)$, 1만큼 밀기)",
+     "steps": [
+      "원래: $x_1=u(t)$ → $y_1(t)=t\\,u(t)$",
+      "먼저 밀고 넣기: $x_2=u(t-1)$ → $y_2(t)=t\\,u(t-1)$. $t=2$ 에서 $2\\times1=2$.",
+      "넣고 나서 밀기: $y_1(t-1)=(t-1)\\,u(t-1)$. $t=2$ 에서 $1\\times1=1$.",
+      "2와 1, 달라요. 시변."
+     ],
+     "answer": "선형이지만 시불변이 아니에요."
+    },
+    {
+     "kind": "steps",
+     "head": "나머지 성질도 확인",
+     "steps": [
+      "기억: 지금 x(t) 만 써요 → 무기억.",
+      "인과: 미래 안 봄 → 인과.",
+      "안정: $x(t)=1$ (유계) 을 넣으면 $y=t$ 가 끝없이 커져요 → 불안정."
+     ],
+     "answer": "무기억, 인과, 불안정, 선형, 시변."
+    },
+    {
+     "kind": "prof",
+     "when": "2주차 목요일 수업",
+     "lines": [
+      "t x(t) 는 리니어한데 타임 인베리언트는 아닌 시스템이라고 했어요.",
+      "리니어하다고 해서 항상 타임 인베리언트한 건 아니고, 반대도 마찬가지라고 했어요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "exam",
+     "src": "슬라이드 예제 (p.82)",
+     "q": "Is y(t) = t x(t) linear? Is it time-invariant?",
+     "qko": "t x(t) 가 선형인지, 시불변인지 판정하세요.",
+     "solve": [
+      "선형: $t(ax_1+bx_2)=a\\,tx_1+b\\,tx_2=ay_1+by_2$ → 선형.",
+      "시불변: 밀고 넣기 $t\\,x(t-t_0)$, 넣고 밀기 $(t-t_0)\\,x(t-t_0)$.",
+      "$t_0\\ne0$ 이면 달라요 → 시변."
+     ],
+     "answer": "선형이지만 시변"
+    },
+    {
+     "kind": "english",
+     "head": "답안 문장",
+     "en": "선형성과 시불변성은 서로 독립인 성질이다. 예를 들어 y(t) = t x(t) 는 선형이지만 시변이고, y(t) = x²(t) 는 시불변이지만 비선형이다.",
+     "ko": "선형 ≠ 시불변. 따로 판정.",
+     "tip": "t 가 식 밖에 곱해지면 시변 의심"
+    }
+   ]
+  },
+  {
+   "p": 83,
+   "title": "y(t)=x²(t): 교차항 때문에 비선형",
+   "terms": [],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "제곱하는 시스템은 선형이 아니에요.",
+      "두 입력을 더해서 제곱하면, 따로 제곱해 더한 것보다 덤이 더 붙어요.",
+      "그 덤, 교차항이 범인이에요."
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "formula",
+     "head": "가산성 확인",
+     "tex": "(x_1+x_2)^2=x_1^2+2x_1x_2+x_2^2\\ \\ne\\ x_1^2+x_2^2",
+     "parts": [
+      {
+       "sym": "(x_1+x_2)^2",
+       "say": "합을 넣은 출력"
+      },
+      {
+       "sym": "x_1^2+x_2^2",
+       "say": "따로 넣은 출력의 합"
+      },
+      {
+       "sym": "2x_1x_2",
+       "say": "교차항(cross-term): 여기서 차이가 나요"
+      }
+     ],
+     "whole": "교차항 $2x_1x_2$ 때문에 가산성이 깨져요. 비선형."
+    },
+    {
+     "kind": "check",
+     "q": "$y=x^2$ 의 가산성을 깨는 항은?",
+     "choices": [
+      "$x_1^2$",
+      "$2x_1x_2$",
+      "$x_2^2$"
+     ],
+     "a": 1,
+     "why": "슬라이드: the cross-term $2x_1x_2$ is the culprit."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.436,
+       "y": 0.247,
+       "w": 0.129,
+       "h": 0.063,
+       "say": "시스템 $y(t)=x^2(t)$."
+      },
+      {
+       "x": 0.061,
+       "y": 0.362,
+       "w": 0.718,
+       "h": 0.076,
+       "say": "가산성 확인: 전개하면 교차항이 생겨서 X."
+      },
+      {
+       "x": 0.061,
+       "y": 0.451,
+       "w": 0.607,
+       "h": 0.057,
+       "say": "비선형. 교차항 $2x_1x_2$ 가 범인."
+      }
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "숫자로 ($x_1=1$, $x_2=2$)",
+     "steps": [
+      "합 입력 $3$ → $3^2=9$",
+      "따로: $1^2+2^2=1+4=5$",
+      "차이 $9-5=4$ 는 교차항 $2\\times1\\times2=4$",
+      "척도도 확인: $2\\times3=6$ 을 넣으면 36, 그런데 $2\\times9=18$. 역시 달라요."
+     ],
+     "answer": "가산성도 척도도 깨져요. 비선형."
+    },
+    {
+     "kind": "steps",
+     "head": "나머지 성질",
+     "steps": [
+      "기억: 무기억.  인과: 인과.",
+      "안정: $|x|<U$ 이면 $y<U^2$ → 안정.",
+      "시불변: $x(t-t_0)$ 넣으면 $x^2(t-t_0)=y(t-t_0)$ → 시불변.",
+      "가역: 2와 -2 가 같은 $4$ → 가역 아님."
+     ],
+     "answer": "시불변이지만 비선형. p.82 와 반대 짝이에요."
+    },
+    {
+     "kind": "prof",
+     "when": "2주차 목요일 수업",
+     "lines": [
+      "x 제곱 t 는 TI 는 맞는데 L 은 아니라고 정리했어요.",
+      "L 도 TI 도 아닌 예로는 t 곱하기 x 제곱 t 같은 것이 있다고 했어요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "compare",
+     "head": "교수님 정리: L 과 TI 네 칸",
+     "cols": [
+      "시스템",
+      "선형",
+      "시불변"
+     ],
+     "rows": [
+      [
+       "$y=3x(t)$",
+       "O",
+       "O (LTI)"
+      ],
+      [
+       "$y=t\\,x(t)$",
+       "O",
+       "X"
+      ],
+      [
+       "$y=x^2(t)$",
+       "X",
+       "O"
+      ],
+      [
+       "$y=t\\,x^2(t)$",
+       "X",
+       "X"
+      ]
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "$y(t)=t\\,x^2(t)$ 는?",
+     "choices": [
+      "선형이고 시불변",
+      "선형도 시불변도 아님",
+      "선형만"
+     ],
+     "a": 1,
+     "why": "제곱 때문에 비선형, t 곱 때문에 시변이에요."
+    }
+   ]
+  },
+  {
+   "p": 84,
+   "title": "Example 1.19: y[n]=Re{x[n]} 는 선형일까?",
+   "terms": [
+    "Complex Number",
+    "Imaginary Unit"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "입력이 **복소수(Complex Number)**일 때 실수 부분만 꺼내는 시스템이에요.",
+      "더하기는 잘 통과하고, 실수를 곱하는 것도 통과해요.",
+      "그런데 허수 j 를 곱하면 깨져요. 그래서 선형이 아니에요."
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "formula",
+     "head": "입력을 실수부와 허수부로",
+     "tex": "x_1[n]=r[n]+j\\,s[n]",
+     "parts": [
+      {
+       "sym": "r[n]",
+       "say": "실수 부분"
+      },
+      {
+       "sym": "s[n]",
+       "say": "허수 부분의 크기"
+      },
+      {
+       "sym": "j",
+       "say": "**허수 단위(Imaginary Unit)**, $j^2=-1$"
+      },
+      {
+       "sym": "\\mathrm{Re}\\{x_1[n]\\}=r[n]",
+       "say": "Re 는 실수 부분만 꺼내요"
+      }
+     ],
+     "whole": "그래서 $y_1[n]=r[n]$ 이에요."
+    },
+    {
+     "kind": "formula",
+     "head": "j 를 곱해 보기",
+     "tex": "x_2=jx_1\\Rightarrow y_2=\\mathrm{Re}\\{jr-s\\}=-s\\ \\ne\\ jy_1=jr",
+     "parts": [
+      {
+       "sym": "jx_1=j(r+js)=jr-s",
+       "say": "$j\\times j=-1$ 이라 $js\\times j=-s$"
+      },
+      {
+       "sym": "y_2=-s",
+       "say": "실수 부분은 $-s$"
+      },
+      {
+       "sym": "jy_1=jr",
+       "say": "척도가 맞으려면 나와야 할 값"
+      }
+     ],
+     "whole": "$-s$ 와 $jr$ 가 달라서 척도(동차성)가 깨져요."
+    },
+    {
+     "kind": "check",
+     "q": "Example 1.19 에서 선형이 아닌 이유는?",
+     "choices": [
+      "가산성이 깨져서",
+      "복소수 상수 j 로 척도가 깨져서",
+      "미래를 봐서"
+     ],
+     "a": 1,
+     "why": "가산성과 실수 척도는 되지만, 선형성은 복소수 상수까지 허용해요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.061,
+       "y": 0.19,
+       "w": 0.468,
+       "h": 0.053,
+       "say": "교재 Example 1.19: Re{x[n]} 는 선형인가? (슬라이드 제목의 Examle 은 Example 오타)"
+      },
+      {
+       "x": 0.061,
+       "y": 0.266,
+       "w": 0.779,
+       "h": 0.048,
+       "say": "가산성과 실수 척도는 되지만 선형성은 복소수 상수도 허용한다는 문장."
+      },
+      {
+       "x": 0.395,
+       "y": 0.34,
+       "w": 0.205,
+       "h": 0.06,
+       "say": "시스템: 실수 부분 꺼내기."
+      },
+      {
+       "x": 0.043,
+       "y": 0.444,
+       "w": 0.911,
+       "h": 0.07,
+       "say": "j 를 곱한 입력의 출력 $-s$ 는 $jy_1=jr$ 과 달라요."
+      },
+      {
+       "x": 0.061,
+       "y": 0.577,
+       "w": 0.632,
+       "h": 0.051,
+       "say": "j 척도 실패 → 복소수 기준으로 선형이 아님."
+      }
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "숫자로 ($x_1=3+4j$)",
+     "steps": [
+      "$y_1=\\mathrm{Re}\\{3+4j\\}=3$",
+      "$x_2=jx_1=j(3+4j)=3j+4j^2=3j-4=-4+3j$",
+      "$y_2=\\mathrm{Re}\\{-4+3j\\}=-4$",
+      "척도라면 $jy_1=3j$ 여야 하는데 $-4$. 달라요."
+     ],
+     "answer": "j 척도가 깨져서 비선형이에요."
+    },
+    {
+     "kind": "steps",
+     "head": "가산성은 되는지 확인 ($x_1=3+4j$, $x_2=1-2j$)",
+     "steps": [
+      "합 $=4+2j$, 실수부 4",
+      "따로: $3+1=4$",
+      "같아요. 가산성은 성립해요."
+     ],
+     "answer": "가산성만으로는 선형이 아니에요. 척도까지 필요해요."
+    },
+    {
+     "kind": "bg",
+     "src": "기초 다지기 b-5 복소수와 복소평면",
+     "lines": [
+      "**복소수(Complex Number)**는 실수부와 허수부로 이루어져요. $3+4j$ 의 실수부는 3, 허수부는 4.",
+      "**허수 단위(Imaginary Unit)** j 는 $j^2=-1$ 인 수예요. 교수님과 교재는 i 대신 j 를 써요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "exam",
+     "src": "교재 Example 1.19 (p.84)",
+     "q": "Is y[n] = Re{x[n]} linear?",
+     "qko": "실수부를 꺼내는 시스템이 선형인지 판정하세요.",
+     "solve": [
+      "가산성: $\\mathrm{Re}\\{x_1+x_2\\}=\\mathrm{Re}\\{x_1\\}+\\mathrm{Re}\\{x_2\\}$ 성립.",
+      "실수 a 척도: $\\mathrm{Re}\\{ax\\}=a\\,\\mathrm{Re}\\{x\\}$ 성립.",
+      "복소수 j 척도: $x_1=r+js$ 이면 $\\mathrm{Re}\\{jx_1\\}=-s\\ne j\\,r$.",
+      "선형성은 복소수 상수도 허용하므로 조건이 깨져요."
+     ],
+     "answer": "선형이 아니다(복소수 상수 기준)"
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "가산성만 보고 선형이라고 결론 내면 틀려요. 척도, 특히 복소수 상수까지 확인하세요.",
+      "p.77 의 $a\\in\\mathbb{C}$ 가 바로 이 예제를 위한 조건이에요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 85,
+   "title": "Example 1.20: 증분 선형 시스템 y[n]=2x[n]+3",
+   "terms": [
+    "Time Reversal",
+    "Incrementally Linear System",
+    "Zero-Input Response"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "$y[n]=2x[n]+3$ 은 3x+2 와 같은 모양이라 선형이 아니에요.",
+      "하지만 '선형 시스템 + 늘 더해지는 3' 으로 나눠 볼 수 있어요.",
+      "이런 시스템을 **증분 선형 시스템(Incrementally Linear System)**이라고 해요."
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "compare",
+     "head": "두 조각으로 나누기",
+     "cols": [
+      "조각",
+      "식",
+      "이름"
+     ],
+     "rows": [
+      [
+       "선형 부분",
+       "$x[n]\\rightarrow2x[n]$",
+       "선형 시스템(Linear system)"
+      ],
+      [
+       "늘 더해지는 부분",
+       "$y_0[n]=3$",
+       "**영입력 응답(Zero-Input Response)**(Zero-input response)"
+      ],
+      [
+       "합친 것",
+       "$y[n]=2x[n]+3$",
+       "**증분 선형 시스템(Incrementally Linear System)**"
+      ]
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "**영입력 응답(Zero-Input Response)**이란",
+     "items": [
+      "입력을 0으로 넣었을 때 나오는 출력이에요.",
+      "$y[n]=2\\times0+3=3$, 그래서 $y_0[n]=3$.",
+      "선형 시스템이라면 영입력 응답은 0이어야 해요."
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "$y[n]=2x[n]+3$ 의 영입력 응답은?",
+     "choices": [
+      "0",
+      "2",
+      "3"
+     ],
+     "a": 2,
+     "why": "입력 0을 넣으면 3이 나와요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.143,
+       "y": 0.266,
+       "w": 0.114,
+       "h": 0.038,
+       "say": "교재 Example 1.20."
+      },
+      {
+       "x": 0.143,
+       "y": 0.311,
+       "w": 0.707,
+       "h": 0.095,
+       "say": "$y[n]=2x[n]+3$ 은 선형 시스템 $x\\rightarrow2x$ 와 3의 합(두 시스템의 중첩)."
+      },
+      {
+       "x": 0.121,
+       "y": 0.425,
+       "w": 0.5,
+       "h": 0.057,
+       "say": "증분 선형 시스템, **영입력 응답(Zero-Input Response)** $y_0[n]=3$."
+      },
+      {
+       "x": 0.05,
+       "y": 0.514,
+       "w": 0.45,
+       "h": 0.279,
+       "say": "Figure 1.48: 선형 시스템 출력에 $y_0$ 를 더하는 구조."
+      },
+      {
+       "x": 0.529,
+       "y": 0.711,
+       "w": 0.396,
+       "h": 0.095,
+       "say": "두 입력에 대한 출력의 차이는 선형이에요."
+      }
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "차이는 선형 ($x_1=1$, $x_2=4$)",
+     "steps": [
+      "$y_1=2\\times1+3=5$, $y_2=2\\times4+3=11$",
+      "출력 차이 $11-5=6$",
+      "입력 차이 $4-1=3$, 2배 하면 6",
+      "식으로: $y_1-y_2=2x_1+3-(2x_2+3)=2(x_1-x_2)$. 3이 지워져요."
+     ],
+     "answer": "출력의 차이는 입력의 차이에 대해 선형이에요. 그래서 '증분' 선형."
+    },
+    {
+     "kind": "prof",
+     "when": "2주차 목요일 수업",
+     "lines": [
+      "영입력(제로 인풋)으로 3이 붙는 이 시스템을 인크리멘탈 리니어 시스템이라고 부른다고 했어요.",
+      "3 만 아니었으면 리니어 시스템이고, 두 입력에 대한 응답의 차이는 리니어하다고 했어요.",
+      "집에서 곰곰이 생각해 보면 무슨 말인지 알 거라고 했어요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "증분 선형 시스템 $y[n]=2x[n]+3$ 은 선형인가요?",
+     "choices": [
+      "선형이다",
+      "선형이 아니다"
+     ],
+     "a": 1,
+     "why": "이름에 '선형' 이 들어가도 그 자체는 선형이 아니에요. $0$ 입력에 3이 나와요."
+    },
+    {
+     "kind": "compare",
+     "head": "여섯 성질 한눈에 정리(1장 예제들)",
+     "cols": [
+      "시스템",
+      "기억",
+      "인과",
+      "안정",
+      "시불변",
+      "선형"
+     ],
+     "rows": [
+      [
+       "$y[n]=x[n-1]$ 지연",
+       "있음",
+       "O",
+       "O",
+       "O",
+       "O"
+      ],
+      [
+       "누산기",
+       "있음",
+       "O",
+       "X",
+       "O",
+       "O"
+      ],
+      [
+       "$y[n]=n\\,x[n]$",
+       "없음",
+       "O",
+       "X",
+       "X",
+       "O"
+      ],
+      [
+       "$y(t)=x(2t)$",
+       "있음",
+       "X",
+       "O",
+       "X",
+       "O"
+      ],
+      [
+       "$y=3x+2$",
+       "없음",
+       "O",
+       "O",
+       "O",
+       "X"
+      ],
+      [
+       "$y[n]=x[-n]$",
+       "있음",
+       "X",
+       "O",
+       "X",
+       "O"
+      ]
+     ]
+    },
+    {
+     "kind": "exam",
+     "src": "성질 판정 연습 (1장 범위)",
+     "q": "Check memory, causality, stability, time invariance and linearity of y[n] = x[-n].",
+     "qko": "$y[n]=x[-n]$ (**시간 반전(Time Reversal)**)의 성질을 모두 판정하세요.",
+     "solve": [
+      "기억/인과: $n=-1$ 이면 $y[-1]=x[1]$, 미래 입력 → 비인과. $n=1$ 이면 $y[1]=x[-1]$, 과거 → 기억 있음.",
+      "안정: $|x|<U$ 이면 $|y|<U$ → 안정.",
+      "시불변: 밀고 넣기 $x[-n-n_0]$, 넣고 밀기 $y[n-n_0]=x[-n+n_0]$ → 다름 → 시변.",
+      "선형: $ax_1[-n]+bx_2[-n]=ay_1+by_2$ → 선형.",
+      "가역: 한 번 더 뒤집으면 원래 → 가역."
+     ],
+     "answer": "기억 있음, 비인과, 안정, 시변, 선형, 가역"
+    },
+    {
+     "kind": "warn",
+     "head": "시험 함정",
+     "items": [
+      "**시간 반전(Time Reversal)** $y[n]=x[-n]$ 은 $n\\ge0$ 만 보면 과거만 쓰는 것 같아 인과라고 착각해요. 음수 n 에서 미래를 봐요.",
+      "$y(t)=x(2t)$ 도 $t>0$ 이면 $x(2t)$ 가 미래라 비인과, 그리고 시불변이 아니에요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 86,
+   "title": "1장 과제: 변환된 신호 그리기 (1.21, 1.22)",
+   "terms": [
+    "Time Shift",
+    "Time Reversal",
+    "Time Scaling"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "여기부터 세 쪽은 1장 과제예요. 슬라이드 번호로 84~86번이에요.",
+      "첫 과제는 그래프를 **시간 이동(Time Shift)**, **시간 반전(Time Reversal)**, **시간 척도 변환(Time Scaling)**해서 다시 그리는 연습이에요.",
+      "영상 재생 비유 그대로예요: 늦게 틀기, 거꾸로 틀기, 2배속."
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "원래 신호와 1만큼 늦춘 신호",
+     "svg": "<svg viewBox=\"0 0 480 270\" xmlns=\"http://www.w3.org/2000/svg\"><line x1=\"34\" y1=\"150\" x2=\"458\" y2=\"150\" class=\"e\"/><line x1=\"215.7\" y1=\"224\" x2=\"215.7\" y2=\"24\" class=\"e\"/><text x=\"462\" y=\"155\" font-size=\"14\" text-anchor=\"start\" class=\"tm\">t</text><line x1=\"98.6\" y1=\"147\" x2=\"98.6\" y2=\"153\" class=\"e\"/><text x=\"98.6\" y=\"230\" font-size=\"14\" text-anchor=\"middle\" class=\"tm\">-2</text><line x1=\"157.1\" y1=\"147\" x2=\"157.1\" y2=\"153\" class=\"e\"/><text x=\"157.1\" y=\"230\" font-size=\"14\" text-anchor=\"middle\" class=\"tm\">-1</text><line x1=\"274.3\" y1=\"147\" x2=\"274.3\" y2=\"153\" class=\"e\"/><text x=\"274.3\" y=\"230\" font-size=\"14\" text-anchor=\"middle\" class=\"tm\">1</text><line x1=\"332.9\" y1=\"147\" x2=\"332.9\" y2=\"153\" class=\"e\"/><text x=\"332.9\" y=\"230\" font-size=\"14\" text-anchor=\"middle\" class=\"tm\">2</text><line x1=\"391.4\" y1=\"147\" x2=\"391.4\" y2=\"153\" class=\"e\"/><text x=\"391.4\" y=\"230\" font-size=\"14\" text-anchor=\"middle\" class=\"tm\">3</text><line x1=\"212.7\" y1=\"50\" x2=\"218.7\" y2=\"50\" class=\"e\"/><text x=\"209.7\" y=\"55\" font-size=\"14\" text-anchor=\"end\" class=\"tm\">2</text><line x1=\"212.7\" y1=\"200\" x2=\"218.7\" y2=\"200\" class=\"e\"/><text x=\"209.7\" y=\"205\" font-size=\"14\" text-anchor=\"end\" class=\"tm\">-1</text><polyline points=\"40,150 98.6,150 98.6,200 157.1,150 157.1,100 215.7,100 215.7,50 274.3,50 274.3,100 332.9,150 438.3,150\" fill=\"none\" class=\"e\"/><text x=\"80\" y=\"262\" font-size=\"14\" text-anchor=\"start\" class=\"tm\">x(t): 원래 모양</text><polyline points=\"40,150 157.1,150 157.1,200 215.7,150 215.7,100 274.3,100 274.3,50 332.9,50 332.9,100 391.4,150 438.3,150\" fill=\"none\" class=\"e2 b1\"/><text x=\"460\" y=\"262\" font-size=\"14\" text-anchor=\"end\" class=\"tb b1\">x(t-1): 오른쪽으로 1칸</text></svg>",
+     "caption": "x(t-1) 은 모든 꺾인 점이 오른쪽으로 1칸",
+     "builds": 1
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "points",
+     "head": "원래 신호 읽기 (Figure P1.21, 연속)",
+     "items": [
+      "$-2<t<-1$: -1 에서 $0$ 으로 올라가는 비스듬한 선($x=t+1$)",
+      "$-1<t<0$: 높이 1",
+      "$0<t<1$: 높이 2",
+      "$1<t<2$: $1$ 에서 $0$ 으로 내려가는 선($x=2-t$), 나머지 0"
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "원래 신호 읽기 (Figure P1.22, 이산)",
+     "items": [
+      "$x[-4]=-1$, $x[-3]=-\\frac{1}{2}$, $x[-2]=\\frac{1}{2}$",
+      "$x[-1]=x[0]=x[1]=x[2]=1$",
+      "$x[3]=\\frac{1}{2}$, 나머지는 0"
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "그리는 요령 (괄호 안을 원래 구간에 맞추기)",
+     "steps": [
+      "원래 신호에서 모양이 바뀌는 구간 끝점을 적어요(-2, -1, 0, 1, 2).",
+      "괄호 안 식 = 끝점 으로 두고 t 를 풀어요. 예: $2-t=-2$ 이면 $t=4$.",
+      "구간마다 새 t 구간을 구해서 같은 모양(값)을 옮겨 그려요.",
+      "뒤집기(-t)가 있으면 순서가 반대로 돼요."
+     ],
+     "answer": "괄호 안을 끝점에 맞추면 헷갈리지 않아요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.079,
+       "y": 0.279,
+       "w": 0.264,
+       "h": 0.508,
+       "say": "Figure P1.21: 연속시간 신호 x(t)."
+      },
+      {
+       "x": 0.389,
+       "y": 0.216,
+       "w": 0.507,
+       "h": 0.127,
+       "say": "문제 1.21: (a)~(f) 여섯 신호 그리기."
+      },
+      {
+       "x": 0.389,
+       "y": 0.343,
+       "w": 0.507,
+       "h": 0.152,
+       "say": "문제 1.22: (a)~(h) 여덟 신호 그리기."
+      },
+      {
+       "x": 0.354,
+       "y": 0.596,
+       "w": 0.254,
+       "h": 0.19,
+       "say": "Figure P1.22: 이산시간 신호 x[n]."
+      }
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "1.22 (b) 뒤집고 밀기: $x[3-n]$",
+     "svg": "<svg viewBox=\"0 0 480 270\" xmlns=\"http://www.w3.org/2000/svg\"><line x1=\"34\" y1=\"55\" x2=\"458\" y2=\"55\" class=\"e\"/><line x1=\"201.1\" y1=\"99\" x2=\"201.1\" y2=\"9\" class=\"e\"/><text x=\"462\" y=\"60\" font-size=\"14\" text-anchor=\"start\" class=\"tm\">n</text><text x=\"460\" y=\"44\" font-size=\"15\" text-anchor=\"end\" class=\"tb\">x[n]</text><circle cx=\"54.6\" cy=\"55\" r=\"3\" class=\"n\"/><line x1=\"83.9\" y1=\"55\" x2=\"83.9\" y2=\"88.3\" class=\"e2\"/><circle cx=\"83.9\" cy=\"88.3\" r=\"4\" class=\"n\"/><line x1=\"113.2\" y1=\"55\" x2=\"113.2\" y2=\"71.7\" class=\"e2\"/><circle cx=\"113.2\" cy=\"71.7\" r=\"4\" class=\"n\"/><line x1=\"142.5\" y1=\"55\" x2=\"142.5\" y2=\"38.3\" class=\"e2\"/><circle cx=\"142.5\" cy=\"38.3\" r=\"4\" class=\"n\"/><line x1=\"171.8\" y1=\"55\" x2=\"171.8\" y2=\"21.7\" class=\"e2\"/><circle cx=\"171.8\" cy=\"21.7\" r=\"4\" class=\"n\"/><line x1=\"201.1\" y1=\"55\" x2=\"201.1\" y2=\"21.7\" class=\"e2\"/><circle cx=\"201.1\" cy=\"21.7\" r=\"4\" class=\"n\"/><line x1=\"230.4\" y1=\"55\" x2=\"230.4\" y2=\"21.7\" class=\"e2\"/><circle cx=\"230.4\" cy=\"21.7\" r=\"4\" class=\"n\"/><line x1=\"259.6\" y1=\"55\" x2=\"259.6\" y2=\"21.7\" class=\"e2\"/><circle cx=\"259.6\" cy=\"21.7\" r=\"4\" class=\"n\"/><line x1=\"288.9\" y1=\"55\" x2=\"288.9\" y2=\"38.3\" class=\"e2\"/><circle cx=\"288.9\" cy=\"38.3\" r=\"4\" class=\"n\"/><circle cx=\"318.2\" cy=\"55\" r=\"3\" class=\"n\"/><circle cx=\"347.5\" cy=\"55\" r=\"3\" class=\"n\"/><circle cx=\"376.8\" cy=\"55\" r=\"3\" class=\"n\"/><circle cx=\"406.1\" cy=\"55\" r=\"3\" class=\"n\"/><circle cx=\"435.4\" cy=\"55\" r=\"3\" class=\"n\"/><line x1=\"83.9\" y1=\"52\" x2=\"83.9\" y2=\"58\" class=\"e\"/><text x=\"83.9\" y=\"111\" font-size=\"14\" text-anchor=\"middle\" class=\"tm\">-4</text><line x1=\"201.1\" y1=\"52\" x2=\"201.1\" y2=\"58\" class=\"e\"/><text x=\"201.1\" y=\"111\" font-size=\"14\" text-anchor=\"middle\" class=\"tm\">0</text><line x1=\"288.9\" y1=\"52\" x2=\"288.9\" y2=\"58\" class=\"e\"/><text x=\"288.9\" y=\"111\" font-size=\"14\" text-anchor=\"middle\" class=\"tm\">3</text><line x1=\"34\" y1=\"190\" x2=\"458\" y2=\"190\" class=\"e b1\"/><line x1=\"201.1\" y1=\"234\" x2=\"201.1\" y2=\"144\" class=\"e b1\"/><text x=\"462\" y=\"195\" font-size=\"14\" text-anchor=\"start\" class=\"tm b1\">n</text><text x=\"40\" y=\"168\" font-size=\"15\" text-anchor=\"start\" class=\"tb b1\">x[3-n]</text><circle cx=\"54.6\" cy=\"190\" r=\"3\" class=\"n2 b1\"/><circle cx=\"83.9\" cy=\"190\" r=\"3\" class=\"n2 b1\"/><circle cx=\"113.2\" cy=\"190\" r=\"3\" class=\"n2 b1\"/><circle cx=\"142.5\" cy=\"190\" r=\"3\" class=\"n2 b1\"/><circle cx=\"171.8\" cy=\"190\" r=\"3\" class=\"n2 b1\"/><line x1=\"201.1\" y1=\"190\" x2=\"201.1\" y2=\"173.3\" class=\"e2 b1\"/><circle cx=\"201.1\" cy=\"173.3\" r=\"4\" class=\"n2 b1\"/><line x1=\"230.4\" y1=\"190\" x2=\"230.4\" y2=\"156.7\" class=\"e2 b1\"/><circle cx=\"230.4\" cy=\"156.7\" r=\"4\" class=\"n2 b1\"/><line x1=\"259.6\" y1=\"190\" x2=\"259.6\" y2=\"156.7\" class=\"e2 b1\"/><circle cx=\"259.6\" cy=\"156.7\" r=\"4\" class=\"n2 b1\"/><line x1=\"288.9\" y1=\"190\" x2=\"288.9\" y2=\"156.7\" class=\"e2 b1\"/><circle cx=\"288.9\" cy=\"156.7\" r=\"4\" class=\"n2 b1\"/><line x1=\"318.2\" y1=\"190\" x2=\"318.2\" y2=\"156.7\" class=\"e2 b1\"/><circle cx=\"318.2\" cy=\"156.7\" r=\"4\" class=\"n2 b1\"/><line x1=\"347.5\" y1=\"190\" x2=\"347.5\" y2=\"173.3\" class=\"e2 b1\"/><circle cx=\"347.5\" cy=\"173.3\" r=\"4\" class=\"n2 b1\"/><line x1=\"376.8\" y1=\"190\" x2=\"376.8\" y2=\"206.7\" class=\"e2 b1\"/><circle cx=\"376.8\" cy=\"206.7\" r=\"4\" class=\"n2 b1\"/><line x1=\"406.1\" y1=\"190\" x2=\"406.1\" y2=\"223.3\" class=\"e2 b1\"/><circle cx=\"406.1\" cy=\"223.3\" r=\"4\" class=\"n2 b1\"/><circle cx=\"435.4\" cy=\"190\" r=\"3\" class=\"n2 b1\"/><line x1=\"201.1\" y1=\"187\" x2=\"201.1\" y2=\"193\" class=\"e b1\"/><text x=\"201.1\" y=\"246\" font-size=\"14\" text-anchor=\"middle\" class=\"tm b1\">0</text><line x1=\"347.5\" y1=\"187\" x2=\"347.5\" y2=\"193\" class=\"e b1\"/><text x=\"347.5\" y=\"246\" font-size=\"14\" text-anchor=\"middle\" class=\"tm b1\">5</text><line x1=\"406.1\" y1=\"187\" x2=\"406.1\" y2=\"193\" class=\"e b1\"/><text x=\"406.1\" y=\"246\" font-size=\"14\" text-anchor=\"middle\" class=\"tm b1\">7</text></svg>",
+     "caption": "위는 x[n], 아래는 x[3-n]. 순서가 거꾸로 되고 오른쪽으로 옮겨져요.",
+     "builds": 1
+    },
+    {
+     "kind": "steps",
+     "head": "1.22 (b) $x[3-n]$ 한 칸씩",
+     "steps": [
+      "$n=0$: $x[3]=\\frac{1}{2}$",
+      "$n=1,2,3,4$: $x[2], x[1], x[0], x[-1]$ 모두 1",
+      "$n=5$: $x[-2]=\\frac{1}{2}$, $n=6$: $x[-3]=-\\frac{1}{2}$, $n=7$: $x[-4]=-1$",
+      "나머지 n 은 0"
+     ],
+     "answer": "$x[3-n]$ 은 0~7 에 $\\frac{1}{2},1,1,1,1,\\frac{1}{2},-\\frac{1}{2},-1$."
+    },
+    {
+     "kind": "prof",
+     "when": "2주차 목요일 수업",
+     "lines": [
+      "마지막 3개 슬라이드(84, 85, 86)는 과제라고 했어요.",
+      "다음 주 수업 시작 전까지 풀어서 제출하라고 했고, 목적은 이해했는지 보려는 것이라고 했어요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "exam",
+     "src": "1장 과제 1.21 (a)(b) (p.86)",
+     "q": "Sketch x(t-1) and x(2-t).",
+     "qko": "x(t-1) 과 x(2-t) 를 그리세요.",
+     "solve": [
+      "(a) 오른쪽으로 1: $-1<t<0$ 에서 -1→0 선($x=t$), $0<t<1$ 에서 1, $1<t<2$ 에서 2, $2<t<3$ 에서 1→0 선($3-t$).",
+      "(b) $x(2-t)=x(-(t-2))$: 뒤집고 오른쪽으로 2.",
+      "(b) 구간: $0<t<1$ 에서 0→1 선($x=t$), $1<t<2$ 에서 2, $2<t<3$ 에서 1, $3<t<4$ 에서 0→-1 선($3-t$)."
+     ],
+     "answer": "(a) -1~3 에 걸친 원래 모양, (b) 0~4 에 걸친 거꾸로 모양"
+    },
+    {
+     "kind": "exam",
+     "src": "1장 과제 1.21 (c)(d) (p.86)",
+     "q": "Sketch x(2t+1) and x(4 - t/2).",
+     "qko": "x(2t+1) 과 x(4 - t/2) 를 그리세요.",
+     "solve": [
+      "(c) $2t+1$ 을 끝점 -2, -1, 0, 1, $2$ 에 맞추면 $t=-1.5, -1, -0.5, 0, 0.5$.",
+      "(c) $-1.5<t<-1$: -1→0 선, $-1<t<-0.5$: 1, $-0.5<t<0$: 2, $0<t<0.5$: 1→0 선.",
+      "(d) $4-t/2$ 를 끝점에 맞추면 $t=12, 10, 8, 6, 4$ (순서가 뒤집혀요).",
+      "(d) $4<t<6$: 0→1 선, $6<t<8$: 2, $8<t<10$: 1, $10<t<12$: 0→-1 선."
+     ],
+     "answer": "(c) 폭 절반, -1.5~0.5 / (d) 뒤집고 폭 2배, 4~12"
+    },
+    {
+     "kind": "exam",
+     "src": "1장 과제 1.21 (e)(f) (p.86)",
+     "q": "Sketch [x(t) + x(-t)]u(t) and x(t)[δ(t + 3/2) - δ(t - 3/2)].",
+     "qko": "(e) 와 (f) 를 그리세요.",
+     "solve": [
+      "(e) $t>0$ 만 남겨요. $0<t<1$: $x(t)=2$, $x(-t)=1$, 합 3.",
+      "(e) $1<t<2$: $(2-t)+(1-t)=3-2t$, 1에서 -1 로 내려가는 선. $t>2$ 는 0.",
+      "(f) 임펄스 자리의 x 값만 남아요: $x(-\\frac{3}{2})=-\\frac{1}{2}$, $x(\\frac{3}{2})=\\frac{1}{2}$.",
+      "(f) $-\\frac{1}{2}\\delta(t+\\frac{3}{2})-\\frac{1}{2}\\delta(t-\\frac{3}{2})$"
+     ],
+     "answer": "(e) 0~1 에서 3, 1~2 에서 3-2t / (f) ±3/2 에 크기 -1/2 임펄스 두 개"
+    },
+    {
+     "kind": "exam",
+     "src": "1장 과제 1.22 (a)(c)(d) (p.86)",
+     "q": "Sketch x[n-4], x[3n], x[3n+1].",
+     "qko": "x[n-4], x[3n], x[3n+1] 을 그리세요.",
+     "solve": [
+      "(a) 오른쪽으로 4칸: $n=0$ 부터 $-1, -\\frac{1}{2}, \\frac{1}{2}, 1, 1, 1, 1, \\frac{1}{2}$ ($n=7$ 까지).",
+      "(c) $x[3n]$: $n=-1$ 이면 $x[-3]=-\\frac{1}{2}$, $n=0$ 이면 1, $n=1$ 이면 $x[3]=\\frac{1}{2}$. 나머지 0.",
+      "(d) $x[3n+1]$: $n=-1$ 이면 $x[-2]=\\frac{1}{2}$, $n=0$ 이면 $x[1]=1$, $n=1$ 이면 $x[4]=0$."
+     ],
+     "answer": "(c) 세 칸마다 하나씩만 뽑혀요(나머지는 버려짐)"
+    },
+    {
+     "kind": "exam",
+     "src": "1장 과제 1.22 (e)(f)(g)(h) (p.86)",
+     "q": "Sketch x[n]u[3-n], x[n-2]δ[n-2], (1/2)x[n]+(1/2)(-1)^n x[n], x[(n-1)^2].",
+     "qko": "나머지 네 신호를 그리세요.",
+     "solve": [
+      "(e) $u[3-n]$ 은 $n\\le3$ 에서 1. x 는 원래 $n\\le3$ 에만 값이 있어서 그대로 $x[n]$.",
+      "(f) $n=2$ 에서만 남아요: $x[0]\\delta[n-2]=\\delta[n-2]$.",
+      "(g) n 이 짝수면 $\\frac{1}{2}x+\\frac{1}{2}x=x$, 홀수면 0. 남는 것: $n=-4$: -1, $n=-2$: $\\frac{1}{2}$, $n=0$: 1, $n=2$: 1.",
+      "(h) $n=1$ 이면 $x[0]=1$, $n=0,2$ 이면 $x[1]=1$, $n=-1,3$ 이면 $x[4]=0$. 그래서 $n=0,1,2$ 에서 1."
+     ],
+     "answer": "(e) x[n], (f) δ[n-2], (g) 짝수 칸만, (h) n=0,1,2 에서 1"
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "$x(2-t)$ 를 '왼쪽으로 2' 라고 하면 틀려요. $x(-(t-2))$ 로 보고 뒤집은 뒤 오른쪽으로 2.",
+      "$x[3n]$ 처럼 이산시간 압축은 버려지는 칸이 있어요. 연속시간처럼 모양이 그대로 줄지 않아요.",
+      "$x(4-t/2)$ 는 순서 주의: 먼저 $x(-(t-8)/2)$ 로 바꿔 보면 뒤집고, 2배로 늘리고, 오른쪽으로 8이에요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 87,
+   "title": "1장 과제: 주기성 (1.25)",
+   "terms": [
+    "Periodic Signal",
+    "Fundamental Period",
+    "Complex Exponential Signal",
+    "Angular Frequency",
+    "Euler's Formula"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "두 번째 과제는 신호가 **주기 신호(Periodic Signal)**인지, 그렇다면 **기본 주기(Fundamental Period)**가 얼마인지 구하는 거예요.",
+      "매일 같은 시간표가 반복되는 하루처럼, 몇 초마다 똑같이 반복되는지 찾아요.",
+      "X 표시된 (d)(e)(f) 는 이번 과제에서 빠진 문제예요."
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "formula",
+     "head": "이번 주 도구",
+     "tex": "T_0=\\frac{2\\pi}{|\\omega_0|}",
+     "parts": [
+      {
+       "sym": "\\omega_0",
+       "say": "**각주파수(Angular Frequency)**: cos 이나 $e^{j\\omega_0 t}$ 에서 t 앞에 곱해진 수"
+      },
+      {
+       "sym": "2\\pi",
+       "say": "한 바퀴(라디안)"
+      },
+      {
+       "sym": "T_0",
+       "say": "**기본 주기(Fundamental Period)**: 한 바퀴 도는 데 걸리는 시간"
+      }
+     ],
+     "whole": "t 앞의 수를 찾아서 2파이를 그 수로 나누면 기본 주기예요."
+    },
+    {
+     "kind": "points",
+     "head": "슬라이드 힌트",
+     "items": [
+      "(a) $T=2\\pi/4$",
+      "(b) **복소 지수 신호(Complex Exponential Signal)**: 연속시간에서는 늘 주기적",
+      "(c) cos 을 먼저 제곱해서 정리하기"
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "$\\cos(4t)$ 의 기본 주기는?",
+     "choices": [
+      "$\\pi/4$",
+      "$\\pi/2$",
+      "$2\\pi$"
+     ],
+     "a": 1,
+     "why": "$2\\pi/4=\\pi/2$ 예요. **주기 신호(Periodic Signal)**의 기본 주기는 2파이를 **각주파수(Angular Frequency)**로 나눠요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.154,
+       "y": 0.324,
+       "w": 0.721,
+       "h": 0.095,
+       "say": "문제 1.25: 연속시간 신호가 주기적인지, 그렇다면 기본 주기를 구하기."
+      },
+      {
+       "x": 0.154,
+       "y": 0.409,
+       "w": 0.304,
+       "h": 0.099,
+       "say": "(a) $3\\cos(4t+\\frac{\\pi}{3})$, (c) cos 제곱."
+      },
+      {
+       "x": 0.457,
+       "y": 0.393,
+       "w": 0.257,
+       "h": 0.053,
+       "say": "(b) $e^{j(\\pi t-1)}$."
+      },
+      {
+       "x": 0.204,
+       "y": 0.451,
+       "w": 0.554,
+       "h": 0.133,
+       "say": "빨간 X: (d)(e)(f) 는 이번 과제에서 제외."
+      },
+      {
+       "x": 0.061,
+       "y": 0.711,
+       "w": 0.832,
+       "h": 0.102,
+       "say": "힌트와 이번 주 도구: 오메가0 → 2파이/오메가0, 가장 작은 공통 주기 확인."
+      }
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "(a) $x(t)=3\\cos(4t+\\frac{\\pi}{3})$",
+     "steps": [
+      "**각주파수(Angular Frequency)** $\\omega_0=4$ 예요(t 앞의 수). 앞의 3(진폭)과 $\\frac{\\pi}{3}$(위상)은 주기와 상관없어요.",
+      "$T_0=\\frac{2\\pi}{4}=\\frac{\\pi}{2}\\approx1.5708$",
+      "Python 확인: $\\frac{\\pi}{2}$ 뒤 값이 같고, $\\frac{\\pi}{4}$ 뒤는 달라요."
+     ],
+     "answer": "주기적, $T_0=\\frac{\\pi}{2}$"
+    },
+    {
+     "kind": "steps",
+     "head": "(b) $x(t)=e^{j(\\pi t-1)}$",
+     "steps": [
+      "$e^{j(\\pi t-1)}=e^{-j}\\,e^{j\\pi t}$ 예요. $e^{-j}$ 는 고정된 수라 모양에 영향 없음.",
+      "$\\omega_0=\\pi$ 라서 $T_0=\\frac{2\\pi}{\\pi}=2$",
+      "**오일러 공식(Euler's Formula)**로 보면 $\\cos(\\pi t-1)+j\\sin(\\pi t-1)$, 둘 다 주기 2예요."
+     ],
+     "answer": "주기적, $T_0=2$. **복소 지수 신호(Complex Exponential Signal)**는 연속시간에서 늘 주기적이에요."
+    },
+    {
+     "kind": "steps",
+     "head": "(c) $x(t)=[\\cos(2t-\\frac{\\pi}{3})]^2$",
+     "steps": [
+      "공식 $\\cos^2\\theta=\\frac{1+\\cos2\\theta}{2}$ 를 써요.",
+      "$x(t)=\\frac{1}{2}+\\frac{1}{2}\\cos(4t-\\frac{2\\pi}{3})$",
+      "이제 $\\omega_0=4$ 라서 $T_0=\\frac{2\\pi}{4}=\\frac{\\pi}{2}$",
+      "원래 cos 의 주기 $\\pi$ 가 아니라 절반인 $\\frac{\\pi}{2}$ 예요. 제곱하면 음수 부분이 양수로 뒤집혀 두 배 자주 반복돼요."
+     ],
+     "answer": "주기적, $T_0=\\frac{\\pi}{2}$"
+    },
+    {
+     "kind": "bg",
+     "src": "기초 다지기 b-3 각도, 라디안, 사인과 코사인",
+     "lines": [
+      "cos 은 $2\\pi$ (한 바퀴)마다 같은 값을 반복해요.",
+      "$\\cos(4t)$ 는 t 가 $\\frac{\\pi}{2}$ 만 가도 안쪽이 $2\\pi$ 가 돼서 한 바퀴를 돌아요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "exam",
+     "src": "1장 과제 1.25 (a) (p.87)",
+     "q": "Is x(t) = 3cos(4t + π/3) periodic? If so, find its fundamental period.",
+     "qko": "3cos(4t+π/3) 의 기본 주기를 구하세요.",
+     "solve": [
+      "$\\omega_0=4$",
+      "$T_0=2\\pi/4=\\pi/2$",
+      "진폭 3, 위상 π/3 은 주기에 영향 없음"
+     ],
+     "answer": "주기적, 기본 주기 π/2"
+    },
+    {
+     "kind": "exam",
+     "src": "1장 과제 1.25 (b) (p.87)",
+     "q": "Is x(t) = e^{j(πt - 1)} periodic? If so, find its fundamental period.",
+     "qko": "e^{j(πt-1)} 의 기본 주기를 구하세요.",
+     "solve": [
+      "$e^{j(\\pi t-1)}=e^{-j}e^{j\\pi t}$",
+      "$\\omega_0=\\pi$",
+      "$T_0=2\\pi/\\pi=2$",
+      "**복소 지수 신호(Complex Exponential Signal)**는 연속시간에서 늘 주기적(ω0 가 0이 아니면)",
+      "**오일러 공식(Euler's Formula)**로 풀면 cos 과 sin 의 합, 둘 다 주기 2"
+     ],
+     "answer": "주기적, 기본 주기 2"
+    },
+    {
+     "kind": "exam",
+     "src": "1장 과제 1.25 (c) (p.87)",
+     "q": "Is x(t) = [cos(2t - π/3)]^2 periodic? If so, find its fundamental period.",
+     "qko": "cos 제곱 신호의 기본 주기를 구하세요.",
+     "solve": [
+      "$\\cos^2\\theta=\\frac{1+\\cos2\\theta}{2}$",
+      "$x(t)=\\frac{1}{2}+\\frac{1}{2}\\cos(4t-\\frac{2\\pi}{3})$",
+      "상수 $\\frac{1}{2}$ 는 주기에 영향 없음",
+      "$T_0=2\\pi/4=\\pi/2$"
+     ],
+     "answer": "주기적, 기본 주기 π/2"
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "(c) 를 $\\cos(2t)$ 만 보고 주기 $\\pi$ 라고 쓰면 틀려요. 제곱하면 주기가 절반($\\frac{\\pi}{2}$)이 돼요.",
+      "기본 주기는 '가장 작은' 양의 주기예요. π 도 반복 주기이긴 하지만 기본 주기는 아니에요.",
+      "(d)(e)(f) 는 슬라이드에서 X 로 지운 문제라 이번 과제 범위가 아니에요. 세 문제 모두 **주기 신호(Periodic Signal)**예요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 88,
+   "title": "1장 과제: LTI 의 힘 (1.31)",
+   "terms": [
+    "Time Invariance",
+    "Linearity",
+    "Linear Time-Invariant System"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "마지막 과제는 **선형성(Linearity)**과 **시불변성(Time Invariance)**이 왜 강력한지 보여 줘요.",
+      "입력 하나에 대한 출력만 알면, 그 입력을 밀고 더해 만든 다른 입력의 출력도 바로 알아요.",
+      "LTI 시스템은 임펄스 응답 하나만 알면 된다. 출력은 뒤집고, 밀고, 곱하고, 더해서(컨볼루션) 구한다."
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "과제 답 미리 보기",
+     "svg": "<svg viewBox=\"0 0 480 270\" xmlns=\"http://www.w3.org/2000/svg\"><line x1=\"44\" y1=\"70\" x2=\"458\" y2=\"70\" class=\"e\"/><line x1=\"150\" y1=\"129\" x2=\"150\" y2=\"9\" class=\"e\"/><text x=\"462\" y=\"75\" font-size=\"14\" text-anchor=\"start\" class=\"tm\">t</text><polyline points=\"50,70 150,70 216.7,24.2 283.3,70 350,115.8 416.7,70 450,70\" fill=\"none\" class=\"e2\"/><text x=\"470\" y=\"30\" font-size=\"14\" text-anchor=\"end\" class=\"tb\">y2 = y1(t) - y1(t-2)</text><line x1=\"216.7\" y1=\"67\" x2=\"216.7\" y2=\"73\" class=\"e\"/><text x=\"216.7\" y=\"88\" font-size=\"14\" text-anchor=\"middle\" class=\"tm\">1</text><line x1=\"350\" y1=\"67\" x2=\"350\" y2=\"73\" class=\"e\"/><text x=\"350\" y=\"62\" font-size=\"14\" text-anchor=\"middle\" class=\"tm\">3</text><line x1=\"416.7\" y1=\"67\" x2=\"416.7\" y2=\"73\" class=\"e\"/><text x=\"416.7\" y=\"88\" font-size=\"14\" text-anchor=\"middle\" class=\"tm\">4</text><line x1=\"44\" y1=\"240\" x2=\"458\" y2=\"240\" class=\"e b1\"/><line x1=\"150\" y1=\"244\" x2=\"150\" y2=\"154\" class=\"e b1\"/><text x=\"462\" y=\"245\" font-size=\"14\" text-anchor=\"start\" class=\"tm b1\">t</text><polyline points=\"50,240 83.3,240 150,173.3 216.7,173.3 283.3,240 450,240\" fill=\"none\" class=\"e2 b1\"/><text x=\"470\" y=\"150\" font-size=\"14\" text-anchor=\"end\" class=\"tb b1\">y3 = y1(t) + y1(t+1)</text><line x1=\"83.3\" y1=\"237\" x2=\"83.3\" y2=\"243\" class=\"e b1\"/><text x=\"83.3\" y=\"260\" font-size=\"14\" text-anchor=\"middle\" class=\"tm b1\">-1</text><line x1=\"150\" y1=\"237\" x2=\"150\" y2=\"243\" class=\"e b1\"/><text x=\"150\" y=\"260\" font-size=\"14\" text-anchor=\"middle\" class=\"tm b1\">0</text><line x1=\"216.7\" y1=\"237\" x2=\"216.7\" y2=\"243\" class=\"e b1\"/><text x=\"216.7\" y=\"260\" font-size=\"14\" text-anchor=\"middle\" class=\"tm b1\">1</text><line x1=\"283.3\" y1=\"237\" x2=\"283.3\" y2=\"243\" class=\"e b1\"/><text x=\"283.3\" y=\"260\" font-size=\"14\" text-anchor=\"middle\" class=\"tm b1\">2</text><line x1=\"147\" y1=\"173.3\" x2=\"153\" y2=\"173.3\" class=\"e b1\"/><text x=\"144\" y=\"178.3\" font-size=\"14\" text-anchor=\"end\" class=\"tm b1\">2</text></svg>",
+     "caption": "위: (a) 의 답 y2, 아래: (b) 의 답 y3",
+     "builds": 1
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "points",
+     "head": "주어진 것 (Figure P1.31)",
+     "items": [
+      "(a) $x_1(t)$: $0$ 부터 $2$ 까지 높이 1인 사각형",
+      "(b) $y_1(t)$: $0$ 에서 올라가 $t=1$ 에서 2, $t=2$ 에서 0인 삼각형",
+      "(c) $x_2(t)$: 0~2 에서 1, 2~4 에서 -1",
+      "(d) $x_3(t)$: -1~0 에서 1, 0~1 에서 2, 1~2 에서 1"
+     ]
+    },
+    {
+     "kind": "analogy",
+     "head": "레시피 두 개 합치기",
+     "scene": "**LTI 시스템(Linear Time-Invariant System)**은 정직한 계산기(선형)이면서 언제 해도 같은 레시피(시불변)예요.",
+     "map": [
+      [
+       "입력을 밀면 출력도 밀림",
+       "**시불변성(Time Invariance)**"
+      ],
+      [
+       "입력을 더하면 출력도 더해짐",
+       "**선형성(Linearity)**"
+      ],
+      [
+       "x1 의 응답 y1 하나",
+       "다른 입력의 응답을 모두 만드는 재료"
+      ]
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "$x_2(t)$ 를 $x_1$ 으로 쓰면?",
+     "choices": [
+      "$x_1(t)+x_1(t-2)$",
+      "$x_1(t)-x_1(t-2)$",
+      "$2x_1(t)$"
+     ],
+     "a": 1,
+     "why": "0~2 에서 +1, 2~4 에서 -1 이니 원래 사각형에서 2만큼 민 사각형을 빼요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.043,
+       "y": 0.19,
+       "w": 0.568,
+       "h": 0.235,
+       "say": "문제 1.31 설명: **LTI 시스템(Linear Time-Invariant System)**의 응답 하나를 알면 다른 많은 입력의 응답을 바로 구할 수 있어요."
+      },
+      {
+       "x": 0.043,
+       "y": 0.425,
+       "w": 0.568,
+       "h": 0.171,
+       "say": "(a) x2 의 응답, (b) x3 의 응답을 구하고 그리기."
+      },
+      {
+       "x": 0.614,
+       "y": 0.419,
+       "w": 0.132,
+       "h": 0.197,
+       "say": "(a) 입력 x1: 0~2 사각형."
+      },
+      {
+       "x": 0.789,
+       "y": 0.419,
+       "w": 0.146,
+       "h": 0.197,
+       "say": "(b) 응답 y1: 꼭대기 2인 삼각형."
+      },
+      {
+       "x": 0.607,
+       "y": 0.641,
+       "w": 0.139,
+       "h": 0.203,
+       "say": "(c) 입력 x2."
+      },
+      {
+       "x": 0.789,
+       "y": 0.641,
+       "w": 0.146,
+       "h": 0.203,
+       "say": "(d) 입력 x3."
+      }
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "(a) $x_2$ 의 응답",
+     "steps": [
+      "$x_2(t)=x_1(t)-x_1(t-2)$ (확인: 0~2 는 1, 2~4 는 $0-1=-1$)",
+      "시불변: $x_1(t-2)$ 의 응답은 $y_1(t-2)$",
+      "선형: $y_2(t)=y_1(t)-y_1(t-2)$",
+      "$y_1$: 0→(1, 2)→2 에서 0인 삼각형. $y_1(t-2)$: 2→(3, 2)→4 인 삼각형.",
+      "그래서 $y_2$: $t=1$ 에서 2, $t=2$ 에서 0, $t=3$ 에서 -2, $t=4$ 에서 0."
+     ],
+     "answer": "위로 뾰족한 삼각형(0~2) 다음 아래로 뾰족한 삼각형(2~4)"
+    },
+    {
+     "kind": "steps",
+     "head": "(b) $x_3$ 의 응답",
+     "steps": [
+      "$x_3(t)=x_1(t)+x_1(t+1)$ (확인: -1~0 은 1, 0~1 은 $1+1=2$, 1~2 는 1)",
+      "$y_3(t)=y_1(t)+y_1(t+1)$, $y_1(t+1)$ 은 -1~1 삼각형(꼭대기 $t=0$ 에서 2)",
+      "$t=-1$: 0, $t=-0.5$: $1+0=1$, $t=0$: $2+0=2$",
+      "$t=0.5$: $1+1=2$, $t=1$: $0+2=2$, $t=1.5$: 1, $t=2$: 0"
+     ],
+     "answer": "-1 에서 올라가 0~1 은 높이 2로 평평, 2에서 0이 되는 사다리꼴"
+    },
+    {
+     "kind": "prof",
+     "when": "2주차 목요일 수업",
+     "lines": [
+      "우리가 앞으로 다룰 것은 리니어이면서 타임 인베리언트인 LTI 시스템이라고 했어요."
+     ]
+    },
+    {
+     "kind": "prof",
+     "when": "3주차 목요일 수업",
+     "lines": [
+      "3주차부터 2장에서 LTI 시스템을 다룬다고 했어요. 이 과제가 그 예고편이에요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "exam",
+     "src": "1장 과제 1.31 (a) (p.88)",
+     "q": "An LTI system maps x1(t) to y1(t). Find and sketch the response to x2(t).",
+     "qko": "x1 → y1 인 LTI 시스템에 x2 를 넣은 출력을 구하세요.",
+     "solve": [
+      "$x_2(t)=x_1(t)-x_1(t-2)$",
+      "선형 + 시불변 → $y_2(t)=y_1(t)-y_1(t-2)$",
+      "꼭짓점: $(0,0),(1,2),(2,0),(3,-2),(4,0)$"
+     ],
+     "answer": "y2(t) = y1(t) - y1(t-2): 0~2 위 삼각형, 2~4 아래 삼각형"
+    },
+    {
+     "kind": "exam",
+     "src": "1장 과제 1.31 (b) (p.88)",
+     "q": "Find and sketch the response of the same system to x3(t).",
+     "qko": "같은 시스템에 x3 를 넣은 출력을 구하세요.",
+     "solve": [
+      "$x_3(t)=x_1(t)+x_1(t+1)$",
+      "$y_3(t)=y_1(t)+y_1(t+1)$",
+      "꼭짓점: $(-1,0),(0,2),(1,2),(2,0)$"
+     ],
+     "answer": "y3(t) = y1(t) + y1(t+1): -1~2 에 걸친 사다리꼴, 0~1 에서 높이 2"
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "$x_1(t+1)$ 은 왼쪽으로 1이에요(더하기는 왼쪽). 그래서 응답도 $y_1(t+1)$, 왼쪽으로 1.",
+      "선형만 있고 시불변이 없으면 $x_1(t-2)$ 의 응답을 $y_1(t-2)$ 로 쓸 수 없어요. 두 성질이 모두 필요해요."
+     ]
+    },
+    {
+     "kind": "english",
+     "head": "답안 문장",
+     "en": "LTI 시스템에서는 입력을 x1 의 이동과 상수배의 합으로 나타내면, 출력도 y1 을 똑같이 이동하고 상수배하여 더한 것이 된다.",
+     "ko": "선형 → 더하기, 곱하기 유지. 시불변 → 밀기 유지.",
+     "tip": "입력을 조각내듯 출력도 조각낸다"
+    }
+   ]
+  }
+ ]
+}

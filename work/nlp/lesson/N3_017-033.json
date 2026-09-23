@@ -1,0 +1,3975 @@
+{
+ "deck": "N3",
+ "from": 17,
+ "to": 33,
+ "glossary": [
+  {
+   "ko": "역전파",
+   "en": "Backpropagation",
+   "say": "틀린 책임을 출력에서 입력 쪽으로, 뒤에서 앞으로 나눠 주며 모든 기울기를 구하는 방법",
+   "more": "연쇄 법칙을 계산 그래프 위에서 거꾸로 걸으며 실행해요. 순전파 한 번쯤의 비용으로 모든 파라미터의 기울기를 한꺼번에 얻어요."
+  },
+  {
+   "ko": "순전파",
+   "en": "Forward Pass",
+   "say": "입력에서 출력 쪽으로 계산을 차례로 해 나가는 것",
+   "more": "계산 그래프를 왼쪽에서 오른쪽으로 방문하며 각 노드 값을 구하고, 역방향 패스에서 다시 쓰려고 그 값을 저장해 둬요."
+  },
+  {
+   "ko": "기울기",
+   "en": "Gradient",
+   "say": "값을 살짝 바꿀 때 결과가 얼마나, 어느 방향으로 변하는지 알려 주는 숫자(들)",
+   "more": "입력이 여러 개면 편미분을 모은 벡터가 돼요. 손실을 줄이려면 기울기의 반대 방향으로 움직여요."
+  },
+  {
+   "ko": "경사 하강법",
+   "en": "Gradient Descent",
+   "say": "안개 낀 산에서 발밑 기울기만 보고 한 걸음씩 내려가기",
+   "more": "파라미터에서 학습률 × 기울기를 빼는 일을 반복해 손실을 줄여요."
+  },
+  {
+   "ko": "확률적 경사 하강법",
+   "en": "Stochastic Gradient Descent (SGD)",
+   "say": "데이터 일부(작은 묶음)로 기울기를 구해 자주, 조금씩 내려가는 경사 하강법",
+   "more": "전체 데이터를 다 보지 않고 일부만 봐서 빠르게 여러 번 업데이트해요. word2vec도 이 방법으로 학습했어요."
+  },
+  {
+   "ko": "학습률",
+   "en": "Learning Rate",
+   "say": "경사 하강법에서 한 걸음의 보폭",
+   "more": "식의 α(알파)예요. 너무 크면 골짜기를 건너뛰고, 너무 작으면 학습이 느려요."
+  },
+  {
+   "ko": "파라미터",
+   "en": "Parameter",
+   "say": "모델이 학습하면서 스스로 고치는 숫자들",
+   "more": "W, b 같은 가중치와 편향 항, 그리고 단어 벡터까지 모두 θ(세타) 안에 들어갈 수 있어요."
+  },
+  {
+   "ko": "손실 함수",
+   "en": "Loss Function",
+   "say": "모델이 틀린 정도를 매기는 벌점",
+   "more": "J(θ)로 써요. 학습은 이 벌점을 줄이는 방향으로 파라미터를 고치는 과정이에요."
+  },
+  {
+   "ko": "단어 벡터",
+   "en": "Word Vector",
+   "say": "단어를 숫자 목록(벡터)으로 나타낸 것, 단어의 지도 좌표",
+   "more": "뜻이 비슷한 단어는 가까이 살아요. 역전파로 이 좌표 자체도 계속 고칠 수 있어요."
+  },
+  {
+   "ko": "행렬 미적분",
+   "en": "Matrix Calculus",
+   "say": "벡터와 행렬로 된 식을 미분하는 방법",
+   "more": "한 변수 미분의 '살짝 밀기' 생각을 벡터, 행렬로 넓힌 것이에요. 역전파 식을 손으로 유도할 때 써요."
+  },
+  {
+   "ko": "미분",
+   "en": "Derivative",
+   "say": "입력을 살짝 밀면 출력이 얼마나 움직이는지, 즉 그래프의 기울기",
+   "more": "f(x) = x³ 이면 f'(x) = 3x² 이에요. x = 2 에서는 12라서, x를 조금 밀면 f는 그 12배쯤 움직여요."
+  },
+  {
+   "ko": "야코비안",
+   "en": "Jacobian",
+   "say": "입력 여러 개, 출력 여러 개인 함수의 미분을 모아 놓은 표(행렬)",
+   "more": "출력이 m개, 입력이 n개면 m×n 행렬이고, (i, j) 칸은 j번째 입력을 살짝 바꿀 때 i번째 출력이 얼마나 변하는지예요."
+  },
+  {
+   "ko": "편미분",
+   "en": "Partial Derivative",
+   "say": "입력이 여러 개일 때 하나만 살짝 바꾸고 나머지는 그대로 두고 구한 미분",
+   "more": "∂(라운드) 기호로 써요. 입력마다 편미분을 모으면 기울기 벡터가 돼요."
+  },
+  {
+   "ko": "연쇄 법칙",
+   "en": "Chain Rule",
+   "say": "여러 단계를 거친 함수의 미분은 단계마다의 미분을 곱하면 된다는 규칙",
+   "more": "맞물린 톱니바퀴처럼, x가 z를 3배로 돌리고 z가 h를 8배로 돌리면 x는 h를 24배로 돌려요. 벡터에서는 야코비안 행렬을 곱해요."
+  },
+  {
+   "ko": "활성화 함수",
+   "en": "Activation Function",
+   "say": "뉴런의 가중합에 씌우는 굽은 함수",
+   "more": "ReLU, 시그모이드, tanh 등이 있어요. 역전파에서는 이 함수의 미분 f'(z)가 대각 행렬로 들어가요."
+  },
+  {
+   "ko": "비선형성",
+   "en": "Nonlinearity",
+   "say": "직선(일차식)이 아닌 굽은 성질",
+   "more": "활성화 함수가 이것을 넣어 줘요. 없으면 층을 아무리 쌓아도 행렬 하나와 같아져요."
+  },
+  {
+   "ko": "국소 기울기",
+   "en": "Local Gradient",
+   "say": "노드 하나가 자기 입력과 출력만 보고 구한 미분",
+   "more": "∂y/∂x예요. 노드는 네트워크 전체를 몰라도 이것만 알면 돼요."
+  },
+  {
+   "ko": "은닉층",
+   "en": "Hidden Layer",
+   "say": "입력과 출력 사이에 있는 중간 층",
+   "more": "3강 예에서는 z = Wx + b를 구하고 f를 씌운 h가 은닉층 값이에요."
+  },
+  {
+   "ko": "렐루",
+   "en": "ReLU",
+   "say": "음수는 0으로, 양수는 그대로 내보내는 함수 max(0, x)",
+   "more": "미분은 양수에서 1, 음수에서 0이에요. 그래서 역전파에서 음수였던 칸의 기울기는 막혀요."
+  },
+  {
+   "ko": "전치",
+   "en": "Transpose",
+   "say": "행렬의 행과 열을 뒤바꾸는 것, 위첨자 T로 표시",
+   "more": "(3×1) 세로 벡터를 전치하면 (1×3) 가로 벡터가 돼요. 역전파 식의 전치는 shape을 맞추려고 붙어요."
+  },
+  {
+   "ko": "원소별 곱",
+   "en": "Hadamard Product",
+   "say": "같은 자리 원소끼리만 곱하는 곱, 기호 ⊙",
+   "more": "[2, 3] ⊙ [1, 0] = [2, 0]이에요. 대각 행렬을 곱한 것과 결과가 같아요."
+  },
+  {
+   "ko": "대각 행렬",
+   "en": "Diagonal Matrix",
+   "say": "대각선 칸에만 숫자가 있고 나머지는 모두 0인 정사각 행렬",
+   "more": "활성화 함수의 야코비안이 이렇게 생겼어요. hᵢ는 zᵢ에만 영향을 받기 때문이에요."
+  },
+  {
+   "ko": "단위 행렬",
+   "en": "Identity Matrix",
+   "say": "대각선이 모두 1이고 나머지는 0인 행렬, 곱해도 아무것도 안 바뀌어요",
+   "more": "숫자 1과 같은 역할이에요. Wx + b를 b로 미분하면 단위 행렬 I가 나와요."
+  },
+  {
+   "ko": "임베딩",
+   "en": "Embedding",
+   "say": "토큰을 벡터로 바꾼 것, 또는 그 벡터들의 표",
+   "more": "단어 벡터와 거의 같은 뜻으로 써요. 학습 중에 같이 고칠 수도, 그대로 얼려 둘 수도 있어요."
+  },
+  {
+   "ko": "개체명 인식",
+   "en": "Named Entity Recognition (NER)",
+   "say": "문장 속 사람, 기관, 장소 같은 이름을 찾아 종류를 붙이는 일",
+   "more": "3강에서는 가운데 단어 주변 창의 벡터를 넣어 그 단어가 장소인지 점수를 매기는 예로 써요."
+  },
+  {
+   "ko": "외적",
+   "en": "Outer Product",
+   "say": "세로 벡터 × 가로 벡터로 표(행렬)를 만드는 곱",
+   "more": "(3×1)(1×5) = (3×5)처럼 모든 짝을 곱해 칸을 채워요. ∂s/∂W = δᵀxᵀ가 외적이에요."
+  },
+  {
+   "ko": "오차 신호",
+   "en": "Error Signal",
+   "say": "출력 쪽에서 거꾸로 흘러와 한 층에 도착한 기울기, 기호 δ(델타)",
+   "more": "3강 예에서는 δ = ∂s/∂z 예요. 한 번 구해 b, W, x의 기울기에 모두 다시 써요."
+  },
+  {
+   "ko": "상류 기울기",
+   "en": "Upstream Gradient",
+   "say": "내 출력 쪽(뒤)에서 나에게 내려온 기울기",
+   "more": "노드 입장에서 ∂J/∂y예요. 여기에 내 국소 기울기를 곱해 앞으로 넘겨요."
+  },
+  {
+   "ko": "워드투벡",
+   "en": "word2vec",
+   "say": "주변 단어를 맞히는 연습으로 단어 벡터를 배우는 2주차 방법",
+   "more": "2주차에 배웠고, 과제 2에서 word2vec의 기울기를 직접 유도해요."
+  },
+  {
+   "ko": "텐서",
+   "en": "Tensor",
+   "say": "숫자를 여러 방향으로 쌓은 묶음(숫자 하나, 벡터, 행렬, 그 이상)",
+   "more": "PyTorch가 다루는 기본 자료예요. tensor.shape로 크기를 볼 수 있어요."
+  },
+  {
+   "ko": "모양",
+   "en": "Shape",
+   "say": "벡터나 행렬이 몇 행 몇 열인지 적은 크기 정보",
+   "more": "(3, 5)는 3행 5열이에요. 역전파 식이 맞는지 가장 빨리 확인하는 방법이 shape 맞추기예요."
+  },
+  {
+   "ko": "계산 그래프",
+   "en": "Computation Graph",
+   "say": "계산을 노드(입력값, 연산)와 선(값의 흐름)으로 그린 그림",
+   "more": "입력은 시작 노드, 더하기나 곱하기 같은 연산은 중간 노드예요. PyTorch는 순전파를 할 때마다 이 그래프를 자동으로 만들어요."
+  },
+  {
+   "ko": "노드",
+   "en": "Node",
+   "say": "계산 그래프의 동그라미 하나, 입력값이거나 연산 하나",
+   "more": "각 노드는 자기 국소 기울기만 알면 되고, 네트워크 전체를 볼 필요가 없어요."
+  },
+  {
+   "ko": "역방향 패스",
+   "en": "Backward Pass",
+   "say": "출력에서 입력 쪽으로 거꾸로 가며 기울기를 구하는 단계",
+   "more": "출력의 기울기 1에서 출발해, 노드마다 상류 기울기 × 국소 기울기를 곱해 앞쪽으로 넘겨요."
+  },
+  {
+   "ko": "하류 기울기",
+   "en": "Downstream Gradient",
+   "say": "내가 계산해서 내 입력 쪽(앞)으로 넘겨주는 기울기",
+   "more": "하류 기울기 = 상류 기울기 × 국소 기울기예요."
+  },
+  {
+   "ko": "위상 순서",
+   "en": "Topological Order",
+   "say": "계산 그래프에서 필요한 값이 먼저 나오도록 정한 방문 순서",
+   "more": "순전파는 이 순서대로, 역방향 패스는 이 순서를 거꾸로 방문해요."
+  },
+  {
+   "ko": "자동 미분",
+   "en": "Automatic Differentiation (Autodiff)",
+   "say": "프로그램이 계산 그래프를 따라 미분을 자동으로 해 주는 기능",
+   "more": "연산마다 자기 국소 기울기를 알고 있어서 역전파를 대신 실행해 줘요. PyTorch의 오토그래드가 그 예예요."
+  },
+  {
+   "ko": "기울기 검사",
+   "en": "Gradient Checking",
+   "say": "손으로 구한 기울기가 맞는지, 값을 살짝 흔들어 얻은 숫자와 비교해 확인하는 방법",
+   "more": "f(θ+h)와 f(θ-h)의 차이를 2h로 나눈 수치 기울기와 비교해요. 느리지만 틀리기가 거의 어려워서 디버깅용으로 써요."
+  },
+  {
+   "ko": "수치 기울기",
+   "en": "Numeric Gradient",
+   "say": "값을 아주 조금 올리고 내려서 생긴 차이로 어림한 기울기",
+   "more": "(f(θ+h) - f(θ-h)) / 2h 이고 h는 0.0001쯤이에요. 파라미터마다 따로 계산해야 해서 느려요."
+  },
+  {
+   "ko": "오토그래드",
+   "en": "autograd",
+   "say": "PyTorch 안의 자동 미분 장치",
+   "more": "loss.backward() 한 줄이면 계산 그래프를 거꾸로 걸으며 모든 파라미터의 .grad 를 채워요."
+  },
+  {
+   "ko": "기울기 소실",
+   "en": "Vanishing Gradient",
+   "say": "뒤에서 오는 기울기가 층을 지날수록 작아져 앞쪽 층이 거의 못 배우는 문제",
+   "more": "귓속말 전달 게임에서 말이 점점 희미해지는 것과 같아요. 역전파 수학을 알아야 원인을 찾을 수 있어요."
+  },
+  {
+   "ko": "기울기 폭발",
+   "en": "Exploding Gradient",
+   "say": "기울기가 층을 지날수록 점점 커져 학습이 튀는 문제",
+   "more": "기울기 소실의 반대예요. 뒤에서 기울기 클리핑으로 막는 법을 배워요."
+  },
+  {
+   "ko": "언어 모델",
+   "en": "Language Model (LM)",
+   "say": "앞 단어들을 보고 다음 단어(토큰)를 맞히는 모델",
+   "more": "휴대폰 자판의 다음 단어 추천과 같아요. 쉬는 시간 뒤 3부의 주제예요."
+  },
+  {
+   "ko": "다음 토큰 예측",
+   "en": "Next Token Prediction",
+   "say": "지금까지 나온 토큰으로 바로 다음 토큰을 맞히는 과제",
+   "more": "교수님은 GPT도 결국 이것이고, 이것이 거의 모든 걸 결정한다고 했어요."
+  }
+ ],
+ "slides": [
+  {
+   "p": 17,
+   "title": "계획: SGD 에는 기울기가 필요해요",
+   "terms": [
+    "Backpropagation",
+    "Forward Pass",
+    "Gradient",
+    "Gradient Descent",
+    "Stochastic Gradient Descent (SGD)",
+    "Learning Rate",
+    "Parameter",
+    "Loss Function",
+    "Word Vector",
+    "Matrix Calculus"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "2부의 주제는 신경망이 '어떻게 배우는가'예요.",
+      "배우는 방법은 2주차와 똑같이 **경사 하강법(Gradient Descent)**, 산을 한 걸음씩 내려가기예요.",
+      "새로운 문제는 딱 하나, 층이 여러 개일 때 발밑 **기울기(Gradient)**를 어떻게 계산하느냐예요.",
+      "그 계산법이 오늘 배울 **역전파(Backpropagation)**예요."
+     ]
+    },
+    {
+     "kind": "analogy",
+     "head": "안개 낀 산 내려가기",
+     "scene": "안개 낀 산에서 발밑 기울기만 보고 한 걸음씩 내려가요. 그런데 이번 산은 손잡이(조절 나사)가 수만 개예요.",
+     "map": [
+      [
+       "산의 높이",
+       "**손실 함수(Loss Function)**"
+      ],
+      [
+       "발밑 기울기",
+       "**기울기(Gradient)**"
+      ],
+      [
+       "보폭",
+       "**학습률(Learning Rate)**"
+      ],
+      [
+       "수만 개의 조절 나사",
+       "W, b, 그리고 **단어 벡터(Word Vector)**까지 모든 **파라미터(Parameter)**"
+      ]
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "compare",
+     "head": "슬라이드 영어를 우리말로",
+     "cols": [
+      "영어 원문",
+      "우리말 뜻"
+     ],
+     "rows": [
+      [
+       "The Plan: SGD Needs Gradients",
+       "계획: **확률적 경사 하강법(Stochastic Gradient Descent (SGD))**에는 기울기가 필요해요"
+      ],
+      [
+       "learning = walk downhill on the loss",
+       "학습 = 손실이라는 산을 걸어 내려가기"
+      ],
+      [
+       "θ now holds EVERYTHING",
+       "이제 θ(세타)에 모든 것이 들어가요: W, b, 단어 벡터까지"
+      ],
+      [
+       "The missing piece: how do we COMPUTE ∇J?",
+       "빠진 조각: 여러 층 신경망에서 ∇J 를 어떻게 계산할까?"
+      ],
+      [
+       "answer in two acts",
+       "답은 두 막: 손으로 **행렬 미적분(Matrix Calculus)** → 알고리즘으로 **역전파(Backpropagation)**"
+      ]
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "용어 하나씩",
+     "items": [
+      "**파라미터(Parameter)**: 모델이 스스로 고치는 숫자들. 기호 θ 하나로 몽땅 묶어 불러요.",
+      "**손실 함수(Loss Function)**: 틀린 정도를 매기는 벌점. J(θ)로 써요.",
+      "**기울기(Gradient)**: ∇(나블라) 기호. 벌점이 가장 빨리 커지는 방향이라, 반대로 가면 내려가요.",
+      "**학습률(Learning Rate)**: α(알파). 한 걸음의 보폭이에요."
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "무엇이 무엇으로 이어지나",
+     "steps": [
+      "**순전파(Forward Pass)**: 입력으로 점수와 벌점 J 를 계산해요.",
+      "**역전파(Backpropagation)**: J 에 대한 모든 파라미터의 기울기 ∇J 를 구해요.",
+      "업데이트: θ 에서 α × ∇J 를 빼요.",
+      "다시 처음으로. 이걸 수없이 반복하면 벌점이 줄어요."
+     ],
+     "answer": "2부는 이 중 두 번째 칸, '기울기를 어떻게 계산하나'를 다뤄요."
+    },
+    {
+     "kind": "check",
+     "q": "이 슬라이드가 말하는 '새로운 문제'는 무엇일까요?",
+     "choices": [
+      "산을 내려가는 방법(SGD)을 새로 만드는 것",
+      "여러 층 신경망에서 기울기를 계산하는 것",
+      "단어 벡터를 새로 만드는 것"
+     ],
+     "a": 1,
+     "why": "SGD 는 word2vec 때와 같아요. 새 문제는 화살표(∇J)를 계산하는 것이고, 답이 **역전파(Backpropagation)**예요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.279,
+       "y": 0.254,
+       "w": 0.379,
+       "h": 0.108,
+       "say": "업데이트 식이에요. 새 θ = 옛 θ - α × 기울기. 2주차 word2vec 과 같은 식이에요."
+      },
+      {
+       "x": 0.061,
+       "y": 0.412,
+       "w": 0.629,
+       "h": 0.044,
+       "say": "\"θ now holds EVERYTHING\": θ 안에 W 들, b 들, 그리고 단어 벡터 자체까지 들어가요."
+      },
+      {
+       "x": 0.079,
+       "y": 0.459,
+       "w": 0.564,
+       "h": 0.036,
+       "say": "딥러닝은 입력 표현(단어 벡터)까지 스스로 다듬어요. 이것이 'deep' 의 거래라고 해요."
+      },
+      {
+       "x": 0.061,
+       "y": 0.508,
+       "w": 0.546,
+       "h": 0.044,
+       "say": "빠진 조각: 여러 층 신경망에서 ∇J 를 어떻게 계산하느냐예요."
+      },
+      {
+       "x": 0.061,
+       "y": 0.565,
+       "w": 0.6,
+       "h": 0.042,
+       "say": "답은 두 막이에요. 먼저 손으로 행렬 미분, 그다음 알고리즘인 역전파."
+      }
+     ]
+    },
+    {
+     "kind": "formula",
+     "head": "업데이트 식",
+     "tex": "\\theta^{new} = \\theta^{old} - \\alpha \\nabla_{\\theta} J(\\theta)",
+     "parts": [
+      {
+       "sym": "\\theta^{old}",
+       "say": "지금 가진 파라미터 전부(W, b, 단어 벡터)"
+      },
+      {
+       "sym": "\\alpha",
+       "say": "**학습률(Learning Rate)**, 한 걸음의 보폭"
+      },
+      {
+       "sym": "\\nabla_{\\theta} J(\\theta)",
+       "say": "벌점 J 를 θ 로 미분한 **기울기(Gradient)**. 오르막 방향이에요"
+      },
+      {
+       "sym": "-",
+       "say": "빼기라서 오르막의 반대, 즉 내리막으로 가요"
+      },
+      {
+       "sym": "\\theta^{new}",
+       "say": "한 걸음 내려간 새 파라미터"
+      }
+     ],
+     "whole": "지금 자리에서 기울기 반대 방향으로 보폭 α 만큼 한 걸음 가요."
+    },
+    {
+     "kind": "steps",
+     "head": "한 걸음 손계산",
+     "given": "J(θ) = θ², θ = 3, α = 0.1",
+     "steps": [
+      "J(θ) = θ², 지금 θ = 3, α = 0.1 이라고 해 봐요.",
+      "기울기: J 를 θ 로 미분하면 2θ, θ = 3 에서 6 이에요.",
+      "업데이트: 3 - 0.1 × 6 = 3 - 0.6 = 2.4",
+      "벌점: 3² = 9 에서 2.4² = 5.76 으로 줄었어요."
+     ],
+     "answer": "θ = 2.4, 벌점 9 → 5.76. 기울기만 알면 한 걸음은 쉬워요."
+    },
+    {
+     "kind": "prof",
+     "when": "3주차 월요일 1교시",
+     "lines": [
+      "학습의 기본 원리는 지난주에 배운 것과 똑같아요.",
+      "W, b 들을 모두 합쳐서 그냥 θ 라고 표현해요.",
+      "word2vec 으로 만든 단어 벡터도 학습할 수 있어요. GloVe 처럼 이미 잘 학습된 게 있으면 얼려(freeze) 둘 수도 있고, 그건 선택이에요.",
+      "과제 2 에 역전파가 있어서, 수업을 잘 들으면 어렵지 않게 할 수 있을 거예요."
+     ]
+    },
+    {
+     "kind": "bg",
+     "src": "기초 다지기 8단원 (wb-8 경사 하강법과 손실)",
+     "lines": [
+      "**경사 하강법(Gradient Descent)**의 한 걸음 계산과 **학습률(Learning Rate)**는 기초 다지기 8단원에 있어요.",
+      "미니배치로 자주 걷는 **확률적 경사 하강법(Stochastic Gradient Descent (SGD))**도 거기서 한 번 더 봐요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "θ 안에 들어가지 않는 것은?",
+     "choices": [
+      "은닉층의 W 와 b",
+      "입력 단어 벡터 x",
+      "학습률 α"
+     ],
+     "a": 2,
+     "why": "α 는 사람이 정하는 보폭이에요. θ 는 모델이 스스로 고치는 **파라미터(Parameter)**이고, 단어 벡터도 들어갈 수 있어요."
+    },
+    {
+     "kind": "english",
+     "head": "답안 문장",
+     "en": "신경망 학습은 **확률적 경사 하강법(Stochastic Gradient Descent (SGD))**로 θ ← θ - α∇J 를 반복하는 것이고, 여러 층 신경망의 기울기 ∇J 는 **역전파(Backpropagation)**로 계산한다.",
+     "ko": "업데이트 방법은 word2vec 과 같고, 새로 배우는 것은 기울기 계산법이에요.",
+     "tip": "'방법은 같고, 화살표 계산이 새롭다' 로 외워요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "**역전파(Backpropagation)**는 '기울기를 계산하는 방법'이에요. 파라미터를 고치는 것은 그 기울기로 하는 **경사 하강법(Gradient Descent)** 쪽이에요.",
+      "여기서 J 는 벌점(손실)이에요. 뒤 p.19 의 야코비안 J 와 글자가 같지만 다른 것이에요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 18,
+   "title": "미분, 한 걸음씩",
+   "terms": [
+    "Gradient",
+    "Derivative"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "**미분(Derivative)**은 딱 한 가지 질문이에요.",
+      "\"x 를 살짝 밀면, f 는 얼마나 움직일까?\"",
+      "그 답이 그래프의 기울기예요. 뒤의 모든 행렬 식도 이 생각을 키운 것뿐이에요."
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "x = 2 에서 살짝 밀어 보기",
+     "svg": "<svg viewBox=\"0 0 480 270\" xmlns=\"http://www.w3.org/2000/svg\"><line x1=\"60\" y1=\"245\" x2=\"440\" y2=\"245\" class=\"e\"/><line x1=\"60\" y1=\"245\" x2=\"60\" y2=\"20\" class=\"e\"/><text x=\"445\" y=\"262\" font-size=\"14\" text-anchor=\"end\" class=\"tm\">x</text><text x=\"70\" y=\"30\" font-size=\"15\" text-anchor=\"start\" class=\"tb\">f(x) = x³</text><polyline points=\"60,240 67,240 74,240 82,240 89,240 96,240 103,240 110,239 118,239 125,239 132,238 139,238 146,237 154,236 161,235 168,234 175,233 182,232 190,230 197,228 204,227 211,224 218,222 226,220 233,217 240,214 247,210 254,207 262,203 269,199 276,195 283,190 290,185 298,180 305,174 312,168 319,162 326,155 334,148 341,140 348,132 355,124 362,116 370,106 377,97 384,87 391,76 398,66 406,54 413,42 420,30\" fill=\"none\" class=\"e2\"/><line x1=\"268\" y1=\"222\" x2=\"430\" y2=\"41\" class=\"e b1\"/><circle cx=\"348\" cy=\"132\" r=\"6\" class=\"n2 b1\"/><text x=\"240\" y=\"130\" font-size=\"15\" text-anchor=\"end\" class=\"tb b1\">x = 2 에서 기울기 12</text><text x=\"250\" y=\"190\" font-size=\"14\" text-anchor=\"start\" class=\"t b2\">x를 0.001 밀면</text><text x=\"250\" y=\"212\" font-size=\"14\" text-anchor=\"start\" class=\"t b2\">f는 약 0.012 움직여요</text></svg>",
+     "caption": "f(x) = x³ 의 x = 2 에서 기울기는 12예요. x 를 0.001 밀면 f 는 약 0.012 움직여요.",
+     "builds": 2
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "compare",
+     "head": "슬라이드 영어를 우리말로",
+     "cols": [
+      "영어 원문",
+      "우리말 뜻"
+     ],
+     "rows": [
+      [
+       "Derivatives, One Step at a Time",
+       "미분, 한 걸음씩 차근차근"
+      ],
+      [
+       "the derivative is the slope",
+       "미분은 기울기예요"
+      ],
+      [
+       "nudge x, how much does f move?",
+       "x 를 살짝 밀면 f 는 얼마나 움직이나?"
+      ],
+      [
+       "scaled up to vectors and matrices",
+       "이 생각을 벡터와 행렬로 키울 뿐이에요"
+      ],
+      [
+       "Hold onto the nudge intuition",
+       "'살짝 밀기' 느낌을 꼭 붙잡고 가세요"
+      ]
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "용어 뜻",
+     "items": [
+      "**미분(Derivative)**: 입력 하나, 출력 하나일 때의 기울기. f'(x) 로 써요.",
+      "도함수: x 자리마다 기울기를 알려 주는 식. x³ 의 도함수는 3x² 이에요.",
+      "**기울기(Gradient)**: 입력이 여러 개로 늘면 미분이 여러 개가 모인 것(다음 쪽)."
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "f(x) = x³ 일 때, x = 2 에서 기울기는?",
+     "choices": [
+      "6",
+      "8",
+      "12"
+     ],
+     "a": 2,
+     "why": "f'(x) = 3x² 이니 3 × 2² = 12 예요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.061,
+       "y": 0.197,
+       "w": 0.589,
+       "h": 0.038,
+       "say": "입력 1개, 출력 1개: 미분은 기울기(slope)예요."
+      },
+      {
+       "x": 0.357,
+       "y": 0.26,
+       "w": 0.207,
+       "h": 0.051,
+       "say": "예시 함수 f(x) = x³ 과 그 도함수 f'(x) = 3x² 이에요."
+      },
+      {
+       "x": 0.546,
+       "y": 0.489,
+       "w": 0.161,
+       "h": 0.06,
+       "say": "빨간 점에서 기울기 = f'(x₀). 'x 를 밀면 f 가 얼마나 움직이나' 와 같은 말이에요."
+      },
+      {
+       "x": 0.061,
+       "y": 0.692,
+       "w": 0.489,
+       "h": 0.042,
+       "say": "뒤에 나올 모든 것은 이 생각을 벡터, 행렬로 키운 것이에요."
+      }
+     ]
+    },
+    {
+     "kind": "formula",
+     "head": "x³ 의 미분",
+     "tex": "f(x) = x^3, \\quad f'(x) = 3x^2",
+     "parts": [
+      {
+       "sym": "f(x) = x^3",
+       "say": "x 를 세 번 곱하는 함수"
+      },
+      {
+       "sym": "f'(x)",
+       "say": "f 의 미분(도함수). 프라임(') 이라고 읽어요"
+      },
+      {
+       "sym": "3x^2",
+       "say": "지수 3 을 앞으로 내리고 지수는 하나 줄여요"
+      },
+      {
+       "sym": "f'(x_0)",
+       "say": "특정한 점 x₀ 에서의 기울기 값"
+      }
+     ],
+     "whole": "x³ 을 미분하면 3x², x = 2 에서 12 예요."
+    },
+    {
+     "kind": "steps",
+     "head": "살짝 밀어서 확인하기",
+     "steps": [
+      "x = 2 에서 f = 2³ = 8",
+      "x 를 0.001 밀어 2.001 로: f = 2.001³ = 8.012006001",
+      "움직인 양: 8.012006001 - 8 = 0.012006001",
+      "밀어 준 양으로 나누기: 0.012006001 ÷ 0.001 = 12.006"
+     ],
+     "answer": "12.006 ≈ 12. 공식 3x² = 12 와 거의 같아요. 이것이 '살짝 밀기' 의 뜻이에요."
+    },
+    {
+     "kind": "prof",
+     "when": "3주차 월요일 1교시",
+     "lines": [
+      "f(x) 가 x³ 이면 도함수는 3x² 이 되죠.",
+      "어떤 점을 딱 찍으면 그 값이 그 점에서의 순간 기울기예요.",
+      "그 기울기만큼 살짝 이동하면 아래로 내려갈 수 있고, 이것이 경사 하강법의 개념이에요."
+     ]
+    },
+    {
+     "kind": "bg",
+     "src": "기초 다지기 7단원 (wb-7 함수, 기울기, 미분)",
+     "lines": [
+      "기울기, 도함수, x² 과 x³ 의 미분 규칙은 기초 다지기 7단원에 있어요.",
+      "처음이면 7단원을 먼저 보고 오면 이 뒤가 훨씬 쉬워요."
+     ]
+    },
+    {
+     "kind": "say",
+     "lines": [
+      "실습에서는 N3L p.4 에서 f(x) = x³ + 2x 를 PyTorch 로 미분해,",
+      "손으로 구한 3x² + 2 와 같은지(x = 2 에서 둘 다 14) 확인해요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "f(x) = x³ + 2x 의 x = 2 에서 기울기는? (실습 N3L p.4 의 예)",
+     "choices": [
+      "12",
+      "14",
+      "16"
+     ],
+     "a": 1,
+     "why": "f'(x) = 3x² + 2, x = 2 에서 12 + 2 = 14 예요."
+    },
+    {
+     "kind": "english",
+     "head": "답안 문장",
+     "en": "**미분(Derivative)**은 입력을 조금 바꿨을 때 출력이 얼마나 변하는지를 나타내는 기울기이다.",
+     "ko": "'nudge x, how much does f move?' 를 그대로 옮긴 문장이에요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "슬라이드의 '밀기' 로 얻은 12.006 은 어림값이에요. 미는 양을 더 작게 할수록 진짜 기울기 12 에 가까워져요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 19,
+   "title": "기울기와 야코비안",
+   "terms": [
+    "Jacobian",
+    "Gradient",
+    "Partial Derivative"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "입력이 여러 개가 되면, '살짝 밀기' 도 입력마다 한 번씩 해야 해요.",
+      "출력이 하나면 그 결과들을 한 줄로 모은 것이 **기울기(Gradient)** 벡터예요.",
+      "출력도 여러 개면 표로 모아요. 그 표가 **야코비안(Jacobian)**이에요."
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "숫자 하나 → 벡터 → 행렬",
+     "svg": "<svg viewBox=\"0 0 480 270\" xmlns=\"http://www.w3.org/2000/svg\"><text x=\"80\" y=\"60\" font-size=\"15\" text-anchor=\"middle\" class=\"tb\">숫자 하나</text><rect x=\"65\" y=\"95\" width=\"30\" height=\"30\" rx=\"2\" class=\"n2\"/><text x=\"80.0\" y=\"115.0\" font-size=\"14\" text-anchor=\"middle\" class=\"tl\">12</text><text x=\"80\" y=\"170\" font-size=\"14\" text-anchor=\"middle\" class=\"tm\">입력 1, 출력 1</text><text x=\"80\" y=\"192\" font-size=\"14\" text-anchor=\"middle\" class=\"t\">미분</text><text x=\"225\" y=\"60\" font-size=\"15\" text-anchor=\"middle\" class=\"tb b1\">기울기 벡터</text><rect x=\"195\" y=\"95\" width=\"30\" height=\"30\" rx=\"2\" class=\"n3 b1\"/><text x=\"210.0\" y=\"115.0\" font-size=\"14\" text-anchor=\"middle\" class=\"tl b1\">2</text><rect x=\"225\" y=\"95\" width=\"30\" height=\"30\" rx=\"2\" class=\"n3 b1\"/><text x=\"240.0\" y=\"115.0\" font-size=\"14\" text-anchor=\"middle\" class=\"tl b1\">3</text><text x=\"225\" y=\"170\" font-size=\"14\" text-anchor=\"middle\" class=\"tm b1\">입력 2, 출력 1</text><text x=\"225\" y=\"192\" font-size=\"14\" text-anchor=\"middle\" class=\"t b1\">기울기</text><text x=\"390\" y=\"60\" font-size=\"15\" text-anchor=\"middle\" class=\"tb b2\">야코비안 행렬</text><rect x=\"345\" y=\"80\" width=\"30\" height=\"30\" rx=\"2\" class=\"n b2\"/><text x=\"360.0\" y=\"100.0\" font-size=\"14\" text-anchor=\"middle\" class=\"tl b2\">1</text><rect x=\"375\" y=\"80\" width=\"30\" height=\"30\" rx=\"2\" class=\"n b2\"/><text x=\"390.0\" y=\"100.0\" font-size=\"14\" text-anchor=\"middle\" class=\"tl b2\">2</text><rect x=\"405\" y=\"80\" width=\"30\" height=\"30\" rx=\"2\" class=\"n b2\"/><text x=\"420.0\" y=\"100.0\" font-size=\"14\" text-anchor=\"middle\" class=\"tl b2\">0</text><rect x=\"345\" y=\"110\" width=\"30\" height=\"30\" rx=\"2\" class=\"n b2\"/><text x=\"360.0\" y=\"130.0\" font-size=\"14\" text-anchor=\"middle\" class=\"tl b2\">0</text><rect x=\"375\" y=\"110\" width=\"30\" height=\"30\" rx=\"2\" class=\"n b2\"/><text x=\"390.0\" y=\"130.0\" font-size=\"14\" text-anchor=\"middle\" class=\"tl b2\">0</text><rect x=\"405\" y=\"110\" width=\"30\" height=\"30\" rx=\"2\" class=\"n b2\"/><text x=\"420.0\" y=\"130.0\" font-size=\"14\" text-anchor=\"middle\" class=\"tl b2\">3</text><text x=\"390\" y=\"170\" font-size=\"14\" text-anchor=\"middle\" class=\"tm b2\">입력 3, 출력 2</text><text x=\"390\" y=\"192\" font-size=\"14\" text-anchor=\"middle\" class=\"t b2\">2×3 표</text><text x=\"240\" y=\"245\" font-size=\"15\" text-anchor=\"middle\" class=\"tb b3\">같은 생각이 자라는 중이에요</text></svg>",
+     "caption": "미분(숫자 하나)이 기울기(한 줄)로, 다시 야코비안(표)으로 자라요. 생각은 같아요.",
+     "builds": 3
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "compare",
+     "head": "슬라이드 영어를 우리말로",
+     "cols": [
+      "영어 원문",
+      "우리말 뜻"
+     ],
+     "rows": [
+      [
+       "n inputs, 1 output: gradient",
+       "입력 n 개, 출력 1 개: 기울기(벡터)"
+      ],
+      [
+       "a vector of partial derivatives",
+       "편미분들을 모은 벡터"
+      ],
+      [
+       "n inputs, m outputs: Jacobian, an m×n matrix",
+       "입력 n 개, 출력 m 개: 야코비안, m×n 행렬"
+      ],
+      [
+       "entry (i, j) = how output i responds to input j",
+       "(i, j) 칸 = 입력 j 를 밀 때 출력 i 가 얼마나 반응하나"
+      ],
+      [
+       "its derivative IS a Jacobian",
+       "신경망 층의 미분은 바로 야코비안이에요"
+      ]
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "용어 뜻",
+     "items": [
+      "**편미분(Partial Derivative)**: 입력 여럿 중 하나만 살짝 밀고 나머지는 그대로 둔 미분. ∂ 기호를 써요.",
+      "**기울기(Gradient)**: 출력 하나에 대한 편미분을 입력마다 모은 한 줄.",
+      "**야코비안(Jacobian)**: 출력마다 기울기 한 줄씩, 줄을 쌓은 표. 행 = 출력, 열 = 입력."
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "셋을 나란히",
+     "cols": [
+      "",
+      "입력",
+      "출력",
+      "미분의 생김새"
+     ],
+     "rows": [
+      [
+       "미분",
+       "1 개",
+       "1 개",
+       "숫자 하나"
+      ],
+      [
+       "기울기",
+       "n 개",
+       "1 개",
+       "숫자 n 개짜리 벡터"
+      ],
+      [
+       "야코비안",
+       "n 개",
+       "m 개",
+       "m×n 행렬(표)"
+      ]
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "입력이 3 개, 출력이 2 개인 함수의 야코비안 크기는?",
+     "choices": [
+      "3×2",
+      "2×3",
+      "3×3"
+     ],
+     "a": 1,
+     "why": "행은 출력 수(m = 2), 열은 입력 수(n = 3)라서 2×3 이에요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.061,
+       "y": 0.197,
+       "w": 0.436,
+       "h": 0.038,
+       "say": "입력 n 개, 출력 1 개: 기울기, 편미분들의 벡터예요."
+      },
+      {
+       "x": 0.061,
+       "y": 0.25,
+       "w": 0.661,
+       "h": 0.039,
+       "say": "입력 n 개, 출력 m 개: 야코비안, m×n 행렬이에요. (i, j) 칸은 출력 i 가 입력 j 에 반응하는 정도예요."
+      },
+      {
+       "x": 0.139,
+       "y": 0.355,
+       "w": 0.296,
+       "h": 0.152,
+       "say": "기울기 벡터 식: 입력 x₁ 부터 xₙ 까지 하나씩 편미분해 늘어놓아요."
+      },
+      {
+       "x": 0.486,
+       "y": 0.355,
+       "w": 0.296,
+       "h": 0.152,
+       "say": "야코비안 식: m×n 실수 행렬이고, i 행 j 열에 ∂fᵢ/∂xⱼ 가 들어가요."
+      },
+      {
+       "x": 0.061,
+       "y": 0.586,
+       "w": 0.486,
+       "h": 0.039,
+       "say": "신경망 층은 벡터를 벡터로 바꿔요. 그래서 층의 미분은 야코비안이에요."
+      }
+     ]
+    },
+    {
+     "kind": "formula",
+     "head": "기울기 벡터",
+     "tex": "\\nabla f = \\left[\\frac{\\partial f}{\\partial x_1}, \\ldots, \\frac{\\partial f}{\\partial x_n}\\right]",
+     "parts": [
+      {
+       "sym": "\\nabla f",
+       "say": "f 의 기울기. ∇ 는 '나블라' 라고 읽어요"
+      },
+      {
+       "sym": "\\frac{\\partial f}{\\partial x_1}",
+       "say": "x₁ 만 살짝 밀 때 f 가 움직이는 정도(편미분)"
+      },
+      {
+       "sym": "\\ldots",
+       "say": "x₂, x₃ 처럼 중간 것들도 똑같이"
+      },
+      {
+       "sym": "\\frac{\\partial f}{\\partial x_n}",
+       "say": "마지막 입력 xₙ 에 대한 편미분"
+      }
+     ],
+     "whole": "입력마다 따로 밀어 본 결과를 한 줄로 모은 것이 기울기예요."
+    },
+    {
+     "kind": "formula",
+     "head": "야코비안 행렬",
+     "tex": "J \\in \\mathbb{R}^{m \\times n}, \\quad J_{ij} = \\frac{\\partial f_i}{\\partial x_j}",
+     "parts": [
+      {
+       "sym": "J",
+       "say": "**야코비안(Jacobian)** 행렬"
+      },
+      {
+       "sym": "\\mathbb{R}^{m \\times n}",
+       "say": "실수가 m 행 n 열로 놓인 표"
+      },
+      {
+       "sym": "J_{ij}",
+       "say": "i 번째 행, j 번째 열의 칸"
+      },
+      {
+       "sym": "\\frac{\\partial f_i}{\\partial x_j}",
+       "say": "입력 j 를 밀 때 출력 i 가 움직이는 정도"
+      }
+     ],
+     "whole": "행은 출력, 열은 입력. 표 한 칸이 편미분 하나예요."
+    },
+    {
+     "kind": "steps",
+     "head": "기울기 손계산",
+     "steps": [
+      "f(x₁, x₂) = x₁² + 3x₂, 점 (1, 2) 에서 구해요.",
+      "x₁ 만 밀기: x₂ 는 상수 취급. x₁² 의 미분 2x₁ = 2 × 1 = 2",
+      "x₂ 만 밀기: x₁ 은 상수 취급. 3x₂ 의 미분 = 3",
+      "모으기: ∇f = [2, 3]"
+     ],
+     "answer": "∇f = [2, 3]. 입력 2 개라서 숫자 2 개짜리 벡터예요."
+    },
+    {
+     "kind": "steps",
+     "head": "야코비안 손계산",
+     "steps": [
+      "F(x₁, x₂, x₃) = (x₁ + 2x₂, 3x₃). 입력 3 개, 출력 2 개예요.",
+      "1행(출력 f₁ = x₁ + 2x₂): x₁ 로 1, x₂ 로 2, x₃ 로 0",
+      "2행(출력 f₂ = 3x₃): x₁ 로 0, x₂ 로 0, x₃ 로 3",
+      "표로 쌓기: J = [[1, 2, 0], [0, 0, 3]]"
+     ],
+     "answer": "2×3 야코비안. 출력 수 × 입력 수 크기예요."
+    },
+    {
+     "kind": "prof",
+     "when": "3주차 월요일 1교시",
+     "lines": [
+      "입력이 500 개, 출력이 300 개면 500 곱하기 300 만큼의 파라미터가 있어요.",
+      "기울기 벡터는 각 입력이 조금씩 바뀔 때 출력이 어떻게 변하는지 모아 놓은 거예요.",
+      "한마디로 가중치 행렬의 크기만큼 기울기가 생겨요. 그 기울기의 행렬을 야코비안이라고 해요."
+     ]
+    },
+    {
+     "kind": "bg",
+     "src": "기초 다지기 7단원 (wb-7 함수, 기울기, 미분)",
+     "lines": [
+      "편미분은 '다른 변수는 숫자처럼 얼려 두고' 한 변수로만 미분하는 거예요.",
+      "미분 규칙(x², 상수배, 합)은 기초 다지기 7단원에서 연습해요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "f(x₁, x₂) = x₁ × x₂ 의 점 (3, 2) 에서 기울기는?",
+     "choices": [
+      "[3, 2]",
+      "[2, 3]",
+      "[6, 6]"
+     ],
+     "a": 1,
+     "why": "x₁ 로 편미분하면 x₂ = 2, x₂ 로 편미분하면 x₁ = 3. 그래서 [2, 3] 이에요."
+    },
+    {
+     "kind": "english",
+     "head": "답안 문장",
+     "en": "**야코비안(Jacobian)**은 입력 n 개, 출력 m 개인 함수의 편미분을 모은 m×n 행렬로, (i, j) 성분은 j 번째 입력에 대한 i 번째 출력의 변화율이다.",
+     "ko": "행 = 출력, 열 = 입력만 기억하면 돼요.",
+     "tip": "'출력이 먼저(행), 입력이 나중(열)'."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "기울기(출력 1 개)와 야코비안(출력 여러 개)을 구별해요. 야코비안의 한 행이 곧 그 출력의 기울기예요.",
+      "J 는 여기서 야코비안이지만, 손실 함수 J(θ) 에도 같은 글자를 써요. 문맥으로 구별해요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 20,
+   "title": "연쇄 법칙, 벡터 버전",
+   "terms": [
+    "Backpropagation",
+    "Chain Rule",
+    "Jacobian",
+    "Activation Function",
+    "Nonlinearity",
+    "Local Gradient",
+    "Hidden Layer"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "**연쇄 법칙(Chain Rule)**은 오늘 가장 중요한 한 가지예요.",
+      "여러 단계를 거친 계산은, 단계마다의 미분을 곱하면 전체 미분이 나와요.",
+      "맞물린 톱니바퀴처럼, 3배 돌리고 8배 돌리면 모두 합쳐 24배 돌아가요."
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "톱니바퀴 두 개",
+     "svg": "<svg viewBox=\"0 0 480 270\" xmlns=\"http://www.w3.org/2000/svg\"><circle cx=\"60\" cy=\"120\" r=\"26\" class=\"n3\"/><text x=\"60\" y=\"126\" font-size=\"16\" text-anchor=\"middle\" class=\"tl\">x</text><circle cx=\"240\" cy=\"120\" r=\"26\" class=\"n3\"/><text x=\"240\" y=\"126\" font-size=\"16\" text-anchor=\"middle\" class=\"tl\">z</text><circle cx=\"420\" cy=\"120\" r=\"26\" class=\"n2\"/><text x=\"420\" y=\"126\" font-size=\"16\" text-anchor=\"middle\" class=\"tl\">h</text><text x=\"60\" y=\"172\" font-size=\"14\" text-anchor=\"middle\" class=\"t\">x = 1</text><text x=\"240\" y=\"172\" font-size=\"14\" text-anchor=\"middle\" class=\"t\">z = 3x + 1 = 4</text><text x=\"420\" y=\"172\" font-size=\"14\" text-anchor=\"middle\" class=\"t\">h = z² = 16</text><line x1=\"88\" y1=\"120\" x2=\"203\" y2=\"120\" class=\"e2 b1\"/><polygon points=\"212,120 203,125 203,115\" class=\"arrow b1\"/><text x=\"150\" y=\"105\" font-size=\"16\" text-anchor=\"middle\" class=\"tb b1\">× 3</text><text x=\"150\" y=\"145\" font-size=\"14\" text-anchor=\"middle\" class=\"tm b1\">dz/dx = 3</text><line x1=\"268\" y1=\"120\" x2=\"383\" y2=\"120\" class=\"e2 b2\"/><polygon points=\"392,120 383,125 383,115\" class=\"arrow b2\"/><text x=\"330\" y=\"105\" font-size=\"16\" text-anchor=\"middle\" class=\"tb b2\">× 8</text><text x=\"330\" y=\"145\" font-size=\"14\" text-anchor=\"middle\" class=\"tm b2\">dh/dz = 2z = 8</text><rect x=\"130\" y=\"210\" width=\"220\" height=\"36\" rx=\"2\" class=\"box2 b3\"/><text x=\"240.0\" y=\"234.0\" font-size=\"16\" text-anchor=\"middle\" class=\"tb b3\">dh/dx = 3 × 8 = 24</text></svg>",
+     "caption": "x 가 z 를 3배로, z 가 h 를 8배로 돌려요. 그러면 x 는 h 를 3 × 8 = 24배로 돌려요.",
+     "builds": 3
+    },
+    {
+     "kind": "analogy",
+     "head": "맞물린 톱니바퀴",
+     "scene": "첫 바퀴를 한 칸 돌리면 둘째가 3칸, 둘째가 한 칸 돌면 셋째가 8칸 돌아요.",
+     "map": [
+      [
+       "바퀴 하나의 회전비",
+       "한 단계의 미분(**국소 기울기(Local Gradient)**)"
+      ],
+      [
+       "회전비를 곱하기",
+       "**연쇄 법칙(Chain Rule)**"
+      ],
+      [
+       "첫 바퀴에서 끝 바퀴까지 비",
+       "전체 미분 dh/dx"
+      ]
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "compare",
+     "head": "슬라이드 영어를 우리말로",
+     "cols": [
+      "영어 원문",
+      "우리말 뜻"
+     ],
+     "rows": [
+      [
+       "One-variable chain rule: multiply derivatives",
+       "한 변수 연쇄 법칙: 미분을 곱해요"
+      ],
+      [
+       "Vector version: multiply Jacobians",
+       "벡터 버전: 야코비안(행렬)을 곱해요"
+      ],
+      [
+       "order matters, shapes must chain",
+       "곱하는 순서가 중요하고, 크기가 사슬처럼 이어져야 해요"
+      ],
+      [
+       "this single rule + bookkeeping = ALL of backpropagation",
+       "이 규칙 하나 + 장부 정리 = 역전파의 전부"
+      ],
+      [
+       "If you can multiply matrices, you can differentiate a neural network",
+       "행렬을 곱할 줄 알면 신경망을 미분할 수 있어요"
+      ]
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "용어 뜻",
+     "items": [
+      "**연쇄 법칙(Chain Rule)**: 합성 함수의 미분 = 단계별 미분의 곱.",
+      "z = Wx + b: **은닉층(Hidden Layer)**의 첫 단계, 곱하고 더하기예요.",
+      "h = f(z): **활성화 함수(Activation Function)**를 씌워 **비선형성(Nonlinearity)**을 넣는 둘째 단계.",
+      "**역전파(Backpropagation)**: 이 규칙을 신경망 전체에 체계적으로 적용한 것."
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "x 에서 h 까지 두 계단",
+     "steps": [
+      "x 가 들어와요.",
+      "z = Wx + b 를 계산해요(1 계단).",
+      "h = f(z) 를 계산해요(2 계단).",
+      "그래서 h 를 x 로 미분하려면 두 계단의 미분을 곱해요: ∂h/∂z × ∂z/∂x"
+     ],
+     "answer": "한 번에 가지 않고 z 를 거쳐 왔으니, 거쳐 온 만큼 곱해요."
+    },
+    {
+     "kind": "check",
+     "q": "h = f(z), z = g(x) 일 때 dh/dx 는?",
+     "choices": [
+      "dh/dz + dz/dx",
+      "dh/dz × dz/dx",
+      "dh/dz ÷ dz/dx"
+     ],
+     "a": 1,
+     "why": "**연쇄 법칙(Chain Rule)**은 단계별 미분을 곱해요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.061,
+       "y": 0.197,
+       "w": 0.568,
+       "h": 0.038,
+       "say": "한 변수에서는 미분을 곱하고, 벡터에서는 야코비안을 곱해요."
+      },
+      {
+       "x": 0.114,
+       "y": 0.33,
+       "w": 0.282,
+       "h": 0.07,
+       "say": "두 계단: h = f(z), 그리고 z = Wx + b."
+      },
+      {
+       "x": 0.429,
+       "y": 0.33,
+       "w": 0.164,
+       "h": 0.074,
+       "say": "그래서 ∂h/∂x = ∂h/∂z × ∂z/∂x. 가운데 z 가 약분되는 것처럼 보이죠."
+      },
+      {
+       "x": 0.061,
+       "y": 0.508,
+       "w": 0.682,
+       "h": 0.038,
+       "say": "층을 이어 붙이면 야코비안의 곱이 돼요. 순서가 중요하고 크기가 이어져야 해요."
+      },
+      {
+       "x": 0.061,
+       "y": 0.562,
+       "w": 0.429,
+       "h": 0.041,
+       "say": "이 규칙 하나와 장부 정리가 역전파의 전부예요."
+      }
+     ]
+    },
+    {
+     "kind": "formula",
+     "head": "연쇄 법칙(벡터)",
+     "tex": "h = f(z), \\quad z = Wx + b \\;\\Rightarrow\\; \\frac{\\partial h}{\\partial x} = \\frac{\\partial h}{\\partial z}\\frac{\\partial z}{\\partial x}",
+     "parts": [
+      {
+       "sym": "z = Wx + b",
+       "say": "입력 x 에 W 를 곱하고 b 를 더한 중간값"
+      },
+      {
+       "sym": "h = f(z)",
+       "say": "z 에 **활성화 함수(Activation Function)** f 를 씌운 값"
+      },
+      {
+       "sym": "\\frac{\\partial h}{\\partial z}",
+       "say": "둘째 계단의 야코비안"
+      },
+      {
+       "sym": "\\frac{\\partial z}{\\partial x}",
+       "say": "첫째 계단의 야코비안"
+      },
+      {
+       "sym": "\\frac{\\partial h}{\\partial x}",
+       "say": "둘을 곱한 전체 야코비안"
+      }
+     ],
+     "whole": "거쳐 온 계단의 야코비안을 순서대로 곱하면 전체 미분이에요."
+    },
+    {
+     "kind": "steps",
+     "head": "숫자로 연쇄 법칙",
+     "steps": [
+      "z = 3x + 1, h = z², x = 1 이라고 해요(숫자 하나짜리 버전).",
+      "순서대로 계산: z = 3 × 1 + 1 = 4, h = 4² = 16",
+      "첫 계단 dz/dx = 3",
+      "둘째 계단 dh/dz = 2z = 2 × 4 = 8",
+      "곱하기: dh/dx = 8 × 3 = 24",
+      "확인: x 를 1.001 로 밀면 h = 4.003² = 16.024009, 늘어난 양 ÷ 0.001 = 24.009"
+     ],
+     "answer": "dh/dx = 24. 살짝 밀어 본 값 24.009 와 거의 같아요."
+    },
+    {
+     "kind": "prof",
+     "when": "3주차 월요일 1교시",
+     "lines": [
+      "고등학교 때 합성 함수를 미분하면서 이런 체인 룰을 배웠을 텐데, 이것도 하나의 합성 함수예요.",
+      "z 를 g(x) 라는 함수로 생각하면 h 는 f(g(x)) 가 되죠.",
+      "체인 룰이 가장 중요하다고 보시면 돼요. x 가 z 에, z 가 h 에 미치는 영향을 이어서 곱하면 돼요.",
+      "이렇게 체인 룰을 신경망 전체에 체계적으로 적용하는 게 역전파예요."
+     ]
+    },
+    {
+     "kind": "bg",
+     "src": "기초 다지기 7단원 (wb-7 함수, 기울기, 미분)",
+     "lines": [
+      "연쇄 법칙 맛보기는 기초 다지기 7단원 끝에 있어요.",
+      "(3x + 1)² 을 전개하지 않고 미분하는 연습을 해 보세요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "z = 2x, h = z³, x = 1 일 때 dh/dx 는?",
+     "choices": [
+      "6",
+      "12",
+      "24"
+     ],
+     "a": 2,
+     "why": "z = 2, dh/dz = 3z² = 12, dz/dx = 2, 곱하면 24 예요."
+    },
+    {
+     "kind": "english",
+     "head": "답안 문장",
+     "en": "**연쇄 법칙(Chain Rule)**에 따르면 합성 함수의 미분은 각 단계 미분의 곱이며, 벡터 함수에서는 각 층의 **야코비안(Jacobian)**을 곱한다. 이를 신경망 전체에 적용한 것이 **역전파(Backpropagation)**이다.",
+     "ko": "교수님이 가장 중요하다고 한 규칙이에요.",
+     "tip": "'단계마다 미분, 그리고 곱하기'."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "미분끼리 더하는 게 아니라 곱해요. 한 경로 위의 단계는 곱하고, 여러 경로가 만나면 그때 더해요(p.30).",
+      "행렬 곱은 순서를 바꾸면 안 돼요. ∂h/∂z 가 앞, ∂z/∂x 가 뒤예요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 21,
+   "title": "주머니 속 야코비안 네 개",
+   "terms": [
+    "Chain Rule",
+    "Jacobian",
+    "Activation Function",
+    "ReLU",
+    "Transpose",
+    "Hadamard Product",
+    "Diagonal Matrix",
+    "Identity Matrix"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "복잡한 신경망도 사실은 레고 블록 몇 종류를 이어 붙인 것이에요.",
+      "블록은 네 가지: 곱하기(W), 더하기(b), 활성화(f), 점수 내기(u)예요.",
+      "블록마다 미분 하나씩만 알면, **연쇄 법칙(Chain Rule)**으로 곱해서 전체 미분이 나와요."
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "레고 블록 네 개",
+     "svg": "<svg viewBox=\"0 0 480 270\" xmlns=\"http://www.w3.org/2000/svg\"><text x=\"240\" y=\"30\" font-size=\"14\" text-anchor=\"middle\" class=\"tm\">순전파: 왼쪽 → 오른쪽</text><rect x=\"10\" y=\"55\" width=\"100\" height=\"44\" rx=\"2\" class=\"n3\"/><text x=\"60.0\" y=\"82.0\" font-size=\"14\" text-anchor=\"middle\" class=\"tl\">× W 곱하기</text><line x1=\"110\" y1=\"77\" x2=\"119\" y2=\"77\" class=\"e\"/><polygon points=\"128,77 119,82 119,72\" class=\"arrow\"/><rect x=\"128\" y=\"55\" width=\"100\" height=\"44\" rx=\"2\" class=\"n3\"/><text x=\"178.0\" y=\"82.0\" font-size=\"14\" text-anchor=\"middle\" class=\"tl\">+ b 더하기</text><line x1=\"228\" y1=\"77\" x2=\"237\" y2=\"77\" class=\"e\"/><polygon points=\"246,77 237,82 237,72\" class=\"arrow\"/><rect x=\"246\" y=\"55\" width=\"100\" height=\"44\" rx=\"2\" class=\"n3\"/><text x=\"296.0\" y=\"82.0\" font-size=\"14\" text-anchor=\"middle\" class=\"tl\">f 활성화</text><line x1=\"346\" y1=\"77\" x2=\"355\" y2=\"77\" class=\"e\"/><polygon points=\"364,77 355,82 355,72\" class=\"arrow\"/><rect x=\"364\" y=\"55\" width=\"106\" height=\"44\" rx=\"2\" class=\"n3\"/><text x=\"417.0\" y=\"82.0\" font-size=\"14\" text-anchor=\"middle\" class=\"tl\">u 와 점수</text><text x=\"60\" y=\"140\" font-size=\"14\" text-anchor=\"middle\" class=\"tb b1\">x로 미분: W</text><text x=\"178\" y=\"140\" font-size=\"14\" text-anchor=\"middle\" class=\"tb b1\">b로 미분: I</text><text x=\"296\" y=\"140\" font-size=\"14\" text-anchor=\"middle\" class=\"tb b1\">diag(f'(z))</text><text x=\"417\" y=\"140\" font-size=\"14\" text-anchor=\"middle\" class=\"tb b1\">h로 미분: uᵀ</text><text x=\"240\" y=\"200\" font-size=\"15\" text-anchor=\"middle\" class=\"t b2\">블록마다 미분 하나씩 외워 두면</text><text x=\"240\" y=\"225\" font-size=\"15\" text-anchor=\"middle\" class=\"tb b2\">곱하기만으로 전체 기울기가 나와요</text></svg>",
+     "caption": "왼쪽에서 오른쪽으로 계산이 흐르고, 블록마다 자기 미분(야코비안)을 하나씩 갖고 있어요.",
+     "builds": 2
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "compare",
+     "head": "슬라이드 영어를 우리말로",
+     "cols": [
+      "영어 원문",
+      "우리말 뜻"
+     ],
+     "rows": [
+      [
+       "A Pocketful of Jacobians",
+       "주머니에 넣어 다닐 야코비안 몇 개"
+      ],
+      [
+       "Four building blocks cover almost every network",
+       "블록 네 개로 거의 모든 신경망을 다뤄요"
+      ],
+      [
+       "Complex nets are LEGO",
+       "복잡한 신경망도 레고예요"
+      ],
+      [
+       "Identity matrix",
+       "**단위 행렬(Identity Matrix)**: 곱해도 그대로인 행렬"
+      ]
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "블록 네 개와 그 미분",
+     "cols": [
+      "블록",
+      "계산",
+      "무엇으로 미분",
+      "결과"
+     ],
+     "rows": [
+      [
+       "곱하기",
+       "Wx",
+       "x",
+       "W"
+      ],
+      [
+       "더하기",
+       "Wx + b",
+       "b",
+       "I (**단위 행렬(Identity Matrix)**)"
+      ],
+      [
+       "활성화",
+       "h = f(z)",
+       "z",
+       "diag(f'(z)) (**대각 행렬(Diagonal Matrix)**)"
+      ],
+      [
+       "점수",
+       "s = uᵀh",
+       "h",
+       "uᵀ (**전치(Transpose)**된 u)"
+      ]
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "용어 뜻",
+     "items": [
+      "**대각 행렬(Diagonal Matrix)**: 대각선 칸에만 숫자가 있고 나머지는 0인 표.",
+      "**단위 행렬(Identity Matrix)**: 대각선이 모두 1인 대각 행렬. 숫자 1처럼 곱해도 그대로예요.",
+      "**전치(Transpose)**: 행과 열을 뒤바꾸기. 세로 벡터 u 가 가로 벡터 uᵀ 가 돼요."
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "h = f(z) 에서 ∂h/∂z 가 대각 행렬인 이유는?",
+     "choices": [
+      "hᵢ 는 zᵢ 하나에만 영향을 받아서",
+      "f 가 항상 직선이라서",
+      "W 가 정사각 행렬이라서"
+     ],
+     "a": 0,
+     "why": "**활성화 함수(Activation Function)**는 칸마다 따로 씌워요. 그래서 다른 칸의 영향은 0 이고 대각선만 남아요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.204,
+       "y": 0.165,
+       "w": 0.468,
+       "h": 0.247,
+       "say": "레고 그림: x(n×1)와 W(m×n)를 곱해 z, b 를 더하고, f 를 씌워 h, u 와 점곱해 점수 s(숫자 하나)."
+      },
+      {
+       "x": 0.207,
+       "y": 0.47,
+       "w": 0.25,
+       "h": 0.406,
+       "say": "활성화의 야코비안: i = j 일 때만 f'(zᵢ), 나머지 칸은 0. 그래서 diag(f'(z))."
+      },
+      {
+       "x": 0.507,
+       "y": 0.482,
+       "w": 0.193,
+       "h": 0.095,
+       "say": "Wx + b 를 x 로 미분하면 W."
+      },
+      {
+       "x": 0.507,
+       "y": 0.609,
+       "w": 0.193,
+       "h": 0.114,
+       "say": "Wx + b 를 b 로 미분하면 단위 행렬 I."
+      },
+      {
+       "x": 0.507,
+       "y": 0.749,
+       "w": 0.193,
+       "h": 0.102,
+       "say": "uᵀh 를 h 로 미분하면 uᵀ."
+      }
+     ]
+    },
+    {
+     "kind": "formula",
+     "head": "활성화 블록의 야코비안",
+     "tex": "\\left(\\frac{\\partial h}{\\partial z}\\right)_{ij} = \\begin{cases} f'(z_i) & i = j \\\\ 0 & \\text{otherwise} \\end{cases} \\;\\Rightarrow\\; \\frac{\\partial h}{\\partial z} = \\mathrm{diag}(f'(z))",
+     "parts": [
+      {
+       "sym": "h_i = f(z_i)",
+       "say": "h 의 i 번째 칸은 z 의 i 번째 칸에만 f 를 씌운 것"
+      },
+      {
+       "sym": "i = j",
+       "say": "자기 칸끼리면 기울기 f'(zᵢ)"
+      },
+      {
+       "sym": "0",
+       "say": "남의 칸끼리면 영향이 없어 0"
+      },
+      {
+       "sym": "\\mathrm{diag}(f'(z))",
+       "say": "대각선에 f'(z₁) ... f'(zₙ) 이 놓인 **대각 행렬(Diagonal Matrix)**"
+      }
+     ],
+     "whole": "칸마다 따로 씌우는 함수라 대각선만 살아남아요."
+    },
+    {
+     "kind": "formula",
+     "head": "나머지 세 블록",
+     "tex": "\\frac{\\partial}{\\partial x}(Wx + b) = W, \\quad \\frac{\\partial}{\\partial b}(Wx + b) = I, \\quad \\frac{\\partial}{\\partial h}(u^T h) = u^T",
+     "parts": [
+      {
+       "sym": "\\frac{\\partial}{\\partial x}(Wx + b) = W",
+       "say": "3x 를 x 로 미분하면 3 인 것처럼, Wx 를 x 로 미분하면 W"
+      },
+      {
+       "sym": "\\frac{\\partial}{\\partial b}(Wx + b) = I",
+       "say": "b 를 b 로 미분하면 1, 벡터라서 **단위 행렬(Identity Matrix)** I"
+      },
+      {
+       "sym": "\\frac{\\partial}{\\partial h}(u^T h) = u^T",
+       "say": "2h 를 h 로 미분하면 2 인 것처럼, uᵀh 를 h 로 미분하면 uᵀ"
+      }
+     ],
+     "whole": "모두 '숫자 한 개짜리 미분' 을 벡터로 옮긴 것이에요."
+    },
+    {
+     "kind": "steps",
+     "head": "ReLU 로 대각 행렬 만들기",
+     "steps": [
+      "z = [2, -1], 활성화는 **ReLU** 라고 해요.",
+      "ReLU 의 미분: 양수면 1, 음수면 0. 그래서 f'(z) = [1, 0]",
+      "대각 행렬: diag(f'(z)) = [[1, 0], [0, 0]]",
+      "u = [2, 3] 이면 uᵀ diag(f'(z)) = [2×1 + 3×0, 2×0 + 3×0] = [2, 0]",
+      "같은 자리끼리 곱한 [2×1, 3×0] = [2, 0] 과 같아요. 이것이 **원소별 곱(Hadamard Product)**예요."
+     ],
+     "answer": "대각 행렬 곱하기 = 원소별 곱. 결과 [2, 0]."
+    },
+    {
+     "kind": "prof",
+     "when": "3주차 월요일 1교시",
+     "lines": [
+      "앞으로 쓸 야코비안 4가지는 암기할 필요는 없어요. PyTorch 같은 것에서 이 기울기들이 다 계산돼요.",
+      "그래도 수식을 이해하기 위해서 이 네 가지를 암기하시면 좋아요.",
+      "활성화에서 h₁ 은 z₁ 의 영향만 받고 다른 뉴런의 영향은 받지 않아요. 그래서 대각선에만 값이 있어요."
+     ]
+    },
+    {
+     "kind": "prof",
+     "when": "3주차 월요일 2교시",
+     "lines": [
+      "동그라미 기호는 하다마드 곱(Hadamard product), 원소별 곱이라고 생각하시면 돼요.",
+      "대각 행렬을 곱하면 나머지가 다 0 이라서, 결국 같은 자리 원소끼리만 곱한 것과 같아요."
+     ]
+    },
+    {
+     "kind": "bg",
+     "src": "기초 다지기 3단원 (wb-3 행렬과 행렬 곱, shape)",
+     "lines": [
+      "행렬 곱, 전치(T), shape 은 기초 다지기 3단원에 있어요.",
+      "(1×2) 가로 벡터 × (2×2) 행렬 = (1×2) 가로 벡터. 가운데 2 가 같아야 곱할 수 있어요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "z = [3, -2], f = ReLU, u = [1, 5] 일 때 uᵀ diag(f'(z)) 는?",
+     "choices": [
+      "[1, 5]",
+      "[3, 0]",
+      "[1, 0]"
+     ],
+     "a": 2,
+     "why": "f'(z) = [1, 0] 이니 원소별 곱 [1×1, 5×0] = [1, 0] 이에요."
+    },
+    {
+     "kind": "english",
+     "head": "답안 문장",
+     "en": "활성화 함수 h = f(z) 의 **야코비안(Jacobian)**은 대각 행렬 diag(f'(z)) 이다. hᵢ 가 zᵢ 에만 의존하기 때문이며, 이 대각 행렬과의 곱은 **원소별 곱(Hadamard Product)**와 같다.",
+     "ko": "네 블록 가운데 설명형 문제로 가장 나오기 좋은 것이에요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "Wx + b 를 x 로 미분하면 W, W 로 미분하면 x 쪽이 나와요. 무엇으로 미분하는지 먼저 확인해요.",
+      "슬라이드 왼쪽 칸은 h, z 를 n 칸으로, 레고 그림은 m 칸(m×1)으로 적었어요. 글자만 다를 뿐 같은 이야기예요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 22,
+   "title": "풀이 예: 준비",
+   "terms": [
+    "Word Vector",
+    "Embedding",
+    "Named Entity Recognition (NER)",
+    "Activation Function",
+    "Nonlinearity",
+    "Hidden Layer"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "이제 실제로 한 번 풀어 봐요. 1부의 **개체명 인식(Named Entity Recognition (NER))** 점수기를 아주 작게 줄인 것이에요.",
+      "순서는 x → z → h → s, 네 칸이에요.",
+      "미분하기 전에 먼저 할 일은 조각마다 이름과 크기를 적는 것이에요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "네 칸 흐름",
+     "items": [
+      "x: 단어 창을 이어 붙인 입력 벡터(**단어 벡터(Word Vector)**, 곧 **임베딩(Embedding)**들)",
+      "z = Wx + b: 곱하고 더하기",
+      "h = f(z): **활성화 함수(Activation Function)** 씌우기, 곧 **비선형성(Nonlinearity)** 넣기",
+      "s = uᵀh: 숫자 하나짜리 점수"
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "compare",
+     "head": "슬라이드 영어를 우리말로",
+     "cols": [
+      "영어 원문",
+      "우리말 뜻"
+     ],
+     "rows": [
+      [
+       "Our NER scorer, stripped to essentials",
+       "우리 NER 점수기의 뼈대만 남긴 것"
+      ],
+      [
+       "Break the network into simple pieces",
+       "신경망을 단순한 조각으로 나눠요"
+      ],
+      [
+       "define every variable, track every shape",
+       "변수마다 이름을 붙이고, 크기를 빠짐없이 적어요"
+      ],
+      [
+       "same story with the loss J",
+       "손실 J 로 해도 같은 이야기예요"
+      ],
+      [
+       "name the pieces before touching the calculus",
+       "미분에 손대기 전에 조각 이름부터"
+      ]
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "조각과 크기",
+     "cols": [
+      "기호",
+      "뜻",
+      "크기(shape)"
+     ],
+     "rows": [
+      [
+       "x",
+       "창 벡터(입력)",
+       "n×1"
+      ],
+      [
+       "W",
+       "**은닉층(Hidden Layer)** 가중치",
+       "m×n"
+      ],
+      [
+       "b",
+       "편향 항",
+       "m×1"
+      ],
+      [
+       "z, h",
+       "중간값, 활성화 뒤 값",
+       "m×1"
+      ],
+      [
+       "u",
+       "점수 가중치",
+       "m×1"
+      ],
+      [
+       "s",
+       "점수",
+       "1×1 (숫자 하나)"
+      ]
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "목표: 기울기 세 개",
+     "steps": [
+      "∂s/∂b: 점수가 b 에 얼마나 민감한가",
+      "∂s/∂W: 점수가 W 에 얼마나 민감한가",
+      "∂s/∂x: 점수가 입력 **단어 벡터(Word Vector)**에 얼마나 민감한가"
+     ],
+     "answer": "이 셋을 구하면 b, W, 그리고 단어 벡터까지 고칠 수 있어요."
+    },
+    {
+     "kind": "check",
+     "q": "이 예에서 점수 s 의 크기는?",
+     "choices": [
+      "m×1",
+      "1×1, 숫자 하나",
+      "m×n"
+     ],
+     "a": 1,
+     "why": "s = uᵀh 는 (1×m)(m×1) = 1×1, 숫자 하나예요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.204,
+       "y": 0.165,
+       "w": 0.468,
+       "h": 0.247,
+       "say": "레고 그림 아래에 z = Wx (m×1), z = Wx + b (m×1), h = f(z) (m×1), s = uᵀh (1×1) 가 적혀 있어요."
+      },
+      {
+       "x": 0.232,
+       "y": 0.533,
+       "w": 0.532,
+       "h": 0.076,
+       "say": "세 식: s = uᵀh, h = f(z), z = Wx + b."
+      },
+      {
+       "x": 0.061,
+       "y": 0.685,
+       "w": 0.696,
+       "h": 0.041,
+       "say": "x 는 창 벡터, W 와 b 는 은닉층, f 는 비선형 함수, u 는 점수 가중치, s 는 점수예요."
+      },
+      {
+       "x": 0.061,
+       "y": 0.744,
+       "w": 0.539,
+       "h": 0.039,
+       "say": "목표는 ∂s/∂b, ∂s/∂W, ∂s/∂x. 변수와 크기를 모두 적어요."
+      },
+      {
+       "x": 0.061,
+       "y": 0.796,
+       "w": 0.536,
+       "h": 0.039,
+       "say": "간단히 하려고 점수 s 를 미분해요. 손실 J 로 해도 같아요."
+      }
+     ]
+    },
+    {
+     "kind": "formula",
+     "head": "풀이 예의 세 식",
+     "tex": "s = u^T h, \\quad h = f(z), \\quad z = Wx + b",
+     "parts": [
+      {
+       "sym": "z = Wx + b",
+       "say": "입력 x 에 W 를 곱하고 b 를 더해요"
+      },
+      {
+       "sym": "h = f(z)",
+       "say": "z 에 **활성화 함수(Activation Function)**를 칸마다 씌워요"
+      },
+      {
+       "sym": "u^T h",
+       "say": "h 의 칸마다 u 를 곱해 모두 더한 점곱(내적)"
+      },
+      {
+       "sym": "s",
+       "say": "마지막 점수, 숫자 하나"
+      }
+     ],
+     "whole": "x 에서 시작해 z, h 를 거쳐 **개체명 인식(Named Entity Recognition (NER))** 점수 s 가 나와요. f 는 **비선형성(Nonlinearity)**을 넣어요."
+    },
+    {
+     "kind": "steps",
+     "head": "작은 숫자로 순전파",
+     "given": "n = 3 (입력 칸), m = 2 (은닉 칸)",
+     "steps": [
+      "x = [1, 2, 3], W = [[1, 0, 1], [-1, 1, -2]], b = [0, 1], u = [2, 3], f = ReLU",
+      "Wx: 1행 1×1 + 0×2 + 1×3 = 4, 2행 -1×1 + 1×2 + (-2)×3 = -5 → [4, -5]",
+      "z = Wx + b = [4 + 0, -5 + 1] = [4, -4]",
+      "h = ReLU(z) = [4, 0] (음수는 0)",
+      "s = uᵀh = 2×4 + 3×0 = 8"
+     ],
+     "answer": "s = 8. 크기는 x (3×1), W (2×3), z, h, b, u (2×1), s 는 숫자 하나."
+    },
+    {
+     "kind": "prof",
+     "when": "3주차 월요일 1교시",
+     "lines": [
+      "입력 x 에 W 를 곱하고 b 를 더해 z 가 나오고, 활성화를 씌워 h, 여기에 u 를 한 번 더 곱해 점수 s 가 나와요.",
+      "목표는 x, W, b 가 점수 s 에 각각 얼마나 영향을 줬는지 구하는 거예요.",
+      "x 가 단어 벡터라면 x 에 대한 미분도 구해야 하는데, 얼릴지 말지는 마음대로예요.",
+      "x → z → h → s 이 흐름을 기억하면 뒤의 역전파를 쉽게 볼 수 있어요."
+     ]
+    },
+    {
+     "kind": "say",
+     "lines": [
+      "실습에서는 N3L p.5~6 에서 바로 이 네트워크(x 5칸, W 3×5, f = tanh)를",
+      "손 계산식과 autograd 로 각각 미분해 결과가 같은지 비교해요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "x 가 5칸(5×1), 은닉 칸이 3개일 때 W 의 크기는? (실습 N3L p.3)",
+     "choices": [
+      "5×3",
+      "3×5",
+      "3×1"
+     ],
+     "a": 1,
+     "why": "z = Wx 가 3칸이 되려면 (3×5)(5×1) = (3×1). W 는 3×5 예요."
+    },
+    {
+     "kind": "english",
+     "head": "답안 문장",
+     "en": "미분을 시작하기 전에 s = uᵀh, h = f(z), z = Wx + b 처럼 계산을 단순한 조각으로 나누고 각 변수의 shape 을 적는다.",
+     "ko": "슬라이드의 'Step 1 of every derivation' 이에요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "여기서는 편하게 점수 s 를 미분하지만, 실제 학습에서는 손실 J 를 미분해요. 방법은 똑같아요.",
+      "h 는 은닉층 값이에요. p.32 의 수치 기울기 식에 나오는 h(아주 작은 수)와 다른 것이에요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 23,
+   "title": "풀이 예: 사슬로 풀고, 다시 쓰기",
+   "terms": [
+    "Backpropagation",
+    "Chain Rule",
+    "Outer Product",
+    "Hadamard Product",
+    "Error Signal",
+    "Upstream Gradient"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "점수 s 가 b 에 얼마나 민감한지는 **연쇄 법칙(Chain Rule)**으로 세 조각을 곱하면 나와요.",
+      "그다음 W 에 대한 미분을 구하면, 앞의 두 조각이 똑같아요.",
+      "그 똑같은 부분에 이름을 붙여요. δ(델타), **오차 신호(Error Signal)**예요.",
+      "한 번 구해서 계속 다시 쓰는 것, 이것이 **역전파(Backpropagation)**의 씨앗이에요."
+     ]
+    },
+    {
+     "kind": "analogy",
+     "head": "틀린 책임 나눠 주기",
+     "scene": "반 전체 점수가 낮게 나왔어요. 담임이 조장에게 책임 몫을 한 번 알려 주면, 조장은 그 몫으로 조원들에게 다시 나눠 줘요.",
+     "map": [
+      [
+       "담임이 조장에게 알려 준 책임 몫",
+       "δ (**오차 신호(Error Signal)**)"
+      ],
+      [
+       "조장이 같은 몫을 여러 조원에게 다시 씀",
+       "δ 를 b, W 에 다시 쓰기"
+      ],
+      [
+       "뒤에서 앞으로 책임 전달",
+       "**역전파(Backpropagation)**"
+      ]
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "compare",
+     "head": "슬라이드 영어를 우리말로",
+     "cols": [
+      "영어 원문",
+      "우리말 뜻"
+     ],
+     "rows": [
+      [
+       "Chain, then Reuse",
+       "사슬(연쇄 법칙)로 풀고, 그다음 다시 쓰기"
+      ],
+      [
+       "three Jacobians from our pocket, multiplied",
+       "주머니 속 야코비안 세 개를 곱해요"
+      ],
+      [
+       "the first two factors are IDENTICAL",
+       "앞의 두 조각이 똑같아요"
+      ],
+      [
+       "the upstream gradient / error signal",
+       "**상류 기울기(Upstream Gradient)** / **오차 신호(Error Signal)**"
+      ],
+      [
+       "compute δ once, reuse it everywhere",
+       "δ 를 한 번 구해 어디서나 다시 써요"
+      ]
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "용어 뜻",
+     "items": [
+      "**오차 신호(Error Signal)** δ: 출력 쪽에서 z 까지 흘러온 기울기, 즉 ∂s/∂z.",
+      "**상류 기울기(Upstream Gradient)**: 위(출력 쪽)에서 내려온 기울기. δ 가 바로 그것이에요.",
+      "**원소별 곱(Hadamard Product)** ⊙: 같은 자리끼리 곱하기.",
+      "**외적(Outer Product)**: 세로 벡터 × 가로 벡터로 표를 만드는 곱. ∂s/∂W 가 이 모양이에요."
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "b 와 W 의 미분이 어떻게 겹치나",
+     "steps": [
+      "∂s/∂b = ∂s/∂h × ∂h/∂z × ∂z/∂b",
+      "∂s/∂W = ∂s/∂h × ∂h/∂z × ∂z/∂W",
+      "앞의 두 조각 ∂s/∂h × ∂h/∂z 가 같아요. 이것이 δ = ∂s/∂z",
+      "그래서 ∂s/∂b = δ × (b 조각), ∂s/∂W = δ × (W 조각)"
+     ],
+     "answer": "마지막 조각만 다르고, 앞부분 δ 는 공유해요."
+    },
+    {
+     "kind": "check",
+     "q": "δ(델타)는 무엇의 미분일까요?",
+     "choices": [
+      "s 를 z 로 미분한 것",
+      "s 를 b 로 미분한 것",
+      "h 를 x 로 미분한 것"
+     ],
+     "a": 0,
+     "why": "δ = ∂s/∂h × ∂h/∂z = ∂s/∂z 예요. z 까지 흘러온 기울기예요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.071,
+       "y": 0.19,
+       "w": 0.539,
+       "h": 0.095,
+       "say": "세 식에 색이 칠해져 있어요. 파랑 h, 주황 z, 빨강 W, 초록 b."
+      },
+      {
+       "x": 0.071,
+       "y": 0.4,
+       "w": 0.55,
+       "h": 0.155,
+       "say": "∂s/∂b = 파랑 × 주황 × 초록 = uᵀ × diag(f'(z)) × I = uᵀ ⊙ f'(z)ᵀ, 이것을 δ 라 불러요."
+      },
+      {
+       "x": 0.696,
+       "y": 0.171,
+       "w": 0.261,
+       "h": 0.451,
+       "say": "오른쪽 상자는 p.21 의 주머니 속 야코비안이에요. 같은 색끼리 짝이에요."
+      },
+      {
+       "x": 0.132,
+       "y": 0.654,
+       "w": 0.393,
+       "h": 0.042,
+       "say": "앞의 두 조각을 δ, 상류 기울기 또는 오차 신호라고 불러요."
+      },
+      {
+       "x": 0.275,
+       "y": 0.761,
+       "w": 0.45,
+       "h": 0.082,
+       "say": "∂s/∂W = δᵀxᵀ. 세로 × 가로의 외적이에요."
+      }
+     ]
+    },
+    {
+     "kind": "formula",
+     "head": "b 에 대한 기울기",
+     "tex": "\\frac{\\partial s}{\\partial b} = \\frac{\\partial s}{\\partial h}\\frac{\\partial h}{\\partial z}\\frac{\\partial z}{\\partial b} = u^T \\mathrm{diag}(f'(z))\\, I = u^T \\odot f'(z)^T \\equiv \\delta",
+     "parts": [
+      {
+       "sym": "\\frac{\\partial s}{\\partial h} = u^T",
+       "say": "점수 블록의 미분"
+      },
+      {
+       "sym": "\\frac{\\partial h}{\\partial z} = \\mathrm{diag}(f'(z))",
+       "say": "활성화 블록의 미분(대각 행렬)"
+      },
+      {
+       "sym": "\\frac{\\partial z}{\\partial b} = I",
+       "say": "더하기 블록의 미분(단위 행렬, 곱해도 그대로)"
+      },
+      {
+       "sym": "u^T \\odot f'(z)^T",
+       "say": "대각 행렬 곱 = 원소별 곱"
+      },
+      {
+       "sym": "\\delta",
+       "say": "이 결과에 붙인 이름, **오차 신호(Error Signal)**"
+      }
+     ],
+     "whole": "b 에 대한 기울기는 δ 그 자체예요."
+    },
+    {
+     "kind": "formula",
+     "head": "W 에 대한 기울기",
+     "tex": "\\frac{\\partial s}{\\partial W} = \\delta^T x^T",
+     "parts": [
+      {
+       "sym": "\\delta",
+       "say": "앞에서 구한 오차 신호(가로 1×m)"
+      },
+      {
+       "sym": "\\delta^T",
+       "say": "세로로 세운 δ (m×1)"
+      },
+      {
+       "sym": "x^T",
+       "say": "가로로 눕힌 x (1×n)"
+      },
+      {
+       "sym": "\\delta^T x^T",
+       "say": "세로 × 가로 = **외적(Outer Product)**, W 와 같은 m×n"
+      }
+     ],
+     "whole": "δ 를 다시 쓰고, 끝에 x 만 붙이면 W 의 기울기예요."
+    },
+    {
+     "kind": "steps",
+     "head": "숫자로: δ, ∂s/∂b, ∂s/∂W",
+     "steps": [
+      "p.22 값: z = [4, -4], u = [2, 3], x = [1, 2, 3], f = ReLU",
+      "f'(z) = [1, 0] (z₁ 양수, z₂ 음수)",
+      "δ = u ⊙ f'(z) = [2×1, 3×0] = [2, 0]",
+      "∂s/∂b = δ = [2, 0]",
+      "∂s/∂W = δᵀxᵀ: 1행 2 × [1, 2, 3] = [2, 4, 6], 2행 0 × [1, 2, 3] = [0, 0, 0]",
+      "확인: b₁ 을 0.1 올리면 s 가 8 → 8.2, 0.2 ÷ 0.1 = 2 (맞음)"
+     ],
+     "answer": "δ = [2, 0], ∂s/∂b = [2, 0], ∂s/∂W = [[2, 4, 6], [0, 0, 0]] (W 와 같은 2×3)."
+    },
+    {
+     "kind": "prof",
+     "when": "3주차 월요일 1교시",
+     "lines": [
+      "편미분도 원래 분자, 분모처럼 생각하면 안 되지만, 우리 수학 레벨에서는 그렇게 생각해도 거의 다 맞아요.",
+      "이렇게 약분된다고 보면 체인 룰도 어려울 게 하나도 없어요."
+     ]
+    },
+    {
+     "kind": "prof",
+     "when": "3주차 월요일 2교시",
+     "lines": [
+      "이 uᵀ 와 f'(z) 의 원소별 곱을 δ 라는 에러 시그널로 정의할 거예요.",
+      "s 를 W 로 미분할 때도 앞의 파란색, 주황색까지는 똑같아요. 그게 δ 예요.",
+      "z 를 W 로 미분하면 x 라서, δ 에 x 를 곱한 게 답이에요. 트랜스포즈는 차원을 맞추려고 붙은 거예요."
+     ]
+    },
+    {
+     "kind": "bg",
+     "src": "기초 다지기 3단원 (wb-3 행렬과 행렬 곱, shape)",
+     "lines": [
+      "행렬 곱의 규칙: (a×b)(b×c) = (a×c). 가운데 b 가 같아야 곱할 수 있어요.",
+      "(2×1) 세로 × (1×3) 가로 = (2×3) 표. 외적도 이 규칙 그대로예요."
+     ]
+    },
+    {
+     "kind": "say",
+     "lines": [
+      "실습에서는 N3L p.6 에서 delta = u * (1 - tanh(z)²), dW = torch.outer(delta, x) 로",
+      "이 식을 그대로 코드로 짜서 autograd 결과와 비교해요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "exam",
+     "src": "예상 문제",
+     "q": "s = uᵀh, h = ReLU(z), z = Wx + b 에서 u = [1, 4], z = [-1, 2], x = [2, 5] 이다. δ 와 ∂s/∂W 를 구하시오.",
+     "qko": "오차 신호 δ 와 W 의 기울기를 숫자로 구하는 문제예요.",
+     "solve": [
+      "ReLU 미분: z = [-1, 2] → f'(z) = [0, 1]",
+      "δ = u ⊙ f'(z) = [1×0, 4×1] = [0, 4]",
+      "∂s/∂W = δᵀxᵀ: 1행 0 × [2, 5] = [0, 0], 2행 4 × [2, 5] = [8, 20]"
+     ],
+     "answer": "δ = [0, 4], ∂s/∂W = [[0, 0], [8, 20]]"
+    },
+    {
+     "kind": "english",
+     "head": "답안 문장",
+     "en": "∂s/∂b 와 ∂s/∂W 의 연쇄 법칙 식은 앞부분 ∂s/∂h × ∂h/∂z 를 공유하므로, 이를 **오차 신호(Error Signal)** δ 로 한 번 계산해 재사용한다. 이 재사용이 **역전파(Backpropagation)**의 핵심이다.",
+     "ko": "'한 번 구해 여러 번 쓴다' 가 역전파가 빠른 이유예요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "슬라이드는 δ 를 가로(1×m)로 두고 ∂s/∂W = δᵀxᵀ 로 써요. 실습 코드는 δ 를 세로로 두고 δxᵀ 로 써요. 결과 shape 은 둘 다 W 와 같아요.",
+      "슬라이드 괄호의 'n × 1 times 1 × m' 은 레고 그림(p.22)과 n, m 글자가 뒤바뀌어 있어요. 글자보다 'W 와 같은 크기' 를 기억해요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 24,
+   "title": "풀이 예: 세 번째 기울기",
+   "terms": [
+    "Gradient",
+    "Gradient Descent",
+    "Learning Rate",
+    "Word Vector",
+    "Embedding",
+    "word2vec",
+    "Error Signal"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "남은 기울기 하나는 입력 x, 즉 단어 벡터에 대한 것이에요.",
+      "여기서도 똑같은 δ 를 다시 써요. 이번엔 x 대신 W 를 곱해요.",
+      "그래서 **단어 벡터(Word Vector)**도 한 걸음씩 고쳐져요. 딥러닝이 '특징을 스스로 배운다' 는 말의 뜻이에요."
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "기울기 세 개, δ 하나",
+     "cols": [
+      "무엇",
+      "δ 에 붙는 것",
+      "결과"
+     ],
+     "rows": [
+      [
+       "b",
+       "없음",
+       "δ"
+      ],
+      [
+       "W",
+       "x",
+       "δᵀxᵀ"
+      ],
+      [
+       "x (단어 벡터)",
+       "W",
+       "Wᵀδᵀ"
+      ]
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "compare",
+     "head": "슬라이드 영어를 우리말로",
+     "cols": [
+      "영어 원문",
+      "우리말 뜻"
+     ],
+     "rows": [
+      [
+       "the gradient that flows into the WORD VECTORS",
+       "단어 벡터로 흘러 들어가는 기울기"
+      ],
+      [
+       "same δ again, now multiplied by W instead of by x",
+       "같은 δ 를 다시, 이번엔 x 대신 W 를 곱해요"
+      ],
+      [
+       "three gradients, one shared δ",
+       "기울기 셋, 공유하는 δ 하나"
+      ],
+      [
+       "the word vectors keep learning",
+       "단어 벡터가 계속 배워요"
+      ],
+      [
+       "A2 asks for the word2vec versions",
+       "과제 2 는 **word2vec** 버전을 구하라고 해요"
+      ]
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "용어 뜻",
+     "items": [
+      "**임베딩(Embedding)**: 토큰을 벡터로 바꾼 것. 여기서는 입력 x 예요.",
+      "∇ₓ: x 에 대한 **기울기(Gradient)**. x 와 같은 크기예요.",
+      "x ← x - α∇ₓ: 단어 벡터에도 **경사 하강법(Gradient Descent)** 한 걸음을 적용해요."
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "∂s/∂x 에서 δ 에 곱해지는 것은?",
+     "choices": [
+      "x",
+      "W",
+      "b"
+     ],
+     "a": 1,
+     "why": "z = Wx + b 를 x 로 미분하면 W 라서, δ 에 W 가 붙어요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.061,
+       "y": 0.277,
+       "w": 0.543,
+       "h": 0.038,
+       "say": "남은 하나: ∂s/∂x, 단어 벡터로 흘러 들어가는 기울기예요."
+      },
+      {
+       "x": 0.3,
+       "y": 0.324,
+       "w": 0.4,
+       "h": 0.148,
+       "say": "파랑 × 주황 × 초록 = δW, 그리고 x 와 같은 세로 모양으로 바꾸면 ∇ₓ = Wᵀδᵀ."
+      },
+      {
+       "x": 0.061,
+       "y": 0.499,
+       "w": 0.664,
+       "h": 0.041,
+       "say": "같은 δ 를 다시 써요. 기울기 셋이 δ 하나를 공유해요."
+      },
+      {
+       "x": 0.389,
+       "y": 0.628,
+       "w": 0.232,
+       "h": 0.07,
+       "say": "단어 벡터 업데이트: x ← x - α Wᵀδᵀ."
+      },
+      {
+       "x": 0.061,
+       "y": 0.734,
+       "w": 0.657,
+       "h": 0.038,
+       "say": "그래서 딥러닝은 특징을 스스로 배워요. 2주차 벡터가 계속 좋아져요."
+      }
+     ]
+    },
+    {
+     "kind": "formula",
+     "head": "x 에 대한 기울기",
+     "tex": "\\frac{\\partial s}{\\partial x} = \\frac{\\partial s}{\\partial h}\\frac{\\partial h}{\\partial z}\\frac{\\partial z}{\\partial x} = \\delta W \\;\\longrightarrow\\; \\nabla_x = W^T \\delta^T",
+     "parts": [
+      {
+       "sym": "\\frac{\\partial s}{\\partial h}\\frac{\\partial h}{\\partial z}",
+       "say": "앞의 두 조각, 곧 δ"
+      },
+      {
+       "sym": "\\frac{\\partial z}{\\partial x} = W",
+       "say": "곱하기 블록을 x 로 미분하면 W"
+      },
+      {
+       "sym": "\\delta W",
+       "say": "가로 모양(1×n)의 결과"
+      },
+      {
+       "sym": "W^T \\delta^T",
+       "say": "x 와 같은 세로 모양(n×1)으로 세운 것"
+      }
+     ],
+     "whole": "δ 에 W 를 곱하면 x 의 기울기, 모양은 x 에 맞춰요."
+    },
+    {
+     "kind": "formula",
+     "head": "단어 벡터 업데이트",
+     "tex": "x \\leftarrow x - \\alpha W^T \\delta^T",
+     "parts": [
+      {
+       "sym": "x",
+       "say": "입력 **단어 벡터(Word Vector)**"
+      },
+      {
+       "sym": "\\alpha",
+       "say": "**학습률(Learning Rate)**"
+      },
+      {
+       "sym": "W^T \\delta^T",
+       "say": "x 에 대한 기울기"
+      },
+      {
+       "sym": "\\leftarrow",
+       "say": "오른쪽 값으로 바꿔 넣어요"
+      }
+     ],
+     "whole": "단어 벡터도 W, b 처럼 한 걸음 고쳐요."
+    },
+    {
+     "kind": "steps",
+     "head": "숫자로: ∂s/∂x 와 한 걸음",
+     "steps": [
+      "δ = [2, 0], W = [[1, 0, 1], [-1, 1, -2]]",
+      "Wᵀδᵀ: 1칸 1×2 + (-1)×0 = 2, 2칸 0×2 + 1×0 = 0, 3칸 1×2 + (-2)×0 = 2",
+      "∂s/∂x = [2, 0, 2] (x 와 같은 3칸)",
+      "α = 0.1 로 한 걸음: x = [1, 2, 3] - 0.1 × [2, 0, 2] = [0.8, 2, 2.8]",
+      "새 x 로 다시 계산: z = [3.6, -3.4], h = [3.6, 0], s = 7.2"
+     ],
+     "answer": "∂s/∂x = [2, 0, 2]. 한 걸음 뒤 s 는 8 → 7.2 로 줄었어요(s 가 벌점이었다면 줄어든 것)."
+    },
+    {
+     "kind": "prof",
+     "when": "3주차 월요일 2교시",
+     "lines": [
+      "x 를 얼리지 않고 입력 벡터도 학습할 수 있어요. 그때는 s 를 x 로 미분해요.",
+      "파랑과 주황은 앞과 똑같아서 δ 이고, z 를 x 로 미분하면 W 라서 δW 가 돼요.",
+      "트랜스포즈가 신경 쓰이면, 모든 벡터를 n×1 로 시작해서 차원을 맞추려고 붙인다고 이해하면 돼요.",
+      "이게 바로 역전파의 핵심 원리예요."
+     ]
+    },
+    {
+     "kind": "say",
+     "lines": [
+      "과제와 이어지는 부분이에요. 과제 2 는 이 세 기울기의 word2vec 버전을 손으로 유도하라고 해요.",
+      "실습 N3L p.6 에서 dx = W.T @ delta 로 이 식을 코드로 확인해요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "W 가 (3×5), δ 가 3칸일 때 ∂s/∂x 의 크기는?",
+     "choices": [
+      "(3,)",
+      "(5,)",
+      "(3, 5)"
+     ],
+     "a": 1,
+     "why": "Wᵀ(5×3) × δ(3칸) = 5칸. x 와 같은 크기예요."
+    },
+    {
+     "kind": "english",
+     "head": "답안 문장",
+     "en": "∂s/∂b = δ, ∂s/∂W = δᵀxᵀ, ∂s/∂x = Wᵀδᵀ 이고 세 기울기는 **오차 신호(Error Signal)** δ 를 공유한다. 입력 **임베딩(Embedding)**도 x ← x - αWᵀδᵀ 로 학습된다.",
+     "ko": "세 식을 한 줄로 외우면 과제 2 에도 바로 써요.",
+     "tip": "'b 는 δ, W 는 δ에 x, x 는 δ에 W'."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "∂s/∂W 에는 x 가, ∂s/∂x 에는 W 가 붙어요. 서로 맞바꿔 붙는 것이에요(곱하기 노드의 성질, p.30).",
+      "미리 학습된 단어 벡터(예: GloVe)는 얼려 둘 수도 있어요. x 를 업데이트할지는 선택이에요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 25,
+   "title": "왜 전치(T)가 붙나: shape 으로 검사하기",
+   "terms": [
+    "Tensor",
+    "Shape",
+    "Transpose"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "식마다 붙는 T(**전치(Transpose)**)가 헷갈리죠.",
+      "솔직한 답은 '그래야 크기가 맞기 때문' 이에요.",
+      "그래서 거꾸로 이용해요. 기호 밑에 크기를 적어 보면, 식이 맞는지 공짜로 검사돼요."
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "크기가 맞는지 보기",
+     "svg": "<svg viewBox=\"0 0 480 270\" xmlns=\"http://www.w3.org/2000/svg\"><text x=\"20\" y=\"30\" font-size=\"15\" text-anchor=\"start\" class=\"tb\">∂s/∂W = δᵀxᵀ 는 W 와 같은 (3×5)</text><rect x=\"40\" y=\"60\" width=\"20\" height=\"60\" rx=\"2\" class=\"n3\"/><text x=\"50\" y=\"140\" font-size=\"14\" text-anchor=\"middle\" class=\"t\">δᵀ</text><text x=\"50\" y=\"158\" font-size=\"13\" text-anchor=\"middle\" class=\"tm\">(3×1)</text><text x=\"85\" y=\"95\" font-size=\"16\" text-anchor=\"middle\" class=\"tb\">×</text><rect x=\"105\" y=\"80\" width=\"100\" height=\"20\" rx=\"2\" class=\"n3\"/><text x=\"155\" y=\"140\" font-size=\"14\" text-anchor=\"middle\" class=\"t\">xᵀ</text><text x=\"155\" y=\"158\" font-size=\"13\" text-anchor=\"middle\" class=\"tm\">(1×5)</text><text x=\"228\" y=\"95\" font-size=\"16\" text-anchor=\"middle\" class=\"tb b1\">=</text><rect x=\"250\" y=\"60\" width=\"100\" height=\"60\" rx=\"2\" class=\"n2 b1\"/><text x=\"300\" y=\"95\" font-size=\"14\" text-anchor=\"middle\" class=\"tl b1\">3×5</text><text x=\"300\" y=\"140\" font-size=\"14\" text-anchor=\"middle\" class=\"t b1\">W 와 같은 모양</text><text x=\"20\" y=\"205\" font-size=\"14\" text-anchor=\"start\" class=\"t b2\">Wᵀ (5×3) × δᵀ (3×1) = (5×1) = x 와 같아요</text><text x=\"20\" y=\"240\" font-size=\"14\" text-anchor=\"start\" class=\"tb b3\">가운데 숫자(3)가 같아야 곱할 수 있어요</text></svg>",
+     "caption": "δᵀ(3×1) × xᵀ(1×5) = (3×5) 로 W 와 크기가 같아요. 가운데 숫자가 같아야 곱해져요.",
+     "builds": 3
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "compare",
+     "head": "슬라이드 영어를 우리말로",
+     "cols": [
+      "영어 원문",
+      "우리말 뜻"
+     ],
+     "rows": [
+      [
+       "Why the Transposes?",
+       "왜 전치가 붙을까?"
+      ],
+      [
+       "because that is what makes the dimensions work out",
+       "그래야 차원(크기)이 맞으니까요"
+      ],
+      [
+       "a feature, not a bug",
+       "결함이 아니라 쓸모 있는 기능이에요"
+      ],
+      [
+       "a free correctness test",
+       "공짜 정답 검사"
+      ],
+      [
+       "print(tensor.shape) is the single most useful debugging line",
+       "print(tensor.shape) 가 딥러닝에서 가장 쓸모 있는 디버깅 한 줄"
+      ]
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "용어 뜻",
+     "items": [
+      "**모양(Shape)**: 몇 행 몇 열인지. (3, 5) 는 3행 5열이에요.",
+      "**전치(Transpose)**: 행과 열 바꾸기. (3×1) → (1×3).",
+      "곱셈 규칙: (a×b)(b×c) = (a×c). 가운데가 같아야 곱할 수 있어요(conform).",
+      "**텐서(Tensor)**: PyTorch 의 숫자 묶음. tensor.shape 로 크기를 봐요."
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "(2×3) 행렬과 (2×1) 벡터를 이 순서로 곱할 수 있나요?",
+     "choices": [
+      "있어요, 결과는 (2×1)",
+      "없어요, 가운데 3 과 2 가 달라요",
+      "있어요, 결과는 (3×1)"
+     ],
+     "a": 1,
+     "why": "(2×3)(2×1) 은 가운데 3 ≠ 2 라서 곱할 수 없어요. 전치가 잘못 붙었다는 신호예요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.061,
+       "y": 0.197,
+       "w": 0.736,
+       "h": 0.038,
+       "say": "솔직한 답: 차원이 맞게 해 주니까. 결함이 아니라 기능이에요."
+      },
+      {
+       "x": 0.236,
+       "y": 0.368,
+       "w": 0.439,
+       "h": 0.057,
+       "say": "δᵀxᵀ: (n×1)(1×m) = n×m = W 의 크기 (맞음)"
+      },
+      {
+       "x": 0.236,
+       "y": 0.459,
+       "w": 0.439,
+       "h": 0.058,
+       "say": "Wᵀδᵀ: (m×n)(n×1) = m×1 = x 의 크기 (맞음)"
+      },
+      {
+       "x": 0.061,
+       "y": 0.561,
+       "w": 0.679,
+       "h": 0.039,
+       "say": "기호마다 밑에 크기를 쓰고 사슬이 이어지는지 봐요. 안 맞으면 전치가 잘못된 거예요."
+      },
+      {
+       "x": 0.061,
+       "y": 0.657,
+       "w": 0.679,
+       "h": 0.041,
+       "say": "코드에서는 print(tensor.shape) 한 줄이 가장 쓸모 있어요."
+      }
+     ]
+    },
+    {
+     "kind": "formula",
+     "head": "shape 검사 두 줄",
+     "tex": "\\delta^T x^T: (n\\times 1)(1\\times m) = n\\times m = \\mathrm{shape}(W), \\quad W^T\\delta^T: (m\\times n)(n\\times 1) = m\\times 1 = \\mathrm{shape}(x)",
+     "parts": [
+      {
+       "sym": "(n\\times 1)(1\\times m)",
+       "say": "세로 × 가로. 가운데 1 이 같아 곱할 수 있어요"
+      },
+      {
+       "sym": "n\\times m = \\mathrm{shape}(W)",
+       "say": "결과가 W 와 같은 크기"
+      },
+      {
+       "sym": "(m\\times n)(n\\times 1)",
+       "say": "가운데 n 이 같아 곱할 수 있어요"
+      },
+      {
+       "sym": "m\\times 1 = \\mathrm{shape}(x)",
+       "say": "결과가 x 와 같은 크기"
+      }
+     ],
+     "whole": "기울기의 크기가 원래 변수의 크기와 같으면 통과예요."
+    },
+    {
+     "kind": "steps",
+     "head": "실습 크기로 검사하기 (N3L p.3 과 같은 크기)",
+     "steps": [
+      "x (5칸), W (3×5), b, z, h, u (3칸), s 는 숫자 하나",
+      "δ 는 z 와 같은 3칸. 세로로 (3×1)",
+      "∂s/∂W = δ(3×1) × xᵀ(1×5) = (3×5) → W 와 같아요 (맞음)",
+      "∂s/∂x = Wᵀ(5×3) × δ(3×1) = (5×1) → x 와 같아요 (맞음)",
+      "잘못 쓴 예: x(5×1) × δᵀ(1×3) = (5×3) → W(3×5) 와 달라요 (틀림)",
+      "또 잘못 쓴 예: W(3×5) × δ(3×1) → 가운데 5 ≠ 3, 곱할 수조차 없어요 (틀림)"
+     ],
+     "answer": "크기만 적어 봐도 틀린 식 두 개를 코드 돌리기 전에 잡아요."
+    },
+    {
+     "kind": "prof",
+     "when": "3주차 월요일 2교시",
+     "lines": [
+      "왜 트랜스포즈가 계속 붙지? 실용적인 답은, 결과 shape 이 우리가 미분하는 변수의 shape 과 같아야 해서예요.",
+      "수식을 다 외울 필요는 없고, shape 을 맞추기 위해 트랜스포즈를 취한다고 보면 돼요.",
+      "오늘 실습에서도 shape 을 계속 보면서 맞춰 줘야 코드가 에러 없이 돌아가요. 가장 빠른 점검 팁이에요."
+     ]
+    },
+    {
+     "kind": "bg",
+     "src": "기초 다지기 3단원 (wb-3 행렬과 행렬 곱, shape)",
+     "lines": [
+      "전치와 행렬 곱의 크기 규칙은 기초 다지기 3단원에 있어요.",
+      "(3,5)@(5,) → (3,) 같은 PyTorch 표기도 거기서 연습해요."
+     ]
+    },
+    {
+     "kind": "say",
+     "lines": [
+      "실습 N3L p.3 에서 x, W, b, z, h, u, s 의 shape 을 한 번에 출력해 봐요.",
+      "결과는 x (5,), W (3, 5), b, z, h, u (3,), s () 예요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "∂s/∂W 를 x δᵀ 로 잘못 쓰면 크기는? (x 5칸, δ 3칸)",
+     "choices": [
+      "(3, 5)",
+      "(5, 3)",
+      "곱할 수 없음"
+     ],
+     "a": 1,
+     "why": "(5×1)(1×3) = (5×3). W 는 (3×5) 라서 틀린 식이라는 걸 바로 알 수 있어요."
+    },
+    {
+     "kind": "english",
+     "head": "답안 문장",
+     "en": "역전파 식의 **전치(Transpose)**는 기울기의 **모양(Shape)**이 해당 변수의 shape 과 같아지도록 차원을 맞추기 위해 붙는다. 그래서 각 기호 밑에 shape 을 적어 곱셈이 이어지는지 확인하면 식의 오류를 찾을 수 있다.",
+     "ko": "교수님: 전치 위치를 외우기보다 shape 을 맞춘다고 생각하라."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "이 쪽 슬라이드는 W 를 n×m, x 를 m×1 로 적었어요. p.22 레고 그림(W 는 m×n, x 는 n×1)과 n, m 이 뒤바뀌었지만 결론은 같아요.",
+      "PyTorch 1차원 벡터는 (5,) 처럼 세로, 가로 구별이 없어요. 그래서 실습은 δxᵀ 대신 torch.outer 를 써요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 26,
+   "title": "shape 장부 정리 규칙",
+   "terms": [
+    "Chain Rule",
+    "Gradient",
+    "Learning Rate",
+    "Parameter",
+    "Shape"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "규칙은 딱 하나예요.",
+      "\"파라미터의 기울기는 파라미터와 같은 크기다.\"",
+      "W 가 3×5 칸이면, W 의 기울기도 3×5 칸이에요. 칸마다 짝이 있어야 한 칸씩 고칠 수 있으니까요."
+     ]
+    },
+    {
+     "kind": "analogy",
+     "head": "성적표와 첨삭표",
+     "scene": "3×5 칸 성적표를 고치려면 첨삭표도 똑같은 3×5 칸이어야 칸마다 고칠 수 있어요.",
+     "map": [
+      [
+       "성적표 W",
+       "**파라미터(Parameter)**"
+      ],
+      [
+       "첨삭표",
+       "∂J/∂W (**기울기(Gradient)**)"
+      ],
+      [
+       "칸 수가 같아야 함",
+       "같은 **모양(Shape)**"
+      ]
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "compare",
+     "head": "슬라이드 영어를 우리말로",
+     "cols": [
+      "영어 원문",
+      "우리말 뜻"
+     ],
+     "rows": [
+      [
+       "the gradient of a parameter has the SAME SHAPE as the parameter",
+       "파라미터의 기울기는 파라미터와 같은 shape"
+      ],
+      [
+       "derive in Jacobian form, reshape to convention at the end",
+       "야코비안 꼴로 유도하고, 마지막에 약속된 shape 으로 바꿔요"
+      ],
+      [
+       "Sanity check that catches 90% of mistakes",
+       "실수의 90% 를 잡는 점검"
+      ],
+      [
+       "if the shapes cannot chain, the math is wrong",
+       "shape 이 이어지지 않으면 수식이 틀린 거예요"
+      ]
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "장부 정리 순서",
+     "steps": [
+      "**연쇄 법칙(Chain Rule)**으로 야코비안 꼴 식을 세워요.",
+      "기호마다 밑에 shape 을 적어요.",
+      "곱셈마다 가운데 숫자가 같은지 봐요.",
+      "마지막 결과를 파라미터와 같은 shape 으로 맞춰요(필요하면 전치)."
+     ],
+     "answer": "계산보다 먼저 shape 부터 확인해요."
+    },
+    {
+     "kind": "check",
+     "q": "W 가 (4×10) 이면 ∂J/∂W 의 칸 수는?",
+     "choices": [
+      "4",
+      "10",
+      "40"
+     ],
+     "a": 2,
+     "why": "W 와 같은 4×10 이라서 40 칸이에요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.061,
+       "y": 0.197,
+       "w": 0.611,
+       "h": 0.042,
+       "say": "약속: 파라미터의 기울기는 파라미터와 같은 shape."
+      },
+      {
+       "x": 0.061,
+       "y": 0.247,
+       "w": 0.146,
+       "h": 0.067,
+       "say": "업데이트 W ← W - α ∂J/∂W. 빼려면 두 표의 크기가 같아야 해요."
+      },
+      {
+       "x": 0.079,
+       "y": 0.324,
+       "w": 0.518,
+       "h": 0.038,
+       "say": "W 가 n×m 이면 ∂J/∂W 도 n×m. 그래서 외적 δᵀxᵀ 꼴이에요."
+      },
+      {
+       "x": 0.061,
+       "y": 0.383,
+       "w": 0.561,
+       "h": 0.039,
+       "say": "실전 요령: 야코비안 꼴로 유도하고, 마지막에 약속된 shape 으로."
+      },
+      {
+       "x": 0.061,
+       "y": 0.442,
+       "w": 0.539,
+       "h": 0.041,
+       "say": "실수의 90% 를 잡는 점검: 차원이 맞는가?"
+      }
+     ]
+    },
+    {
+     "kind": "formula",
+     "head": "W 업데이트",
+     "tex": "W \\leftarrow W - \\alpha \\frac{\\partial J}{\\partial W}",
+     "parts": [
+      {
+       "sym": "W",
+       "say": "가중치 행렬(예: 3×5)"
+      },
+      {
+       "sym": "\\alpha",
+       "say": "**학습률(Learning Rate)**"
+      },
+      {
+       "sym": "\\frac{\\partial J}{\\partial W}",
+       "say": "손실을 W 로 미분한 **기울기(Gradient)**, W 와 같은 3×5"
+      },
+      {
+       "sym": "-",
+       "say": "칸마다 같은 자리끼리 빼요"
+      }
+     ],
+     "whole": "같은 크기의 두 표를 칸마다 빼는 것이라 크기가 같아야 해요."
+    },
+    {
+     "kind": "steps",
+     "head": "칸 수 세기",
+     "steps": [
+      "실습 크기: W (3×5) → 기울기도 3×5 = 15 칸",
+      "b (3칸) → 기울기도 3칸",
+      "교수님 예: 입력 500, 출력 300 → W 는 500 × 300 = 150,000 칸",
+      "그러면 기울기도 150,000 개가 생겨요"
+     ],
+     "answer": "기울기 개수 = 파라미터 개수. 칸마다 짝이 있어요."
+    },
+    {
+     "kind": "prof",
+     "when": "3주차 월요일 2교시",
+     "lines": [
+      "어떤 파라미터의 그레디언트든 기존 파라미터와 같은 shape 을 가져야 한다, 이것만 기억하시면 됩니다.",
+      "shape 이 이렇게 앞으로 흐를 때 뒤로 흐른다, 이렇게 보시면 돼요.",
+      "트랜스포즈가 어디 붙는지 무작정 외우기보다, 이 변수에 적용되려면 shape 이 어떻게 돼야 하는지 먼저 생각해 보세요."
+     ]
+    },
+    {
+     "kind": "bg",
+     "src": "기초 다지기 3단원 (wb-3 행렬과 행렬 곱, shape)",
+     "lines": [
+      "행렬 빼기는 같은 자리 칸끼리 빼는 것이라 두 행렬의 shape 이 같아야 해요.",
+      "기초 다지기 3단원에서 shape 표기를 연습해요."
+     ]
+    },
+    {
+     "kind": "say",
+     "lines": [
+      "실습 N3L p.6 은 dW, db, dx 의 shape 이 W.grad, b.grad, x.grad 와 같은지 출력해 확인해요.",
+      "결과: dW (3, 5), db (3,), dx (5,) 로 모두 짝이 맞아요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "다음 중 shape 규칙에 맞는 것은? (W 가 3×5)",
+     "choices": [
+      "∂J/∂W 가 (5×3)",
+      "∂J/∂W 가 (3×5)",
+      "∂J/∂W 가 (3×1)"
+     ],
+     "a": 1,
+     "why": "기울기는 파라미터와 같은 shape 이라서 (3×5) 예요."
+    },
+    {
+     "kind": "english",
+     "head": "답안 문장",
+     "en": "파라미터의 **기울기(Gradient)**는 파라미터와 같은 **모양(Shape)**을 가져야 W ← W - α∂J/∂W 처럼 원소별로 업데이트할 수 있다. shape 이 이어지지 않으면 유도가 틀린 것이다.",
+     "ko": "교수님이 '이것만 기억하라' 고 한 문장이에요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "야코비안 꼴 그대로면 가로, 세로가 뒤집혀 나올 수 있어요. 마지막에 파라미터 shape 으로 맞추는 단계를 잊지 마요.",
+      "슬라이드는 여기서 W 를 n×m 이라 적었어요. 글자 대신 '파라미터와 같다' 만 기억하면 돼요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 27,
+   "title": "계산 그래프",
+   "terms": [
+    "Computation Graph",
+    "Forward Pass",
+    "Node"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "컴퓨터는 신경망을 **계산 그래프(Computation Graph)**로 봐요.",
+      "동그라미 하나하나가 **노드(Node)**, 입력값이거나 곱하기, 더하기 같은 연산이에요.",
+      "왼쪽에서 오른쪽으로 값을 차례로 구하는 것이 **순전파(Forward Pass)**예요."
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "풀이 예를 그래프로",
+     "svg": "<svg viewBox=\"0 0 480 270\" xmlns=\"http://www.w3.org/2000/svg\"><circle cx=\"40\" cy=\"75\" r=\"20\" class=\"n3\"/><text x=\"40\" y=\"80\" font-size=\"14\" text-anchor=\"middle\" class=\"tl\">x</text><circle cx=\"40\" cy=\"195\" r=\"20\" class=\"n3\"/><text x=\"40\" y=\"200\" font-size=\"14\" text-anchor=\"middle\" class=\"tl\">W</text><circle cx=\"215\" cy=\"45\" r=\"18\" class=\"n3\"/><text x=\"215\" y=\"50\" font-size=\"14\" text-anchor=\"middle\" class=\"tl\">b</text><circle cx=\"385\" cy=\"45\" r=\"18\" class=\"n3\"/><text x=\"385\" y=\"50\" font-size=\"14\" text-anchor=\"middle\" class=\"tl\">u</text><line x1=\"58\" y1=\"83\" x2=\"112\" y2=\"127\" class=\"e\"/><line x1=\"58\" y1=\"187\" x2=\"112\" y2=\"143\" class=\"e\"/><line x1=\"215\" y1=\"63\" x2=\"215\" y2=\"115\" class=\"e\"/><line x1=\"385\" y1=\"63\" x2=\"385\" y2=\"115\" class=\"e\"/><circle cx=\"130\" cy=\"135\" r=\"20\" class=\"n\"/><text x=\"130\" y=\"141\" font-size=\"16\" text-anchor=\"middle\" class=\"tl\">×</text><circle cx=\"215\" cy=\"135\" r=\"20\" class=\"n\"/><text x=\"215\" y=\"141\" font-size=\"16\" text-anchor=\"middle\" class=\"tl\">+</text><circle cx=\"300\" cy=\"135\" r=\"20\" class=\"n\"/><text x=\"300\" y=\"141\" font-size=\"16\" text-anchor=\"middle\" class=\"tl\">f</text><circle cx=\"385\" cy=\"135\" r=\"20\" class=\"n\"/><text x=\"385\" y=\"140\" font-size=\"12\" text-anchor=\"middle\" class=\"tl\">uᵀh</text><line x1=\"150\" y1=\"135\" x2=\"195\" y2=\"135\" class=\"e\"/><line x1=\"235\" y1=\"135\" x2=\"280\" y2=\"135\" class=\"e\"/><line x1=\"320\" y1=\"135\" x2=\"365\" y2=\"135\" class=\"e\"/><line x1=\"405\" y1=\"135\" x2=\"440\" y2=\"135\" class=\"e\"/><text x=\"458\" y=\"140\" font-size=\"16\" text-anchor=\"middle\" class=\"tb\">s</text><text x=\"40\" y=\"108\" font-size=\"13\" text-anchor=\"middle\" class=\"tm b1\">[1,2,3]</text><text x=\"40\" y=\"232\" font-size=\"13\" text-anchor=\"middle\" class=\"tm b1\">2×3 표</text><text x=\"240\" y=\"50\" font-size=\"13\" text-anchor=\"start\" class=\"tm b1\">[0,1]</text><text x=\"410\" y=\"50\" font-size=\"13\" text-anchor=\"start\" class=\"tm b1\">[2,3]</text><text x=\"172\" y=\"165\" font-size=\"13\" text-anchor=\"middle\" class=\"tm b2\">Wx</text><text x=\"172\" y=\"182\" font-size=\"13\" text-anchor=\"middle\" class=\"tb b2\">[4,-5]</text><text x=\"257\" y=\"165\" font-size=\"13\" text-anchor=\"middle\" class=\"tm b2\">z</text><text x=\"257\" y=\"182\" font-size=\"13\" text-anchor=\"middle\" class=\"tb b2\">[4,-4]</text><text x=\"342\" y=\"165\" font-size=\"13\" text-anchor=\"middle\" class=\"tm b2\">h</text><text x=\"342\" y=\"182\" font-size=\"13\" text-anchor=\"middle\" class=\"tb b2\">[4,0]</text><text x=\"458\" y=\"182\" font-size=\"16\" text-anchor=\"middle\" class=\"tb b2\">8</text><text x=\"240\" y=\"255\" font-size=\"14\" text-anchor=\"middle\" class=\"t b2\">왼쪽에서 오른쪽으로 값을 구해 저장해요</text></svg>",
+     "caption": "x, W 를 곱하고 b 를 더하고 f 를 씌우고 u 와 곱해 점수 8 이 나와요.",
+     "builds": 2
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "compare",
+     "head": "슬라이드 영어를 우리말로",
+     "cols": [
+      "영어 원문",
+      "우리말 뜻"
+     ],
+     "rows": [
+      [
+       "Software sees your network as a graph",
+       "소프트웨어는 신경망을 그래프로 봐요"
+      ],
+      [
+       "source nodes = inputs, interior nodes = operations",
+       "시작 노드 = 입력, 안쪽 노드 = 연산"
+      ],
+      [
+       "Forward pass: visit nodes left to right",
+       "순전파: 노드를 왼쪽에서 오른쪽으로 방문"
+      ],
+      [
+       "PyTorch builds this graph for you",
+       "PyTorch 가 이 그래프를 대신 만들어 줘요"
+      ]
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "용어 뜻",
+     "items": [
+      "**계산 그래프(Computation Graph)**: 계산을 노드와 화살표로 그린 그림.",
+      "**노드(Node)**: 입력값(x, W, b, u) 또는 연산(×, +, f, 점곱).",
+      "**순전파(Forward Pass)**: 그래프를 왼쪽에서 오른쪽으로 따라가며 값을 구하는 것. 그냥 신경망을 계산하는 것이에요."
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "계산 그래프에서 '+' 동그라미는 무엇일까요?",
+     "choices": [
+      "입력값 노드",
+      "연산 노드",
+      "출력값"
+     ],
+     "a": 1,
+     "why": "×, +, f 같은 계산은 안쪽의 연산 노드예요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.061,
+       "y": 0.197,
+       "w": 0.639,
+       "h": 0.038,
+       "say": "소프트웨어는 신경망을 그래프로 봐요. 시작 노드는 입력, 안쪽 노드는 연산."
+      },
+      {
+       "x": 0.114,
+       "y": 0.425,
+       "w": 0.071,
+       "h": 0.19,
+       "say": "파란 노드 x, W 가 입력이에요."
+      },
+      {
+       "x": 0.246,
+       "y": 0.419,
+       "w": 0.561,
+       "h": 0.146,
+       "say": "×, +, f, 점곱(가운데 점) 노드가 연산 노드예요. 화살표 방향으로 값이 흘러요."
+      },
+      {
+       "x": 0.843,
+       "y": 0.501,
+       "w": 0.039,
+       "h": 0.038,
+       "say": "마지막 출력 s 예요."
+      },
+      {
+       "x": 0.061,
+       "y": 0.742,
+       "w": 0.639,
+       "h": 0.038,
+       "say": "순전파: 왼쪽에서 오른쪽으로 노드를 방문해 값을 구해요."
+      }
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "그래프 위 순전파 (p.22 숫자)",
+     "steps": [
+      "× 노드: W 와 x 를 곱해 Wx = [4, -5]",
+      "+ 노드: b = [0, 1] 을 더해 z = [4, -4]",
+      "f 노드: ReLU 로 h = [4, 0]",
+      "점곱 노드: u = [2, 3] 과 점곱해 s = 8",
+      "이 중간값들(Wx, z, h)을 모두 저장해 둬요. 역방향 패스에서 다시 써요."
+     ],
+     "answer": "s = 8. 순전파는 그냥 신경망을 한 번 계산하는 것이에요."
+    },
+    {
+     "kind": "prof",
+     "when": "3주차 월요일 2교시",
+     "lines": [
+      "텐서플로우 시절에는 이 그래프를 우리가 직접 그렸어야 했어요. 플레이스홀더로 그래프를 직접 선언했죠.",
+      "PyTorch 가 나오면서 그래프를 자동으로 그려 주고, 기울기 계산도 알아서 해 줘요.",
+      "요즘은 Hugging Face 모델에 train 함수까지 있어서, 그래프를 직접 그릴 일은 거의 없고 이번 수업에서만 배워요."
+     ]
+    },
+    {
+     "kind": "warn",
+     "head": "그림 읽기 주의",
+     "items": [
+      "선 아래 글자는 조금 밀려 있어요. ×→+ 선의 값은 Wx, +→f 선의 값은 z = Wx + b, f→점곱 선의 값은 h 예요.",
+      "그림의 'h = f(z)', 's = uᵀh' 는 바로 오른쪽 노드가 하는 계산이라고 읽으면 편해요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "순전파에서 중간값(Wx, z, h)을 저장하는 이유는?",
+     "choices": [
+      "메모리를 아끼려고",
+      "역방향 패스에서 국소 기울기를 계산할 때 다시 쓰려고",
+      "점수를 두 번 출력하려고"
+     ],
+     "a": 1,
+     "why": "예를 들어 ReLU 의 미분은 z 가 양수였는지 알아야 구할 수 있어요. 그래서 저장해 둬요."
+    },
+    {
+     "kind": "english",
+     "head": "답안 문장",
+     "en": "**계산 그래프(Computation Graph)**는 입력을 시작 노드, 연산을 안쪽 노드로 그린 것이고, **순전파(Forward Pass)**는 노드를 왼쪽부터 방문해 값을 계산하는 과정이다.",
+     "ko": "다음 쪽의 역방향 패스와 짝으로 외워요."
+    }
+   ]
+  },
+  {
+   "p": 28,
+   "title": "그래프 위의 역전파",
+   "terms": [
+    "Backpropagation",
+    "Chain Rule",
+    "Forward Pass",
+    "Backward Pass"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "이번엔 거꾸로, 오른쪽 끝에서 왼쪽으로 가요. 이것이 **역방향 패스(Backward Pass)**예요.",
+      "출발값은 1 이에요. s 를 s 로 미분하면 1 이니까요.",
+      "선을 하나 지날 때마다 그 노드의 미분을 곱해 넘겨요. 앞에서 손으로 구한 δ 가 딱 그 자리에 나타나요."
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "거꾸로 흐르는 기울기",
+     "svg": "<svg viewBox=\"0 0 480 270\" xmlns=\"http://www.w3.org/2000/svg\"><circle cx=\"40\" cy=\"75\" r=\"20\" class=\"n3\"/><text x=\"40\" y=\"80\" font-size=\"14\" text-anchor=\"middle\" class=\"tl\">x</text><circle cx=\"40\" cy=\"195\" r=\"20\" class=\"n3\"/><text x=\"40\" y=\"200\" font-size=\"14\" text-anchor=\"middle\" class=\"tl\">W</text><circle cx=\"215\" cy=\"45\" r=\"18\" class=\"n3\"/><text x=\"215\" y=\"50\" font-size=\"14\" text-anchor=\"middle\" class=\"tl\">b</text><circle cx=\"385\" cy=\"45\" r=\"18\" class=\"n3\"/><text x=\"385\" y=\"50\" font-size=\"14\" text-anchor=\"middle\" class=\"tl\">u</text><line x1=\"58\" y1=\"83\" x2=\"112\" y2=\"127\" class=\"e\"/><line x1=\"58\" y1=\"187\" x2=\"112\" y2=\"143\" class=\"e\"/><line x1=\"215\" y1=\"63\" x2=\"215\" y2=\"115\" class=\"e\"/><line x1=\"385\" y1=\"63\" x2=\"385\" y2=\"115\" class=\"e\"/><circle cx=\"130\" cy=\"135\" r=\"20\" class=\"n\"/><text x=\"130\" y=\"141\" font-size=\"16\" text-anchor=\"middle\" class=\"tl\">×</text><circle cx=\"215\" cy=\"135\" r=\"20\" class=\"n\"/><text x=\"215\" y=\"141\" font-size=\"16\" text-anchor=\"middle\" class=\"tl\">+</text><circle cx=\"300\" cy=\"135\" r=\"20\" class=\"n\"/><text x=\"300\" y=\"141\" font-size=\"16\" text-anchor=\"middle\" class=\"tl\">f</text><circle cx=\"385\" cy=\"135\" r=\"20\" class=\"n\"/><text x=\"385\" y=\"140\" font-size=\"12\" text-anchor=\"middle\" class=\"tl\">uᵀh</text><line x1=\"150\" y1=\"135\" x2=\"195\" y2=\"135\" class=\"e\"/><line x1=\"235\" y1=\"135\" x2=\"280\" y2=\"135\" class=\"e\"/><line x1=\"320\" y1=\"135\" x2=\"365\" y2=\"135\" class=\"e\"/><line x1=\"405\" y1=\"135\" x2=\"440\" y2=\"135\" class=\"e\"/><text x=\"458\" y=\"140\" font-size=\"16\" text-anchor=\"middle\" class=\"tb\">s</text><line x1=\"440\" y1=\"112\" x2=\"417\" y2=\"112\" class=\"e2 b1\"/><polygon points=\"408,112 417,107 417,117\" class=\"arrow b1\"/><text x=\"430\" y=\"102\" font-size=\"14\" text-anchor=\"middle\" class=\"tb b1\">1</text><line x1=\"362\" y1=\"112\" x2=\"331\" y2=\"112\" class=\"e2 b1\"/><polygon points=\"322,112 331,107 331,117\" class=\"arrow b1\"/><text x=\"342\" y=\"102\" font-size=\"13\" text-anchor=\"middle\" class=\"tb b1\">[2,3]</text><line x1=\"277\" y1=\"112\" x2=\"246\" y2=\"112\" class=\"e2 b2\"/><polygon points=\"237,112 246,107 246,117\" class=\"arrow b2\"/><text x=\"257\" y=\"102\" font-size=\"13\" text-anchor=\"middle\" class=\"tb b2\">δ=[2,0]</text><text x=\"300\" y=\"175\" font-size=\"13\" text-anchor=\"middle\" class=\"tm b2\">f'(z) = [1,0] 을 곱해요</text><line x1=\"200\" y1=\"95\" x2=\"200\" y2=\"79\" class=\"e2 b3\"/><polygon points=\"200,70 205,79 195,79\" class=\"arrow b3\"/><text x=\"240\" y=\"28\" font-size=\"13\" text-anchor=\"start\" class=\"tb b3\">∂s/∂b = [2,0]</text><line x1=\"112\" y1=\"120\" x2=\"71\" y2=\"93\" class=\"e2 b3\"/><polygon points=\"64,88 74,89 69,97\" class=\"arrow b3\"/><text x=\"12\" y=\"30\" font-size=\"13\" text-anchor=\"start\" class=\"tb b3\">∂s/∂x = [2,0,2]</text><line x1=\"112\" y1=\"150\" x2=\"71\" y2=\"177\" class=\"e2 b3\"/><polygon points=\"64,182 69,173 74,181\" class=\"arrow b3\"/><text x=\"20\" y=\"250\" font-size=\"13\" text-anchor=\"start\" class=\"tb b3\">∂s/∂W = [[2,4,6],[0,0,0]]</text></svg>",
+     "caption": "1 에서 출발해 [2, 3], δ = [2, 0] 을 거쳐 b, W, x 의 기울기에 도착해요.",
+     "builds": 3
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "compare",
+     "head": "슬라이드 영어를 우리말로",
+     "cols": [
+      "영어 원문",
+      "우리말 뜻"
+     ],
+     "rows": [
+      [
+       "Backward pass: start with 1 at the output",
+       "역방향 패스: 출력에서 1 로 시작해요"
+      ],
+      [
+       "push gradients along the edges in reverse",
+       "선을 따라 거꾸로 기울기를 밀어 보내요"
+      ],
+      [
+       "each edge multiplies by a local Jacobian",
+       "선마다 그 자리의 야코비안을 곱해요"
+      ],
+      [
+       "Backprop = the chain rule, executed as a graph walk",
+       "역전파 = 그래프를 걸으며 실행하는 연쇄 법칙"
+      ]
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "순전파와 역방향 패스",
+     "cols": [
+      "",
+      "**순전파(Forward Pass)**",
+      "**역방향 패스(Backward Pass)**"
+     ],
+     "rows": [
+      [
+       "방향",
+       "왼쪽 → 오른쪽",
+       "오른쪽 → 왼쪽"
+      ],
+      [
+       "흐르는 것",
+       "값(Wx, z, h, s)",
+       "기울기(1, ∂s/∂h, δ, ...)"
+      ],
+      [
+       "출발",
+       "입력 x",
+       "출력에서 1"
+      ],
+      [
+       "노드에서 하는 일",
+       "연산",
+       "국소 미분을 곱하기"
+      ]
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "역방향 패스의 출발값이 1 인 이유는?",
+     "choices": [
+      "s 를 s 로 미분하면 1 이라서",
+      "학습률이 1 이라서",
+      "점수가 항상 1 이라서"
+     ],
+     "a": 0,
+     "why": "자기 자신으로 미분하면 1 이에요. 여기서부터 곱해 나가요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.061,
+       "y": 0.197,
+       "w": 0.6,
+       "h": 0.038,
+       "say": "역방향 패스: 출력에서 1 로 시작해 선을 따라 거꾸로 기울기를 보내요."
+      },
+      {
+       "x": 0.796,
+       "y": 0.444,
+       "w": 0.057,
+       "h": 0.053,
+       "say": "출발값 1."
+      },
+      {
+       "x": 0.486,
+       "y": 0.444,
+       "w": 0.082,
+       "h": 0.057,
+       "say": "∂s/∂h 글자예요. 그림에서는 + 와 f 사이에 적혔지만, 뜻은 h 선(f 와 점곱 사이)의 기울기예요."
+      },
+      {
+       "x": 0.264,
+       "y": 0.362,
+       "w": 0.164,
+       "h": 0.114,
+       "say": "∂s/∂z = δ, 오차 신호가 여기 나타나요. + 는 기울기를 그대로 넘기니 + 앞뒤 모두 δ 예요."
+      },
+      {
+       "x": 0.114,
+       "y": 0.355,
+       "w": 0.143,
+       "h": 0.305,
+       "say": "마지막으로 x 와 W 에 ∂s/∂x, ∂s/∂W 가 도착해요."
+      }
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "그래프 위 역방향 패스 (p.22 숫자)",
+     "steps": [
+      "출발: ∂s/∂s = 1",
+      "점곱 노드(s = uᵀh): ∂s/∂h = u = [2, 3]",
+      "f 노드(ReLU): f'(z) = [1, 0] 을 원소별로 곱해 δ = ∂s/∂z = [2, 0]",
+      "+ 노드: b 로 그대로 → ∂s/∂b = [2, 0]",
+      "× 노드: W 쪽으로 δ 와 x 의 외적 [[2, 4, 6], [0, 0, 0]], x 쪽으로 Wᵀδ = [2, 0, 2]"
+     ],
+     "answer": "p.23, p.24 에서 손으로 구한 값과 똑같이 나와요."
+    },
+    {
+     "kind": "prof",
+     "when": "3주차 월요일 2교시",
+     "lines": [
+      "맨 처음 신호는 1 이에요. s 를 s 로 미분하면 1 이니까요.",
+      "PyTorch 의 autograd 는 1 로 시작해서 W, b 등의 기울기를 다 계산해 저장해 둬요.",
+      "그래서 파라미터가 100MB 인 모델을 학습하려면 기울기까지 담을 최소 2배 메모리가 필요해요.",
+      "GPU 메모리가 16GB 인데 모델이 10GB 면, 추론은 되지만 학습은 안 돼요(20GB 필요)."
+     ]
+    },
+    {
+     "kind": "say",
+     "lines": [
+      "실습 N3L p.6 에서 s.backward() 한 줄이 이 걸음을 대신하고,",
+      "W.grad, b.grad, x.grad 에 결과를 채워요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "이 그래프에서 δ(오차 신호)가 나타나는 자리는?",
+     "choices": [
+      "s 바로 앞",
+      "+ 노드 앞, 곧 ∂s/∂z 자리",
+      "x 노드"
+     ],
+     "a": 1,
+     "why": "δ = ∂s/∂z 라서 z 선(+ 와 f 사이)의 기울기예요. + 는 그대로 넘기므로 슬라이드처럼 + 앞에 적어도 같은 값이에요."
+    },
+    {
+     "kind": "english",
+     "head": "답안 문장",
+     "en": "**역방향 패스(Backward Pass)**는 출력 기울기 1 에서 시작해 그래프를 거꾸로 따라가며 선마다 국소 야코비안을 곱한다. 즉 **역전파(Backpropagation)**는 그래프 위의 **연쇄 법칙(Chain Rule)**이다.",
+     "ko": "'Backprop = the chain rule, executed as a graph walk'."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "역방향 패스는 순전파 값을 다시 써요. 그래서 학습할 때는 추론할 때보다 메모리가 훨씬 많이 들어요(교수님: 최소 2배)."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 29,
+   "title": "노드 하나씩",
+   "terms": [
+    "Chain Rule",
+    "Upstream Gradient",
+    "Local Gradient",
+    "Downstream Gradient",
+    "Node"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "**노드(Node)** 하나만 떼어서 보면 할 일이 아주 단순해요.",
+      "뒤에서 받은 **상류 기울기(Upstream Gradient)**에 자기 **국소 기울기(Local Gradient)**를 곱해서 앞으로 넘기면 끝이에요.",
+      "어떤 노드도 네트워크 전체를 볼 필요가 없어요."
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "노드 하나의 일",
+     "svg": "<svg viewBox=\"0 0 480 270\" xmlns=\"http://www.w3.org/2000/svg\"><rect x=\"190\" y=\"85\" width=\"100\" height=\"70\" rx=\"2\" class=\"n2\"/><text x=\"240.0\" y=\"126.0\" font-size=\"15\" text-anchor=\"middle\" class=\"tl\">f: y = x²</text><line x1=\"30\" y1=\"105\" x2=\"179\" y2=\"105\" class=\"e\"/><polygon points=\"188,105 179,110 179,100\" class=\"arrow\"/><text x=\"110\" y=\"95\" font-size=\"14\" text-anchor=\"middle\" class=\"t\">입력 x = 3</text><line x1=\"292\" y1=\"105\" x2=\"441\" y2=\"105\" class=\"e\"/><polygon points=\"450,105 441,110 441,100\" class=\"arrow\"/><text x=\"370\" y=\"95\" font-size=\"14\" text-anchor=\"middle\" class=\"t\">출력 y = 9</text><line x1=\"450\" y1=\"140\" x2=\"301\" y2=\"140\" class=\"e2 b1\"/><polygon points=\"292,140 301,135 301,145\" class=\"arrow b1\"/><text x=\"370\" y=\"165\" font-size=\"14\" text-anchor=\"middle\" class=\"tb b1\">상류 기울기 2</text><text x=\"240\" y=\"190\" font-size=\"14\" text-anchor=\"middle\" class=\"tm b1\">국소 기울기 dy/dx = 2x = 6</text><line x1=\"188\" y1=\"140\" x2=\"39\" y2=\"140\" class=\"e2 b2\"/><polygon points=\"30,140 39,135 39,145\" class=\"arrow b2\"/><text x=\"110\" y=\"165\" font-size=\"14\" text-anchor=\"middle\" class=\"tb b2\">하류 2 × 6 = 12</text><text x=\"240\" y=\"240\" font-size=\"15\" text-anchor=\"middle\" class=\"t b2\">노드는 자기 입력과 출력만 알면 돼요</text></svg>",
+     "caption": "x = 3 이 들어와 y = 9 가 나가요. 뒤에서 2 가 오면, 국소 기울기 6 을 곱해 12 를 앞으로 보내요.",
+     "builds": 2
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "compare",
+     "head": "슬라이드 영어를 우리말로",
+     "cols": [
+      "영어 원문",
+      "우리말 뜻"
+     ],
+     "rows": [
+      [
+       "Every node only needs to know ONE thing",
+       "노드마다 딱 한 가지만 알면 돼요"
+      ],
+      [
+       "its local gradient",
+       "자기 **국소 기울기(Local Gradient)**"
+      ],
+      [
+       "downstream = upstream × local",
+       "하류 = 상류 × 국소"
+      ],
+      [
+       "no node ever sees the whole network",
+       "어떤 노드도 전체 네트워크를 보지 않아요"
+      ],
+      [
+       "This locality is why autodiff frameworks can be built at all",
+       "이 '자기 주변만' 성질 덕분에 자동 미분 도구를 만들 수 있어요"
+      ]
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "기울기 세 가지",
+     "cols": [
+      "이름",
+      "기호",
+      "뜻"
+     ],
+     "rows": [
+      [
+       "**상류 기울기(Upstream Gradient)**",
+       "∂J/∂y",
+       "내 출력 쪽(뒤)에서 받은 것"
+      ],
+      [
+       "**국소 기울기(Local Gradient)**",
+       "∂y/∂x",
+       "내 입력과 출력만 보고 구한 것"
+      ],
+      [
+       "**하류 기울기(Downstream Gradient)**",
+       "∂J/∂x",
+       "둘을 곱해 내 입력 쪽(앞)으로 보내는 것"
+      ]
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "하류 기울기를 구하는 식은?",
+     "choices": [
+      "상류 + 국소",
+      "상류 × 국소",
+      "상류 ÷ 국소"
+     ],
+     "a": 1,
+     "why": "**연쇄 법칙(Chain Rule)** 그대로, 곱해요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.061,
+       "y": 0.197,
+       "w": 0.446,
+       "h": 0.038,
+       "say": "노드마다 딱 하나, 자기 국소 기울기만 알면 돼요."
+      },
+      {
+       "x": 0.427,
+       "y": 0.412,
+       "w": 0.146,
+       "h": 0.127,
+       "say": "노드 f: 입력 x 를 받아 출력 y = f(x) 를 내요."
+      },
+      {
+       "x": 0.571,
+       "y": 0.501,
+       "w": 0.2,
+       "h": 0.057,
+       "say": "오른쪽에서 상류 기울기 ∂J/∂y 가 들어와요."
+      },
+      {
+       "x": 0.232,
+       "y": 0.501,
+       "w": 0.196,
+       "h": 0.057,
+       "say": "왼쪽으로 하류 기울기 ∂J/∂x = ∂J/∂y × ∂y/∂x 가 나가요."
+      },
+      {
+       "x": 0.371,
+       "y": 0.584,
+       "w": 0.257,
+       "h": 0.032,
+       "say": "국소 기울기 ∂y/∂x 는 노드 안에 살아요."
+      }
+     ]
+    },
+    {
+     "kind": "formula",
+     "head": "노드 하나의 규칙",
+     "tex": "\\frac{\\partial J}{\\partial x} = \\frac{\\partial J}{\\partial y}\\cdot\\frac{\\partial y}{\\partial x}",
+     "parts": [
+      {
+       "sym": "\\frac{\\partial J}{\\partial y}",
+       "say": "**상류 기울기(Upstream Gradient)**: 뒤에서 받은 것"
+      },
+      {
+       "sym": "\\frac{\\partial y}{\\partial x}",
+       "say": "**국소 기울기(Local Gradient)**: 노드 안에서 구한 것"
+      },
+      {
+       "sym": "\\frac{\\partial J}{\\partial x}",
+       "say": "**하류 기울기(Downstream Gradient)**: 앞으로 보낼 것"
+      }
+     ],
+     "whole": "받은 것 × 내 것 = 보낼 것. 연쇄 법칙을 노드 하나에 적용한 모양이에요."
+    },
+    {
+     "kind": "steps",
+     "head": "제곱 노드 손계산",
+     "steps": [
+      "노드: y = x², 들어온 값 x = 3, 나간 값 y = 9",
+      "뒤에서 상류 기울기 ∂J/∂y = 2 가 도착했어요.",
+      "국소 기울기: y = x² 의 미분 2x = 2 × 3 = 6",
+      "하류 기울기: 2 × 6 = 12 를 앞으로 보내요."
+     ],
+     "answer": "∂J/∂x = 12. 노드는 J 가 뭔지 몰라도 계산할 수 있어요."
+    },
+    {
+     "kind": "prof",
+     "when": "3주차 월요일 2교시",
+     "lines": [
+      "노드 하나는 전체 네트워크의 다른 노드 흐름을 알 필요가 없어요. 각 노드는 나만 알면 돼요.",
+      "다운스트림 그레디언트는 업스트림 그레디언트에 로컬 그레디언트를 곱하면 된다.",
+      "이 로컬리티 때문에 역전파를 일반적인 알고리즘으로 만들 수 있고, PyTorch 같은 자동 미분 프레임워크도 가능한 거예요."
+     ]
+    },
+    {
+     "kind": "bg",
+     "src": "기초 다지기 7단원 (wb-7 함수, 기울기, 미분)",
+     "lines": [
+      "국소 기울기는 결국 그 노드 함수의 미분이에요. x² → 2x 같은 규칙은 기초 다지기 7단원에 있어요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "노드 y = 3x 에 상류 기울기 5 가 들어오면 하류 기울기는?",
+     "choices": [
+      "3",
+      "8",
+      "15"
+     ],
+     "a": 2,
+     "why": "국소 기울기 3, 상류 5 를 곱해 15 예요."
+    },
+    {
+     "kind": "english",
+     "head": "답안 문장",
+     "en": "각 노드는 **상류 기울기(Upstream Gradient)**에 자신의 **국소 기울기(Local Gradient)**를 곱해 **하류 기울기(Downstream Gradient)**를 입력 쪽으로 보낸다.",
+     "ko": "하류 = 상류 × 국소, 한 줄만 외워도 돼요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "'상류(upstream)' 는 출력 쪽, '하류(downstream)' 는 입력 쪽이에요. 기울기가 거꾸로 흐르니 물의 방향도 뒤에서 앞으로예요.",
+      "J 는 여기서 전체 손실(또는 점수)이에요. 야코비안 J 와 헷갈리지 마요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 30,
+   "title": "노드의 성격: +, max, ×",
+   "terms": [
+    "ReLU",
+    "Local Gradient"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "자주 나오는 노드 세 개는 성격이 뚜렷해요.",
+      "+ 는 받은 기울기를 똑같이 나눠 주고, max 는 이긴 쪽에만 주고,",
+      "× 는 상대편 값을 곱해서 맞바꿔 줘요."
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "세 노드, 세 성격 (뒤에서 온 기울기 2)",
+     "svg": "<svg viewBox=\"0 0 480 270\" xmlns=\"http://www.w3.org/2000/svg\"><text x=\"22\" y=\"68\" font-size=\"15\" text-anchor=\"end\" class=\"t\">3</text><text x=\"22\" y=\"176\" font-size=\"15\" text-anchor=\"end\" class=\"t\">2</text><line x1=\"28\" y1=\"65\" x2=\"60\" y2=\"106\" class=\"e\"/><line x1=\"28\" y1=\"168\" x2=\"60\" y2=\"124\" class=\"e\"/><circle cx=\"80\" cy=\"115\" r=\"22\" class=\"n\"/><text x=\"80\" y=\"121\" font-size=\"16\" text-anchor=\"middle\" class=\"tl\">+</text><line x1=\"102\" y1=\"115\" x2=\"135\" y2=\"115\" class=\"e\"/><text x=\"142\" y=\"120\" font-size=\"15\" text-anchor=\"start\" class=\"t\">5</text><text x=\"122\" y=\"142\" font-size=\"14\" text-anchor=\"middle\" class=\"tb b1\">2</text><text x=\"28\" y=\"94\" font-size=\"14\" text-anchor=\"end\" class=\"tb b1\">2</text><text x=\"28\" y=\"200\" font-size=\"14\" text-anchor=\"end\" class=\"tb b1\">2</text><text x=\"80\" y=\"240\" font-size=\"15\" text-anchor=\"middle\" class=\"tb b1\">나눠 주기</text><text x=\"182\" y=\"68\" font-size=\"15\" text-anchor=\"end\" class=\"t\">3</text><text x=\"182\" y=\"176\" font-size=\"15\" text-anchor=\"end\" class=\"t\">2</text><line x1=\"188\" y1=\"65\" x2=\"220\" y2=\"106\" class=\"e\"/><line x1=\"188\" y1=\"168\" x2=\"220\" y2=\"124\" class=\"e\"/><circle cx=\"240\" cy=\"115\" r=\"22\" class=\"n\"/><text x=\"240\" y=\"120\" font-size=\"14\" text-anchor=\"middle\" class=\"tl\">max</text><line x1=\"262\" y1=\"115\" x2=\"295\" y2=\"115\" class=\"e\"/><text x=\"302\" y=\"120\" font-size=\"15\" text-anchor=\"start\" class=\"t\">3</text><text x=\"282\" y=\"142\" font-size=\"14\" text-anchor=\"middle\" class=\"tb b2\">2</text><text x=\"188\" y=\"94\" font-size=\"14\" text-anchor=\"end\" class=\"tb b2\">2</text><text x=\"188\" y=\"200\" font-size=\"14\" text-anchor=\"end\" class=\"tb b2\">0</text><text x=\"240\" y=\"240\" font-size=\"15\" text-anchor=\"middle\" class=\"tb b2\">이긴 쪽에만</text><text x=\"342\" y=\"68\" font-size=\"15\" text-anchor=\"end\" class=\"t\">3</text><text x=\"342\" y=\"176\" font-size=\"15\" text-anchor=\"end\" class=\"t\">2</text><line x1=\"348\" y1=\"65\" x2=\"380\" y2=\"106\" class=\"e\"/><line x1=\"348\" y1=\"168\" x2=\"380\" y2=\"124\" class=\"e\"/><circle cx=\"400\" cy=\"115\" r=\"22\" class=\"n\"/><text x=\"400\" y=\"121\" font-size=\"16\" text-anchor=\"middle\" class=\"tl\">×</text><line x1=\"422\" y1=\"115\" x2=\"455\" y2=\"115\" class=\"e\"/><text x=\"462\" y=\"120\" font-size=\"15\" text-anchor=\"start\" class=\"t\">6</text><text x=\"442\" y=\"142\" font-size=\"14\" text-anchor=\"middle\" class=\"tb b3\">2</text><text x=\"348\" y=\"94\" font-size=\"14\" text-anchor=\"end\" class=\"tb b3\">2×2=4</text><text x=\"348\" y=\"200\" font-size=\"14\" text-anchor=\"end\" class=\"tb b3\">2×3=6</text><text x=\"400\" y=\"240\" font-size=\"15\" text-anchor=\"middle\" class=\"tb b3\">맞바꿔 곱하기</text></svg>",
+     "caption": "+ 는 2, 2 로 나눠 주고, max 는 이긴 3 쪽에만 2, × 는 상대 값을 곱해 4 와 6 을 보내요.",
+     "builds": 3
+    },
+    {
+     "kind": "analogy",
+     "head": "배관공처럼 읽기",
+     "scene": "물(기울기)이 파이프를 거꾸로 흘러요. 갈림길에서 나뉘고, 밸브에서 한쪽만 열리고, 스위치에서 바뀌어요.",
+     "map": [
+      [
+       "물을 양쪽에 똑같이 보냄",
+       "+ 노드: 나눠 주기"
+      ],
+      [
+       "한쪽 밸브만 열림",
+       "max 노드: 이긴 쪽에만"
+      ],
+      [
+       "상대편 굵기로 바뀜",
+       "× 노드: 맞바꿔 곱하기"
+      ],
+      [
+       "두 파이프가 만나면 물이 합쳐짐",
+       "갈라졌던 길의 기울기는 더해요"
+      ]
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "compare",
+     "head": "슬라이드 영어를 우리말로",
+     "cols": [
+      "영어 원문",
+      "우리말 뜻"
+     ],
+     "rows": [
+      [
+       "\"+\" distributes the gradient",
+       "+ 는 기울기를 나눠 줘요"
+      ],
+      [
+       "\"max\" routes it to the winner",
+       "max 는 이긴 쪽으로 보내요"
+      ],
+      [
+       "\"×\" switches the inputs",
+       "× 는 입력을 맞바꿔 곱해요"
+      ],
+      [
+       "branches that MERGE forward will SUM their gradients backward",
+       "순전파에서 갈라져 쓰인 값은 역전파에서 기울기를 더해요"
+      ],
+      [
+       "Read a graph like a plumber",
+       "그래프를 배관공처럼 읽어요"
+      ]
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "세 노드의 국소 기울기",
+     "cols": [
+      "노드",
+      "순전파",
+      "국소 기울기",
+      "뒤로 보내는 것(상류 2)"
+     ],
+     "rows": [
+      [
+       "+",
+       "3 + 2 = 5",
+       "둘 다 1",
+       "2, 2"
+      ],
+      [
+       "max",
+       "max(3, 2) = 3",
+       "이긴 쪽 1, 진 쪽 0",
+       "2, 0"
+      ],
+      [
+       "×",
+       "3 × 2 = 6",
+       "상대편 값(2, 3)",
+       "2×2 = 4, 2×3 = 6"
+      ]
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "max 노드에서 진 쪽 입력이 받는 기울기는?",
+     "choices": [
+      "상류 기울기 그대로",
+      "0",
+      "상류 기울기의 절반"
+     ],
+     "a": 1,
+     "why": "진 쪽은 출력에 영향을 주지 않으니 0 이에요. **ReLU** = max(0, x) 도 음수 쪽 기울기가 0 이에요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.061,
+       "y": 0.197,
+       "w": 0.593,
+       "h": 0.038,
+       "say": "흔한 노드 세 개, 성격 세 가지. 세 예 모두 뒤에서 온 기울기는 2 예요."
+      },
+      {
+       "x": 0.107,
+       "y": 0.406,
+       "w": 0.239,
+       "h": 0.254,
+       "say": "+ : 3 + 2 = 5. 뒤로 2, 2 를 똑같이 나눠 줘요."
+      },
+      {
+       "x": 0.379,
+       "y": 0.406,
+       "w": 0.243,
+       "h": 0.254,
+       "say": "max : 더 큰 3 이 이겨요. 이긴 쪽에 2, 진 쪽에 0."
+      },
+      {
+       "x": 0.654,
+       "y": 0.406,
+       "w": 0.243,
+       "h": 0.254,
+       "say": "× : 3 × 2 = 6. 3 쪽에는 2×2 = 4, 2 쪽에는 2×3 = 6. 상대 값을 곱해요."
+      },
+      {
+       "x": 0.061,
+       "y": 0.749,
+       "w": 0.464,
+       "h": 0.036,
+       "say": "순전파에서 갈라진 가지는 역전파에서 기울기를 합쳐요(더하기)."
+      }
+     ]
+    },
+    {
+     "kind": "formula",
+     "head": "세 노드의 국소 기울기",
+     "tex": "y = x_1 + x_2: \\frac{\\partial y}{\\partial x_1} = 1, \\quad y = \\max(x_1, x_2): \\frac{\\partial y}{\\partial x_1} = \\begin{cases}1 & x_1 > x_2\\\\ 0 & \\text{else}\\end{cases}, \\quad y = x_1 x_2: \\frac{\\partial y}{\\partial x_1} = x_2",
+     "parts": [
+      {
+       "sym": "x_1 + x_2",
+       "say": "x₁ 을 1 밀면 y 도 1 움직여요 → 1"
+      },
+      {
+       "sym": "\\max(x_1, x_2)",
+       "say": "이긴 쪽만 y 를 움직여요 → 1 또는 0"
+      },
+      {
+       "sym": "x_1 x_2",
+       "say": "x₁ 을 1 밀면 y 는 x₂ 만큼 움직여요 → 상대 값"
+      },
+      {
+       "sym": "\\frac{\\partial y}{\\partial x_1}",
+       "say": "**국소 기울기(Local Gradient)**. 여기에 상류 기울기를 곱해요"
+      }
+     ],
+     "whole": "나눠 주기(1), 이긴 쪽만(1 과 0), 맞바꾸기(상대 값)."
+    },
+    {
+     "kind": "steps",
+     "head": "세 성격을 한 그래프에서: f = (a + b) × max(b, c)",
+     "steps": [
+      "값: a = 1, b = 3, c = 2. 순전파: q = a + b = 4, r = max(b, c) = 3, f = q × r = 12",
+      "출발 ∂f/∂f = 1. × 노드는 맞바꿔요: q 쪽 1 × r = 3, r 쪽 1 × q = 4",
+      "+ 노드는 나눠 줘요: a 에 3, b 에 3",
+      "max 노드는 이긴 쪽(b = 3 > c = 2)에만: b 에 4, c 에 0",
+      "b 는 두 가지에 쓰였으니 합쳐요: 3 + 4 = 7",
+      "확인: ∂f/∂b = max(b, c) + (a + b) × 1 = 3 + 4 = 7 (맞음)"
+     ],
+     "answer": "∂f/∂a = 3, ∂f/∂b = 7, ∂f/∂c = 0."
+    },
+    {
+     "kind": "prof",
+     "when": "3주차 월요일 2교시",
+     "lines": [
+      "이건 조금 알아두시면 좋은데, 손으로 계산할 때 쓰는 세 가지 백워드 동작이에요.",
+      "덧셈은 그레디언트를 그대로 분배하고, max 는 큰 놈만 골라 흘려서 위너에게 라우팅해요.",
+      "곱하기는 각자 상대 카운터파트 값을 곱해서 흘러가요. 3 과 2 가 있으면 위로 2×2, 아래로 2×3 이에요."
+     ]
+    },
+    {
+     "kind": "bg",
+     "src": "기초 다지기 7단원 (wb-7 함수, 기울기, 미분)",
+     "lines": [
+      "합의 미분은 각각의 미분의 합, 상수배는 그 상수. 이 두 규칙만으로 + 와 × 노드가 설명돼요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "× 노드에 x = 4, y = -1 이 들어오고 상류 기울기가 3 이면, x 쪽 기울기는?",
+     "choices": [
+      "-3",
+      "12",
+      "3"
+     ],
+     "a": 0,
+     "why": "x 쪽은 상대 값 y = -1 을 곱해 3 × (-1) = -3, y 쪽은 3 × 4 = 12 예요."
+    },
+    {
+     "kind": "check",
+     "q": "한 값이 순전파에서 두 곳에 쓰였다면 역전파에서 그 값의 기울기는?",
+     "choices": [
+      "두 기울기 중 큰 것",
+      "두 기울기의 합",
+      "두 기울기의 곱"
+     ],
+     "a": 1,
+     "why": "갈라진 가지는 역전파에서 더해요(sum at joins)."
+    },
+    {
+     "kind": "english",
+     "head": "답안 문장",
+     "en": "역전파에서 덧셈 노드는 상류 기울기를 입력에 그대로 분배하고, max 노드는 더 큰 입력에만 전달하며, 곱셈 노드는 상대 입력값을 곱해 전달한다. 순전파에서 여러 곳에 쓰인 변수의 기울기는 합한다.",
+     "ko": "distribute, route, switch, 그리고 sum."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "× 노드는 '자기 값' 이 아니라 '상대 값' 을 곱해요. 3 쪽에 가는 기울기는 2 × 2 = 4 예요.",
+      "max 에서 진 쪽 기울기 0 은 '틀렸다' 가 아니라 '출력에 영향이 없었다' 는 뜻이에요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 31,
+   "title": "전체 알고리즘과 그 값",
+   "terms": [
+    "Backpropagation",
+    "Forward Pass",
+    "Backward Pass",
+    "Parameter",
+    "Topological Order"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "정리하면 **역전파(Backpropagation)**는 두 번 걷기예요.",
+      "앞으로 한 번 걸으며 값을 구해 저장하고, 뒤로 한 번 걸으며 기울기를 구해요.",
+      "진짜 마법은 값싸다는 것이에요. 뒤로 한 번 걷는 비용이 앞으로 한 번 걷는 비용과 비슷해요."
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "두 가지 방법의 값",
+     "svg": "<svg viewBox=\"0 0 480 270\" xmlns=\"http://www.w3.org/2000/svg\"><text x=\"20\" y=\"60\" font-size=\"15\" text-anchor=\"start\" class=\"tb\">하나씩 흔들어 보기</text><rect x=\"20\" y=\"72\" width=\"440\" height=\"30\" rx=\"2\" class=\"n4\"/><text x=\"240\" y=\"93\" font-size=\"14\" text-anchor=\"middle\" class=\"tl\">순전파 1,000,000번</text><text x=\"20\" y=\"150\" font-size=\"15\" text-anchor=\"start\" class=\"tb b1\">역전파</text><rect x=\"20\" y=\"162\" width=\"30\" height=\"30\" rx=\"2\" class=\"n2 b1\"/><rect x=\"50\" y=\"162\" width=\"30\" height=\"30\" rx=\"2\" class=\"n3 b1\"/><text x=\"90\" y=\"183\" font-size=\"14\" text-anchor=\"start\" class=\"t b1\">순전파 1번 + 역방향 1번 (비슷한 값)</text><text x=\"240\" y=\"240\" font-size=\"15\" text-anchor=\"middle\" class=\"tb b1\">파라미터 백만 개의 기울기를 한 번에</text></svg>",
+     "caption": "파라미터를 하나씩 흔들면 백만 번 계산해야 하지만, 역전파는 두 번 걷기로 끝나요.",
+     "builds": 1
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "compare",
+     "head": "슬라이드 영어를 우리말로",
+     "cols": [
+      "영어 원문",
+      "우리말 뜻"
+     ],
+     "rows": [
+      [
+       "visit nodes in topological order, compute values (store them!)",
+       "**위상 순서(Topological Order)**대로 노드를 방문해 값을 구해요(저장!)"
+      ],
+      [
+       "output gradient = 1, visit in REVERSE order",
+       "출력 기울기 1, 순서를 거꾸로 방문"
+      ],
+      [
+       "apply upstream × local, sum at branches",
+       "상류 × 국소를 곱하고, 갈림길에서는 더해요"
+      ],
+      [
+       "ALL gradients for the price of one",
+       "기울기 전부를 한 번 값에"
+      ],
+      [
+       "Backprop's real magic is not correctness, it is the price tag",
+       "역전파의 진짜 마법은 정확함이 아니라 값(가격표)이에요"
+      ]
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "전체 알고리즘",
+     "steps": [
+      "**순전파(Forward Pass)**: **위상 순서(Topological Order)**대로 노드를 방문해 값을 구하고 저장해요.",
+      "**역방향 패스(Backward Pass)**: 출력 기울기를 1 로 두고, 순서를 거꾸로 방문해요.",
+      "노드마다 상류 × 국소를 곱해 앞으로 보내요.",
+      "여러 가지가 만나는 곳에서는 기울기를 더해요.",
+      "모든 **파라미터(Parameter)**의 기울기가 모이면 경사 하강법으로 한 걸음 고쳐요."
+     ],
+     "answer": "앞으로 한 번, 뒤로 한 번이면 모든 기울기가 나와요."
+    },
+    {
+     "kind": "points",
+     "head": "용어 뜻",
+     "items": [
+      "**위상 순서(Topological Order)**: 필요한 값이 먼저 계산되도록 정한 방문 순서. 예: x, W → × → + → f → 점곱 → s",
+      "비용(cost): 계산에 드는 시간. 역방향 한 번 ≈ 순방향 한 번이에요."
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "파라미터가 백만 개일 때, 하나씩 흔들어 기울기를 구하면 순전파가 몇 번 필요할까요? (슬라이드 기준)",
+     "choices": [
+      "1 번",
+      "2 번",
+      "백만 번"
+     ],
+     "a": 2,
+     "why": "파라미터마다 따로 흔들어야 하니 백만 번이에요. 역전파는 앞뒤 한 번씩이면 돼요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.061,
+       "y": 0.197,
+       "w": 0.539,
+       "h": 0.042,
+       "say": "순방향: 위상 순서대로 노드를 방문해 값을 계산하고, 저장해요!"
+      },
+      {
+       "x": 0.061,
+       "y": 0.251,
+       "w": 0.718,
+       "h": 0.041,
+       "say": "역방향: 출력 기울기 1, 거꾸로 방문, 상류 × 국소, 갈림길에서 합."
+      },
+      {
+       "x": 0.061,
+       "y": 0.307,
+       "w": 0.696,
+       "h": 0.042,
+       "say": "비용: 역방향 한 번 ≈ 순방향 한 번. 기울기 전부를 한 번 값에."
+      },
+      {
+       "x": 0.079,
+       "y": 0.355,
+       "w": 0.582,
+       "h": 0.034,
+       "say": "비교: 백만 개 파라미터를 하나씩 흔들면 순전파 백만 번."
+      },
+      {
+       "x": 0.061,
+       "y": 0.406,
+       "w": 0.521,
+       "h": 0.041,
+       "say": "이 효율 덕분에 딥러닝이 계산상 가능해졌어요."
+      }
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "값 비교 손계산",
+     "steps": [
+      "파라미터 1,000,000 개, 순전파 한 번에 1 초가 걸린다고 해 봐요.",
+      "하나씩 흔들기: 1,000,000 번 × 1 초 = 1,000,000 초(약 11.6 일)",
+      "역전파: 순전파 1 번 + 역방향 1 번 ≈ 2 초",
+      "그래서 한 걸음 업데이트에 11 일이 걸리느냐, 2 초가 걸리느냐의 차이예요."
+     ],
+     "answer": "역전파는 기울기 전부를 순전파 한 번과 비슷한 값에 줘요."
+    },
+    {
+     "kind": "prof",
+     "when": "3주차 월요일 2교시",
+     "lines": [
+      "포워드 패스에서 각 노드 값을 계산하고, 백워드 때 다시 써야 하니까 중간 값들을 저장해 놓아요.",
+      "백워드 패스는 출력에서 시작하고, 맨 출력의 기울기는 1 이에요.",
+      "모든 그레디언트를 포워드 한 번, 백워드 한 번으로 한 번에 구해요. 수십억 개 파라미터 신경망이 한 스텝에 어떻게 동작하는지를 설명해 줘요."
+     ]
+    },
+    {
+     "kind": "prof",
+     "when": "3주차 월요일 2교시",
+     "lines": [
+      "정리하면 역전파의 목적은 각 파라미터가 손실에 얼마나 영향을 미치는지, 그 그레디언트를 계산하는 것이에요.",
+      "위에서 받은 업스트림 에러 시그널에 내 로컬만 곱하면 되고, 그렇게 거꾸로 전파시키니까 역전파라고 불러요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "역전파 알고리즘에서 순전파 값을 저장하는 이유로 알맞은 것은?",
+     "choices": [
+      "역방향 패스에서 국소 기울기를 계산할 때 필요해서",
+      "출력을 여러 번 보여 주려고",
+      "학습률을 정하려고"
+     ],
+     "a": 0,
+     "why": "예: ReLU 미분은 z 부호, × 노드는 상대 입력값이 필요해요."
+    },
+    {
+     "kind": "english",
+     "head": "답안 문장",
+     "en": "**역전파(Backpropagation)**는 순전파 값을 저장한 뒤 역순으로 상류 × 국소를 곱하고 분기점에서 합한다. 비용이 순전파 한 번과 비슷한 것이 핵심이다.",
+     "ko": "정확함보다 '값(price tag)' 이 핵심이라는 슬라이드 결론까지 함께 써요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "'백만 번' 은 슬라이드가 든 비교예요. 역전파가 공짜라는 뜻은 아니고, 순전파 한 번과 비슷한 비용이 든다는 뜻이에요.",
+      "속도 대신 메모리를 써요. 중간값과 기울기를 저장해야 해서 학습은 추론보다 메모리가 많이 들어요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 32,
+   "title": "자동 미분, 기울기 검사, 그리고 여러분",
+   "terms": [
+    "Automatic Differentiation (Autodiff)",
+    "Gradient Checking",
+    "Numeric Gradient",
+    "autograd",
+    "Matrix Calculus",
+    "Vanishing Gradient",
+    "Exploding Gradient"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "실제로는 PyTorch 의 **autograd(오토그래드)**가 역전파를 대신해요.",
+      "loss.backward() 한 줄이면 그래프를 거꾸로 걸어 모든 기울기를 채워요.",
+      "손으로 짠 기울기가 맞는지 의심되면 **기울기 검사(Gradient Checking)**로 확인해요.",
+      "그래도 수학을 배우는 이유가 있어요. 도구는 방법을 숨길 뿐, 책임은 우리에게 남아요."
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "기울기를 구하는 세 가지 길",
+     "cols": [
+      "방법",
+      "속도",
+      "쓰임"
+     ],
+     "rows": [
+      [
+       "손으로 유도(**행렬 미적분(Matrix Calculus)**)",
+       "사람이 느림",
+       "원리 이해, 과제 2"
+      ],
+      [
+       "**자동 미분(Automatic Differentiation (Autodiff))**",
+       "빠름",
+       "실제 학습"
+      ],
+      [
+       "**수치 기울기(Numeric Gradient)**",
+       "아주 느림",
+       "맞는지 검사"
+      ]
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "compare",
+     "head": "슬라이드 영어를 우리말로",
+     "cols": [
+      "영어 원문",
+      "우리말 뜻"
+     ],
+     "rows": [
+      [
+       "every op knows its local gradient",
+       "연산마다 자기 국소 기울기를 알아요"
+      ],
+      [
+       "loss.backward() runs the graph walk for you",
+       "loss.backward() 가 그래프 걷기를 대신 해요"
+      ],
+      [
+       "the numeric gradient: slow but nearly impossible to get wrong",
+       "수치 기울기: 느리지만 틀리기가 거의 불가능해요"
+      ],
+      [
+       "Why still learn the math?",
+       "그래도 왜 수학을 배우나?"
+      ],
+      [
+       "frameworks hide the how, not the responsibility",
+       "도구는 '어떻게' 를 숨길 뿐, 책임까지 숨기진 않아요"
+      ]
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "용어 뜻",
+     "items": [
+      "**autograd(오토그래드)**: PyTorch 의 **자동 미분(Automatic Differentiation (Autodiff))** 장치.",
+      "**수치 기울기(Numeric Gradient)**: θ 를 조금 올린 값과 내린 값의 차이로 어림한 기울기.",
+      "**기울기 검사(Gradient Checking)**: 손 유도 기울기와 수치 기울기를 비교해 버그를 찾는 것.",
+      "수학이 필요한 때: **기울기 소실(Vanishing Gradient)**, **기울기 폭발(Exploding Gradient)** 원인 찾기, 새 층 만들기, 논문 읽기."
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "수치 기울기의 장점은?",
+     "choices": [
+      "아주 빠르다",
+      "틀리기가 거의 어렵다",
+      "메모리가 필요 없다"
+     ],
+     "a": 1,
+     "why": "느리지만 공식이 단순해서 틀리기 어려워요. 그래서 검사용으로 써요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드 짚어 읽기",
+     "boxes": [
+      {
+       "x": 0.061,
+       "y": 0.197,
+       "w": 0.729,
+       "h": 0.038,
+       "say": "PyTorch autograd: 연산마다 국소 기울기를 알아서, loss.backward() 가 그래프 걷기를 대신해요."
+      },
+      {
+       "x": 0.061,
+       "y": 0.25,
+       "w": 0.554,
+       "h": 0.039,
+       "say": "디버그 도구, 수치 기울기: 느리지만 틀리기 거의 불가능해요."
+      },
+      {
+       "x": 0.332,
+       "y": 0.4,
+       "w": 0.336,
+       "h": 0.089,
+       "say": "f'(θ) ≈ (f(θ + h) - f(θ - h)) / 2h, h 는 10⁻⁴ 쯤."
+      },
+      {
+       "x": 0.061,
+       "y": 0.533,
+       "w": 0.743,
+       "h": 0.041,
+       "say": "그래도 수학을 배우는 이유: 기울기 소실과 폭발 디버깅, 직접 만드는 층, 논문 읽기."
+      },
+      {
+       "x": 0.079,
+       "y": 0.581,
+       "w": 0.35,
+       "h": 0.034,
+       "say": "도구는 방법을 숨길 뿐 책임은 숨기지 않아요."
+      }
+     ]
+    },
+    {
+     "kind": "formula",
+     "head": "수치 기울기 (중앙 차분)",
+     "tex": "f'(\\theta) \\approx \\frac{f(\\theta + h) - f(\\theta - h)}{2h}, \\quad h \\approx 10^{-4}",
+     "parts": [
+      {
+       "sym": "f(\\theta + h)",
+       "say": "θ 를 아주 조금 올려서 계산한 값"
+      },
+      {
+       "sym": "f(\\theta - h)",
+       "say": "θ 를 아주 조금 내려서 계산한 값"
+      },
+      {
+       "sym": "2h",
+       "say": "올린 곳과 내린 곳 사이 거리"
+      },
+      {
+       "sym": "h \\approx 10^{-4}",
+       "say": "0.0001. 은닉층 h 와는 다른, 아주 작은 수예요"
+      }
+     ],
+     "whole": "양쪽으로 살짝 밀어 본 차이를 거리로 나누면 기울기의 어림값이에요."
+    },
+    {
+     "kind": "steps",
+     "head": "수치 기울기로 검사하기 (실습 N3L p.4 의 함수)",
+     "steps": [
+      "f(θ) = θ³ + 2θ, θ = 2, h = 0.0001",
+      "손 공식: f'(θ) = 3θ² + 2 = 3 × 4 + 2 = 14",
+      "f(2.0001) = 12.001400060001, f(1.9999) = 11.998600059999",
+      "차이 0.002800000002 를 2h = 0.0002 로 나누면 약 14.00000001",
+      "14 와 거의 같아요 → 손 공식이 맞아요 (맞음)"
+     ],
+     "answer": "수치 기울기 ≈ 14.00000001, 손 공식 14. 기울기 검사 통과."
+    },
+    {
+     "kind": "prof",
+     "when": "3주차 월요일 2교시",
+     "lines": [
+      "현실에서는 PyTorch 가 이걸 대신해요. 모든 연산이 자기만의 로컬 그레디언트를 갖고 있어요.",
+      "loss.backward() 한 방이면 역전파 그레디언트를 다 계산해 주고, 옵티마이저 스텝이 알파만큼 업데이트해요.",
+      "그래서 여러분이 굳이 수학적으로 미분을 다 계산할 필요는 없어요."
+     ]
+    },
+    {
+     "kind": "say",
+     "lines": [
+      "실습 N3L p.4 에서 f(x) = x³ + 2x 를 x.grad 로 미분해 손 공식 14 와 비교하고,",
+      "N3L p.5~6 에서 두 층 신경망의 dW, db, dx 를 손 공식과 autograd 로 비교해요. 과제 2 Part A 와 같은 작업이에요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "f(θ) = θ², θ = 3, h = 0.1 로 중앙 차분 수치 기울기를 구하면?",
+     "choices": [
+      "5.9",
+      "6",
+      "6.1"
+     ],
+     "a": 1,
+     "why": "(3.1² - 2.9²) / 0.2 = (9.61 - 8.41) / 0.2 = 1.2 / 0.2 = 6 이에요."
+    },
+    {
+     "kind": "check",
+     "q": "loss.backward() 가 하는 일은?",
+     "choices": [
+      "파라미터를 업데이트한다",
+      "계산 그래프를 거꾸로 걸으며 모든 기울기를 구해 .grad 에 채운다",
+      "순전파를 다시 한다"
+     ],
+     "a": 1,
+     "why": "업데이트는 옵티마이저 스텝이 해요. backward 는 기울기 계산까지예요."
+    },
+    {
+     "kind": "english",
+     "head": "답안 문장",
+     "en": "**자동 미분(Automatic Differentiation (Autodiff))**는 국소 기울기로 역전파를 자동 수행하고, **기울기 검사(Gradient Checking)**는 수치 기울기와 비교해 손 유도를 검증한다.",
+     "ko": "수치 기울기는 느려서 학습이 아니라 검사에만 써요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "수치 기울기 식의 h 는 아주 작은 수(0.0001)예요. 은닉층 값 h 와 글자만 같아요.",
+      "backward() 는 기울기만 구하고, 파라미터를 바꾸는 건 옵티마이저 스텝이에요.",
+      "뒤의 RNN 에서 **기울기 소실(Vanishing Gradient)**과 **기울기 폭발(Exploding Gradient)**을 다시 만나요. 그때 이 쪽의 '수학을 배우는 이유' 가 쓰여요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 33,
+   "title": "10분 쉬는 시간",
+   "terms": [
+    "Language Model (LM)",
+    "Next Token Prediction"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "반환점이에요. 지금까지 신경망이 어떻게 계산하고(1부), 어떻게 배우는지(2부) 봤어요.",
+      "다음은 **언어 모델(Language Model (LM))**, 앞 단어로 **다음 토큰 예측(Next Token Prediction)**을 하는 과제예요. 이것이 ChatGPT 까지 이어져요.",
+      "글을 토큰으로 자르고, 토큰을 벡터로 바꾸고, 벡터로 다음 토큰을 맞혀요.",
+      "실제 수업에서는 이 쪽에서 쉬지 않고 바로 이어서 진행했어요."
+     ]
+    },
+    {
+     "kind": "say",
+     "lines": [
+      "**언어 모델(Language Model (LM))**은 휴대폰 자판의 다음 단어 추천과 같아요.",
+      "교수님은 **다음 토큰 예측(Next Token Prediction)**이 거의 모든 걸 결정한다고, GPT 도 결국 이것이라고 했어요."
+     ]
+    }
+   ],
+   "pass2": [],
+   "pass3": [],
+   "pass4": []
+  }
+ ]
+}

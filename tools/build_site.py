@@ -43,7 +43,8 @@ LOGOS = {
 DEFAULT_LOGO = _logo('<path d="M4 5.5h6.5a2 2 0 012 2V20a2 2 0 00-2-2H4z"/><path d="M20 5.5h-5.5a2 2 0 00-2 2V20a2 2 0 012-2H20z"/>')
 
 LAZY_PAGES = {"note": "정리노트", "time": "연표"}   # pages/<이름>.html -> data/page_<이름>.js, 메뉴 이름
-META_KEYS = ("name", "brand", "key", "eyebrow", "intro", "pathLabel", "examLabel", "examsDesc", "tipsDesc", "mockDesc", "bgLabel", "sentLabel", "mock", "pet")
+META_KEYS = ("name", "brand", "key", "eyebrow", "intro", "pathLabel", "examLabel", "examsDesc", "tipsDesc", "mockDesc", "bgLabel", "sentLabel", "mock", "pet",
+             "examsNav", "tipsNav")   # examsNav, tipsNav: pages/exams.html, tips.html 메뉴 이름 (없으면 "기출 분석", "답안 팁". 페이지 파일이 없으면 메뉴도 없음)
 
 
 def js_assign(name, key, obj):
@@ -115,7 +116,9 @@ def pack_recall(src, out, name, deck):
         return None
     r = load(src)
     pages = [[m[:6] for m in pg["m"]] for pg in r["pages"]]
-    n = [sum(1 for pg in pages for m in pg if m[4] <= lv) for lv in (1, 2, 3)]
+    # 4단계(다 가리기) 블록: 데이터에 4단계 칸(모든 글 줄)이 있으면 단계 수가 4가 된다. 엔진은 n 의 길이로 단계 수를 안다
+    top = max([3] + [m[4] for pg in pages for m in pg])
+    n = [sum(1 for pg in pages for m in pg if m[4] <= lv) for lv in range(1, top + 1)]
     secs = sum(len(c["items"]) for c in r.get("sections", []))
     write(out, js_assign(name, deck, {"deck": deck, "ar": r.get("ar", 1.414), "pages": pages, "sections": r.get("sections", [])}))
     print(f"  가리고 설명하기 {deck}: 칸 {n}, 소단원 {secs}")
@@ -365,9 +368,9 @@ def main(slug, skip, home=True):
     if any(str(t.get("say") or "").strip() for lst in terms.values() for t in lst):
         nav.append('<a class="tab" data-nav="game" href="#/game">용어 게임</a>')
     if "exams" in pages:
-        nav.append('<a class="tab" data-nav="exams" href="#/exams">기출 분석</a>')
+        nav.append(f'<a class="tab" data-nav="exams" href="#/exams">{html.escape(cfg.get("examsNav") or "기출 분석")}</a>')
     if "tips" in pages:
-        nav.append('<a class="tab" data-nav="tips" href="#/tips">답안 팁</a>')
+        nav.append(f'<a class="tab" data-nav="tips" href="#/tips">{html.escape(cfg.get("tipsNav") or "답안 팁")}</a>')
     nav.append('<a class="tab" data-nav="set" href="#/settings">설정</a>')
     name = cfg["name"]
     page = ((ENGINE / "index.html").read_text(encoding="utf-8")

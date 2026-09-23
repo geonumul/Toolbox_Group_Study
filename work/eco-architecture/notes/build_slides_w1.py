@@ -1417,7 +1417,7 @@ def main():
         for s in u["slides"]:
             if s["kind"] == "figure":
                 assert 'rx="' not in s["svg"] or all(int(v) <= 3 for v in re.findall(r'rx="(\d+)"', s["svg"]))
-    d = {"week": "1", "title": "1주차. 친환경건축의 개념 및 정의", "units": UNITS}
+    d = {"week": "1", "title": "1-2주차. 1강 친환경건축의 개념 및 정의", "units": UNITS}
     raw = json.dumps(d, ensure_ascii=False, indent=1)
     for ch in ("—", "–", "·", "・"):
         assert ch not in raw, repr(ch)

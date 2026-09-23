@@ -431,6 +431,9 @@ img,svg,video,canvas{max-width:100%}
 .rcm::after{content:"";position:absolute;inset:-5px}
 .rcm.open{background:transparent;border-color:var(--amber);border-style:dashed}
 .rcm:focus-visible{outline:3px solid var(--accent);outline-offset:1px;z-index:1}
+/* 4단계(다 가리기) 블록: 줄 칸이 촘촘해서 누르는 범위를 칸 크기로 줄이고 모서리를 덜 둥글게 */
+.rcm.l4{border-radius:3px;border-width:1px}
+.rcm.l4::after{inset:-1px}
 .rcbar{display:flex;align-items:center;justify-content:space-between;gap:8px 12px;flex-wrap:wrap;width:100%;max-width:calc(64vh * var(--ar, 1.414));line-height:1.5}
 .rcbar .rccap{font-size:14px;color:var(--sub);word-break:keep-all}
 .rcbar .rccap b{color:var(--ink)}

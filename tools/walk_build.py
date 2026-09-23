@@ -101,7 +101,8 @@ def build(slug, deck, pdf, sheet_dir=None):
             print(f"  {deck}: OCR 캐시가 없어요. 먼저 python tools/recall_build.py {slug} {deck}")
             return
         raw = [RB.chars_from_ocr(pg) for pg in RB.ocr_pages(pdf, cache)]
-    lines = [RB.classify(r, "a4") for r in raw]
+    prof = RB.get_profile(slug)   # 쪽 모양(a4, slide)은 recall 프로필을 따른다 (없으면 a4)
+    lines = [RB.classify(r, RB.layout_of(prof, deck) if prof else "a4") for r in raw]
     imgdir = ROOT / "subjects" / slug / "img" / deck / "walk"
     imgdir.mkdir(parents=True, exist_ok=True)
     for old in imgdir.glob("*.jpg"):
