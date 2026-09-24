@@ -2238,4 +2238,34 @@
      "items": [
       "**기계 번역(Machine Translation (MT))** 을 풀려고 **시퀀스-투-시퀀스 모델(Sequence-to-Sequence Model)** 을 만들었고, 거기서 **정보 병목(Information Bottleneck)** 이 나왔어요.",
       "학습은 **교사 강요(Teacher Forcing)**, 그 부작용은 **노출 편향(Exposure Bias)** 였어요.",
-      "생성은 **탐욕적 디코딩(Greedy Decoding)** 과 **빔 서치(Beam Search)**, 그리고 **길이 정규�
+      "생성은 **탐욕적 디코딩(Greedy Decoding)** 과 **빔 서치(Beam Search)**, 그리고 **길이 정규화(Length Normalization)** 이었어요.",
+      "**어텐션(Attention)** 은 점수, 소프트맥스, 가중합, 예측의 네 단계였어요.",
+      "점수 함수는 내적, 이중선형, 그리고 작은 **MLP(다층 퍼셉트론)** 를 쓰는 덧셈형이 있었어요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "전반전 용어 다시 부르기",
+     "items": [
+      "**기계 번역(Machine Translation (MT))**, **교사 강요(Teacher Forcing)**, **노출 편향(Exposure Bias)** 를 한 번씩 소리 내어 읽어 봐요.",
+      "**탐욕적 디코딩(Greedy Decoding)**, **빔 서치(Beam Search)**, **MLP(다층 퍼셉트론)** 도 한 번씩 읽어 봐요.",
+      "여섯 낱말을 말할 수 있으면 Part 1 과 Part 2 는 끝난 거예요.",
+      "후반전에는 여기에 쿼리, 키, 밸류가 더해져요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "슬라이드 영어와 우리말 뜻",
+     "items": [
+      "half-time: seq2seq, its bottleneck, and attention = 전반전은 seq2seq, 그 병목, 그리고 어텐션",
+      "Coming up: self-attention = 다음은 셀프 어텐션",
+      "the same idea, but the sequence attends to itself = 같은 생각인데 시퀀스가 자기 자신에 주목한다",
+      "and the RNN disappears entirely = 그리고 RNN 이 완전히 사라진다"
+     ]
+    }
+   ],
+   "pass3": [],
+   "pass4": []
+  }
+ ]
+}

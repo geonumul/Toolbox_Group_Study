@@ -1,0 +1,42 @@
+<div class="whead" style="padding-top:22px"><div class="eyebrow">직접 해보기</div><h1>Colab 연습 노트북</h1><p>교수님 실습 노트북(실습 탭에서 한 줄씩 읽기)을 본 다음, 빈칸을 채우며 손으로 계산하는 연습이에요. 빈칸 아래 확인 셀을 실행하면 맞았는지 바로 알려 줘요. GPU 도, 인터넷 다운로드도 필요 없어요.</p></div>
+
+<div class="card" style="margin-top:14px">
+<h3 style="margin-top:0">쓰는 법</h3>
+<ul class="mnem">
+<li><b>1</b> 아래에서 "Colab 에서 열기" 를 눌러요. 그다음 상단의 "드라이브에 사본 저장" 을 눌러야 내가 쓴 코드가 남아요</li>
+<li><b>2</b> 위에서부터 차례로 Shift+Enter 로 실행해요. 맨 위 준비 칸부터 꼭 실행해요</li>
+<li><b>3</b> <b># TODO</b> 가 붙은 줄의 <b>None</b> 을 알맞은 코드로 바꿔요</li>
+<li><b>4</b> 바로 아래 <b>확인 셀</b> 을 실행해요. 맞으면 "정답!" 이 뜨고, 틀리면 빨간 AssertionError 와 함께 힌트가 나와요</li>
+<li><b>5</b> 막히면 맨 아래 <b>정답 코드</b> 를 봐요. 먼저 스스로 10분은 붙들어 봐요</li>
+</ul>
+<p class="tipline">4주차 노트북부터는 문제마다 <b>생각 순서</b> 가 먼저 나와요. 코드를 치기 전에 그 순서를 말로 한 번 읊고 시작해요. 시험장에서도 이 순서가 답안이 돼요.</p>
+</div>
+
+<div class="card">
+<h3 style="margin-top:0">2주차: 토큰화와 단어 벡터 (9문제)</h3>
+<p>토큰 자르기, BPE 쌍 세기와 병합, fertility, 내적과 코사인 유사도, 소프트맥스, skip-gram 쌍 만들기, 단어 유추. 강의 N2 와 실습 N2L 에 맞춰 놓았어요.</p>
+<p><a href="https://colab.research.google.com/github/geonumul/Toolbox_Group_Study/blob/main/subjects/nlp/practice/nlp_w2_practice.ipynb" target="_blank" rel="noopener">Colab 에서 열기</a> &nbsp; <a href="practice/nlp_w2_practice.ipynb" download>파일 받기</a></p>
+</div>
+
+<div class="card">
+<h3 style="margin-top:0">3주차: 신경망과 언어 모델 (10문제)</h3>
+<p>뉴런 한 개, 선형 층 두 개를 합치면 한 층이 되는 것, shape 먼저 예측하기, 손 미분과 autograd 비교, 연쇄 법칙, 계산 그래프 노드 직관(+, max, 곱하기), 바이그램 확률, 퍼플렉서티, RNN 한 걸음, 기울기 소실과 클리핑. 강의 N3 와 실습 N3L 에 맞춰 놓았어요.</p>
+<p><a href="https://colab.research.google.com/github/geonumul/Toolbox_Group_Study/blob/main/subjects/nlp/practice/nlp_w3_practice.ipynb" target="_blank" rel="noopener">Colab 에서 열기</a> &nbsp; <a href="practice/nlp_w3_practice.ipynb" download>파일 받기</a></p>
+</div>
+
+<div class="card">
+<h3 style="margin-top:0">4주차: 어텐션과 트랜스포머 (10문제)</h3>
+<p>내적으로 어텐션 점수 만들기, 소프트맥스 직접 구현, 가중합으로 문맥 벡터, 루트 d_k 로 나누기 전후 비교, 한 입력에서 Q/K/V 만들기, 행렬 한 번에 셀프 어텐션, 인과 마스킹, 멀티 헤드로 나누고 다시 잇기, 사인 코사인 위치 인코딩, 층 정규화와 Pre-LN 블록. 강의 N4 와 실습 N4L 에 맞춰 놓았어요.</p>
+<p>문제마다 <b>생각 순서</b> 가 먼저 나와요. 예를 들어 6번은 "모양을 종이에 적기 → 루트 d_k 로 나누기 → 줄마다 소프트맥스 → V 곱하기" 예요.</p>
+<p><a href="https://colab.research.google.com/github/geonumul/Toolbox_Group_Study/blob/main/subjects/nlp/practice/nlp_w4_practice.ipynb" target="_blank" rel="noopener">Colab 에서 열기</a> &nbsp; <a href="practice/nlp_w4_practice.ipynb" download>파일 받기</a></p>
+</div>
+
+<div class="card">
+<h3 style="margin-top:0">교수님 실습 노트북과 무엇이 다른가요</h3>
+<ul class="mnem">
+<li><b>교수님 실습</b> 사이버캠퍼스에 올라온 Lab 0-1, Lab 2, Lab 3. 사이트의 실습 탭에서 코드를 한 줄도 빼지 않고 풀어 읽어요. <b>읽는</b> 연습이에요</li>
+<li><b>여기 연습 노트북</b> 같은 개념을 아주 작은 숫자로 줄여 놓고 빈칸을 직접 채워요. <b>쓰는</b> 연습이에요</li>
+<li><b>순서</b> 회독 → 정리 슬라이드 → 실습 탭에서 코드 읽기 → 여기서 빈칸 채우기 → 문제은행. 이 순서가 가장 덜 힘들어요</li>
+<li><b>교수님 말</b> Lab 3 은 수업에서 시간이 모자라 건너뛰었어요. "풀 코드 아웃풋까지 찍어서 올려놨으니 복습을 나중에 해보시면 좋겠다"</li>
+</ul>
+</div>

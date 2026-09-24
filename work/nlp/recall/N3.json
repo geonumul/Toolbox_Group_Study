@@ -37,6 +37,54 @@
 0.0263,
 2,
 "Artificial Intelligence"
+],
+[
+0.0569,
+0.1691,
+0.5374,
+0.0729,
+4,
+"Natural Language Processing"
+],
+[
+0.0572,
+0.2622,
+0.3344,
+0.0432,
+4,
+"Week 3. Neural NLP Foundations"
+],
+[
+0.0572,
+0.3238,
+0.1277,
+0.0294,
+4,
+"Fall 2026 . 06488-01"
+],
+[
+0.0572,
+0.6234,
+0.1168,
+0.0432,
+4,
+"Yongil Kim"
+],
+[
+0.0572,
+0.6835,
+0.3416,
+0.0301,
+4,
+"Assistant Professor, Department of Artificial Intelligence"
+],
+[
+0.5631,
+0.8734,
+0.4008,
+0.0283,
+4,
+"Department of Artificial Intelligence, The Catholic University of Korea"
 ]
 ]
 },
@@ -50,6 +98,38 @@
 0.0263,
 2,
 "Artificial Intelligence"
+],
+[
+0.0569,
+0.1691,
+0.1811,
+0.0729,
+4,
+"Reminder"
+],
+[
+0.0572,
+0.4224,
+0.8393,
+0.0506,
+4,
+"1. Please do not distribute this material because it contains copyright."
+],
+[
+0.0572,
+0.5824,
+0.8394,
+0.0506,
+4,
+"2. If there are video or audio problems, please let me know right away."
+],
+[
+0.5631,
+0.8734,
+0.4008,
+0.0283,
+4,
+"Department of Artificial Intelligence, The Catholic University of Korea"
 ]
 ]
 },
@@ -79,6 +159,86 @@
 0.044,
 2,
 "n-gram"
+],
+[
+0.0569,
+0.079,
+0.1342,
+0.058,
+4,
+"Contents"
+],
+[
+0.1269,
+0.2611,
+0.0228,
+0.0526,
+4,
+"1"
+],
+[
+0.1894,
+0.2631,
+0.3017,
+0.046,
+4,
+"Neural Network Foundations"
+],
+[
+0.1269,
+0.4386,
+0.0228,
+0.0526,
+4,
+"2"
+],
+[
+0.1894,
+0.4407,
+0.426,
+0.046,
+4,
+"Backpropagation - How Networks Learn"
+],
+[
+0.1269,
+0.6163,
+0.0228,
+0.0526,
+4,
+"3"
+],
+[
+0.1842,
+0.619,
+0.392,
+0.046,
+4,
+"Language Modeling - the n-gram Era"
+],
+[
+0.1269,
+0.7938,
+0.0228,
+0.0526,
+4,
+"4"
+],
+[
+0.1894,
+0.796,
+0.3438,
+0.046,
+4,
+"Neural Language Models & RNNs"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"01 / 55"
 ]
 ]
 },
@@ -188,6 +348,70 @@
 0.0324,
 3,
 "15%"
+],
+[
+0.0569,
+0.079,
+0.3516,
+0.058,
+4,
+"Recap | Last Week & Today"
+],
+[
+0.0575,
+0.1973,
+0.7939,
+0.0391,
+4,
+"• Last week: subword tokenization (BPE) . word2vec - meaning as vectors, learned by predicting neighbors"
+],
+[
+0.0575,
+0.2583,
+0.7215,
+0.0391,
+4,
+"• The pipeline so far: text → tokens → vectors → ??? - something has to consume those vectors"
+],
+[
+0.0575,
+0.3195,
+0.8794,
+0.0391,
+4,
+"• Today: the machine that eats vectors - neural networks - and the task that will carry us to GPT: language modeling"
+],
+[
+0.0575,
+0.3806,
+0.449,
+0.0391,
+4,
+"• New format from today: 2h theory (with a break) + 1h lab"
+],
+[
+0.0575,
+0.4419,
+0.7817,
+0.0391,
+4,
+"• Also today: Assignment 2 goes out (15% - the big one; word2vec gradients + implementation, due W7)"
+],
+[
+0.259,
+0.8667,
+0.486,
+0.031,
+4,
+"Two questions today: how does a network compute? . how does it learn?"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"02 / 55"
 ]
 ]
 },
@@ -217,6 +441,38 @@
 0.0306,
 3,
 "deep"
+],
+[
+0.4847,
+0.3026,
+0.0311,
+0.0803,
+4,
+"1"
+],
+[
+0.2126,
+0.4604,
+0.5748,
+0.0803,
+4,
+"Neural Network Foundations"
+],
+[
+0.3657,
+0.5912,
+0.2683,
+0.0326,
+4,
+"from a single neuron to deep networks"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"03 / 55"
 ]
 ]
 },
@@ -286,6 +542,54 @@
 0.029,
 3,
 "out"
+],
+[
+0.0569,
+0.079,
+0.6174,
+0.058,
+4,
+"1. Neural Networks | A Task to Hold Onto - NER"
+],
+[
+0.0575,
+0.1972,
+0.6384,
+0.037,
+4,
+"• We need a concrete task while we build the machinery - named entity recognition (NER)"
+],
+[
+0.095,
+0.2403,
+0.428,
+0.0333,
+4,
+"- find and classify names in text: persons, organizations, locations, …"
+],
+[
+0.0575,
+0.2894,
+0.4573,
+0.037,
+4,
+"• Simple approach: classify each word using its context window:"
+],
+[
+0.2551,
+0.8667,
+0.4939,
+0.031,
+4,
+"Concatenated word vectors in, a decision out - now we need the classifier"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"04 / 55"
 ]
 ]
 },
@@ -387,6 +691,54 @@
 0.029,
 3,
 "LINEAR"
+],
+[
+0.0569,
+0.079,
+0.6719,
+0.058,
+4,
+"1. Neural Networks | Classification, the Standard Setup"
+],
+[
+0.0575,
+0.1972,
+0.5433,
+0.0407,
+4,
+"• Supervised learning: a training set of pairs {\u0000\u0000\u0000\u0000\u0000\u0000} - inputs and true labels"
+],
+[
+0.0575,
+0.2502,
+0.5344,
+0.037,
+4,
+"• The softmax classifier - scores for every class, squashed into probabilities:"
+],
+[
+0.0575,
+0.5612,
+0.6392,
+0.037,
+4,
+"• Train by making the true class likely - cross-entropy loss (softmax + NLL, week 2's friend):"
+],
+[
+0.3159,
+0.8667,
+0.3725,
+0.031,
+4,
+"So far this is just logistic regression - a LINEAR machine"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"05 / 55"
 ]
 ]
 },
@@ -432,6 +784,38 @@
 0.029,
 3,
 "sum"
+],
+[
+0.0569,
+0.079,
+0.5167,
+0.058,
+4,
+"1. Neural Networks | The Limit of Linear"
+],
+[
+0.0575,
+0.1972,
+0.5421,
+0.037,
+4,
+"• A linear classifier can only draw a straight line (hyperplane) between classes"
+],
+[
+0.2198,
+0.8667,
+0.5647,
+0.031,
+4,
+"Language is full of interactions like this - “not bad” is not the sum of “not” and “bad”"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"06 / 55"
 ]
 ]
 },
@@ -517,6 +901,46 @@
 0.029,
 3,
 "learned"
+],
+[
+0.0569,
+0.079,
+0.4479,
+0.058,
+4,
+"1. Neural Networks | The Neuron"
+],
+[
+0.0575,
+0.1972,
+0.4617,
+0.037,
+4,
+"• A neuron = weighted sum + bias, passed through a nonlinearity"
+],
+[
+0.0575,
+0.748,
+0.549,
+0.037,
+4,
+"• loosely inspired by biology - but really just a tiny, learnable feature detector"
+],
+[
+0.2261,
+0.8667,
+0.5519,
+0.031,
+4,
+"One neuron = one learned pattern detector - stack many and things get interesting"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"07 / 55"
 ]
 ]
 },
@@ -618,6 +1042,54 @@
 0.029,
 3,
 "probability"
+],
+[
+0.0569,
+0.079,
+0.597,
+0.058,
+4,
+"1. Neural Networks | Nonlinearities - the Menu"
+],
+[
+0.0575,
+0.1972,
+0.5129,
+0.037,
+4,
+"• sigmoid/tanh: classic, squashing - still used for probabilities and gates"
+],
+[
+0.0575,
+0.2465,
+0.4796,
+0.037,
+4,
+"• ReLU: max(0, x) - cheap, trains fast, the deep-learning workhorse"
+],
+[
+0.0575,
+0.2961,
+0.4815,
+0.037,
+4,
+"• GELU: smooth ReLU - what Transformers use (see you in week 4)"
+],
+[
+0.2296,
+0.8667,
+0.5447,
+0.031,
+4,
+"Default advice today: ReLU/GELU inside, sigmoid only when you need a probability"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"08 / 55"
 ]
 ]
 },
@@ -687,6 +1159,38 @@
 0.029,
 3,
 "one"
+],
+[
+0.0569,
+0.079,
+0.6579,
+0.058,
+4,
+"1. Neural Networks | Why Nonlinearity Is Not Optional"
+],
+[
+0.2064,
+0.8234,
+0.5916,
+0.031,
+4,
+"Universal approximation Theorem : enough hidden units can fit “any” reasonable funciton"
+],
+[
+0.2789,
+0.8667,
+0.4463,
+0.031,
+4,
+"No f, no deep learning - the whole tower collapses into one matrix"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"09 / 55"
 ]
 ]
 },
@@ -748,6 +1252,46 @@
 0.029,
 3,
 "vectors"
+],
+[
+0.0569,
+0.079,
+0.6048,
+0.058,
+4,
+"1. Neural Networks | The Multi-Layer Perceptron"
+],
+[
+0.0575,
+0.1947,
+0.3231,
+0.0437,
+4,
+"• Stack neuron layers: \u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000"
+],
+[
+0.2449,
+0.8667,
+0.5144,
+0.031,
+4,
+"Our NER window classifier = word vectors → MLP → P(location) - that simple"
+],
+[
+0.3089,
+0.9001,
+0.3864,
+0.031,
+4,
+"Then, How can we determine W & b? - Training network!"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"10 / 55"
 ]
 ]
 },
@@ -793,6 +1337,38 @@
 0.029,
 3,
 "trigram"
+],
+[
+0.0569,
+0.079,
+0.6252,
+0.058,
+4,
+"1. Neural Networks | CNNs for Text (1) - the Idea"
+],
+[
+0.0554,
+0.1948,
+0.5485,
+0.037,
+4,
+"• A convolution filter = a small pattern detector that slides along the sentence"
+],
+[
+0.2425,
+0.8667,
+0.5191,
+0.031,
+4,
+"A filter of width 3 is a learned trigram detector - “was really great” lights it up"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"11 / 55"
 ]
 ]
 },
@@ -894,6 +1470,70 @@
 0.0324,
 3,
 "part"
+],
+[
+0.0569,
+0.079,
+0.6837,
+0.058,
+4,
+"1. Neural Networks | CNNs for Text (2) - Why & Where"
+],
+[
+0.0575,
+0.508,
+0.637,
+0.0391,
+4,
+"• Max-pooling: keep the strongest response - “did this pattern appear ANYWHERE?”"
+],
+[
+0.0575,
+0.5636,
+0.6306,
+0.0391,
+4,
+"• Many filters of widths 2-5 → a bank of learned n-gram detectors → classifier on top"
+],
+[
+0.0575,
+0.6191,
+0.6529,
+0.0391,
+4,
+"• Strengths: fast (all windows in parallel) . position-independent . great for classification"
+],
+[
+0.0575,
+0.6747,
+0.7022,
+0.0391,
+4,
+"• Limits: local view only - no long-range order; for sequences we will want recurrence (part 4)"
+],
+[
+0.0575,
+0.7305,
+0.7869,
+0.0391,
+4,
+"• used in production for years for sentiment & topic classification; convolution returns in week 4's story too"
+],
+[
+0.2539,
+0.8667,
+0.4965,
+0.031,
+4,
+"CNN = parallel n-gram detectors . RNN (coming up) = a reader with memory"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"12 / 55"
 ]
 ]
 },
@@ -995,6 +1635,70 @@
 0.029,
 3,
 "part"
+],
+[
+0.0569,
+0.079,
+0.5792,
+0.058,
+4,
+"1. Neural Networks | Check Yourself - Part 1"
+],
+[
+0.0575,
+0.1973,
+0.6554,
+0.0391,
+4,
+"• Q1. I stack 10 linear layers with no activation in between. How expressive is the result?"
+],
+[
+0.0575,
+0.2588,
+0.8063,
+0.0445,
+4,
+"• Q2. My hidden layer has 300 units and the input window is 5 words × 100 dims. What is the shape of \u0000\u0000 ?"
+],
+[
+0.0575,
+0.3298,
+0.5918,
+0.0391,
+4,
+"• Q3. A width-3 CNN filter fires strongly. What kind of pattern did it just detect?"
+],
+[
+0.0575,
+0.3946,
+0.6163,
+0.0391,
+4,
+"• Q4. Why does max-pooling make the CNN insensitive to WHERE a phrase occurs?"
+],
+[
+0.0575,
+0.4651,
+0.4317,
+0.0391,
+4,
+"• think for 60 seconds, then talk to the person next to you"
+],
+[
+0.3386,
+0.8667,
+0.3272,
+0.031,
+4,
+"If Q1 and Q2 feel instant, you are ready for part 2"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"13 / 55"
 ]
 ]
 },
@@ -1008,6 +1712,38 @@
 0.0783,
 1,
 "Backpropagation"
+],
+[
+0.4847,
+0.3026,
+0.0311,
+0.0803,
+4,
+"2"
+],
+[
+0.3261,
+0.4604,
+0.3477,
+0.0803,
+4,
+"Backpropagation"
+],
+[
+0.3573,
+0.5912,
+0.285,
+0.0326,
+4,
+"how the gradients actually get computed"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"14 / 55"
 ]
 ]
 },
@@ -1109,6 +1845,70 @@
 0.029,
 3,
 "new"
+],
+[
+0.0569,
+0.079,
+0.6905,
+0.058,
+4,
+"2. Backpropagation | The Plan - SGD Needs Gradients"
+],
+[
+0.0575,
+0.1972,
+0.3678,
+0.037,
+4,
+"• From week 2: learning = walk downhill on the loss"
+],
+[
+0.0575,
+0.4146,
+0.6329,
+0.0391,
+4,
+"• θ now holds EVERYTHING: all the \u0000's and \u0000’s - and the word vectors themselves"
+],
+[
+0.095,
+0.4605,
+0.5487,
+0.0351,
+4,
+"- deep learning fine-tunes its own input representation - that's the “deep” bargain"
+],
+[
+0.0575,
+0.5118,
+0.5507,
+0.0391,
+4,
+"• The missing piece: how do we COMPUTE \u0000J for a multi-layer network?"
+],
+[
+0.0575,
+0.5638,
+0.6049,
+0.0391,
+4,
+"• answer in two acts: matrix calculus (by hand) → backpropagation (by algorithm)"
+],
+[
+0.2793,
+0.8667,
+0.4457,
+0.031,
+4,
+"Same SGD as word2vec - the new problem is computing the arrow"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"15 / 55"
 ]
 ]
 },
@@ -1170,6 +1970,46 @@
 0.029,
 3,
 "all"
+],
+[
+0.0569,
+0.079,
+0.6598,
+0.058,
+4,
+"2. Backpropagation | Derivatives, One Step at a Time"
+],
+[
+0.0575,
+0.1972,
+0.5914,
+0.037,
+4,
+"• 1 input, 1 output: the derivative is the slope - “nudge x, how much does f move?”"
+],
+[
+0.0575,
+0.6946,
+0.4921,
+0.037,
+4,
+"• Everything that follows is this idea, scaled up to vectors and matrices"
+],
+[
+0.2837,
+0.8667,
+0.4369,
+0.031,
+4,
+"Hold onto the nudge intuition - it survives all the matrix notation"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"16 / 55"
 ]
 ]
 },
@@ -1271,6 +2111,54 @@
 0.029,
 3,
 "vector"
+],
+[
+0.0569,
+0.079,
+0.5887,
+0.058,
+4,
+"2. Backpropagation | Gradients and Jacobians"
+],
+[
+0.0575,
+0.1972,
+0.4413,
+0.037,
+4,
+"• n inputs, 1 output: gradient - a vector of partial derivatives"
+],
+[
+0.0575,
+0.2451,
+0.6661,
+0.0421,
+4,
+"• n inputs, m outputs: Jacobian - an m×n matrix, entry (i, j) = how output i responds to input j"
+],
+[
+0.0575,
+0.5879,
+0.4904,
+0.037,
+4,
+"• A neural layer maps vectors to vectors → its derivative IS a Jacobian"
+],
+[
+0.2461,
+0.8667,
+0.5119,
+0.031,
+4,
+"One number → gradient vector → Jacobian matrix: the same idea, growing up"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"17 / 55"
 ]
 ]
 },
@@ -1364,6 +2252,54 @@
 0.0324,
 3,
 "ALL"
+],
+[
+0.0569,
+0.079,
+0.6155,
+0.058,
+4,
+"2. Backpropagation | The Chain Rule, Vectorized"
+],
+[
+0.0575,
+0.1972,
+0.5718,
+0.037,
+4,
+"• One-variable chain rule: multiply derivatives. Vector version: multiply Jacobians"
+],
+[
+0.0554,
+0.508,
+0.6886,
+0.0391,
+4,
+"• Composition of layers \u0000 product of Jacobian matrices - order matters, shapes must chain"
+],
+[
+0.0554,
+0.5636,
+0.4349,
+0.0391,
+4,
+"• this single rule + bookkeeping = ALL of backpropagation"
+],
+[
+0.2797,
+0.8667,
+0.4447,
+0.031,
+4,
+"If you can multiply matrices, you can differentiate a neural network"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"18 / 55"
 ]
 ]
 },
@@ -1377,6 +2313,38 @@
 0.056,
 2,
 "Backpropagation"
+],
+[
+0.0569,
+0.079,
+0.586,
+0.058,
+4,
+"2. Backpropagation | A Pocketful of Jacobians"
+],
+[
+0.0575,
+0.432,
+0.4544,
+0.037,
+4,
+"• Four building blocks cover almost every network you will meet:"
+],
+[
+0.2886,
+0.8829,
+0.427,
+0.031,
+4,
+"Complex nets are LEGO - and these are the four standard bricks"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"19 / 55"
 ]
 ]
 },
@@ -1486,6 +2454,62 @@
 0.0324,
 3,
 "loss"
+],
+[
+0.0569,
+0.079,
+0.6052,
+0.058,
+4,
+"2. Backpropagation | Worked Example - Setup"
+],
+[
+0.0575,
+0.417,
+0.5552,
+0.037,
+4,
+"• Our NER scorer, stripped to essentials. Break the network into simple pieces:"
+],
+[
+0.0575,
+0.6819,
+0.7031,
+0.0449,
+4,
+"• x: window vector . W, b: hidden layer . f: nonlinearity function . u: score weights . s: the score"
+],
+[
+0.0575,
+0.7438,
+0.5445,
+0.0391,
+4,
+"• Goal: ∂s/∂b, ∂s/∂W, ∂s/∂x - define every variable, track every shape"
+],
+[
+0.0575,
+0.7959,
+0.5407,
+0.0391,
+4,
+"• (we differentiate the score s for simplicity - same story with the loss J)"
+],
+[
+0.2644,
+0.8667,
+0.4754,
+0.031,
+4,
+"Step 1 of every derivation: name the pieces before touching the calculus"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"20 / 55"
 ]
 ]
 },
@@ -1555,6 +2579,62 @@
 0.0324,
 3,
 "two"
+],
+[
+0.0569,
+0.079,
+0.7353,
+0.058,
+4,
+"2. Backpropagation | Worked Example - Chain, then Reuse"
+],
+[
+0.0575,
+0.3235,
+0.4649,
+0.037,
+4,
+"• ∂s/∂b by the chain: three Jacobians from our pocket, multiplied:"
+],
+[
+0.0575,
+0.601,
+0.3931,
+0.0391,
+4,
+"• Now ∂s/∂W - the first two factors are IDENTICAL:"
+],
+[
+0.1325,
+0.6612,
+0.3932,
+0.0344,
+4,
+"-> call them δ (the upstream gradient / error signal)"
+],
+[
+0.0575,
+0.7086,
+0.6152,
+0.0391,
+4,
+"• compute δ once, reuse it everywhere - this reuse is the seed of backpropagation"
+],
+[
+0.2366,
+0.8667,
+0.5309,
+0.031,
+4,
+"δ flows backward, meeting each parameter on the way - remember this picture"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"21 / 55"
 ]
 ]
 },
@@ -1656,6 +2736,62 @@
 0.0306,
 3,
 "vectors"
+],
+[
+0.0569,
+0.079,
+0.7301,
+0.058,
+4,
+"2. Backpropagation | Worked Example - the Third Gradient"
+],
+[
+0.0575,
+0.2775,
+0.5486,
+0.037,
+4,
+"• One gradient left: ∂s/∂x - the gradient that flows into the WORD VECTORS"
+],
+[
+0.0575,
+0.4989,
+0.6296,
+0.0391,
+4,
+"• same δ again, now multiplied by W instead of by x - three gradients, one shared δ"
+],
+[
+0.0575,
+0.5545,
+0.6691,
+0.0391,
+4,
+"• And yes, we then update the embeddings themselves - the word vectors keep learning:"
+],
+[
+0.0575,
+0.7346,
+0.6613,
+0.037,
+4,
+"• this is exactly why deep learning “learns its own features” - week 2's vectors keep improving"
+],
+[
+0.2579,
+0.8667,
+0.4885,
+0.031,
+4,
+"∂s/∂b, ∂s/∂W, ∂s/∂x - the full set, and A2 asks for the word2vec versions"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"22 / 55"
 ]
 ]
 },
@@ -1757,6 +2893,62 @@
 0.0324,
 3,
 "learning"
+],
+[
+0.0569,
+0.079,
+0.7926,
+0.058,
+4,
+"2. Backpropagation | Why the Transposes? - Shapes as a Check"
+],
+[
+0.0575,
+0.1972,
+0.7404,
+0.037,
+4,
+"• Honest answer: because that is what makes the dimensions work out - and that is a feature, not a bug"
+],
+[
+0.0575,
+0.5613,
+0.6832,
+0.0391,
+4,
+"• Use it as a free correctness test: write the shape under every symbol, then check the chain"
+],
+[
+0.095,
+0.6072,
+0.6615,
+0.0351,
+4,
+"- if a product does not conform, you have a transpose in the wrong place - before you ever run code"
+],
+[
+0.0575,
+0.6585,
+0.6848,
+0.0393,
+4,
+"• In code: print(tensor.shape) is the single most useful debugging line in deep learning"
+],
+[
+0.2301,
+0.8667,
+0.5439,
+0.031,
+4,
+"Shape checking catches most gradient bugs in seconds - use it in A2 and in the lab"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"23 / 55"
 ]
 ]
 },
@@ -1866,6 +3058,62 @@
 0.029,
 3,
 "check"
+],
+[
+0.0569,
+0.079,
+0.6727,
+0.058,
+4,
+"2. Backpropagation | Shapes - the Bookkeeping Rule"
+],
+[
+0.0575,
+0.1973,
+0.6153,
+0.0391,
+4,
+"• Convention: the gradient of a parameter has the SAME SHAPE as the parameter"
+],
+[
+0.0736,
+0.3183,
+0.5238,
+0.0445,
+4,
+"W is n×m → ∂J/∂W must be n×m (that's why δᵀxᵀ, an outer product)"
+],
+[
+0.0575,
+0.3831,
+0.5675,
+0.0391,
+4,
+"• Practical recipe: derive in Jacobian form, reshape to convention at the end"
+],
+[
+0.0575,
+0.4424,
+0.5452,
+0.0391,
+4,
+"• Sanity check that catches 90% of mistakes: do the dimensions line up?"
+],
+[
+0.095,
+0.4883,
+0.5058,
+0.0351,
+4,
+"- if the shapes cannot chain, the math is wrong - check before you compute"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"24 / 55"
 ]
 ]
 },
@@ -1935,6 +3183,46 @@
 0.029,
 3,
 "graph"
+],
+[
+0.0569,
+0.079,
+0.5465,
+0.058,
+4,
+"2. Backpropagation | Computation Graphs"
+],
+[
+0.0575,
+0.1972,
+0.6433,
+0.037,
+4,
+"• Software sees your network as a graph: source nodes = inputs, interior nodes = operations"
+],
+[
+0.0575,
+0.7413,
+0.6444,
+0.037,
+4,
+"• Forward pass: visit nodes left to right, compute each value - that's just evaluating the net"
+],
+[
+0.3177,
+0.8667,
+0.3687,
+0.031,
+4,
+"PyTorch builds this graph for you on every forward pass"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"25 / 55"
 ]
 ]
 },
@@ -1996,6 +3284,54 @@
 0.029,
 3,
 "graph"
+],
+[
+0.0569,
+0.079,
+0.5719,
+0.058,
+4,
+"2. Backpropagation | Backprop on the Graph"
+],
+[
+0.0575,
+0.1972,
+0.6044,
+0.037,
+4,
+"• Backward pass: start with 1 at the output, push gradients along the edges in reverse"
+],
+[
+0.2644,
+0.3706,
+0.0943,
+0.0318,
+4,
+"Error signal \u0000"
+],
+[
+0.0575,
+0.7413,
+0.6504,
+0.037,
+4,
+"• each edge multiplies by a local Jacobian - δ appears exactly where we computed it by hand"
+],
+[
+0.3304,
+0.8667,
+0.3434,
+0.031,
+4,
+"Backprop = the chain rule, executed as a graph walk"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"26 / 55"
 ]
 ]
 },
@@ -2097,6 +3433,46 @@
 0.029,
 3,
 "all"
+],
+[
+0.0569,
+0.079,
+0.5414,
+0.058,
+4,
+"2. Backpropagation | One Node at a Time"
+],
+[
+0.0575,
+0.1972,
+0.452,
+0.037,
+4,
+"• Every node only needs to know ONE thing - its local gradient:"
+],
+[
+0.0575,
+0.7162,
+0.861,
+0.0421,
+4,
+"• downstream gradient = upstream gradient (such as error signal)× local gradient - no node ever sees the whole network"
+],
+[
+0.3118,
+0.8667,
+0.3805,
+0.031,
+4,
+"This locality is why autodiff frameworks can be built at all"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"27 / 55"
 ]
 ]
 },
@@ -2174,6 +3550,46 @@
 0.029,
 3,
 "route"
+],
+[
+0.0569,
+0.079,
+0.6221,
+0.058,
+4,
+"2. Backpropagation | Node Intuitions - +, max, ×"
+],
+[
+0.0575,
+0.1972,
+0.5953,
+0.037,
+4,
+"• Three common nodes, three personalities (upstream gradient = 2 in each example):"
+],
+[
+0.0575,
+0.748,
+0.468,
+0.037,
+4,
+"• branches that MERGE forward will SUM their gradients backward"
+],
+[
+0.259,
+0.8667,
+0.4863,
+0.031,
+4,
+"Read a graph like a plumber: distribute, route, switch - and sums at joins"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"28 / 55"
 ]
 ]
 },
@@ -2283,6 +3699,70 @@
 0.0324,
 3,
 "all"
+],
+[
+0.0569,
+0.079,
+0.6844,
+0.058,
+4,
+"2. Backpropagation | The Full Algorithm - and Its Price"
+],
+[
+0.0575,
+0.1973,
+0.5448,
+0.0391,
+4,
+"• Forward: visit nodes in topological order, compute values (store them!)"
+],
+[
+0.0575,
+0.2455,
+0.7207,
+0.0446,
+4,
+"• Backward: output gradient = 1, visit in REVERSE order, apply upstream × local, sum at branches"
+],
+[
+0.0575,
+0.3084,
+0.6989,
+0.0391,
+4,
+"• Cost: one backward pass ≈ the cost of one forward pass - ALL gradients for the price of one"
+],
+[
+0.095,
+0.3545,
+0.5649,
+0.0351,
+4,
+"- compare: nudging each of a million parameters separately = a million forward passes"
+],
+[
+0.0575,
+0.4075,
+0.527,
+0.0391,
+4,
+"• this efficiency is why deep learning is computationally possible at all"
+],
+[
+0.3046,
+0.8667,
+0.3953,
+0.031,
+4,
+"Backprop's real magic is not correctness - it is the price tag"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"29 / 55"
 ]
 ]
 },
@@ -2360,6 +3840,62 @@
 0.0306,
 3,
 "graph"
+],
+[
+0.0569,
+0.079,
+0.7135,
+0.058,
+4,
+"2. Backpropagation | Autodiff, Gradient Checking, and You"
+],
+[
+0.0575,
+0.1972,
+0.733,
+0.0372,
+4,
+"• PyTorch autograd: every op knows its local gradient → loss.backward() runs the graph walk for you"
+],
+[
+0.0575,
+0.2502,
+0.5584,
+0.037,
+4,
+"• Debug tool - the numeric gradient: slow but nearly impossible to get wrong:"
+],
+[
+0.0575,
+0.5347,
+0.7469,
+0.0391,
+4,
+"• Why still learn the math? debugging vanishing/exploding gradients . custom layers . reading papers"
+],
+[
+0.095,
+0.5805,
+0.3326,
+0.0351,
+4,
+"- frameworks hide the how, not the responsibility"
+],
+[
+0.3503,
+0.8667,
+0.3037,
+0.031,
+4,
+"In today's lab: PyTorch does backprop for you"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"30 / 55"
 ]
 ]
 },
@@ -2389,6 +3925,46 @@
 0.0306,
 3,
 "into"
+],
+[
+0.3765,
+0.3949,
+0.2476,
+0.0617,
+4,
+"10-minute break"
+],
+[
+0.3348,
+0.4753,
+0.331,
+0.0294,
+4,
+"half-time: how a network computes, and how it learns"
+],
+[
+0.0575,
+0.6146,
+0.5467,
+0.037,
+4,
+"• Coming up: language modeling - the task that turns all of this into ChatGPT"
+],
+[
+0.2596,
+0.724,
+0.4849,
+0.031,
+4,
+"Stretch, ask me anything - then we meet the next-word prediction game"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"31 / 55"
 ]
 ]
 },
@@ -2402,6 +3978,38 @@
 0.0306,
 3,
 "word"
+],
+[
+0.4847,
+0.3026,
+0.0311,
+0.0803,
+4,
+"3"
+],
+[
+0.3006,
+0.4604,
+0.3986,
+0.0803,
+4,
+"Language Modeling"
+],
+[
+0.3754,
+0.5912,
+0.2487,
+0.0326,
+4,
+"the task of predicting the next word"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"32 / 55"
 ]
 ]
 },
@@ -2479,6 +4087,54 @@
 0.029,
 3,
 "all"
+],
+[
+0.0569,
+0.079,
+0.4663,
+0.058,
+4,
+"3. Language Modeling | The Task"
+],
+[
+0.0575,
+0.1972,
+0.6262,
+0.037,
+4,
+"• Language modeling: given a prefix, predict a probability distribution over the next word"
+],
+[
+0.095,
+0.2403,
+0.6641,
+0.0335,
+4,
+"- the lecture will end at ______ → {9pm: 0.2, noon: 0.1, midnight: 0.05, …}"
+],
+[
+0.0575,
+0.2894,
+0.6679,
+0.037,
+4,
+"• Equivalently: a model that assigns a probability to any piece of text (chain rule of probability):"
+],
+[
+0.2967,
+0.8667,
+0.4108,
+0.031,
+4,
+"One innocent-looking task - it will carry us all the way to GPT"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"33 / 55"
 ]
 ]
 },
@@ -2580,6 +4236,62 @@
 0.0324,
 3,
 "ChatGPT"
+],
+[
+0.0569,
+0.079,
+0.6202,
+0.058,
+4,
+"3. Language Modeling | You Use One Every Day"
+],
+[
+0.0575,
+0.1973,
+0.456,
+0.0391,
+4,
+"• Keyboard autocomplete: ranks your next word as you type"
+],
+[
+0.0575,
+0.2473,
+0.6253,
+0.0446,
+4,
+"• Search suggestions: “자연어처리 …” → 강의, 책, 예제 - that's a LM over queries"
+],
+[
+0.0575,
+0.3084,
+0.8688,
+0.0391,
+4,
+"• Speech recognition & translation: choosing between similar-sounding outputs = asking a LM which is more plausible"
+],
+[
+0.0575,
+0.364,
+0.7634,
+0.0391,
+4,
+"• ChatGPT & friends: a very large LM, sampling the next token again and again - that's the whole trick"
+],
+[
+0.254,
+0.8667,
+0.4962,
+0.031,
+4,
+"LLM = Large Language Model - the middle letters are literally today's topic"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"34 / 55"
 ]
 ]
 },
@@ -2665,6 +4377,54 @@
 0.0306,
 3,
 "big"
+],
+[
+0.0569,
+0.079,
+0.6319,
+0.058,
+4,
+"3. Language Modeling | n-gram Language Models"
+],
+[
+0.0575,
+0.1972,
+0.5238,
+0.037,
+4,
+"• The pre-deep-learning answer. n-gram = a chunk of n consecutive words"
+],
+[
+0.0575,
+0.2502,
+0.5559,
+0.037,
+4,
+"• Markov assumption: the next word depends only on the previous n−1 words:"
+],
+[
+0.0575,
+0.6012,
+0.2482,
+0.037,
+4,
+"• Then just COUNT in a big corpus:"
+],
+[
+0.2816,
+0.8667,
+0.441,
+0.031,
+4,
+"Week 1's Act 2 (statistics), now with its actual formula on the table"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"35 / 55"
 ]
 ]
 },
@@ -2710,6 +4470,38 @@
 0.029,
 3,
 "words"
+],
+[
+0.0569,
+0.079,
+0.6725,
+0.058,
+4,
+"3. Language Modeling | n-gram - a Worked Example"
+],
+[
+0.0575,
+0.1972,
+0.4954,
+0.037,
+4,
+"• 4-gram model, so we keep the last 3 words and throw the rest away:"
+],
+[
+0.2518,
+0.8667,
+0.5006,
+0.031,
+4,
+"The model is not wrong - it was FORCED to forget the words that mattered"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"36 / 55"
 ]
 ]
 },
@@ -2811,6 +4603,78 @@
 0.0324,
 3,
 "words"
+],
+[
+0.0569,
+0.079,
+0.6139,
+0.058,
+4,
+"3. Language Modeling | Where Counting Breaks"
+],
+[
+0.0575,
+0.1973,
+0.8654,
+0.0391,
+4,
+"• Sparsity: numerator never seen → probability 0 (fix: smoothing) . denominator never seen → cannot condition at all"
+],
+[
+0.0763,
+0.2426,
+0.2371,
+0.0344,
+4,
+"(fix: back off to shorter context)"
+],
+[
+0.095,
+0.284,
+0.3366,
+0.0351,
+4,
+"- and it gets WORSE as n grows - in practice n ≤ 5"
+],
+[
+0.0575,
+0.3316,
+0.6124,
+0.0445,
+4,
+"• Storage: must store a count for every observed n-gram - grows with corpus × n"
+],
+[
+0.0575,
+0.3944,
+0.8377,
+0.0391,
+4,
+"• Blindness: “opened their” and “opened her” share no counts - no notion of similarity (week 2's disease, again)"
+],
+[
+0.0575,
+0.4519,
+0.6094,
+0.0391,
+4,
+"• Discarded context: everything beyond n−1 words is invisible, however important"
+],
+[
+0.1963,
+0.8667,
+0.6121,
+0.031,
+4,
+"Three walls: sparsity, storage, similarity - remember them; neural LMs tear two down today"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"37 / 55"
 ]
 ]
 },
@@ -2888,6 +4752,46 @@
 0.029,
 3,
 "only"
+],
+[
+0.0569,
+0.079,
+0.6805,
+0.058,
+4,
+"3. Language Modeling | Generating with an n-gram LM"
+],
+[
+0.0575,
+0.1972,
+0.5393,
+0.037,
+4,
+"• A LM is also a text generator: sample from the distribution, append, repeat"
+],
+[
+0.0575,
+0.7413,
+0.5875,
+0.037,
+4,
+"• output is locally grammatical but globally incoherent - the 3-word memory shows"
+],
+[
+0.2569,
+0.8667,
+0.4905,
+0.031,
+4,
+"Same sampling loop as ChatGPT - the model quality is the only difference"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"38 / 55"
 ]
 ]
 },
@@ -2989,6 +4893,62 @@
 0.029,
 3,
 "model"
+],
+[
+0.0569,
+0.079,
+0.6638,
+0.058,
+4,
+"3. Language Modeling | Measuring LMs - Perplexity"
+],
+[
+0.0575,
+0.1972,
+0.6886,
+0.037,
+4,
+"• The standard metric. Perplexity = exp(cross-entropy loss) - geometric-mean inverse probability:"
+],
+[
+0.0575,
+0.5213,
+0.6268,
+0.0391,
+4,
+"• Intuition: “on average, the model is as confused as a fair choice among PPL words”"
+],
+[
+0.095,
+0.5672,
+0.6269,
+0.0351,
+4,
+"- uniform over 10k words → PPL 10,000 . good n-gram ≈ 100ish . modern LLMs < 10 (illustrative)"
+],
+[
+0.0575,
+0.6166,
+0.6551,
+0.0391,
+4,
+"• lower is better - and it drops out of the SAME cross-entropy loss we already train with"
+],
+[
+0.2973,
+0.8667,
+0.4095,
+0.031,
+4,
+"You will compute perplexity on your own model in today's lab"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"39 / 55"
 ]
 ]
 },
@@ -3042,6 +5002,38 @@
 0.0324,
 3,
 "SAME"
+],
+[
+0.0569,
+0.079,
+0.7004,
+0.058,
+4,
+"3. Language Modeling | Perplexity - a Worked Example"
+],
+[
+0.0575,
+0.6213,
+0.7625,
+0.0391,
+4,
+"• Sanity anchors: uniform over V words → PPL = V . perfect model → PPL = 1 . PPL < 1 is impossible"
+],
+[
+0.0575,
+0.677,
+0.7432,
+0.0391,
+4,
+"• careful: perplexity is only comparable across models that share the SAME vocabulary & tokenizer"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"40 / 55"
 ]
 ]
 },
@@ -3055,6 +5047,38 @@
 0.0306,
 1,
 "language model"
+],
+[
+0.4847,
+0.3026,
+0.0311,
+0.0803,
+4,
+"4"
+],
+[
+0.3004,
+0.4604,
+0.3989,
+0.0803,
+4,
+"Neural LMs & RNNs"
+],
+[
+0.3701,
+0.5912,
+0.2595,
+0.0326,
+4,
+"giving the language model a memory"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"41 / 55"
 ]
 ]
 },
@@ -3066,8 +5090,16 @@
 0.0893,
 0.2633,
 0.0448,
-2,
+1,
 "Fixed-Window Neural LM"
+],
+[
+0.5148,
+0.2025,
+0.082,
+0.0306,
+1,
+"vocabulary"
 ],
 [
 0.1863,
@@ -3076,14 +5108,6 @@
 0.0306,
 2,
 "window"
-],
-[
-0.5148,
-0.2025,
-0.082,
-0.0306,
-2,
-"vocabulary"
 ],
 [
 0.4009,
@@ -3100,6 +5124,38 @@
 0.029,
 3,
 "words"
+],
+[
+0.0569,
+0.079,
+0.6496,
+0.058,
+4,
+"4. Neural LMs & RNNs | A Fixed-Window Neural LM"
+],
+[
+0.0575,
+0.1972,
+0.5403,
+0.037,
+4,
+"• Idea: reuse the window classifier - but classify over the whole vocabulary"
+],
+[
+0.2746,
+0.8667,
+0.4549,
+0.031,
+4,
+"Embeddings give it what n-grams never had: similar words share fate"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"42 / 55"
 ]
 ]
 },
@@ -3201,6 +5257,78 @@
 0.029,
 3,
 "Two"
+],
+[
+0.0569,
+0.079,
+0.6548,
+0.058,
+4,
+"4. Neural LMs & RNNs | Fixed Window - Scorecard"
+],
+[
+0.0575,
+0.1973,
+0.8703,
+0.0391,
+4,
+"• Fixed: no sparsity (unseen combinations still get sensible probabilities) . no giant count tables - similarity built in via"
+],
+[
+0.0763,
+0.2426,
+0.0965,
+0.0344,
+4,
+"embeddings"
+],
+[
+0.0575,
+0.2955,
+0.5068,
+0.0391,
+4,
+"• Broken: the window is still FIXED - context beyond it is discarded"
+],
+[
+0.0575,
+0.3529,
+0.7418,
+0.0391,
+4,
+"• Broken: each position has its OWN weights in W - “the” in slot 1 and slot 3 are learned separately"
+],
+[
+0.095,
+0.3989,
+0.5167,
+0.0351,
+4,
+"- no sharing of what a word means across positions - wasteful and unscalable"
+],
+[
+0.0575,
+0.4537,
+0.5938,
+0.0391,
+4,
+"• Wanted: (1) any length . (2) shared processing across positions → recurrence"
+],
+[
+0.2748,
+0.8667,
+0.4548,
+0.031,
+4,
+"Two of three walls down - the fixed window is the last one standing"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"43 / 55"
 ]
 ]
 },
@@ -3212,7 +5340,7 @@
 0.0893,
 0.0555,
 0.0448,
-2,
+1,
 "RNN"
 ],
 [
@@ -3220,7 +5348,7 @@
 0.2025,
 0.0909,
 0.0306,
-2,
+1,
 "hidden state"
 ],
 [
@@ -3270,6 +5398,46 @@
 0.029,
 3,
 "length"
+],
+[
+0.0569,
+0.079,
+0.5171,
+0.058,
+4,
+"4. Neural LMs & RNNs | The RNN Idea"
+],
+[
+0.0575,
+0.1972,
+0.7739,
+0.037,
+4,
+"• Apply the SAME weights at every step, carrying a hidden state - a running summary of everything read so far"
+],
+[
+0.8221,
+0.7289,
+0.0992,
+0.031,
+4,
+"RECURRENCE!"
+],
+[
+0.2734,
+0.8667,
+0.4576,
+0.031,
+4,
+"One set of weights, any sentence length - the reader with a memory"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"44 / 55"
 ]
 ]
 },
@@ -3281,7 +5449,7 @@
 0.0893,
 0.0555,
 0.0448,
-2,
+1,
 "RNN"
 ],
 [
@@ -3347,12 +5515,60 @@
 0.0324,
 3,
 "same"
+],
+[
+0.0569,
+0.079,
+0.6546,
+0.058,
+4,
+"4. Neural LMs & RNNs | The RNN, in Two Equations"
+],
+[
+0.0575,
+0.1972,
+0.5007,
+0.037,
+4,
+"• New memory = a learned blend of old memory and the current word:"
+],
+[
+0.0575,
+0.4813,
+0.8079,
+0.0431,
+4,
+"•\u0000\u0000\u0000: how to carry memory forward . \u0000\u0000: how to absorb a new word . \u0000\u0000\u0000\u0000: squash to keep values sane"
+],
+[
+0.0575,
+0.5369,
+0.5078,
+0.0431,
+4,
+"• the same (\u0000\u0000,\u0000\u0000\u0000, U) at every timestep - that is the recurrence"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"45 / 55"
 ]
 ]
 },
 {
 "p": 48,
 "m": [
+[
+0.6001,
+0.0893,
+0.0555,
+0.0448,
+1,
+"RNN"
+],
 [
 0.483,
 0.0893,
@@ -3362,20 +5578,36 @@
 "Window"
 ],
 [
-0.6001,
-0.0893,
-0.0555,
-0.0448,
-2,
-"RNN"
-],
-[
 0.3355,
 0.805,
 0.0473,
 0.029,
 3,
 "length"
+],
+[
+0.0569,
+0.079,
+0.7642,
+0.058,
+4,
+"4. Neural LMs & RNNs | Fixed Window vs RNN - Side by Side"
+],
+[
+0.224,
+0.804,
+0.5567,
+0.031,
+4,
+"Recurrence buys length and sharing - and charges us in speed and in memory decay"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"46 / 55"
 ]
 ]
 },
@@ -3387,7 +5619,7 @@
 0.0893,
 0.0555,
 0.0448,
-2,
+1,
 "RNN"
 ],
 [
@@ -3395,8 +5627,24 @@
 0.0893,
 0.0378,
 0.0448,
-2,
+1,
 "LM"
+],
+[
+0.4809,
+0.2025,
+0.0992,
+0.0306,
+1,
+"cross-entropy"
+],
+[
+0.2683,
+0.8677,
+0.1037,
+0.029,
+1,
+"teacher forcing"
 ],
 [
 0.1258,
@@ -3405,22 +5653,6 @@
 0.0306,
 2,
 "corpus"
-],
-[
-0.4809,
-0.2025,
-0.0992,
-0.0306,
-2,
-"cross-entropy"
-],
-[
-0.2683,
-0.8677,
-0.1037,
-0.029,
-2,
-"teacher forcing"
 ],
 [
 0.0773,
@@ -3453,6 +5685,38 @@
 0.029,
 3,
 "TRUE"
+],
+[
+0.0569,
+0.079,
+0.5809,
+0.058,
+4,
+"4. Neural LMs & RNNs | Training an RNN-LM"
+],
+[
+0.0575,
+0.1972,
+0.6167,
+0.037,
+4,
+"• Feed a corpus; at every step predict the next word and pay cross-entropy for the truth:"
+],
+[
+0.2605,
+0.8667,
+0.4832,
+0.031,
+4,
+"“teacher forcing”: we always condition on the TRUE prefix during training"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"47 / 55"
 ]
 ]
 },
@@ -3464,7 +5728,7 @@
 0.2025,
 0.0628,
 0.0306,
-2,
+1,
 "gradient"
 ],
 [
@@ -3472,7 +5736,7 @@
 0.487,
 0.1277,
 0.0324,
-2,
+1,
 "backpropagation"
 ],
 [
@@ -3480,7 +5744,7 @@
 0.8677,
 0.0386,
 0.029,
-2,
+1,
 "BPTT"
 ],
 [
@@ -3562,6 +5826,62 @@
 0.029,
 3,
 "one"
+],
+[
+0.0569,
+0.079,
+0.6166,
+0.058,
+4,
+"4. Neural LMs & RNNs | Backprop Through Time"
+],
+[
+0.0575,
+0.1972,
+0.6515,
+0.037,
+4,
+"• One subtlety: Wh appears at EVERY timestep - the gradient sums over all its appearances:"
+],
+[
+0.0575,
+0.4813,
+0.8747,
+0.0391,
+4,
+"• mechanically: ordinary backprop on the unrolled graph, accumulating into the shared W - “backpropagation through"
+],
+[
+0.0763,
+0.5267,
+0.0485,
+0.0344,
+4,
+"time”"
+],
+[
+0.0575,
+0.574,
+0.6573,
+0.0391,
+4,
+"• (exactly the “gradients sum at branches” rule from part 2 - nothing new was invented)"
+],
+[
+0.285,
+0.8667,
+0.4343,
+0.031,
+4,
+"BPTT = part 2's backprop + one summation - you already know it"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"48 / 55"
 ]
 ]
 },
@@ -3573,7 +5893,7 @@
 0.2029,
 0.0582,
 0.0324,
-2,
+1,
 "n-gram"
 ],
 [
@@ -3581,7 +5901,7 @@
 0.2482,
 0.0347,
 0.029,
-2,
+1,
 "RNN"
 ],
 [
@@ -3663,6 +5983,70 @@
 0.0324,
 3,
 "step"
+],
+[
+0.0569,
+0.079,
+0.665,
+0.058,
+4,
+"4. Neural LMs & RNNs | Generation, and a Scorecard"
+],
+[
+0.0575,
+0.1973,
+0.8167,
+0.0391,
+4,
+"• Generate exactly like the n-gram loop: sample → feed back in → repeat - but now with unbounded memory"
+],
+[
+0.095,
+0.2431,
+0.567,
+0.0352,
+4,
+"- in the lab: a character-level RNN - train it on any text and watch it write in that style"
+],
+[
+0.0575,
+0.2962,
+0.7808,
+0.0391,
+4,
+"• Wins: any length . shared weights . similarity via embeddings . model size independent of context length"
+],
+[
+0.0575,
+0.3538,
+0.5541,
+0.0391,
+4,
+"• Prices: sequential - step t needs t−1: slow, cannot parallelize over time"
+],
+[
+0.0575,
+0.4111,
+0.5995,
+0.0391,
+4,
+"• Prices: in PRACTICE memory fades - accessing many steps back is hard …why?"
+],
+[
+0.2441,
+0.8667,
+0.5159,
+0.031,
+4,
+"That last weakness deserves its own slides - it shaped the next decade of NLP"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"49 / 55"
 ]
 ]
 },
@@ -3674,7 +6058,7 @@
 0.2025,
 0.0628,
 0.0306,
-2,
+1,
 "gradient"
 ],
 [
@@ -3724,6 +6108,38 @@
 0.029,
 3,
 "signal"
+],
+[
+0.0569,
+0.079,
+0.5768,
+0.058,
+4,
+"4. Neural LMs & RNNs | Vanishing Gradients"
+],
+[
+0.0575,
+0.1972,
+0.5074,
+0.037,
+4,
+"• The gradient from step t to step 1 is a PRODUCT of per-step Jacobians:"
+],
+[
+0.2593,
+0.8667,
+0.4855,
+0.031,
+4,
+"Long products of smallish factors → the learning signal from far away dies"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"50 / 55"
 ]
 ]
 },
@@ -3735,7 +6151,7 @@
 0.2968,
 0.0343,
 0.0306,
-2,
+1,
 "SGD"
 ],
 [
@@ -3743,7 +6159,7 @@
 0.3499,
 0.1218,
 0.0306,
-2,
+1,
 "gradient clipping"
 ],
 [
@@ -3825,6 +6241,62 @@
 0.029,
 3,
 "vanishing"
+],
+[
+0.0569,
+0.079,
+0.7889,
+0.058,
+4,
+"4. Neural LMs & RNNs | Why It Matters - and the Mirror Problem"
+],
+[
+0.0575,
+0.1972,
+0.5774,
+0.037,
+4,
+"• “She bought extra toner for the ____” - the answer (printer) was 20 words ago"
+],
+[
+0.095,
+0.2403,
+0.7422,
+0.0333,
+4,
+"- if gradients from 20 steps back are ≈ 0, the model cannot learn that dependency - it guesses from recent words instead"
+],
+[
+0.0575,
+0.2914,
+0.827,
+0.037,
+4,
+"• Mirror image - exploding gradients: factors slightly > 1 → the product blows up → one insane SGD step (or Inf/NaN)"
+],
+[
+0.0575,
+0.3445,
+0.5472,
+0.037,
+4,
+"• The standard bandage - gradient clipping: keep the direction, cap the size:"
+],
+[
+0.2787,
+0.8707,
+0.4468,
+0.031,
+4,
+"Clipping fixes exploding; vanishing needs a better ARCHITECTURE →"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"51 / 55"
 ]
 ]
 },
@@ -3836,7 +6308,7 @@
 0.0893,
 0.0964,
 0.0448,
-2,
+1,
 "Attention"
 ],
 [
@@ -3844,7 +6316,7 @@
 0.2025,
 0.0437,
 0.0306,
-2,
+1,
 "LSTM"
 ],
 [
@@ -3852,7 +6324,7 @@
 0.6733,
 0.0365,
 0.0306,
-2,
+1,
 "RNN"
 ],
 [
@@ -3894,6 +6366,46 @@
 0.0306,
 3,
 "step"
+],
+[
+0.0569,
+0.079,
+0.7861,
+0.058,
+4,
+"4. Neural LMs & RNNs | The Fix Preview - Gates, then Attention"
+],
+[
+0.0575,
+0.1972,
+0.7095,
+0.037,
+4,
+"• LSTM / GRU: add a cell state highway plus learned gates that decide what to keep, write, and reveal"
+],
+[
+0.0575,
+0.668,
+0.7338,
+0.037,
+4,
+"• gradients ride the highway - long dependencies become learnable . the standard RNN unit for a decade"
+],
+[
+0.0575,
+0.7173,
+0.7695,
+0.037,
+4,
+"• The bigger fix (next week): stop squeezing history through one vector - let every step attend to every other"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"52 / 55"
 ]
 ]
 },
@@ -3905,7 +6417,31 @@
 0.0893,
 0.0926,
 0.0448,
-2,
+1,
+"seq2seq"
+],
+[
+0.1054,
+0.6403,
+0.0655,
+0.0324,
+1,
+"decoder"
+],
+[
+0.3792,
+0.8677,
+0.0263,
+0.029,
+1,
+"LM"
+],
+[
+0.57,
+0.8677,
+0.0589,
+0.029,
+1,
 "seq2seq"
 ],
 [
@@ -3917,36 +6453,12 @@
 "shape"
 ],
 [
-0.1054,
-0.6403,
-0.0655,
-0.0324,
-2,
-"decoder"
-],
-[
 0.0773,
 0.6922,
 0.1498,
 0.0324,
 2,
 "machine translation"
-],
-[
-0.3792,
-0.8677,
-0.0263,
-0.029,
-2,
-"LM"
-],
-[
-0.57,
-0.8677,
-0.0589,
-0.029,
-2,
-"seq2seq"
 ],
 [
 0.1979,
@@ -3995,12 +6507,84 @@
 0.0324,
 3,
 "today"
+],
+[
+0.0569,
+0.079,
+0.6729,
+0.058,
+4,
+"4. Neural LMs & RNNs | One More Teaser - seq2seq"
+],
+[
+0.0575,
+0.1972,
+0.513,
+0.037,
+4,
+"• RNNs unlocked a new shape of problem: sequence in → sequence out"
+],
+[
+0.0575,
+0.6346,
+0.6502,
+0.0391,
+4,
+"• the decoder is literally a conditional language model - everything from today, reused"
+],
+[
+0.0575,
+0.6865,
+0.6715,
+0.0391,
+4,
+"• machine translation, summarization, dialogue - one architecture, week 4's starting point"
+],
+[
+0.3252,
+0.8667,
+0.3539,
+0.031,
+4,
+"Today's LM is the engine inside every seq2seq system"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"53 / 55"
 ]
 ]
 },
 {
 "p": 56,
 "m": [
+[
+0.2289,
+0.3068,
+0.0783,
+0.0324,
+1,
+"perplexity"
+],
+[
+0.1505,
+0.3697,
+0.0386,
+0.0324,
+1,
+"RNN"
+],
+[
+0.1111,
+0.4327,
+0.1294,
+0.0324,
+1,
+"Gradient clipping"
+],
 [
 0.181,
 0.2029,
@@ -4010,36 +6594,12 @@
 "LM"
 ],
 [
-0.2289,
-0.3068,
-0.0783,
-0.0324,
-2,
-"perplexity"
-],
-[
-0.1505,
-0.3697,
-0.0386,
-0.0324,
-2,
-"RNN"
-],
-[
 0.3531,
 0.3697,
 0.0554,
 0.0324,
 2,
 "weight"
-],
-[
-0.1111,
-0.4327,
-0.1294,
-0.0324,
-2,
-"Gradient clipping"
 ],
 [
 0.4205,
@@ -4096,6 +6656,70 @@
 0.0324,
 3,
 "vanishing"
+],
+[
+0.0569,
+0.079,
+0.6751,
+0.058,
+4,
+"4. Neural LMs & RNNs | Check Yourself - Parts 3 & 4"
+],
+[
+0.0575,
+0.1973,
+0.8807,
+0.0391,
+4,
+"• Q1. A 5-gram LM sees a test sentence whose 5-gram never occurred in training. What probability does it assign - and"
+],
+[
+0.0763,
+0.2426,
+0.1838,
+0.0344,
+4,
+"what do we do about it?"
+],
+[
+0.0575,
+0.3011,
+0.7618,
+0.0391,
+4,
+"• Q2. Two LMs report perplexity 40 and 25. Which is better, and when is that comparison meaningless?"
+],
+[
+0.0575,
+0.364,
+0.6944,
+0.0391,
+4,
+"• Q3. In an RNN, how many DIFFERENT weight matrices are applied over a 50-word sentence?"
+],
+[
+0.0575,
+0.4271,
+0.6349,
+0.0391,
+4,
+"• Q4. Gradient clipping fixes exploding gradients. Why does it NOT fix vanishing ones?"
+],
+[
+0.2699,
+0.8667,
+0.4645,
+0.031,
+4,
+"These four are exactly the flavor of the exam's short-answer questions"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"54 / 55"
 ]
 ]
 },
@@ -4107,8 +6731,40 @@
 0.2025,
 0.0551,
 0.0306,
-2,
+1,
 "n-gram"
+],
+[
+0.6504,
+0.3621,
+0.0692,
+0.0306,
+1,
+"attention"
+],
+[
+0.4888,
+0.4173,
+0.0365,
+0.0306,
+1,
+"RNN"
+],
+[
+0.5233,
+0.4173,
+0.0272,
+0.0306,
+1,
+"LM"
+],
+[
+0.5033,
+0.2025,
+0.0363,
+0.0306,
+2,
+"CNN"
 ],
 [
 0.5667,
@@ -4117,30 +6773,6 @@
 0.0306,
 2,
 "perplexity"
-],
-[
-0.6504,
-0.3621,
-0.0692,
-0.0306,
-2,
-"attention"
-],
-[
-0.4888,
-0.4173,
-0.0365,
-0.0306,
-2,
-"RNN"
-],
-[
-0.5233,
-0.4173,
-0.0272,
-0.0306,
-2,
-"LM"
 ],
 [
 0.7168,
@@ -4159,28 +6791,12 @@
 "word2vec"
 ],
 [
-0.5548,
-0.8677,
-0.1056,
-0.029,
-2,
-"neural network"
-],
-[
-0.1563,
+0.4101,
 0.2025,
-0.055,
+0.0877,
 0.0306,
 3,
-"neuron"
-],
-[
-0.5033,
-0.2025,
-0.0363,
-0.0306,
-3,
-"CNN"
+"nonlinearity"
 ],
 [
 0.1489,
@@ -4191,12 +6807,92 @@
 "chain rule"
 ],
 [
+0.3421,
+0.3621,
+0.0398,
+0.0306,
+3,
+"BPTT"
+],
+[
 0.6306,
 0.4704,
 0.0727,
 0.0306,
 3,
 "skip-gram"
+],
+[
+0.0569,
+0.079,
+0.4984,
+0.058,
+4,
+"Wrap-up | Summary . Lab . Assignment 2"
+],
+[
+0.0575,
+0.1972,
+0.6703,
+0.037,
+4,
+"• Networks: neuron = linear + bend . depth needs nonlinearity . CNN = parallel n-gram detectors"
+],
+[
+0.0575,
+0.2502,
+0.7089,
+0.037,
+4,
+"• Learning: chain rule with Jacobians . δ reuse . backprop = graph walk at the cost of one forward pass"
+],
+[
+0.0575,
+0.3037,
+0.6597,
+0.037,
+4,
+"• Language models: predict the next word . n-grams count and hit walls . perplexity = exp(loss)"
+],
+[
+0.0575,
+0.3568,
+0.7462,
+0.037,
+4,
+"• RNNs: shared weights + hidden state . BPTT . vanishing/exploding → clipping, gates, attention (next week)"
+],
+[
+0.0575,
+0.4119,
+0.7342,
+0.037,
+4,
+"• Lab (1h): PyTorch tensors & autograd → build + train a char-RNN LM → sample text, measure perplexity"
+],
+[
+0.0575,
+0.465,
+0.8559,
+0.037,
+4,
+"• Assignment 2 out today (15%, due W7 . 10/12): word2vec gradients BY HAND + skip-gram implementation - start early!"
+],
+[
+0.2518,
+0.8667,
+0.5005,
+0.031,
+4,
+"Break, then Colab - today you train your first neural network of this course"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"55 / 55"
 ]
 ]
 }

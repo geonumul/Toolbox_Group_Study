@@ -1140,7 +1140,19 @@
      "items": [
       "3주차에서 배운 **다음 토큰 예측(Next Token Prediction)**과 계산이 똑같아요. 조건 x 하나가 더 붙었을 뿐이에요.",
       "교수님: **다음 토큰 예측(Next Token Prediction)**이 거의 모든 걸 결정한다, GPT 도 다 결국 이거다.",
-      "그래서 **언어 모델(Language Model (LM))**을 이해하면 번역 모델도 바로 이해돼요."
+      "그래서 **언어 모델(Language Model (LM))**을 이해하면 번역 모델도 바로 이해돼요.",
+      "**자연어처리(Natural Language Processing (NLP))** 전체가 이 한 가지 위에 서 있다고 봐도 돼요.",
+      "손실을 거슬러 보내는 것도 3주차의 **시간 역전파(Backpropagation Through Time (BPTT))** 와 같은 방식이에요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "이 구조가 어디까지 가나",
+     "items": [
+      "**시퀀스-투-시퀀스 모델(Sequence-to-Sequence Model)** 에 어텐션을 붙이고, RNN 을 빼면 트랜스포머가 돼요.",
+      "트랜스포머를 크게 쌓은 것이 **LLM(대규모 언어 모델)** 이에요.",
+      "**자연어처리(Natural Language Processing (NLP))** 수업의 나머지가 전부 이 길 위에 있어요.",
+      "**시간 역전파(Backpropagation Through Time (BPTT))** 는 RNN 을 쓰는 동안만 필요하고, 트랜스포머에서는 사라져요."
      ]
     }
    ],

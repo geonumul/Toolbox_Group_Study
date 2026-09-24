@@ -45,6 +45,54 @@
 0.0263,
 2,
 "Artificial Intelligence"
+],
+[
+0.0569,
+0.1691,
+0.5374,
+0.0729,
+4,
+"Natural Language Processing"
+],
+[
+0.0572,
+0.2622,
+0.5195,
+0.0432,
+4,
+"Week 4. Attention and the Transformer Architecture"
+],
+[
+0.0572,
+0.3162,
+0.1277,
+0.0294,
+4,
+"Fall 2026 . 06488-01"
+],
+[
+0.0572,
+0.6234,
+0.1168,
+0.0432,
+4,
+"Yongil Kim"
+],
+[
+0.0572,
+0.6835,
+0.3416,
+0.0301,
+4,
+"Assistant Professor, Department of Artificial Intelligence"
+],
+[
+0.5631,
+0.8734,
+0.4008,
+0.0283,
+4,
+"Department of Artificial Intelligence, The Catholic University of Korea"
 ]
 ]
 },
@@ -58,6 +106,38 @@
 0.0263,
 2,
 "Artificial Intelligence"
+],
+[
+0.0569,
+0.1691,
+0.1811,
+0.0729,
+4,
+"Reminder"
+],
+[
+0.0572,
+0.4224,
+0.8393,
+0.0506,
+4,
+"1. Please do not distribute this material because it contains copyright."
+],
+[
+0.0572,
+0.5824,
+0.8394,
+0.0506,
+4,
+"2. If there are video or audio problems, please let me know right away."
+],
+[
+0.5631,
+0.8734,
+0.4008,
+0.0283,
+4,
+"Department of Artificial Intelligence, The Catholic University of Korea"
 ]
 ]
 },
@@ -95,6 +175,86 @@
 0.044,
 3,
 "Bottleneck"
+],
+[
+0.0569,
+0.079,
+0.1342,
+0.058,
+4,
+"Contents"
+],
+[
+0.1269,
+0.2611,
+0.0228,
+0.0526,
+4,
+"1"
+],
+[
+0.1894,
+0.2631,
+0.4309,
+0.046,
+4,
+"Sequence-to-Sequence and its Bottleneck"
+],
+[
+0.1269,
+0.4386,
+0.0228,
+0.0526,
+4,
+"2"
+],
+[
+0.1894,
+0.4407,
+0.1053,
+0.046,
+4,
+"Attention"
+],
+[
+0.1269,
+0.6163,
+0.0228,
+0.0526,
+4,
+"3"
+],
+[
+0.1842,
+0.619,
+0.1503,
+0.046,
+4,
+"Self-Attention"
+],
+[
+0.1269,
+0.7938,
+0.0228,
+0.0526,
+4,
+"4"
+],
+[
+0.1894,
+0.796,
+0.178,
+0.046,
+4,
+"The Transformer"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"01 / 57"
 ]
 ]
 },
@@ -196,6 +356,78 @@
 0.029,
 3,
 "step"
+],
+[
+0.0569,
+0.079,
+0.3516,
+0.058,
+4,
+"Recap | Last Week & Today"
+],
+[
+0.0575,
+0.2019,
+0.5453,
+0.0344,
+4,
+"Last week: neural networks . backpropagation . language modeling . RNNs"
+],
+[
+0.0575,
+0.2526,
+0.8481,
+0.0344,
+4,
+"Where we stopped: vanishing gradients - an RNN cannot carry information across a long distance, and it cannot be"
+],
+[
+0.0575,
+0.2904,
+0.0906,
+0.0344,
+4,
+"parallelised"
+],
+[
+0.0575,
+0.3393,
+0.6081,
+0.0344,
+4,
+"Today: two ideas that fix exactly that - attention (2015) and self-attention (2017)"
+],
+[
+0.0575,
+0.3882,
+0.78,
+0.0344,
+4,
+"By the end: you should be able to draw the Transformer block from memory, and say what every box is for"
+],
+[
+0.0575,
+0.4371,
+0.6118,
+0.0344,
+4,
+"Also today: project teams (4 people, free topic - tell me your team by next week)"
+],
+[
+0.27,
+0.8667,
+0.4641,
+0.031,
+4,
+"From \"read it all, then speak\" to \"look back at every word, every step\""
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"02 / 57"
 ]
 ]
 },
@@ -241,6 +473,38 @@
 0.0783,
 3,
 "Bottleneck"
+],
+[
+0.4847,
+0.3026,
+0.0311,
+0.0803,
+4,
+"1"
+],
+[
+0.0807,
+0.4604,
+0.8385,
+0.0803,
+4,
+"Sequence-to-Sequence and its Bottleneck"
+],
+[
+0.2928,
+0.5912,
+0.4141,
+0.0326,
+4,
+"machine translation . the encoder-decoder . how to decode"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"03 / 57"
 ]
 ]
 },
@@ -350,6 +614,70 @@
 0.029,
 3,
 "Self-Attention"
+],
+[
+0.0569,
+0.079,
+0.4096,
+0.058,
+4,
+"1. Seq2Seq | Where We Left Off"
+],
+[
+0.0575,
+0.2015,
+0.4854,
+0.0326,
+4,
+"An RNN reads a sequence one step at a time and keeps a hidden state."
+],
+[
+0.0575,
+0.2499,
+0.3142,
+0.0326,
+4,
+"Two problems we could not solve last week:"
+],
+[
+0.081,
+0.2925,
+0.3819,
+0.037,
+4,
+"(1) Long-range dependency + Vanishing Gradients"
+],
+[
+0.081,
+0.3434,
+0.1851,
+0.0326,
+4,
+"(2) Sequential Calculation"
+],
+[
+0.081,
+0.39,
+0.6943,
+0.0326,
+4,
+"+(3) NEW Information Bottleneck : All information from the input sequence must fit into ONE vector."
+],
+[
+0.1531,
+0.8667,
+0.6981,
+0.031,
+4,
+"Keep these three problems in mind - today’s two ideas (Attention and Self-Attention) tackle exactly these."
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"04 / 57"
 ]
 ]
 },
@@ -403,6 +731,46 @@
 0.029,
 3,
 "model"
+],
+[
+0.0569,
+0.079,
+0.5345,
+0.058,
+4,
+"1. Seq2Seq | The Task: Machine Translation"
+],
+[
+0.0575,
+0.2007,
+0.6817,
+0.0335,
+4,
+"Machine translation: given a source sentence \u0000, produce a target sentence \u0000in another language."
+],
+[
+0.0575,
+0.2491,
+0.7151,
+0.0335,
+4,
+"Formally we want argmax\u0000\u0000\u0000\u0000\u0000\u0000\u0000 - and the space of possible \u0000is infinite, so we will have to search it."
+],
+[
+0.2811,
+0.8667,
+0.4421,
+0.031,
+4,
+"One task, three eras - and each era changed what \"model\" means"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"05 / 57"
 ]
 ]
 },
@@ -504,6 +872,70 @@
 0.029,
 3,
 "model"
+],
+[
+0.0569,
+0.079,
+0.5087,
+0.058,
+4,
+"1. Seq2Seq | Rules → Statistics → Neural"
+],
+[
+0.0575,
+0.201,
+0.3721,
+0.031,
+4,
+"1950s-80s: hand-written rules and bilingual dictionaries."
+],
+[
+0.0575,
+0.247,
+0.8527,
+0.031,
+4,
+"1990s-2010s: Statistical MT - learn P(x|y) and P(y) from parallel corpora. Huge systems: separate alignment models, phrase tables,"
+],
+[
+0.0575,
+0.2804,
+0.281,
+0.031,
+4,
+"reranking, and a lot of feature engineering."
+],
+[
+0.0575,
+0.3248,
+0.8703,
+0.031,
+4,
+"2014-: Neural MT - one neural network, trained end-to-end. Within two years it beat systems that had taken hundreds of engineers a"
+],
+[
+0.0575,
+0.3581,
+0.0581,
+0.031,
+4,
+"decade."
+],
+[
+0.255,
+0.8667,
+0.494,
+0.031,
+4,
+"The lesson that keeps repeating: replace a pipeline with one learned model"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"06 / 57"
 ]
 ]
 },
@@ -605,6 +1037,46 @@
 0.029,
 3,
 "vector"
+],
+[
+0.0569,
+0.079,
+0.5792,
+0.058,
+4,
+"1. Seq2Seq | The Encoder-Decoder Architecture"
+],
+[
+0.0575,
+0.2015,
+0.8689,
+0.0326,
+4,
+"Two RNNs. The encoder reads the source and compresses it into a vector. The decoder is a language model that generates the"
+],
+[
+0.0575,
+0.2398,
+0.2418,
+0.0326,
+4,
+"target, conditioned on that vector."
+],
+[
+0.2676,
+0.8667,
+0.469,
+0.031,
+4,
+"Sutskever et al. 2014 . Cho et al. 2014 - two RNNs, glued at one vector"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"07 / 57"
 ]
 ]
 },
@@ -706,6 +1178,62 @@
 0.029,
 3,
 "backward pass"
+],
+[
+0.0569,
+0.079,
+0.533,
+0.058,
+4,
+"1. Seq2Seq | A Conditional Language Model"
+],
+[
+0.0575,
+0.2015,
+0.8603,
+0.0326,
+4,
+"The decoder is a language model that is conditioned on the source - so the whole thing factorises the same way an LM does."
+],
+[
+0.0575,
+0.2499,
+0.8754,
+0.0326,
+4,
+"Training is ordinary cross-entropy on the target tokens, and the gradient flows all the way back through the decoder, the bridge,"
+],
+[
+0.0575,
+0.2856,
+0.1233,
+0.0326,
+4,
+"and the encoder."
+],
+[
+0.5303,
+0.3744,
+0.2067,
+0.031,
+4,
+"“Conditional” Language Model"
+],
+[
+0.2494,
+0.8667,
+0.5054,
+0.031,
+4,
+"One model, one loss, one backward pass - that is what \"end-to-end\" means"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"08 / 57"
 ]
 ]
 },
@@ -783,6 +1311,54 @@
 0.0306,
 3,
 "only"
+],
+[
+0.0569,
+0.079,
+0.4822,
+0.058,
+4,
+"1. Seq2Seq | Training: Teacher Forcing"
+],
+[
+0.0575,
+0.2015,
+0.6202,
+0.0326,
+4,
+"During training we feed the decoder the true previous target word, not its own prediction."
+],
+[
+0.0575,
+0.2499,
+0.8889,
+0.0326,
+4,
+"Why: it keeps training stable and parallel over time steps. The catch: at test time the model only ever sees its own output - this"
+],
+[
+0.0575,
+0.2856,
+0.2351,
+0.0326,
+4,
+"mismatch is called exposure bias."
+],
+[
+0.272,
+0.8667,
+0.4603,
+0.031,
+4,
+"Train on the gold prefix, test on your own prefix - remember the gap"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"09 / 57"
 ]
 ]
 },
@@ -836,6 +1412,46 @@
 0.0306,
 3,
 "word"
+],
+[
+0.0569,
+0.079,
+0.5256,
+0.058,
+4,
+"1. Seq2Seq | Decoding 1 - Greedy Search"
+],
+[
+0.0575,
+0.2015,
+0.4571,
+0.0326,
+4,
+"At each step take the single most likely word. Fast, and often fine."
+],
+[
+0.0575,
+0.2499,
+0.7042,
+0.0326,
+4,
+"But it cannot take anything back: one confident wrong word early on poisons everything that follows."
+],
+[
+0.2897,
+0.8667,
+0.4249,
+0.031,
+4,
+"Greedy decoding is one path through an exponentially large tree"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"10 / 57"
 ]
 ]
 },
@@ -921,6 +1537,46 @@
 0.029,
 3,
 "cost"
+],
+[
+0.0569,
+0.079,
+0.5103,
+0.058,
+4,
+"1. Seq2Seq | Decoding 2 - Beam Search"
+],
+[
+0.0575,
+0.201,
+0.538,
+0.031,
+4,
+"Keep the k best partial hypotheses at every step instead of one. Typical k is 5 to 10."
+],
+[
+0.0575,
+0.247,
+0.8092,
+0.031,
+4,
+"Score is a sum of log-probabilities, so longer sequences score lower - divide by length before comparing finished hypotheses."
+],
+[
+0.2762,
+0.8667,
+0.4519,
+0.031,
+4,
+"Not exhaustive search, but a very good approximation for a tiny cost"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"11 / 57"
 ]
 ]
 },
@@ -1014,6 +1670,70 @@
 0.0324,
 3,
 "words"
+],
+[
+0.0569,
+0.079,
+0.5189,
+0.058,
+4,
+"1. Seq2Seq | Evaluating Translation: BLEU"
+],
+[
+0.0575,
+0.2019,
+0.8876,
+0.0344,
+4,
+"BLEU compares the model output against one or more human references by counting overlapping n-grams (n = 1…4), with"
+],
+[
+0.0575,
+0.2426,
+0.4195,
+0.0344,
+4,
+"a brevity penalty so the model cannot win by saying less."
+],
+[
+0.081,
+0.2935,
+0.8632,
+0.0344,
+4,
+"Example: reference \"the cat is on the mat\" . output \"the cat the cat on the mat\" → high unigram overlap, poor 4-gram"
+],
+[
+0.081,
+0.3313,
+0.067,
+0.0344,
+4,
+"overlap."
+],
+[
+0.081,
+0.3802,
+0.8503,
+0.0344,
+4,
+"It is useful but imperfect: a good translation that uses different words scores badly, so BLEU rewards being ordinary."
+],
+[
+0.2819,
+0.8667,
+0.4408,
+0.031,
+4,
+"Every metric in NLP is a proxy - know what your proxy cannot see"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"12 / 57"
 ]
 ]
 },
@@ -1051,6 +1771,46 @@
 0.0306,
 3,
 "sequence"
+],
+[
+0.0569,
+0.079,
+0.6646,
+0.058,
+4,
+"1. Seq2Seq | Encoder-Decoder is More Than Translation"
+],
+[
+0.081,
+0.2015,
+0.8501,
+0.0326,
+4,
+"The same architecture works whenever the input and the output are both sequences - and they need not be the same kind"
+],
+[
+0.081,
+0.2398,
+0.0946,
+0.0326,
+4,
+"of sequence."
+],
+[
+0.3137,
+0.8667,
+0.3768,
+0.031,
+4,
+"Learn the pattern once, reuse it for the rest of the course"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"13 / 57"
 ]
 ]
 },
@@ -1120,6 +1880,54 @@
 0.029,
 3,
 "vector"
+],
+[
+0.0569,
+0.079,
+0.4939,
+0.058,
+4,
+"1. Seq2Seq | The Information Bottleneck"
+],
+[
+0.081,
+0.201,
+0.5279,
+0.031,
+4,
+"Everything the decoder knows about the source has to fit in one fixed-size vector."
+],
+[
+0.081,
+0.247,
+0.8478,
+0.031,
+4,
+"A 20-word sentence and a 200-word paragraph get the same number of dimensions - and performance duly collapses as sentences"
+],
+[
+0.081,
+0.2804,
+0.0767,
+0.031,
+4,
+"get longer."
+],
+[
+0.081,
+0.3248,
+0.5704,
+0.031,
+4,
+"The fix is almost obvious in hindsight: stop forcing the decoder to use only that vector."
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"14 / 57"
 ]
 ]
 },
@@ -1149,6 +1957,38 @@
 0.0306,
 3,
 "step"
+],
+[
+0.4847,
+0.3026,
+0.0311,
+0.0803,
+4,
+"2"
+],
+[
+0.4047,
+0.4604,
+0.1907,
+0.0803,
+4,
+"Attention"
+],
+[
+0.3084,
+0.5912,
+0.383,
+0.0326,
+4,
+"let the decoder look back at the source - at every step"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"15 / 57"
 ]
 ]
 },
@@ -1234,6 +2074,54 @@
 0.029,
 3,
 "word"
+],
+[
+0.0569,
+0.079,
+0.3713,
+0.058,
+4,
+"2. Attention | The Core Idea"
+],
+[
+0.081,
+0.2015,
+0.664,
+0.0326,
+4,
+"At every decoder step, look at all the encoder states - and decide which ones matter right now."
+],
+[
+0.081,
+0.2499,
+0.8315,
+0.0326,
+4,
+"The decoder no longer depends on one summary vector; it builds a fresh summary at every step, tailored to the word it is"
+],
+[
+0.081,
+0.2856,
+0.1302,
+0.0326,
+4,
+"about to produce."
+],
+[
+0.2945,
+0.8667,
+0.4158,
+0.031,
+4,
+"Direct connections from every output step to every input word"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"16 / 57"
 ]
 ]
 },
@@ -1327,6 +2215,46 @@
 0.0306,
 3,
 "model"
+],
+[
+0.0569,
+0.079,
+0.5508,
+0.058,
+4,
+"2. Attention | A Weighted Average of the Past"
+],
+[
+0.081,
+0.2015,
+0.8592,
+0.0326,
+4,
+"Attention produces a context vector - a weighted average of the encoder states, where the weights are computed on the fly"
+],
+[
+0.081,
+0.2398,
+0.1177,
+0.0326,
+4,
+"and sum to one."
+],
+[
+0.081,
+0.2883,
+0.7295,
+0.0326,
+4,
+"Sharp weights = \"look here\". Flat weights = \"everything matters a little\". The model learns which it needs."
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"17 / 57"
 ]
 ]
 },
@@ -1412,6 +2340,46 @@
 0.029,
 3,
 "today"
+],
+[
+0.0569,
+0.079,
+0.5851,
+0.058,
+4,
+"2. Attention | An Analogy: Soft Dictionary Lookup"
+],
+[
+0.081,
+0.2015,
+0.4875,
+0.0326,
+4,
+"A Python dict does a hard lookup: one key matches, you get one value."
+],
+[
+0.081,
+0.2499,
+0.7708,
+0.0326,
+4,
+"Attention does a soft lookup: the query matches every key to some degree, and you get a blend of all the values."
+],
+[
+0.2493,
+0.8667,
+0.5057,
+0.031,
+4,
+"Query, key, value - remember these three words, they run the rest of today"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"18 / 57"
 ]
 ]
 },
@@ -1521,6 +2489,46 @@
 0.029,
 3,
 "step"
+],
+[
+0.0569,
+0.079,
+0.603,
+0.058,
+4,
+"2. Attention | Step 1 - Score Every Encoder State"
+],
+[
+0.081,
+0.2007,
+0.7714,
+0.0335,
+4,
+"Take the current decoder state \u0000and score it against every encoder state \u0000. The simplest score is a dot product."
+],
+[
+0.081,
+0.2499,
+0.5298,
+0.0326,
+4,
+"A large score means \"this source word is relevant to what I am about to say\"."
+],
+[
+0.2873,
+0.8667,
+0.4303,
+0.031,
+4,
+"One number per source word, recomputed at every decoder step"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"19 / 57"
 ]
 ]
 },
@@ -1582,6 +2590,46 @@
 0.0306,
 3,
 "into"
+],
+[
+0.0569,
+0.079,
+0.5942,
+0.058,
+4,
+"2. Attention | Step 2 - Softmax into a Distribution"
+],
+[
+0.081,
+0.2015,
+0.8278,
+0.0326,
+4,
+"Softmax turns the raw scores into a probability distribution over the source positions - this is the attention distribution."
+],
+[
+0.081,
+0.2499,
+0.4803,
+0.0326,
+4,
+"It sums to one, so it really is \"how much of my attention goes where\"."
+],
+[
+0.2981,
+0.8667,
+0.4082,
+0.031,
+4,
+"Scores are arbitrary numbers; the distribution is interpretable"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"20 / 57"
 ]
 ]
 },
@@ -1651,6 +2699,46 @@
 0.029,
 3,
 "bottleneck"
+],
+[
+0.0569,
+0.079,
+0.612,
+0.058,
+4,
+"2. Attention | Step 3 - Weighted Sum, then Predict"
+],
+[
+0.081,
+0.2015,
+0.5948,
+0.0326,
+4,
+"Multiply each encoder state by its weight and add them up: that is the context vector."
+],
+[
+0.081,
+0.2499,
+0.5476,
+0.0326,
+4,
+"Concatenate it with the decoder state, and predict the next word from the pair."
+],
+[
+0.3712,
+0.8667,
+0.262,
+0.031,
+4,
+"Three steps, and the bottleneck is gone"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"21 / 57"
 ]
 ]
 },
@@ -1672,6 +2760,38 @@
 0.029,
 3,
 "you"
+],
+[
+0.0569,
+0.079,
+0.426,
+0.058,
+4,
+"2. Attention | The Four Equations"
+],
+[
+0.081,
+0.2015,
+0.6913,
+0.0326,
+4,
+"Score, normalise, mix, predict. Everything in the rest of this lecture is a variation on these four lines."
+],
+[
+0.2818,
+0.8667,
+0.4407,
+0.031,
+4,
+"Write these down - you will meet them again in Q / K / V clothing"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"22 / 57"
 ]
 ]
 },
@@ -1773,6 +2893,70 @@
 0.029,
 3,
 "weighted"
+],
+[
+0.0569,
+0.079,
+0.4793,
+0.058,
+4,
+"2. Attention | What Attention Buys You"
+],
+[
+0.0575,
+0.2019,
+0.7551,
+0.0344,
+4,
+"1. Performance. NMT with attention beat NMT without it immediately, and by a lot on long sentences."
+],
+[
+0.0575,
+0.2526,
+0.6435,
+0.0344,
+4,
+"2. No bottleneck. The decoder reads the source directly instead of through a summary."
+],
+[
+0.0575,
+0.3015,
+0.8554,
+0.0344,
+4,
+"3. Shorter gradient paths. A direct connection from every output to every input - the vanishing-gradient problem is"
+],
+[
+0.0575,
+0.3393,
+0.1753,
+0.0344,
+4,
+"bypassed, not patched."
+],
+[
+0.0575,
+0.3882,
+0.8286,
+0.0344,
+4,
+"4. Interpretability. The weights are a picture of what the model looked at - rare in deep learning, and free here."
+],
+[
+0.3754,
+0.8667,
+0.2535,
+0.031,
+4,
+"Four wins from one weighted average"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"23 / 57"
 ]
 ]
 },
@@ -1882,6 +3066,54 @@
 0.029,
 3,
 "Learned"
+],
+[
+0.0569,
+0.079,
+0.5102,
+0.058,
+4,
+"2. Attention | Alignment, Learned for Free"
+],
+[
+0.081,
+0.2015,
+0.819,
+0.0326,
+4,
+"Statistical MT needed a separate alignment model - an entire research area of its own - to decide which source word"
+],
+[
+0.081,
+0.2398,
+0.2052,
+0.0326,
+4,
+"produced which target word."
+],
+[
+0.081,
+0.2883,
+0.6272,
+0.0326,
+4,
+"Attention learns alignment as a side effect of learning to translate. Nobody supervised it."
+],
+[
+0.4069,
+0.8667,
+0.1904,
+0.031,
+4,
+"Alignment Learned for Free!"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"24 / 57"
 ]
 ]
 },
@@ -1975,6 +3207,62 @@
 0.029,
 3,
 "function"
+],
+[
+0.0569,
+0.079,
+0.44,
+0.058,
+4,
+"2. Attention | Three Ways to Score"
+],
+[
+0.081,
+0.2015,
+0.8234,
+0.0326,
+4,
+"Dot product is the cheapest but forces the encoder and decoder states to have the same size and live in the same space."
+],
+[
+0.081,
+0.2499,
+0.3035,
+0.0326,
+4,
+"Bilinear (Luong) inserts a learned matrix W."
+],
+[
+0.081,
+0.2967,
+0.6227,
+0.0326,
+4,
+"Additive (Bahdanau) feeds both through a small MLP - more expressive, more expensive."
+],
+[
+0.081,
+0.3392,
+0.479,
+0.037,
+4,
+"The Transformer uses the dot product, scaled. We will see why in §3."
+],
+[
+0.3561,
+0.8667,
+0.2921,
+0.031,
+4,
+"Same three steps, different scoring function"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"25 / 57"
 ]
 ]
 },
@@ -2052,6 +3340,46 @@
 0.029,
 3,
 "out"
+],
+[
+0.0569,
+0.079,
+0.5661,
+0.058,
+4,
+"2. Attention | Attention as a General Technique"
+],
+[
+0.081,
+0.201,
+0.4072,
+0.031,
+4,
+"Strip away translation and the definition is completely general:"
+],
+[
+0.0821,
+0.247,
+0.8133,
+0.031,
+4,
+"- given a set of values and a query, attention computes a weighted sum of the values, where the weights depend on the query."
+],
+[
+0.081,
+0.2915,
+0.8593,
+0.031,
+4,
+"The query chooses what to pull out of the values - a way to build a fixed-size summary of an arbitrary set, conditioned on something."
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"26 / 57"
 ]
 ]
 },
@@ -2153,6 +3481,62 @@
 0.0324,
 3,
 "word"
+],
+[
+0.0569,
+0.079,
+0.3377,
+0.058,
+4,
+"Check Yourself | Part 1"
+],
+[
+0.0575,
+0.2137,
+0.6122,
+0.0344,
+4,
+"1. Why does a fixed-size encoder vector hurt long sentences more than short ones?"
+],
+[
+0.0575,
+0.2815,
+0.6113,
+0.0344,
+4,
+"2. In teacher forcing, what exactly is different between training time and test time?"
+],
+[
+0.0575,
+0.3493,
+0.7216,
+0.0344,
+4,
+"3. Beam search with k = 1 is the same as which algorithm? And why must we normalise by length?"
+],
+[
+0.0575,
+0.4171,
+0.6876,
+0.0344,
+4,
+"4. Write the four attention equations from memory. Which one makes the weights sum to 1?"
+],
+[
+0.0575,
+0.4849,
+0.8066,
+0.0344,
+4,
+"5. Attention gives a direct path from every output step to every input word. Why does that help the gradient?"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"27 / 57"
 ]
 ]
 },
@@ -2206,6 +3590,46 @@
 0.0306,
 3,
 "sequence"
+],
+[
+0.3765,
+0.3949,
+0.2476,
+0.0617,
+4,
+"10-minute break"
+],
+[
+0.3529,
+0.4753,
+0.2952,
+0.0294,
+4,
+"half-time: seq2seq, its bottleneck, and attention"
+],
+[
+0.0575,
+0.619,
+0.7706,
+0.0326,
+4,
+"Coming up: self-attention - the same idea, but the sequence attends to itself, and the RNN disappears entirely."
+],
+[
+0.3052,
+0.724,
+0.394,
+0.031,
+4,
+"Stretch, ask me anything - then we remove the recurrence"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"28 / 57"
 ]
 ]
 },
@@ -2227,6 +3651,38 @@
 0.0306,
 2,
 "attention"
+],
+[
+0.4847,
+0.3026,
+0.0311,
+0.0803,
+4,
+"3"
+],
+[
+0.3596,
+0.4604,
+0.281,
+0.0803,
+4,
+"Self-Attention"
+],
+[
+0.3504,
+0.5912,
+0.2987,
+0.0326,
+4,
+"remove the recurrence, keep the attention"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"29 / 57"
 ]
 ]
 },
@@ -2296,6 +3752,46 @@
 0.029,
 3,
 "length"
+],
+[
+0.0569,
+0.079,
+0.6152,
+0.058,
+4,
+"3. Self-Attention | Do We Even Need Recurrence?"
+],
+[
+0.081,
+0.2015,
+0.6364,
+0.0326,
+4,
+"Attention already connects every output to every input directly. So what is the RNN still for?"
+],
+[
+0.081,
+0.2499,
+0.7954,
+0.0326,
+4,
+"Its job is to mix information within a sequence - and attention can do that too, if we let a sequence attend to itself."
+],
+[
+0.2641,
+0.8667,
+0.4758,
+0.031,
+4,
+"Remove the recurrence and the maximum path length drops from n to 1"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"30 / 57"
 ]
 ]
 },
@@ -2397,6 +3893,46 @@
 0.029,
 3,
 "vectors"
+],
+[
+0.0569,
+0.079,
+0.6194,
+0.058,
+4,
+"3. Self-Attention | Cross-Attention vs Self-Attention"
+],
+[
+0.081,
+0.1972,
+0.7209,
+0.037,
+4,
+"Cross-attention: queries come from one sequence, keys and values from another. That is §2's attention."
+],
+[
+0.081,
+0.2499,
+0.8408,
+0.0326,
+4,
+"Self-attention: queries, keys and values all come from the same sequence. Every token asks every other token a question."
+],
+[
+0.2781,
+0.8667,
+0.4479,
+0.031,
+4,
+"Same machinery - the only change is where the vectors come from"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"31 / 57"
 ]
 ]
 },
@@ -2466,6 +4002,46 @@
 0.0306,
 3,
 "vector"
+],
+[
+0.0569,
+0.079,
+0.5529,
+0.058,
+4,
+"3. Self-Attention | Queries, Keys and Values"
+],
+[
+0.081,
+0.2015,
+0.6994,
+0.0326,
+4,
+"Each token plays three roles at once, produced by three learned linear maps of the same input vector."
+],
+[
+0.081,
+0.2499,
+0.7033,
+0.0326,
+4,
+"Query - what am I looking for? Key - what do I advertise? Value - what do I hand over if chosen?"
+],
+[
+0.3083,
+0.8622,
+0.3876,
+0.0366,
+4,
+"Three matrices: \u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000- shared across all positions"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"32 / 57"
 ]
 ]
 },
@@ -2567,6 +4143,62 @@
 0.0306,
 3,
 "information"
+],
+[
+0.0569,
+0.079,
+0.5441,
+0.058,
+4,
+"3. Self-Attention | One Query, Step by Step"
+],
+[
+0.081,
+0.1972,
+0.8027,
+0.037,
+4,
+"Take the query of one token, score it against every key, softmax, and mix the values. Exactly the three steps from §2."
+],
+[
+0.081,
+0.2499,
+0.7735,
+0.0326,
+4,
+"The result replaces that token's vector - \"his\" now carries information about \"uncle\", because it attended there."
+],
+[
+0.0152,
+0.323,
+0.0161,
+0.0321,
+4,
+"1"
+],
+[
+0.8781,
+0.5199,
+0.0161,
+0.0321,
+4,
+"2"
+],
+[
+0.2868,
+0.8667,
+0.4313,
+0.031,
+4,
+"Every token gets rewritten as a blend of the tokens it cares about"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"33 / 57"
 ]
 ]
 },
@@ -2596,6 +4228,38 @@
 0.0306,
 3,
 "new"
+],
+[
+0.0569,
+0.079,
+0.4357,
+0.058,
+4,
+"3. Self-Attention | The Equations"
+],
+[
+0.0575,
+0.1972,
+0.8569,
+0.037,
+4,
+"The same four lines as §2, now with q, k, v all coming from the same sequence - plus one new factor we are about to justify."
+],
+[
+0.3407,
+0.8628,
+0.323,
+0.0351,
+4,
+"Recognise it? This is §2 wearing different clothes"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"34 / 57"
 ]
 ]
 },
@@ -2681,6 +4345,46 @@
 0.029,
 3,
 "sequence"
+],
+[
+0.0569,
+0.079,
+0.6179,
+0.058,
+4,
+"3. Self-Attention | Everything at Once: Matrix Form"
+],
+[
+0.081,
+0.2015,
+0.8443,
+0.0326,
+4,
+"Stack all the queries into a matrix Q, all the keys into K, all the values into V. Three matrix multiplications and you are done."
+],
+[
+0.081,
+0.2499,
+0.6594,
+0.0326,
+4,
+"No loop over positions - which is exactly why this runs so well on a GPU, and why RNNs do not."
+],
+[
+0.3551,
+0.8667,
+0.294,
+0.031,
+4,
+"The whole sequence in one batched matmul"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"35 / 57"
 ]
 ]
 },
@@ -2750,6 +4454,54 @@
 0.029,
 3,
 "one-hot"
+],
+[
+0.0569,
+0.079,
+0.5884,
+0.058,
+4,
+"3. Self-Attention | Why the Scaled Dot Product?"
+],
+[
+0.081,
+0.1969,
+0.8631,
+0.0387,
+4,
+"If \u0000and \u0000have independent unit-variance entries, their dot product has variance \u0000\u0000- so with \u0000\u0000= 512 the scores are typically ±20 or"
+],
+[
+0.081,
+0.237,
+0.046,
+0.031,
+4,
+"more."
+],
+[
+0.081,
+0.2825,
+0.877,
+0.0354,
+4,
+"Huge scores make softmax nearly one-hot, and a saturated softmax has almost no gradient. Dividing by √\u0000\u0000puts the variance back to 1."
+],
+[
+0.2829,
+0.8667,
+0.4383,
+0.031,
+4,
+"A one-symbol fix for a problem that would otherwise stop training"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"36 / 57"
 ]
 ]
 },
@@ -2803,6 +4555,46 @@
 0.0306,
 3,
 "you"
+],
+[
+0.0569,
+0.079,
+0.5924,
+0.058,
+4,
+"3. Self-Attention | Three Things Are Still Missing"
+],
+[
+0.081,
+0.2015,
+0.8455,
+0.0326,
+4,
+"Self-attention on its own is not a layer you can stack - it has three structural gaps, and the Transformer fixes each with one"
+],
+[
+0.081,
+0.2398,
+0.0902,
+0.0326,
+4,
+"component."
+],
+[
+0.2953,
+0.8667,
+0.4135,
+0.031,
+4,
+"Barrier → fix: this is the whole design of the Transformer block"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"37 / 57"
 ]
 ]
 },
@@ -2888,6 +4680,54 @@
 0.029,
 3,
 "words"
+],
+[
+0.0569,
+0.079,
+0.6131,
+0.058,
+4,
+"3. Self-Attention | Barrier 1 - Positional Encoding"
+],
+[
+0.081,
+0.201,
+0.2086,
+0.031,
+4,
+"dog bites man vs man bites dog"
+],
+[
+0.081,
+0.2627,
+0.8632,
+0.031,
+4,
+"Give every position a vector and add it to the token embedding before the first layer. Now identical words at different positions differ."
+],
+[
+0.081,
+0.309,
+0.7764,
+0.031,
+4,
+"The original choice: sinusoids of geometrically spaced frequencies, so each dimension is a wave with its own wavelength."
+],
+[
+0.3192,
+0.8667,
+0.366,
+0.031,
+4,
+"Order is not in the mechanism, so we put it in the input"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"38 / 57"
 ]
 ]
 },
@@ -2957,6 +4797,54 @@
 0.029,
 3,
 "out"
+],
+[
+0.0569,
+0.079,
+0.5719,
+0.058,
+4,
+"3. Self-Attention | Which Positional Encoding?"
+],
+[
+0.081,
+0.2015,
+0.4365,
+0.0326,
+4,
+"Three families, and the field has largely converged on the third."
+],
+[
+0.081,
+0.2499,
+0.8513,
+0.0326,
+4,
+"Modern LLMs use RoPE - it rotates q and k by an angle proportional to position, so the attention score depends only on the"
+],
+[
+0.081,
+0.2856,
+0.4281,
+0.0326,
+4,
+"relative offset i − j. That is what lets context windows stretch."
+],
+[
+0.3052,
+0.8667,
+0.3938,
+0.031,
+4,
+"A 2017 detail that turned out to matter enormously in 2023"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"39 / 57"
 ]
 ]
 },
@@ -3042,6 +4930,54 @@
 0.029,
 3,
 "layer"
+],
+[
+0.0569,
+0.079,
+0.6655,
+0.058,
+4,
+"3. Self-Attention | Barrier 2 - The Feed-Forward Layer"
+],
+[
+0.081,
+0.201,
+0.6816,
+0.031,
+4,
+"Apply the same two-layer MLP to every position independently. No mixing across positions happens here."
+],
+[
+0.081,
+0.247,
+0.8113,
+0.031,
+4,
+"Division of labour: attention moves information between tokens, the FFN transforms each token. It is also where most of the"
+],
+[
+0.081,
+0.2804,
+0.2385,
+0.031,
+4,
+"parameters live - d_ff is usually 4d."
+],
+[
+0.3068,
+0.8667,
+0.3906,
+0.031,
+4,
+"Attention communicates, the feed-forward layer computes"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"40 / 57"
 ]
 ]
 },
@@ -3111,6 +5047,54 @@
 0.029,
 3,
 "skip"
+],
+[
+0.0569,
+0.079,
+0.6081,
+0.058,
+4,
+"3. Self-Attention | Barrier 3 - Masking the Future"
+],
+[
+0.081,
+0.201,
+0.8285,
+0.031,
+4,
+"A language model must not attend to tokens it has not produced yet - otherwise the task is trivial and the model learns nothing."
+],
+[
+0.081,
+0.247,
+0.8547,
+0.031,
+4,
+"Set the scores for future positions to −∞ before the softmax, so those weights become exactly zero. Encoders skip this and look both"
+],
+[
+0.081,
+0.2804,
+0.0439,
+0.031,
+4,
+"ways."
+],
+[
+0.2874,
+0.8667,
+0.4293,
+0.031,
+4,
+"One triangular mask separates BERT-style from GPT-style models"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"41 / 57"
 ]
 ]
 },
@@ -3156,6 +5140,46 @@
 0.0306,
 3,
 "times"
+],
+[
+0.0569,
+0.079,
+0.4509,
+0.058,
+4,
+"3. Self-Attention | A Minimal Block"
+],
+[
+0.081,
+0.2015,
+0.7371,
+0.0326,
+4,
+"Embeddings + positional encoding → masked self-attention → position-wise feed-forward. Stack it N times."
+],
+[
+0.081,
+0.2458,
+0.752,
+0.037,
+4,
+"This already works. What §4 adds - multi-head, residuals, LayerNorm - is what makes it trainable at depth."
+],
+[
+0.3216,
+0.8667,
+0.3611,
+0.031,
+4,
+"Three barriers, three components, one stackable block"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"42 / 57"
 ]
 ]
 },
@@ -3185,6 +5209,38 @@
 0.0783,
 3,
 "Transformer"
+],
+[
+0.4847,
+0.3026,
+0.0311,
+0.0803,
+4,
+"4"
+],
+[
+0.3306,
+0.4604,
+0.3386,
+0.0803,
+4,
+"The Transformer"
+],
+[
+0.2969,
+0.5912,
+0.4058,
+0.0326,
+4,
+"multi-head attention . residuals . LayerNorm . the full stack"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"43 / 57"
 ]
 ]
 },
@@ -3246,6 +5302,46 @@
 0.029,
 3,
 "word"
+],
+[
+0.0569,
+0.079,
+0.5767,
+0.058,
+4,
+"4. Transformer | Why One Head Is Not Enough"
+],
+[
+0.081,
+0.2015,
+0.7648,
+0.0326,
+4,
+"One attention distribution can only average one way. But a word usually needs several different things at once:"
+],
+[
+0.081,
+0.2499,
+0.8049,
+0.0326,
+4,
+"its syntactic subject, the nearby modifiers, the coreferent pronoun, the topic of the paragraph - all at the same time."
+],
+[
+0.2767,
+0.8667,
+0.451,
+0.031,
+4,
+"One weighted average is one question; a word has several questions"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"44 / 57"
 ]
 ]
 },
@@ -3275,6 +5371,46 @@
 0.0306,
 3,
 "into"
+],
+[
+0.0569,
+0.079,
+0.4761,
+0.058,
+4,
+"4. Transformer | Multi-Head Attention"
+],
+[
+0.081,
+0.2015,
+0.8203,
+0.0326,
+4,
+"Project Q, K, V into h lower-dimensional subspaces, run attention in each independently, concatenate, and project back."
+],
+[
+0.081,
+0.2499,
+0.4675,
+0.0326,
+4,
+"Original paper: d = 512, h = 8, so each head works in 64 dimensions."
+],
+[
+0.2784,
+0.8667,
+0.4475,
+0.031,
+4,
+"h heads, each in d/h dimensions, then one shared output projection"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"45 / 57"
 ]
 ]
 },
@@ -3352,6 +5488,70 @@
 0.029,
 3,
 "learning"
+],
+[
+0.0569,
+0.079,
+0.5893,
+0.058,
+4,
+"4. Transformer | Multi-Head Costs Nothing Extra"
+],
+[
+0.081,
+0.2015,
+0.8662,
+0.0326,
+4,
+"Because each head uses d/h dimensions, the total compute and the total parameter count are the same as a single head of full"
+],
+[
+0.081,
+0.2398,
+0.0511,
+0.0326,
+4,
+"width."
+],
+[
+0.081,
+0.2883,
+0.2776,
+0.0326,
+4,
+"So h different views are, in effect, free."
+],
+[
+0.081,
+0.3349,
+0.8365,
+0.0326,
+4,
+"What heads actually learn (studied in BERT): some track the previous or next token, some follow syntactic dependencies,"
+],
+[
+0.081,
+0.3705,
+0.6311,
+0.0326,
+4,
+"some point at rare words, and a surprising number learn almost nothing and can be pruned."
+],
+[
+0.2619,
+0.8667,
+0.4804,
+0.031,
+4,
+"Free capacity is rare in deep learning - this is why h > 1 is never debated"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"46 / 57"
 ]
 ]
 },
@@ -3437,6 +5637,54 @@
 0.029,
 3,
 "deep"
+],
+[
+0.0569,
+0.079,
+0.4913,
+0.058,
+4,
+"4. Transformer | Residual Connections"
+],
+[
+0.081,
+0.201,
+0.7073,
+0.031,
+4,
+"Add the input of a sublayer to its output. The layer then only has to learn the change, not the whole mapping."
+],
+[
+0.081,
+0.247,
+0.7851,
+0.031,
+4,
+"The identity path makes the Jacobian I + ∂f/∂x, so the gradient reaches layer 1 even in a 96-layer stack. Without this, deep"
+],
+[
+0.081,
+0.2804,
+0.2206,
+0.031,
+4,
+"Transformers simply do not train."
+],
+[
+0.2935,
+0.8667,
+0.4178,
+0.031,
+4,
+"The single most important trick for making anything deep work"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"47 / 57"
 ]
 ]
 },
@@ -3522,6 +5770,54 @@
 0.029,
 3,
 "residual"
+],
+[
+0.0569,
+0.079,
+0.4723,
+0.058,
+4,
+"4. Transformer | Layer Normalization"
+],
+[
+0.081,
+0.201,
+0.6364,
+0.031,
+4,
+"Normalise each token's feature vector to mean 0 and variance 1, then rescale with learned γ and β."
+],
+[
+0.081,
+0.247,
+0.8498,
+0.031,
+4,
+"Note what it does not do: it never mixes across tokens or across the batch, so it behaves identically at training and inference, and for"
+],
+[
+0.081,
+0.2804,
+0.1432,
+0.031,
+4,
+"any sequence length."
+],
+[
+0.2596,
+0.8667,
+0.4849,
+0.031,
+4,
+"Keeps activations in a sane range so the residual stream does not explode"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"48 / 57"
 ]
 ]
 },
@@ -3583,6 +5879,54 @@
 0.0306,
 3,
 "residual"
+],
+[
+0.0569,
+0.079,
+0.4698,
+0.058,
+4,
+"4. Transformer | Pre-LN or Post-LN?"
+],
+[
+0.081,
+0.1896,
+0.805,
+0.0326,
+4,
+"The 2017 paper normalised after the residual addition. It works, but needs a careful learning-rate warmup or training"
+],
+[
+0.081,
+0.2279,
+0.069,
+0.0326,
+4,
+"diverges."
+],
+[
+0.081,
+0.2763,
+0.7614,
+0.0326,
+4,
+"Putting LayerNorm before the sublayer keeps the residual path completely clean. Every modern LLM does this."
+],
+[
+0.3251,
+0.8667,
+0.3542,
+0.031,
+4,
+"A two-line change that made 100-layer stacks routine"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"49 / 57"
 ]
 ]
 },
@@ -3668,6 +6012,46 @@
 0.029,
 3,
 "model"
+],
+[
+0.0569,
+0.079,
+0.6161,
+0.058,
+4,
+"4. Transformer | Encoder Block and Decoder Block"
+],
+[
+0.081,
+0.2015,
+0.6377,
+0.0326,
+4,
+"Encoder block: self-attention → Add & Norm → feed-forward → Add & Norm. Bidirectional."
+],
+[
+0.081,
+0.2499,
+0.7243,
+0.0326,
+4,
+"Decoder block: the same, plus a masked self-attention at the bottom and a cross-attention in the middle."
+],
+[
+0.2989,
+0.8667,
+0.4063,
+0.031,
+4,
+"Two blocks, four or six sublayers, and that is the entire model"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"50 / 57"
 ]
 ]
 },
@@ -3737,6 +6121,46 @@
 0.029,
 2,
 "Self-attention"
+],
+[
+0.0569,
+0.079,
+0.6393,
+0.058,
+4,
+"4. Transformer | Cross-Attention Ties Them Together"
+],
+[
+0.081,
+0.2015,
+0.8604,
+0.0326,
+4,
+"In the decoder's middle sublayer the queries come from the decoder, but the keys and values come from the encoder output."
+],
+[
+0.081,
+0.2458,
+0.6593,
+0.037,
+4,
+"This is literally the 2015 attention of §2, rewritten in Q / K / V notation. The circle closes here."
+],
+[
+0.3157,
+0.8667,
+0.3729,
+0.031,
+4,
+"Self-attention looks inward, cross-attention looks across"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"51 / 57"
 ]
 ]
 },
@@ -3750,6 +6174,38 @@
 0.056,
 1,
 "Transformer"
+],
+[
+0.0569,
+0.079,
+0.4799,
+0.058,
+4,
+"4. Transformer | The Full Architecture"
+],
+[
+0.081,
+0.2015,
+0.4476,
+0.0326,
+4,
+"Every box on this diagram is something we built in the last hours."
+],
+[
+0.3142,
+0.8667,
+0.3759,
+0.031,
+4,
+"Close your notes and try to redraw this - that is the test"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"52 / 57"
 ]
 ]
 },
@@ -3819,6 +6275,54 @@
 0.029,
 3,
 "linear"
+],
+[
+0.0569,
+0.079,
+0.5755,
+0.058,
+4,
+"4. Transformer | The Price: Quadratic Attention"
+],
+[
+0.081,
+0.1969,
+0.6552,
+0.0351,
+4,
+"The score matrix is n × n, so both compute and memory grow with the square of the sequence length."
+],
+[
+0.081,
+0.247,
+0.8518,
+0.031,
+4,
+"At n = 512 this is cheap. At n = 128,000 it is the single biggest engineering problem in LLMs - FlashAttention, sliding windows, linear"
+],
+[
+0.081,
+0.2804,
+0.3602,
+0.031,
+4,
+"attention and state-space models all attack exactly this."
+],
+[
+0.2989,
+0.8667,
+0.4063,
+0.031,
+4,
+"Every advantage has a bill attached; here is the Transformer's"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"53 / 57"
 ]
 ]
 },
@@ -3856,6 +6360,54 @@
 0.0306,
 3,
 "part"
+],
+[
+0.0569,
+0.079,
+0.3945,
+0.058,
+4,
+"4. Transformer | Did It Work?"
+],
+[
+0.081,
+0.2015,
+0.8278,
+0.0326,
+4,
+"WMT 2014 English→German: the Transformer beat every previous system, including large ensembles - and trained in a"
+],
+[
+0.081,
+0.2398,
+0.144,
+0.0326,
+4,
+"fraction of the time."
+],
+[
+0.081,
+0.2883,
+0.8613,
+0.0326,
+4,
+"The cost column is the part people underestimated: cheaper training means more experiments, which means faster progress."
+],
+[
+0.2443,
+0.8667,
+0.5158,
+0.031,
+4,
+"Better and cheaper at the same time - that is why the field switched in a year"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"54 / 57"
 ]
 ]
 },
@@ -3901,6 +6453,38 @@
 0.029,
 2,
 "AI"
+],
+[
+0.0569,
+0.079,
+0.5373,
+0.058,
+4,
+"4. Transformer | Why the Transformer Won"
+],
+[
+0.081,
+0.2015,
+0.7338,
+0.0326,
+4,
+"The architecture is not obviously smarter than an LSTM. It won because of four properties that compound:"
+],
+[
+0.2675,
+0.8667,
+0.4693,
+0.031,
+4,
+"Designed for machine translation in 2017 - now it runs almost all of AI"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"55 / 57"
 ]
 ]
 },
@@ -3978,6 +6562,78 @@
 0.029,
 3,
 "you"
+],
+[
+0.0569,
+0.079,
+0.3377,
+0.058,
+4,
+"Check Yourself | Part 2"
+],
+[
+0.0575,
+0.2083,
+0.5591,
+0.037,
+4,
+"1. What exactly is the difference between self-attention and the attention of §2?"
+],
+[
+0.0575,
+0.2771,
+0.4714,
+0.0326,
+4,
+"2. Why must the mask be applied before the softmax and not after?"
+],
+[
+0.0575,
+0.3416,
+0.4089,
+0.0326,
+4,
+"3. Why divide by √d_k, and what goes wrong if you forget?"
+],
+[
+0.0575,
+0.406,
+0.6793,
+0.0326,
+4,
+"4. Where do most of a Transformer's parameters live - in attention or in the feed-forward layers?"
+],
+[
+0.0575,
+0.4705,
+0.5862,
+0.0326,
+4,
+"5. Name the three barriers of plain self-attention and the component that fixes each."
+],
+[
+0.0575,
+0.535,
+0.5105,
+0.0326,
+4,
+"6. Why is attention O(n²), and name one line of work that tries to avoid it."
+],
+[
+0.2766,
+0.8667,
+0.4512,
+0.031,
+4,
+"Draw the block from memory - if you can, you are ready for the lab"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"56 / 57"
 ]
 ]
 },
@@ -4079,6 +6735,86 @@
 0.0306,
 3,
 "attention"
+],
+[
+0.0569,
+0.079,
+0.4501,
+0.058,
+4,
+"Wrap-up | Summary . Lab 3 . Project"
+],
+[
+0.081,
+0.2126,
+0.5071,
+0.0326,
+4,
+"Seq2Seq: two RNNs, one bridge vector - and that vector is a bottleneck."
+],
+[
+0.081,
+0.2771,
+0.675,
+0.0326,
+4,
+"Attention: score → softmax → weighted sum . removes the bottleneck . learns alignment for free."
+],
+[
+0.081,
+0.3416,
+0.7578,
+0.0326,
+4,
+"Self-attention: Q/K/V from one sequence . scaled dot product . needs positional encoding, an FFN and a mask."
+],
+[
+0.081,
+0.406,
+0.6731,
+0.0326,
+4,
+"Transformer: multi-head + residual + LayerNorm . encoder and decoder blocks . O(n²) is the price."
+],
+[
+0.081,
+0.4705,
+0.8343,
+0.0326,
+4,
+"Lab 3 (1h): self-attention from scratch in NumPy and PyTorch - Q/K/V, the mask, multi-head, and a look at real attention"
+],
+[
+0.081,
+0.5238,
+0.0487,
+0.0326,
+4,
+"maps."
+],
+[
+0.081,
+0.5883,
+0.6593,
+0.0326,
+4,
+"Project: form your team of 4 and send me the members and a one-line topic idea by next week."
+],
+[
+0.2903,
+0.8667,
+0.4237,
+0.031,
+4,
+"Next week: pretraining - the same block, trained on everything"
+],
+[
+0.9274,
+0.9322,
+0.0463,
+0.0283,
+4,
+"57 / 57"
 ]
 ]
 }

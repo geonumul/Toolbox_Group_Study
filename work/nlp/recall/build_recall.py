@@ -24,6 +24,7 @@ PROF = {
     "out": W / "recall",
     "img": ROOT / "subjects" / "nlp" / "img",
     "layout": "wide",
+    "all_lines": True,   # 4단계(다 가리기): 쪽의 모든 글 줄을 4단계 칸으로
 }
 
 
