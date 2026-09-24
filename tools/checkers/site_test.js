@@ -25,7 +25,7 @@ const go = async h => { w.location.hash = h; await wait(60); };
 (async () => {
   await wait(50);
   console.log('home cards:', $$('.wcard').length, 'plan cells:', $$('.pcell').length, 'tools:', $$('.tool').length);
-  for (const wk of ['0', '1', '2', '3']) { await go('#/week/' + wk); console.log('week', wk, 'ptiles', $$('.ptile').length, 'units', $$('.ucard').length, 'qbtns', $$('.qbtn').length); }
+  for (const wk of ['0', '1', '2', '3', '4']) { await go('#/week/' + wk); console.log('week', wk, 'ptiles', $$('.ptile').length, 'units', $$('.ucard').length, 'qbtns', $$('.qbtn').length); }
   await go('#/quiz?week=2&level=basic&mode=all&start=1&n=0');
   let types = {}, guard = 0;
   while (guard++ < 400) {

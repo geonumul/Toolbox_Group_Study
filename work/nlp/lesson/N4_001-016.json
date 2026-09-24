@@ -1050,7 +1050,7 @@
     {
      "kind": "english",
      "head": "답안 문장",
-     "en": "**시퀀스-투-시퀀스 모델(Sequence-to-Sequence Model)**은 **인코더(Encoder)** RNN 이 입력 문장을 읽어 고정 크기 벡터로 압축하고, **디코더(Decoder)** RNN 이 그 벡터를 조건으로 목표 문장을 한 토큰씩 생성하는 구조다.",
+     "en": "**시퀀스-투-시퀀스 모델(Sequence-to-Sequence Model)**은 **인코더(Encoder)** RNN 이 입력 문장을 읽어 고정 크기 벡터 하나로 압축한다. **디코더(Decoder)** RNN 은 그 벡터를 조건으로 목표 문장을 한 토큰씩 생성한다.",
      "ko": "'두 RNN + 벡터 하나' 라는 뼈대를 먼저 쓰고 세부를 붙여요."
     }
    ]
@@ -1071,7 +1071,7 @@
      "kind": "say",
      "lines": [
       "**디코더(Decoder)**는 그냥 **언어 모델(Language Model (LM))**인데, 입력 문장 x 라는 조건이 하나 더 붙은 거예요.",
-      "그래서 **조건부 언어 모델(Conditional Language Model)**이라고 불러요.",
+      "그래서 **조건부 언어 모델(Conditional Language Model)**이라고 불러요. 하는 일은 3주차의 **다음 토큰 예측(Next Token Prediction)** 그대로예요.",
       "학습은 3주차에 배운 교차 엔트로피 그대로예요."
      ]
     },
@@ -1132,6 +1132,15 @@
       "factorises the same way an LM does = 언어 모델과 똑같은 방식으로 쪼개진다",
       "ordinary cross-entropy on the target tokens = 목표 토큰에 대한 평범한 교차 엔트로피",
       "the gradient flows all the way back = 기울기가 끝까지 거슬러 흐른다"
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "3주차와 이어지는 점",
+     "items": [
+      "3주차에서 배운 **다음 토큰 예측(Next Token Prediction)**과 계산이 똑같아요. 조건 x 하나가 더 붙었을 뿐이에요.",
+      "교수님: **다음 토큰 예측(Next Token Prediction)**이 거의 모든 걸 결정한다, GPT 도 다 결국 이거다.",
+      "그래서 **언어 모델(Language Model (LM))**을 이해하면 번역 모델도 바로 이해돼요."
      ]
     }
    ],
@@ -1432,7 +1441,7 @@
     {
      "kind": "english",
      "head": "답안 문장",
-     "en": "**교사 강요(Teacher Forcing)**는 학습 시 디코더의 다음 입력으로 정답 토큰을 넣어 학습을 안정적이고 병렬적으로 만들지만, 추론 시에는 모델 자신의 출력만 보므로 학습과 추론 사이에 어긋남, 곧 **노출 편향(Exposure Bias)**이 생긴다.",
+     "en": "**교사 강요(Teacher Forcing)**는 학습 시 디코더의 다음 입력으로 정답 토큰을 넣어 학습을 안정적이고 병렬적으로 만든다. 추론 시에는 모델 자신의 출력만 보므로 학습과 추론이 어긋나는 **노출 편향(Exposure Bias)**이 생긴다.",
      "ko": "장점(안정, 병렬)과 단점(노출 편향)을 반드시 함께 써요."
     }
    ]
@@ -2012,7 +2021,7 @@
     {
      "kind": "english",
      "head": "답안 문장",
-     "en": "**블루 점수(BLEU)**는 모델 번역과 사람이 만든 정답 번역 사이에서 1-gram 부터 4-gram 까지의 겹침(정밀도)을 재고, 너무 짧은 번역을 막기 위해 **간결성 페널티(Brevity Penalty)**를 곱하는 지표다. 뜻이 같아도 다른 표현을 쓰면 점수가 낮게 나오는 한계가 있다.",
+     "en": "**블루 점수(BLEU)**는 모델 번역과 정답 번역 사이에서 1-gram 부터 4-gram 까지의 겹침을 재고, 짧은 번역을 막으려고 **간결성 페널티(Brevity Penalty)**를 곱한다. 뜻이 같아도 표현이 다르면 점수가 낮은 한계가 있다.",
      "ko": "정의(겹침) + 페널티(짧음 방지) + 한계(표현 다양성) 세 마디를 꼭 넣어요."
     },
     {
@@ -2165,7 +2174,7 @@
     {
      "kind": "english",
      "head": "답안 문장",
-     "en": "**시퀀스-투-시퀀스 모델(Sequence-to-Sequence Model)**은 특정 과제가 아니라 입력과 출력이 모두 시퀀스인 모든 문제에 쓰이는 **인코더(Encoder)**, **디코더(Decoder)** 프레임워크이며, 번역, 요약, 대화, 음성 인식, 코드 생성 등에 같은 구조가 재사용된다.",
+     "en": "**시퀀스-투-시퀀스 모델(Sequence-to-Sequence Model)**은 입력과 출력이 모두 시퀀스인 모든 문제에 쓰이는 **인코더(Encoder)**, **디코더(Decoder)** 틀이다. 번역, 요약, 대화, 음성 인식, 코드 생성에 같은 구조가 다시 쓰인다.",
      "ko": "과제 다섯 개를 외워 두면 나열형 문제에 그대로 써요."
     }
    ]
@@ -2320,7 +2329,7 @@
     {
      "kind": "english",
      "head": "답안 문장",
-     "en": "**시퀀스-투-시퀀스 모델(Sequence-to-Sequence Model)**에서 **인코더(Encoder)**의 정보는 고정 크기 벡터 하나를 통해서만 **디코더(Decoder)**로 전달되므로, 문장이 길어질수록 압축 손실이 커지는 **정보 병목(Information Bottleneck)**이 생긴다.",
+     "en": "**시퀀스-투-시퀀스 모델(Sequence-to-Sequence Model)**에서 **인코더(Encoder)**의 정보는 고정 크기 벡터 하나로만 **디코더(Decoder)**에 전달된다. 그래서 문장이 길어질수록 압축 손실이 커지는 **정보 병목(Information Bottleneck)**이 생긴다.",
      "ko": "'고정 크기 + 유일한 통로 + 길수록 손실' 세 조각을 꼭 넣어요."
     },
     {
