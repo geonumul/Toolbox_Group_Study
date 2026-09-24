@@ -47,6 +47,7 @@ def _iot():
         "out": w / "recall",
         "img": ROOT / "subjects" / "iot-smart-home" / "img",
         "layout": "a4",
+        "all_lines": True,          # 4단계(다 가리기): 쪽의 모든 글 줄
     }
 
 
@@ -80,6 +81,7 @@ def _eco():
         "out": w / "recall",
         "img": ROOT / "subjects" / "eco-architecture" / "img",
         "layout": "a4",
+        "all_lines": True,          # 4단계(다 가리기): 쪽의 모든 글 줄
         # PDF 글자 층의 인코딩이 깨져 있어서 (한글이 엉뚱한 글자로 나온다) 늘 OCR 을 쓴다
         "force_ocr": True,
         # 1주차 정리 슬라이드 단원이 다루는 쪽 (build_slides_w1.py 의 단원과 같이 고친다)
