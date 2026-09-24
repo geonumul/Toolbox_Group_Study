@@ -778,4 +778,142 @@
       u.txt(g.out, 'w = ' + num(w) + ', 손실 ' + num(L) + (w < -1 || w > 9.5 ? ' (그림 밖)' : ''));
     },
   });
+
+  /* ---------- 11. 이웃 샘플링: 계산 그래프 폭발과 고정 크기 뽑기 (w4-2) ---------- */
+  V.add('gnn.sample', {
+    title: '이웃을 몇 명만 뽑아 계산 그래프를 붙잡아요',
+    w: 480, h: 300,
+    states: [
+      { cap: '대상 노드 A 하나예요. A 의 표현을 구하려면 이웃 정보가 필요해요.' },
+      { cap: '1층: A 의 이웃 6명이 전부 따라와요. 여기까지 노드 7개예요.' },
+      { cap: '2층: 이웃마다 또 이웃 4명씩 붙어요. 1 + 6 + 24 = 31개가 됐어요.' },
+      { cap: '이웃이 수천 명인 허브 노드가 섞이면 이 숫자가 수만으로 커져요. 크기를 미리 알 수 없어요.' },
+      { cap: 'GraphSAGE 는 한 층에서 뽑을 이웃 수를 S = 2 로 못 박아요. 1층에서 2명만 남겨요.' },
+      { cap: '2층에서도 2명씩만 뽑아요. 1 + 2 + 4 = 7개. 층이 L 개면 S 의 L 제곱이에요.' },
+      { cap: '크기를 미리 알 수 있으니 메모리를 잡아 두고 미니 배치로 쪼갤 수 있어요.' },
+    ],
+    build(ctx) {
+      const g = ctx.g = {};
+      const root = [240, 42];
+      g.root = root;
+      g.l1 = []; g.e1 = []; g.e2 = [];
+      const ge = u.el(ctx.svg, 'g'), gn = u.el(ctx.svg, 'g'), gs = u.el(ctx.svg, 'g');
+      for (let i = 0; i < 6; i++) {
+        const x = 45 + i * 78, y = 150;
+        g.e1.push(u.el(ge, 'line', { class: 'vz-e' }));
+        g.l1.push({ p: [x, y] });
+        for (let j = 0; j < 4; j++) {
+          g.e2.push({ line: u.el(ge, 'line', { class: 'vz-e' }), p: [x - 27 + j * 18, 252], i: i, j: j });
+        }
+      }
+      g.e2.forEach(c => { c.dot = u.el(gs, 'circle', { cx: c.p[0], cy: c.p[1], r: 7, class: 'vz-n' }); });
+      g.l1.forEach((n, i) => { n.nd = u.node(gn, n.p[0], n.p[1], 17, String(i + 1)); });
+      g.A = u.node(gn, root[0], root[1], 20, 'A');
+      u.el(ctx.svg, 'text', { x: 12, y: 154, class: 'vz-ts' }, '1층');
+      u.el(ctx.svg, 'text', { x: 12, y: 256, class: 'vz-ts' }, '2층');
+      g.cnt = u.el(ctx.svg, 'text', { x: 468, y: 24, 'text-anchor': 'end', class: 'vz-tb' }, '');
+      g.note = u.el(ctx.svg, 'text', { x: 468, y: 44, 'text-anchor': 'end', class: 'vz-ta' }, '');
+    },
+    draw(ctx, s, k) {
+      const g = ctx.g;
+      const keep1 = [1, 3], keep2 = [0, 1];
+      const cut = at(s, k, 4) > 0.4;
+      const p1 = at(s, k, 1), p2 = at(s, k, 2);
+      g.l1.forEach((n, i) => {
+        const kept = !cut || keep1.indexOf(i) >= 0;
+        const ab = u.shrink(g.root, n.p, 20, 17);
+        u.draw(g.e1[i], ab[0], ab[1], seg(p1, i * 0.1, i * 0.1 + 0.5));
+        g.e1[i].setAttribute('class', 'vz-e' + (kept ? (s >= 4 ? ' tl' : ' on') : ' off'));
+        nodeCls(n.nd, kept ? (s >= 4 ? 'tl' : 'on') : 'off');
+        u.op(n.nd.g, seg(p1, i * 0.08, i * 0.08 + 0.5));
+      });
+      g.e2.forEach((c, idx) => {
+        const kept = !cut || (keep1.indexOf(c.i) >= 0 && keep2.indexOf(c.j) >= 0);
+        const ab = u.shrink(g.l1[c.i].p, c.p, 17, 7);
+        const t0 = (idx % 8) * 0.04;
+        u.draw(c.line, ab[0], ab[1], seg(p2, t0, t0 + 0.5));
+        c.line.setAttribute('class', 'vz-e' + (kept ? (s >= 4 ? ' tl' : '') : ' off'));
+        c.dot.setAttribute('class', 'vz-n' + (kept && s >= 4 ? ' on' : ''));
+        u.op(c.dot, seg(p2, t0, t0 + 0.5) * (kept ? 1 : 0.25));
+      });
+      nodeCls(g.A, s >= 4 ? 'cr' : 'on');
+      const n = s >= 5 ? 7 : s >= 4 ? 3 : s >= 2 ? 31 : s >= 1 ? 7 : 1;
+      u.txt(g.cnt, '계산 그래프 노드 ' + n + '개');
+      u.txt(g.note, s >= 5 ? 'S = 2, L = 2 이면 언제나 7개'
+        : s === 4 ? '1층에서 2명만 남겼어요'
+          : s === 3 ? '허브가 끼면 크기를 셀 수 없어요'
+            : s >= 2 ? '이웃이 d 명이면 d 의 L 제곱' : '');
+      u.op(g.note, s >= 2 ? 1 : 0);
+    },
+  });
+
+  /* ---------- 12. 군집 단위 미니 배치: Cluster-GCN (w4-4) ---------- */
+  V.add('gnn.cluster', {
+    title: '그래프를 커뮤니티로 잘라 미니 배치로 써요',
+    w: 480, h: 300,
+    states: [
+      { cap: '노드 15개짜리 그래프예요. 엣지는 21개인데 어딘가 덩어리져 보여요.' },
+      { cap: 'METIS 같은 군집화가 빽빽한 덩어리 3개를 찾아요. 이게 커뮤니티예요.' },
+      { cap: '군집 사이 엣지 3개를 끊어요. 21개 중 3개, 약 14%만 사라져요.' },
+      { cap: '군집 하나를 통째로 미니 배치로 써요. 이웃이 군집 안에 있어서 임베딩을 알뜰하게 다시 써요.' },
+      { cap: '문제가 하나 있어요. 군집 안 노드는 레이블이 거의 같아서 배치가 치우쳐요.' },
+      { cap: '해법: 군집 2개를 무작위로 골라 한 배치로 묶어요. 끊겼던 엣지도 되살아나요.' },
+    ],
+    build(ctx) {
+      const g = ctx.g = {};
+      const pos = g.pos = {
+        a1: [45, 58], a2: [115, 46], a3: [42, 126], a4: [112, 120], a5: [80, 90],
+        b1: [205, 212], b2: [275, 206], b3: [202, 274], b4: [272, 270], b5: [240, 242],
+        c1: [370, 50], c2: [440, 60], c3: [366, 122], c4: [436, 126], c5: [402, 90],
+      };
+      g.inner = [['a1', 'a5'], ['a2', 'a5'], ['a3', 'a5'], ['a4', 'a5'], ['a1', 'a2'], ['a3', 'a4'],
+        ['b1', 'b5'], ['b2', 'b5'], ['b3', 'b5'], ['b4', 'b5'], ['b1', 'b2'], ['b3', 'b4'],
+        ['c1', 'c5'], ['c2', 'c5'], ['c3', 'c5'], ['c4', 'c5'], ['c1', 'c2'], ['c3', 'c4']];
+      g.cross = [['a4', 'b1'], ['b2', 'c3'], ['a2', 'c1']];
+      const gh = u.el(ctx.svg, 'g');
+      g.hull = [0, 1, 2].map(() => u.el(gh, 'rect', { rx: 16, class: 'vz-box' }));
+      g.G = graph(ctx.svg, pos, g.inner.concat(g.cross), 15, id => id[1]);
+      const box = { a: [20, 24, 118, 124], b: [178, 180, 118, 114], c: [344, 26, 118, 124] };
+      g.tag = ['a', 'b', 'c'].map((c, i) => {
+        u.set(g.hull[i], { x: box[c][0], y: box[c][1], width: box[c][2], height: box[c][3] });
+        return u.el(ctx.svg, 'text', { x: box[c][0] + box[c][2] / 2, y: box[c][1] - 7, 'text-anchor': 'middle', class: 'vz-ta' }, '군집 ' + (i + 1));
+      });
+      g.msg = u.el(ctx.svg, 'text', { x: 240, y: 166, 'text-anchor': 'middle', class: 'vz-tb' }, '');
+    },
+    draw(ctx, s, k) {
+      const g = ctx.g;
+      const kc = { a: 'vz-k4', b: 'vz-k2', c: 'vz-k7' };
+      const colored = at(s, k, 1) > 0.3;
+      const cutp = at(s, k, 2);
+      const batch = (s === 3 || s === 4) ? ['a'] : s === 5 ? ['a', 'c'] : [];
+      Object.keys(g.pos).forEach(id => {
+        const c = id[0], inBatch = batch.indexOf(c) >= 0;
+        nodeCls(g.G.N[id], (colored ? kc[c] : '') + (batch.length && !inBatch ? ' off' : ''));
+      });
+      g.inner.forEach(e => {
+        const inBatch = batch.indexOf(e[0][0]) >= 0;
+        g.G.edge(e[0], e[1]).setAttribute('class', 'vz-e' + (batch.length ? (inBatch ? ' tl' : ' off') : colored ? ' on' : ''));
+      });
+      g.cross.forEach(e => {
+        const both = batch.indexOf(e[0][0]) >= 0 && batch.indexOf(e[1][0]) >= 0;
+        const back = s >= 5 && both;
+        const gone = cutp > 0.35 && !back;
+        const ln = g.G.edge(e[0], e[1]);
+        ln.setAttribute('class', 'vz-e' + (back ? ' tl' : ' cr'));
+        u.op(ln, gone ? 0.16 : 1);
+      });
+      g.hull.forEach((h, i) => {
+        const c = ['a', 'b', 'c'][i], inBatch = batch.indexOf(c) >= 0;
+        h.setAttribute('class', 'vz-box' + (inBatch ? ' tl' : colored ? ' on' : ' off'));
+        const dim = batch.length && !inBatch ? 0.22 : 1;
+        u.op(h, seg(at(s, k, 1), 0, 0.6) * dim);
+        u.op(g.tag[i], seg(at(s, k, 1), 0.3, 0.9) * dim);
+      });
+      u.txt(g.msg, s === 2 ? '끊긴 엣지 3개 / 21개 = 약 14%'
+        : s === 3 ? '배치 = 군집 1. 노드 5개로 손실 5개'
+          : s === 4 ? '배치 안 레이블이 한 가지로 치우쳐요'
+            : s === 5 ? '배치 = 군집 1 + 군집 3. 사이 엣지도 살아나요' : '');
+      u.op(g.msg, s >= 2 ? 1 : 0);
+    },
+  });
 })();

@@ -1,0 +1,8 @@
+{
+ "layout": "slide",
+ "layouts": {"S1": "slide"},
+ "glossary": ["rules/용어사전.json"],
+ "glossary_units": ["notes/slides_w1.json", "notes/slides_w2.json", "notes/slides_w3.json", "notes/slides_wb.json", "terms/1.json", "terms/2.json", "terms/3.json", "terms/b.json"],
+ "corpus": ["bank/*.json"],
+ "all_lines": true
+}

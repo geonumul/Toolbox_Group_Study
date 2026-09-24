@@ -33,7 +33,7 @@ def walk(o, path=""):
             yield from walk(v, f"{path}.{k}")
 
 
-def check_file(f, items, errs):
+def check_file(f, items, errs, warns):
     raw = f.read_text(encoding="utf-8")
     for ch, name in BAD.items():
         if ch in raw:
@@ -61,10 +61,11 @@ def check_file(f, items, errs):
             items.append((where, body, disp))
             if re.search("[가-힣]", body) and "\\text" not in body:
                 errs.append(f"{where}: 수식 안 한글은 \\text{{}} 로: {body[:50]}")
+        # (2026-09-23) 엔진 fmt() 의 숫자 자리표 버그는 고쳐졌다. 이제는 권장 사항이라 경고로만 알린다.
         plain = MATH.sub(" X ", s)
         for m in re.finditer(r"(?<= )\d+(?= )", plain):
             a = max(0, m.start() - 15)
-            errs.append(f"{where}: 공백 사이 숫자 '{plain[a:m.end() + 10]}' (엔진이 지움. $..$ 로 감싸거나 조사/단위를 붙여요)")
+            warns.append(f"{where}: 공백 사이 숫자 '{plain[a:m.end() + 10]}' ($..$ 로 감싸면 더 보기 좋아요)")
             break
 
 
@@ -100,14 +101,16 @@ def main():
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
     files = [pathlib.Path(a) for a in args] or sorted(
         [p for d in ("lesson", "notes", "bank", "terms") for p in (W / d).glob("*.json")])
-    errs, items = [], []
+    errs, warns, items = [], [], []
     for f in files:
-        check_file(f, items, errs)
+        check_file(f, items, errs, warns)
+    for w in warns[:20]:
+        print("  경고:", w)
     for e in errs[:80]:
         print("  오류:", e)
     if len(errs) > 80:
         print(f"  ... 외 {len(errs) - 80}건")
-    print(f"파일 {len(files)}개, 수식 {len(items)}개, 오류 {len(errs)}건")
+    print(f"파일 {len(files)}개, 수식 {len(items)}개, 오류 {len(errs)}건, 경고 {len(warns)}건")
     ok = not errs
     if "--katex" in sys.argv:
         res = katex(items)

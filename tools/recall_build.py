@@ -55,13 +55,14 @@ def _gnn():
     return {
         "name": "gnn",
         # 사이트 그림은 한글 슬라이드라서 한글을 입힌 PDF 에서 글자 위치를 읽는다
-        "decks": {d: str(GNN / "번역" / "img" / f"{d}_ko.pdf") for d in ("L1", "L2", "L3")},
+        "decks": {d: str(GNN / "번역" / "img" / f"{d}_ko.pdf") for d in ("L1", "L2", "L3", "L4")},
         "lesson": str(work / "lesson" / "{deck}_*.json"),
         "glossary": [],
         "corpus": [str(work / "문제은행" / "*.json"), str(work / "기출_텍스트" / "*.txt")],
         "out": work / "recall",
         "img": GNN_SITE / "img",
         "layout": "wide",
+        "all_lines": True,          # 4단계(다 가리기): 쪽의 모든 글 줄
     }
 
 
@@ -135,9 +136,11 @@ def profile_from_json(slug):
 
 
 def get_profile(slug):
-    if slug in PROFILES:
-        return PROFILES[slug]()
-    return profile_from_json(slug)
+    """work/<과목>/recall/profile.json 이 있으면 그것을 먼저 쓰고, 없으면 코드 프로필을 쓴다."""
+    prof = profile_from_json(slug)
+    if prof:
+        return prof
+    return PROFILES[slug]() if slug in PROFILES else None
 
 
 def layout_of(prof, deck):
