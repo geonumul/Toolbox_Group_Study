@@ -1,0 +1,2336 @@
+{
+ "deck": "N4",
+ "from": 1,
+ "to": 16,
+ "glossary": [
+  {
+   "ko": "자연어처리",
+   "en": "Natural Language Processing (NLP)",
+   "say": "컴퓨터가 사람의 말과 글을 다루게 하는 분야",
+   "more": "글을 토큰으로 자르고, 벡터로 바꾸고, 그 벡터로 다음 토큰을 맞혀요."
+  },
+  {
+   "ko": "토큰",
+   "en": "Token",
+   "say": "글을 자른 레고 조각 하나",
+   "more": "모델이 읽는 가장 작은 단위예요. 단어일 수도, 단어의 조각(서브워드)일 수도 있어요."
+  },
+  {
+   "ko": "어휘",
+   "en": "Vocabulary",
+   "say": "모델이 아는 토큰 종류의 목록",
+   "more": "어휘 크기를 V 라고 써요. 매 자리마다 V 개 후보 중 하나를 고르는 셈이에요."
+  },
+  {
+   "ko": "순환 신경망",
+   "en": "Recurrent Neural Network (RNN)",
+   "say": "한 단어씩 읽으며 메모장에 요약을 고쳐 쓰는 신경망",
+   "more": "3주차에 배웠어요. 시점마다 같은 가중치를 다시 써서 은닉 상태를 갱신해요."
+  },
+  {
+   "ko": "은닉 상태",
+   "en": "Hidden State",
+   "say": "지금까지 읽은 내용을 요약해 들고 다니는 숫자 벡터, 곧 메모장",
+   "more": "RNN 이 한 토큰을 읽을 때마다 새로 계산해요. 기호는 h 로 써요."
+  },
+  {
+   "ko": "기울기 소실",
+   "en": "Vanishing Gradient",
+   "say": "귓속말 전달 게임처럼 기울기가 점점 희미해져 0 에 가까워지는 문제",
+   "more": "RNN 에서 먼 과거까지 학습 신호가 잘 가지 않는 이유예요. 어텐션이 이 문제를 비켜 가요."
+  },
+  {
+   "ko": "시간 역전파",
+   "en": "Backpropagation Through Time (BPTT)",
+   "say": "시점마다 펼친 RNN 위에서 뒤에서 앞으로 역전파하기",
+   "more": "먼 과거로 갈수록 곱셈이 여러 번 쌓여서 기울기가 작아지거나 커져요."
+  },
+  {
+   "ko": "시퀀스-투-시퀀스 모델",
+   "en": "Sequence-to-Sequence Model",
+   "say": "줄줄이 들어온 것을 읽고 줄줄이 내놓는 모델 틀",
+   "more": "인코더와 디코더 두 부분으로 되어 있어요. 번역, 요약, 대화, 음성 인식에 모두 써요."
+  },
+  {
+   "ko": "인코더",
+   "en": "Encoder",
+   "say": "입력 문장을 끝까지 읽어 요약을 만드는 쪽",
+   "more": "2014년 원래 구조에서는 인코더가 RNN 이었고, 마지막 은닉 상태가 요약 벡터였어요."
+  },
+  {
+   "ko": "디코더",
+   "en": "Decoder",
+   "say": "요약을 받아 답 문장을 한 토큰씩 만들어 내는 쪽",
+   "more": "디코더는 입력에 조건이 걸린 언어 모델이에요. 그래서 조건부 언어 모델이라고 불러요."
+  },
+  {
+   "ko": "기계 번역",
+   "en": "Machine Translation (MT)",
+   "say": "한 언어 문장을 다른 언어 문장으로 바꾸는 과제",
+   "more": "4주차 내내 예제로 쓰는 과제예요. 입력 x 를 보고 출력 y 를 만들어요."
+  },
+  {
+   "ko": "신경망 기계 번역",
+   "en": "Neural Machine Translation (NMT)",
+   "say": "신경망 하나로 통째로 학습하는 번역 방식",
+   "more": "2014년에 등장했어요. 2년 만에 수백 명이 십 년간 만든 통계 기반 시스템을 앞질렀어요."
+  },
+  {
+   "ko": "언어 모델",
+   "en": "Language Model (LM)",
+   "say": "휴대폰 자판의 다음 단어 추천처럼 다음 토큰을 맞히는 모델",
+   "more": "3주차에 배웠어요. 문장의 확률을 조각조각 곱으로 나눠 써요."
+  },
+  {
+   "ko": "조건부 언어 모델",
+   "en": "Conditional Language Model",
+   "say": "입력 문장 x 를 조건으로 붙인 언어 모델",
+   "more": "P(y|x) = P(y1|x) P(y2|y1, x) ... 처럼 매 자리마다 x 가 조건으로 계속 붙어요."
+  },
+  {
+   "ko": "다음 토큰 예측",
+   "en": "Next Token Prediction",
+   "say": "지금까지의 토큰으로 바로 다음 토큰을 맞히는 과제",
+   "more": "교수님: 지금까지 토큰으로 다음 토큰을 예측하는 이것이 거의 모든 걸 결정해요."
+  },
+  {
+   "ko": "교차 엔트로피",
+   "en": "Cross-Entropy",
+   "say": "정답 토큰에 준 확률의 -log 를 벌점으로 매기는 손실",
+   "more": "정답 확률이 1 이면 벌점 0, 0 에 가까우면 벌점이 아주 커져요."
+  },
+  {
+   "ko": "손실 함수",
+   "en": "Loss Function",
+   "say": "틀린 정도를 매기는 벌점",
+   "more": "학습은 이 벌점이 작아지는 쪽으로 파라미터를 조금씩 고치는 일이에요."
+  },
+  {
+   "ko": "종단간 학습",
+   "en": "End-to-End",
+   "say": "여러 부품을 따로 만들지 않고 하나의 신경망을 한 번에 학습하는 방식",
+   "more": "손실 하나를 정하고 역전파 한 번으로 디코더, 다리, 인코더까지 전부 고쳐요."
+  },
+  {
+   "ko": "역전파",
+   "en": "Backpropagation",
+   "say": "틀린 책임을 뒤에서 앞으로 나눠 주기",
+   "more": "3주차 주제였어요. 손실의 기울기를 출력 쪽에서 입력 쪽으로 연쇄 법칙으로 계산해요."
+  },
+  {
+   "ko": "교사 강요",
+   "en": "Teacher Forcing",
+   "say": "학습할 때 모델의 예측 대신 정답 단어를 다음 입력으로 넣어 주기",
+   "more": "선생님이 정답을 옆에서 알려 주는 셈이에요. 학습이 안정되고 시점끼리 병렬로 돌아가요."
+  },
+  {
+   "ko": "노출 편향",
+   "en": "Exposure Bias",
+   "say": "학습 때는 정답을 보고, 시험 때는 자기 출력만 보는 데서 오는 어긋남",
+   "more": "교사 강요의 부작용이에요. 학습 환경과 실제 생성 환경이 달라서 생겨요."
+  },
+  {
+   "ko": "추론",
+   "en": "Inference",
+   "say": "학습이 끝난 모델로 실제로 답을 만들어 보는 일",
+   "more": "이때는 정답을 모르니까 모델이 직전에 만든 토큰을 다음 입력으로 넣어요."
+  },
+  {
+   "ko": "탐욕적 디코딩",
+   "en": "Greedy Decoding",
+   "say": "매 순간 확률이 가장 높은 토큰 하나만 고르기",
+   "more": "빠르고 단순하지만 한 번 잘못 고르면 되돌릴 수 없어요."
+  },
+  {
+   "ko": "빔 서치",
+   "en": "Beam Search",
+   "say": "매 단계에서 좋은 후보 k 개를 남겨 두고 함께 넓히기",
+   "more": "탐욕의 단점을 줄여요. 전부 탐색하지는 않지만 꽤 좋은 근사예요."
+  },
+  {
+   "ko": "빔 크기",
+   "en": "Beam Size",
+   "say": "빔 서치가 남겨 두는 후보 개수 k",
+   "more": "보통 5에서 10 을 써요. k = 1 이면 탐욕적 디코딩과 같아요."
+  },
+  {
+   "ko": "길이 정규화",
+   "en": "Length Normalization",
+   "say": "끝난 후보들의 점수를 길이로 나눠서 비교하기",
+   "more": "로그 확률을 더하면 길수록 점수가 낮아져서, 나누지 않으면 짧은 문장만 뽑혀요."
+  },
+  {
+   "ko": "블루 점수",
+   "en": "BLEU",
+   "say": "사람이 쓴 정답 문장과 n-gram 이 얼마나 겹치는지로 매기는 번역 점수",
+   "more": "1에서 4까지의 n-gram 정밀도를 곱하고, 너무 짧은 번역에는 페널티를 줘요."
+  },
+  {
+   "ko": "간결성 페널티",
+   "en": "Brevity Penalty",
+   "say": "번역이 정답보다 너무 짧으면 점수를 깎는 항",
+   "more": "짧게 말해서 정밀도만 올리는 꼼수를 막아요."
+  },
+  {
+   "ko": "엔그램",
+   "en": "n-gram",
+   "say": "바로 붙어 있는 토큰 n개 묶음",
+   "more": "2개면 bigram, 3개면 trigram 이에요. BLEU 는 1에서 4까지를 봐요."
+  },
+  {
+   "ko": "정보 병목",
+   "en": "Information Bottleneck",
+   "say": "입력 전체가 고정 크기 벡터 하나를 지나가야 해서 생기는 막힘",
+   "more": "20단어 문장이든 200단어 문단이든 같은 칸 수의 벡터에 욱여넣어야 해요."
+  },
+  {
+   "ko": "어텐션",
+   "en": "Attention",
+   "say": "필요한 곳을 골라 보는 장치. 점수를 매기고 가중 평균을 내요",
+   "more": "2015년에 나왔어요. 디코더가 매 단계마다 입력의 모든 자리를 다시 봐요."
+  },
+  {
+   "ko": "셀프 어텐션",
+   "en": "Self-Attention",
+   "say": "한 문장이 자기 자신을 바라보는 어텐션",
+   "more": "2017년 트랜스포머의 핵심이에요. RNN 을 아예 빼 버려요."
+  },
+  {
+   "ko": "트랜스포머",
+   "en": "Transformer",
+   "say": "어텐션만으로 만든 요즘 언어 모델의 기본 블록",
+   "more": "교수님: 이 트랜스포머를 좀 크게 쌓으면 그게 LLM 이에요."
+  },
+  {
+   "ko": "대규모 언어 모델",
+   "en": "Large Language Model (LLM)",
+   "say": "트랜스포머 블록을 아주 많이 쌓아 크게 학습한 언어 모델",
+   "more": "ChatGPT 같은 모델이에요. 비전 트랜스포머까지 대부분 이 구조 위에 있어요."
+  },
+  {
+   "ko": "병렬화",
+   "en": "Parallelization",
+   "say": "여러 계산을 한꺼번에 동시에 하기",
+   "more": "GPU 는 큰 행렬 곱을 한 번에 잘해요. 교수님: 패러럴이 핵심이에요."
+  },
+  {
+   "ko": "기울기",
+   "en": "Gradient",
+   "say": "손실이 가장 빨리 커지는 방향과 그 가파름",
+   "more": "학습은 기울기의 반대 방향으로 한 걸음씩 내려가요."
+  }
+ ],
+ "slides": [
+  {
+   "p": 1,
+   "title": "표지: 4주차 Attention and the Transformer Architecture",
+   "terms": [
+    "Attention",
+    "Transformer"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "4주차 강의 표지예요. 제목은 Week 4. Attention and the Transformer Architecture 예요.",
+      "우리말로 '**어텐션(Attention)**과 **트랜스포머(Transformer)** 구조' 라는 뜻이에요.",
+      "오늘 배우는 것이 요즘 인공지능의 뼈대예요."
+     ]
+    }
+   ],
+   "pass2": [],
+   "pass3": [],
+   "pass4": []
+  },
+  {
+   "p": 2,
+   "title": "Reminder: 자료 배포 금지 안내",
+   "terms": [],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "매주 나오는 안내 쪽이에요. 강의 자료에 저작권이 있으니 밖에 배포하지 말라는 뜻이에요.",
+      "화면이나 소리에 문제가 있으면 바로 알려 달라는 내용도 있어요."
+     ]
+    }
+   ],
+   "pass2": [],
+   "pass3": [],
+   "pass4": []
+  },
+  {
+   "p": 3,
+   "title": "Contents: 오늘의 네 부분",
+   "terms": [
+    "Sequence-to-Sequence Model",
+    "Attention",
+    "Self-Attention",
+    "Transformer"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "오늘 수업은 네 부분이에요. 앞부분이 다음 부분의 문제를 만들어 주는 순서예요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "네 부분을 한 줄씩",
+     "items": [
+      "1. Sequence-to-Sequence and its Bottleneck = **시퀀스-투-시퀀스 모델(Sequence-to-Sequence Model)**과 그 병목",
+      "2. Attention = **어텐션(Attention)**. 오늘의 메인이에요",
+      "3. Self-Attention = **셀프 어텐션(Self-Attention)**. RNN 을 아예 빼요",
+      "4. The Transformer = **트랜스포머(Transformer)**. 진짜 블록을 조립해요"
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "compare",
+     "head": "영어 제목과 우리말 뜻",
+     "cols": [
+      "영어",
+      "우리말"
+     ],
+     "rows": [
+      [
+       "Sequence-to-Sequence",
+       "줄줄이 들어와 줄줄이 나가는 구조"
+      ],
+      [
+       "Bottleneck",
+       "병목, 좁은 통로"
+      ],
+      [
+       "Attention",
+       "주목하기, 어디를 볼지 정하기"
+      ],
+      [
+       "Self-Attention",
+       "자기 자신에게 주목하기"
+      ]
+     ]
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "prof",
+     "when": "4주차 월요일 1교시",
+     "lines": [
+      "교수님: 오늘 수업이 끝날 때면 여러분이 트랜스포머를 이해하고, 라지 랭귀지 모델이 어떻게 되는지 알아볼 수 있게 될 거예요.",
+      "교수님: 사실상 이 **트랜스포머(Transformer)**를 좀 크게 쌓으면 그게 **LLM(대규모 언어 모델)**이다, 이렇게 보셔도 돼요."
+     ]
+    }
+   ],
+   "pass4": []
+  },
+  {
+   "p": 4,
+   "title": "지난주 복습과 오늘 할 일",
+   "terms": [
+    "Recurrent Neural Network (RNN)",
+    "Vanishing Gradient",
+    "Attention",
+    "Self-Attention",
+    "Parallelization"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "지난주에 신경망, **역전파(Backpropagation)**, **언어 모델(Language Model (LM))**, 그리고 **RNN(순환 신경망)**까지 배웠어요.",
+      "멈춰 선 자리는 **기울기 소실(Vanishing Gradient)**이었어요. **RNN(순환 신경망)**은 먼 거리 정보를 나르지 못하고, 병렬 계산도 안 돼요.",
+      "오늘은 그걸 정확히 고치는 두 아이디어, **어텐션(Attention)**(2015)과 **셀프 어텐션(Self-Attention)**(2017)을 배워요."
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "오늘 가는 길",
+     "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 480 270\"><text x=\"240\" y=\"26\" font-size=\"16\" text-anchor=\"middle\" class=\"tb\">오늘 가는 길</text><rect x=\"8\" y=\"50\" width=\"104\" height=\"40\" rx=\"2\" class=\"box b1\"/><text x=\"60.0\" y=\"74.55\" font-size=\"13\" text-anchor=\"middle\" class=\"tb b1\">RNN 의 한계</text><text x=\"60\" y=\"108\" font-size=\"12\" text-anchor=\"middle\" class=\"tm b1\">1 먼 거리</text><text x=\"60\" y=\"126\" font-size=\"12\" text-anchor=\"middle\" class=\"tm b1\">2 순차 계산</text><text x=\"60\" y=\"144\" font-size=\"12\" text-anchor=\"middle\" class=\"tm b1\">3 정보 병목</text><line x1=\"114\" y1=\"70\" x2=\"137.6\" y2=\"70.0\" class=\"e2 b2\"/><polygon points=\"144,70 136.0,66.0 136.0,74.0\" class=\"arrow b2\"/><rect x=\"146\" y=\"50\" width=\"104\" height=\"40\" rx=\"2\" class=\"box2 b2\"/><text x=\"198.0\" y=\"74.55\" font-size=\"13\" text-anchor=\"middle\" class=\"tb b2\">어텐션 2015</text><text x=\"198\" y=\"108\" font-size=\"12\" text-anchor=\"middle\" class=\"tm b2\">입력을 다시</text><text x=\"198\" y=\"126\" font-size=\"12\" text-anchor=\"middle\" class=\"tm b2\">직접 본다</text><line x1=\"252\" y1=\"70\" x2=\"275.6\" y2=\"70.0\" class=\"e2 b3\"/><polygon points=\"282,70 274.0,66.0 274.0,74.0\" class=\"arrow b3\"/><rect x=\"284\" y=\"50\" width=\"104\" height=\"40\" rx=\"2\" class=\"box2 b3\"/><text x=\"336.0\" y=\"74.2\" font-size=\"12\" text-anchor=\"middle\" class=\"tb b3\">셀프 어텐션 2017</text><text x=\"336\" y=\"108\" font-size=\"12\" text-anchor=\"middle\" class=\"tm b3\">RNN 을 뺀다</text><text x=\"336\" y=\"126\" font-size=\"12\" text-anchor=\"middle\" class=\"tm b3\">병렬로 계산</text><line x1=\"390\" y1=\"70\" x2=\"413.6\" y2=\"70.0\" class=\"e2 b4\"/><polygon points=\"420,70 412.0,66.0 412.0,74.0\" class=\"arrow b4\"/><rect x=\"392\" y=\"50\" width=\"80\" height=\"40\" rx=\"2\" class=\"box2 b4\"/><text x=\"432.0\" y=\"74.55\" font-size=\"13\" text-anchor=\"middle\" class=\"tb b4\">트랜스포머</text><text x=\"432\" y=\"108\" font-size=\"12\" text-anchor=\"middle\" class=\"tm b4\">= LLM 의</text><text x=\"432\" y=\"126\" font-size=\"12\" text-anchor=\"middle\" class=\"tm b4\">기본 블록</text><line x1=\"10\" y1=\"176\" x2=\"470\" y2=\"176\" class=\"e b4\"/><text x=\"240\" y=\"200\" font-size=\"14\" text-anchor=\"middle\" class=\"t b4\">문제 → 해결 → 새 문제 → 해결 의 순서예요</text><text x=\"240\" y=\"226\" font-size=\"12\" text-anchor=\"middle\" class=\"tm b4\">주문: 글을 토큰으로 자르고, 벡터로 바꾸고, 다음 토큰을 맞혀요</text></svg>",
+     "caption": "문제가 생기면 부품을 하나 더하는 식으로 트랜스포머까지 가요.",
+     "builds": 4
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "compare",
+     "head": "슬라이드 영어와 우리말 뜻",
+     "cols": [
+      "영어 원문",
+      "뜻"
+     ],
+     "rows": [
+      [
+       "Last week: neural networks, backpropagation, language modeling, RNNs",
+       "지난주에 배운 네 가지"
+      ],
+      [
+       "Where we stopped: vanishing gradients",
+       "멈춘 자리는 **기울기 소실(Vanishing Gradient)**"
+      ],
+      [
+       "an RNN cannot carry information across a long distance",
+       "RNN 은 먼 거리로 정보를 못 나른다"
+      ],
+      [
+       "and it cannot be parallelised",
+       "그리고 **병렬화(Parallelization)**도 안 된다"
+      ],
+      [
+       "By the end: you should be able to draw the Transformer block from memory",
+       "수업이 끝나면 트랜스포머 블록을 외워서 그릴 수 있어야 한다"
+      ]
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "맨 아래 한 줄의 뜻",
+     "items": [
+      "From 'read it all, then speak' to 'look back at every word, every step'",
+      "'다 읽고 나서 말하기' 에서 '매 단계마다 모든 단어를 다시 보기' 로 바뀐다는 뜻이에요.",
+      "이게 **어텐션(Attention)**의 한 줄 요약이에요."
+     ]
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드를 짚어 읽어요",
+     "boxes": [
+      {
+       "x": 0.05,
+       "y": 0.19,
+       "w": 0.9,
+       "h": 0.07,
+       "say": "Last week 줄: 지난주에 배운 네 가지를 늘어놨어요."
+      },
+      {
+       "x": 0.05,
+       "y": 0.26,
+       "w": 0.9,
+       "h": 0.09,
+       "say": "Where we stopped 줄: **기울기 소실(Vanishing Gradient)** 때문에 멈췄다는 뜻이에요."
+      },
+      {
+       "x": 0.05,
+       "y": 0.36,
+       "w": 0.9,
+       "h": 0.07,
+       "say": "Today 줄: 오늘 배울 두 아이디어가 **어텐션(Attention)**(2015)과 **셀프 어텐션(Self-Attention)**(2017)이에요."
+      },
+      {
+       "x": 0.05,
+       "y": 0.43,
+       "w": 0.9,
+       "h": 0.07,
+       "say": "By the end 줄: 트랜스포머 블록을 외워서 그릴 수 있어야 한다는 목표예요."
+      },
+      {
+       "x": 0.05,
+       "y": 0.5,
+       "w": 0.9,
+       "h": 0.07,
+       "say": "Also today 줄: 팀 프로젝트 안내. 4인 1조, 자유 주제, 다음 주까지 팀을 알려 달라는 뜻이에요."
+      }
+     ]
+    },
+    {
+     "kind": "prof",
+     "when": "4주차 월요일 1교시",
+     "lines": [
+      "교수님: RNN 은 이전 정보를 은닉 상태에 담아 전달하지만, 시퀀스가 길어질수록 먼 거리 정보를 전달하기 어려워요.",
+      "교수님: 두 번째는 계산을 순서대로 해야 한다는 거예요. t 번째를 계산하려면 t-1 이 먼저 끝나야 해요.",
+      "교수님: 컴퓨터 사이언스를 하시는 분들은 순차 계산을 늘 경계하고, 병렬 파이프라인을 머릿속에 그려 주세요."
+     ]
+    },
+    {
+     "kind": "bg",
+     "src": "기초 다지기 7단원",
+     "lines": [
+      "**기울기 소실(Vanishing Gradient)**은 1보다 작은 수를 여러 번 곱하는 것과 같아요. 0.5를 열 번 곱하면 0.001 이 돼요.",
+      "그래서 **시간 역전파(Backpropagation Through Time (BPTT))**로 먼 과거까지 거슬러 갈수록 학습 신호가 거의 사라져요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "오늘 배우는 두 아이디어가 고치려는 RNN 의 약점 두 가지는?",
+     "choices": [
+      "먼 거리 정보 전달과 순차 계산",
+      "어휘 크기와 토큰화",
+      "과적합과 정규화",
+      "학습률과 배치 크기"
+     ],
+     "a": 0,
+     "why": "슬라이드가 vanishing gradients 와 cannot be parallelised 라고 적었어요. **기울기 소실(Vanishing Gradient)**과 **병렬화(Parallelization)** 불가예요."
+    },
+    {
+     "kind": "english",
+     "head": "답안 문장",
+     "en": "**RNN(순환 신경망)**은 먼 거리 의존을 다루기 어렵고 순차 계산이라 병렬화가 안 되는데, **어텐션(Attention)**과 **셀프 어텐션(Self-Attention)**이 이 두 약점을 각각 해결한다.",
+     "ko": "어텐션은 먼 거리를 직접 잇고, 셀프 어텐션은 순서를 없애 병렬 계산을 가능하게 해요.",
+     "tip": "'먼 거리 + 병렬' 두 단어만 기억하면 4주차 전체가 따라와요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "**어텐션(Attention)**은 2015년, **셀프 어텐션(Self-Attention)**(트랜스포머)은 2017년이에요. 두 해를 바꿔 쓰지 않아요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 5,
+   "title": "Part 1 구분 슬라이드: Sequence-to-Sequence and its Bottleneck",
+   "terms": [
+    "Sequence-to-Sequence Model",
+    "Machine Translation (MT)",
+    "Encoder",
+    "Decoder"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "Part 1 이 시작돼요. 제목은 **시퀀스-투-시퀀스 모델(Sequence-to-Sequence Model)**과 그 병목이에요.",
+      "부제 'machine translation, the encoder-decoder, how to decode' 는 **기계 번역(Machine Translation (MT))**, **인코더(Encoder)**와 **디코더(Decoder)**, 그리고 디코딩 방법이라는 뜻이에요."
+     ]
+    }
+   ],
+   "pass2": [],
+   "pass3": [],
+   "pass4": []
+  },
+  {
+   "p": 6,
+   "title": "지난주에 멈춘 자리: RNN 의 세 가지 문제",
+   "terms": [
+    "Recurrent Neural Network (RNN)",
+    "Hidden State",
+    "Vanishing Gradient",
+    "Information Bottleneck",
+    "Parallelization"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "**RNN(순환 신경망)**은 줄줄이 들어온 것을 한 걸음씩 읽으며 **은닉 상태(Hidden State)**에 요약을 들고 다녀요.",
+      "여기에는 못 풀었던 문제가 둘, 그리고 오늘 새로 보는 문제가 하나 더 있어요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "문제 세 가지를 아주 쉽게",
+     "items": [
+      "1. 멀리 있는 단어끼리 서로 닿기 어려워요",
+      "2. 앞 계산이 끝나야 뒤 계산을 할 수 있어요",
+      "3. 입력 전체가 벡터 하나에 다 들어가야 해요"
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "compare",
+     "head": "슬라이드 영어와 우리말 뜻",
+     "cols": [
+      "영어 원문",
+      "뜻"
+     ],
+     "rows": [
+      [
+       "Long-range dependency + Vanishing Gradients",
+       "먼 거리 의존과 **기울기 소실(Vanishing Gradient)**"
+      ],
+      [
+       "Sequential Calculation",
+       "순차 계산, 앞에서 뒤로 한 칸씩"
+      ],
+      [
+       "NEW Information Bottleneck",
+       "새 문제인 **정보 병목(Information Bottleneck)**"
+      ],
+      [
+       "All information from the input sequence must fit into ONE vector",
+       "입력의 모든 정보가 벡터 하나에 들어가야 한다"
+      ]
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "세 문제와 오늘의 처방",
+     "items": [
+      "먼 거리 문제 → **어텐션(Attention)**이 입력의 모든 자리를 직접 이어 줘요",
+      "순차 계산 문제 → **셀프 어텐션(Self-Attention)**이 한꺼번에 계산하게 해 줘요(**병렬화(Parallelization)**)",
+      "**정보 병목(Information Bottleneck)** → **어텐션(Attention)**이 매 단계마다 새 요약을 만들어 줘요"
+     ]
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드를 짚어 읽어요",
+     "boxes": [
+      {
+       "x": 0.05,
+       "y": 0.19,
+       "w": 0.9,
+       "h": 0.06,
+       "say": "첫 줄: RNN 은 한 스텝씩 읽고 은닉 상태를 들고 다닌다는 복습이에요."
+      },
+      {
+       "x": 0.05,
+       "y": 0.28,
+       "w": 0.9,
+       "h": 0.09,
+       "say": "(1) 먼 거리 의존과 기울기 소실. 지난주에 배운 문제예요."
+      },
+      {
+       "x": 0.05,
+       "y": 0.4,
+       "w": 0.9,
+       "h": 0.06,
+       "say": "(2) 순차 계산. 이것도 지난주 문제예요."
+      },
+      {
+       "x": 0.05,
+       "y": 0.47,
+       "w": 0.9,
+       "h": 0.08,
+       "say": "(3) NEW 표시가 붙은 정보 병목. 오늘 새로 보는 문제예요."
+      },
+      {
+       "x": 0.05,
+       "y": 0.6,
+       "w": 0.9,
+       "h": 0.07,
+       "say": "맨 아래: 오늘의 두 아이디어가 정확히 이 셋을 겨냥한다는 안내예요."
+      }
+     ]
+    },
+    {
+     "kind": "prof",
+     "when": "4주차 월요일 1교시",
+     "lines": [
+      "교수님: t 번째 은닉 상태를 계산하려면 t-1 번째가 필요해서, 하나씩 처리해야 하는 순차 계산 자체가 좋지 않아요.",
+      "교수님: 인코더에서 긴 영어 문장을 다 읽은 다음 한국어 첫 토큰을 시작하는데, 그 모든 정보가 **은닉 상태(Hidden State)** 하나에 담겨야 해요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "슬라이드가 NEW 라고 표시한 새 문제는?",
+     "choices": [
+      "정보 병목",
+      "기울기 소실",
+      "순차 계산",
+      "과적합"
+     ],
+     "a": 0,
+     "why": "(3) 에 NEW 가 붙어 있어요. 입력 전체가 벡터 하나에 들어가야 하는 **정보 병목(Information Bottleneck)**이에요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "**기울기 소실(Vanishing Gradient)**과 **정보 병목(Information Bottleneck)**은 다른 문제예요. 앞은 학습 신호가 사라지는 문제, 뒤는 정보를 담을 칸이 모자라는 문제예요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 7,
+   "title": "오늘의 과제: 기계 번역",
+   "terms": [
+    "Machine Translation (MT)",
+    "Vocabulary",
+    "Token",
+    "Language Model (LM)"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "오늘 계속 쓸 예제 과제는 **기계 번역(Machine Translation (MT))**이에요.",
+      "입력 문장 x 를 보고, 다른 언어의 출력 문장 y 를 만드는 일이에요."
+     ]
+    },
+    {
+     "kind": "analogy",
+     "head": "번역은 두 가지 일을 동시에 해요",
+     "scene": "아주 넓은 도서관에서 '가장 좋은 답 문장' 을 찾는 일이에요. 좋은지 판단하는 눈도 있어야 하고, 넓은 서가를 뒤지는 발도 있어야 해요.",
+     "map": [
+      [
+       "좋은 답인지 판단하는 눈",
+       "확률 모델 P(y|x), 곧 **언어 모델(Language Model (LM))**"
+      ],
+      [
+       "넓은 서가를 뒤지는 발",
+       "탐색(search), 곧 디코딩 방법"
+      ],
+      [
+       "서가가 끝없이 넓다",
+       "가능한 y 가 사실상 무한히 많다"
+      ]
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "compare",
+     "head": "슬라이드 영어와 우리말 뜻",
+     "cols": [
+      "영어 원문",
+      "뜻"
+     ],
+     "rows": [
+      [
+       "given a source sentence x, produce a target sentence y",
+       "원문 x 가 주어지면 목표 문장 y 를 만든다"
+      ],
+      [
+       "Formally we want argmax P(y|x)",
+       "식으로는 P(y|x) 를 가장 크게 하는 y 를 찾는다"
+      ],
+      [
+       "the space of possible y is infinite",
+       "가능한 y 의 공간이 사실상 무한하다"
+      ],
+      [
+       "so we will have to search it",
+       "그래서 탐색을 해야 한다"
+      ]
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "argmax 라는 기호",
+     "items": [
+      "argmax 는 '가장 큰 값을 주는 것' 을 뜻해요. max 는 값 자체, argmax 는 그 값을 만든 후보예요.",
+      "argmax P(y|x) 는 확률이 가장 높은 문장 y 를 고른다는 말이에요."
+     ]
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "steps",
+     "head": "후보 문장이 얼마나 많을까요",
+     "steps": [
+      "**어휘(Vocabulary)** 크기 V = 32,000 이라고 해요(요즘 모델에서 흔한 크기예요)",
+      "길이가 딱 10개 **토큰(Token)**이라고 못 박아도, 자리마다 32,000 가지예요",
+      "후보 수 = 32,000을 10번 곱한 수 = 32,000^10",
+      "이 수는 46자리 수예요. 10의 45제곱 정도예요",
+      "게다가 길이도 정해져 있지 않으니 진짜 후보는 더 많아요"
+     ],
+     "answer": "그래서 전부 확인하는 것은 불가능하고, 똑똑한 탐색(디코딩)이 필요해요."
+    },
+    {
+     "kind": "prof",
+     "when": "4주차 월요일 1교시",
+     "lines": [
+      "교수님: y 의 공간이 사실상 거의 무한해요. 길이도 정해져 있지 않고, 자리마다 어휘 수만큼 후보가 있으니까요.",
+      "교수님: 그래서 좋은 확률 모델을 만드는 문제이면서, 동시에 거대한 탐색 공간에서 좋은 문장을 찾는 탐색 문제이기도 해요."
+     ]
+    },
+    {
+     "kind": "bg",
+     "src": "기초 다지기 5단원",
+     "lines": [
+      "P(y|x) 는 'x 가 주어졌을 때 y 가 나올 확률' 이라고 읽어요. 세로줄은 '주어졌을 때' 예요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "argmax P(y|x) 가 뜻하는 것은?",
+     "choices": [
+      "확률이 가장 높은 문장 y 를 고르기",
+      "확률의 최댓값 자체",
+      "x 의 확률을 구하기",
+      "y 의 길이를 정하기"
+     ],
+     "a": 0,
+     "why": "argmax 는 값이 아니라 그 값을 만드는 후보를 가리켜요."
+    },
+    {
+     "kind": "english",
+     "head": "답안 문장",
+     "en": "**기계 번역(Machine Translation (MT))**은 P(y|x) 를 최대로 하는 목표 문장 y 를 찾는 문제이고, 후보 문장 공간이 사실상 무한해서 좋은 확률 모델과 효율적인 탐색이 함께 필요하다.",
+     "ko": "모델(판단)과 디코딩(탐색) 두 축으로 나눠 적으면 점수가 잘 나와요."
+    }
+   ]
+  },
+  {
+   "p": 8,
+   "title": "번역의 역사: 규칙에서 통계로, 다시 신경망으로",
+   "terms": [
+    "Machine Translation (MT)",
+    "Neural Machine Translation (NMT)",
+    "BLEU"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "번역의 역사는 자연어처리 전체의 역사와 모양이 같아요.",
+      "사람이 규칙을 적던 시대에서, 말뭉치 통계를 세던 시대로, 다시 신경망 하나로 통째로 배우는 시대로 왔어요."
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "세 시대",
+     "cols": [
+      "시기",
+      "방식",
+      "한 줄 설명"
+     ],
+     "rows": [
+      [
+       "1950s-80s",
+       "규칙 기반",
+       "사람이 문법 규칙과 이중 언어 사전을 직접 만들었어요"
+      ],
+      [
+       "1990s-2010s",
+       "통계 기반(SMT)",
+       "말뭉치에서 P(x|y) 와 P(y) 를 세어 배웠어요"
+      ],
+      [
+       "2014-",
+       "**신경망 기계 번역(Neural Machine Translation (NMT))**",
+       "신경망 하나를 종단간으로 학습해요"
+      ]
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "points",
+     "head": "슬라이드 영어에서 꼭 아는 단어",
+     "items": [
+      "hand-written rules = 사람이 손으로 쓴 규칙",
+      "bilingual dictionaries = 두 언어 사전",
+      "parallel corpora = 같은 뜻의 두 언어 문장 쌍 말뭉치",
+      "phrase tables, reranking, feature engineering = 통계 번역이 따로따로 만들던 부품들",
+      "trained end-to-end = 처음부터 끝까지 한 번에 학습"
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "한 줄 교훈",
+     "items": [
+      "슬라이드 맨 아래: replace a pipeline with one learned model",
+      "여러 부품을 이어 붙인 파이프라인을 학습된 모델 하나로 바꾼다는 뜻이에요.",
+      "2주차 word2vec, 3주차 신경망에서도 나온 같은 이야기예요."
+     ]
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드를 짚어 읽어요",
+     "boxes": [
+      {
+       "x": 0.05,
+       "y": 0.19,
+       "w": 0.9,
+       "h": 0.06,
+       "say": "1950s-80s: 규칙과 사전의 시대예요."
+      },
+      {
+       "x": 0.05,
+       "y": 0.26,
+       "w": 0.9,
+       "h": 0.1,
+       "say": "1990s-2010s: 통계 기반. 정렬 모델, 구문 표, 재순위화 같은 부품이 따로따로 있었어요."
+      },
+      {
+       "x": 0.05,
+       "y": 0.38,
+       "w": 0.9,
+       "h": 0.1,
+       "say": "2014-: 신경망 기계 번역. 2년 만에 수백 명이 십 년간 만든 시스템을 앞질렀어요."
+      },
+      {
+       "x": 0.05,
+       "y": 0.86,
+       "w": 0.9,
+       "h": 0.06,
+       "say": "맨 아래 한 줄: 파이프라인을 학습된 모델 하나로 바꾼다."
+      }
+     ]
+    },
+    {
+     "kind": "prof",
+     "when": "4주차 월요일 1교시",
+     "lines": [
+      "교수님: 규칙 기반의 가장 큰 단점은 예외가 생겼을 때 아주 취약하다는 거예요.",
+      "교수님: 구글도 네이버 파파고도 원래 통계 기반이었는데, 2015~2016년쯤 신경망 방식으로 바꿨어요.",
+      "교수님: 그래프의 세로축 점수가 **블루 점수(BLEU)**인데, 높으면 번역이 잘 된 거라고 보면 돼요(뒤에서 다시 설명해요)."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "슬라이드가 말하는 '계속 반복되는 교훈' 은?",
+     "choices": [
+      "파이프라인을 학습된 모델 하나로 바꾼다",
+      "규칙을 더 정교하게 쓴다",
+      "사전을 더 크게 만든다",
+      "말뭉치를 줄인다"
+     ],
+     "a": 0,
+     "why": "replace a pipeline with one learned model 이 맨 아래 한 줄이에요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "**신경망 기계 번역(Neural Machine Translation (NMT))**이 등장한 해는 2014년, 어텐션은 2015년, 트랜스포머는 2017년이에요. 세 해가 자주 섞여요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 9,
+   "title": "인코더 디코더 구조",
+   "terms": [
+    "Encoder",
+    "Decoder",
+    "Recurrent Neural Network (RNN)",
+    "Hidden State",
+    "Sequence-to-Sequence Model"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "**시퀀스-투-시퀀스 모델(Sequence-to-Sequence Model)**의 기본 모양이에요. **RNN(순환 신경망)** 두 개를 벡터 하나로 붙였어요.",
+      "**인코더(Encoder)**는 입력을 끝까지 읽어 요약을 만들고, **디코더(Decoder)**는 그 요약을 받아 답을 한 토큰씩 만들어요."
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "인코더와 디코더",
+     "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 480 270\"><text x=\"240\" y=\"24\" font-size=\"15\" text-anchor=\"middle\" class=\"tb\">RNN 두 개를 벡터 하나로 붙인 것</text><rect x=\"14\" y=\"60\" width=\"46\" height=\"34\" rx=\"2\" class=\"n b1\"/><rect x=\"64\" y=\"60\" width=\"46\" height=\"34\" rx=\"2\" class=\"n b1\"/><rect x=\"114\" y=\"60\" width=\"46\" height=\"34\" rx=\"2\" class=\"n b1\"/><rect x=\"164\" y=\"60\" width=\"46\" height=\"34\" rx=\"2\" class=\"n b1\"/><text x=\"37\" y=\"82\" font-size=\"12\" text-anchor=\"middle\" class=\"tl b1\">il</text><text x=\"87\" y=\"82\" font-size=\"12\" text-anchor=\"middle\" class=\"tl b1\">a</text><text x=\"137\" y=\"82\" font-size=\"12\" text-anchor=\"middle\" class=\"tl b1\">m'</text><text x=\"187\" y=\"82\" font-size=\"11\" text-anchor=\"middle\" class=\"tl b1\">entarte</text><line x1=\"60\" y1=\"77\" x2=\"64\" y2=\"77\" class=\"e b1\"/><line x1=\"110\" y1=\"77\" x2=\"114\" y2=\"77\" class=\"e b1\"/><line x1=\"160\" y1=\"77\" x2=\"164\" y2=\"77\" class=\"e b1\"/><text x=\"112\" y=\"116\" font-size=\"12\" text-anchor=\"middle\" class=\"tm b1\">인코더 RNN: 왼쪽부터 한 단어씩 읽어요</text><line x1=\"212\" y1=\"77\" x2=\"243.6\" y2=\"77.0\" class=\"e2 b2\"/><polygon points=\"250,77 242.0,73.0 242.0,81.0\" class=\"arrow b2\"/><text x=\"231\" y=\"60\" font-size=\"12\" text-anchor=\"middle\" class=\"tb b2\">encoding</text><rect x=\"254\" y=\"60\" width=\"46\" height=\"34\" rx=\"2\" class=\"n2 b3\"/><rect x=\"304\" y=\"60\" width=\"46\" height=\"34\" rx=\"2\" class=\"n2 b3\"/><rect x=\"354\" y=\"60\" width=\"46\" height=\"34\" rx=\"2\" class=\"n2 b3\"/><rect x=\"404\" y=\"60\" width=\"46\" height=\"34\" rx=\"2\" class=\"n2 b3\"/><text x=\"277\" y=\"82\" font-size=\"12\" text-anchor=\"middle\" class=\"tl b3\">he</text><text x=\"327\" y=\"82\" font-size=\"12\" text-anchor=\"middle\" class=\"tl b3\">hit</text><text x=\"377\" y=\"82\" font-size=\"12\" text-anchor=\"middle\" class=\"tl b3\">me</text><text x=\"427\" y=\"82\" font-size=\"12\" text-anchor=\"middle\" class=\"tl b3\">...</text><line x1=\"300\" y1=\"77\" x2=\"304\" y2=\"77\" class=\"e b3\"/><line x1=\"350\" y1=\"77\" x2=\"354\" y2=\"77\" class=\"e b3\"/><line x1=\"400\" y1=\"77\" x2=\"404\" y2=\"77\" class=\"e b3\"/><text x=\"352\" y=\"116\" font-size=\"12\" text-anchor=\"middle\" class=\"tm b3\">디코더 RNN: 한 토큰씩 만들어요</text><rect x=\"200\" y=\"150\" width=\"80\" height=\"30\" rx=\"2\" class=\"n4 b4\"/><text x=\"240\" y=\"170\" font-size=\"13\" text-anchor=\"middle\" class=\"tl b4\">벡터 하나</text><text x=\"240\" y=\"202\" font-size=\"13\" text-anchor=\"middle\" class=\"t b4\">입력의 모든 정보가 이 칸을 지나가야 해요</text><text x=\"240\" y=\"226\" font-size=\"13\" text-anchor=\"middle\" class=\"tb b4\">여기가 정보 병목(Information Bottleneck)</text></svg>",
+     "caption": "왼쪽이 인코더, 오른쪽이 디코더, 가운데 파란 화살표가 요약 벡터예요.",
+     "builds": 4
+    },
+    {
+     "kind": "analogy",
+     "head": "통역사 두 명",
+     "scene": "첫 번째 사람이 프랑스어 문장을 끝까지 다 듣고 쪽지 한 장에 요약을 적어 건네요. 두 번째 사람은 그 쪽지만 보고 영어로 말해요.",
+     "map": [
+      [
+       "끝까지 듣는 사람",
+       "**인코더(Encoder)**"
+      ],
+      [
+       "쪽지 한 장",
+       "요약 벡터(encoding)"
+      ],
+      [
+       "쪽지만 보고 말하는 사람",
+       "**디코더(Decoder)**"
+      ]
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "compare",
+     "head": "슬라이드 영어와 우리말 뜻",
+     "cols": [
+      "영어 원문",
+      "뜻"
+     ],
+     "rows": [
+      [
+       "Two RNNs",
+       "RNN 두 개"
+      ],
+      [
+       "The encoder reads the source and compresses it into a vector",
+       "인코더가 원문을 읽어 벡터 하나로 압축한다"
+      ],
+      [
+       "The decoder is a language model that generates the target",
+       "디코더는 목표 문장을 만드는 언어 모델이다"
+      ],
+      [
+       "conditioned on that vector",
+       "그 벡터를 조건으로 하여"
+      ]
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "그림 속 낱말",
+     "items": [
+      "source sentence (input) = 원문, 곧 입력 문장",
+      "target sentence (output) = 목표 문장, 곧 출력 문장",
+      "encoding = 인코더의 마지막 은닉 상태, 곧 요약 벡터",
+      "<s> = 문장 시작을 알리는 특별한 토큰이에요"
+     ]
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드를 짚어 읽어요",
+     "boxes": [
+      {
+       "x": 0.05,
+       "y": 0.19,
+       "w": 0.9,
+       "h": 0.09,
+       "say": "위쪽 두 줄: 인코더는 읽어서 압축하고, 디코더는 그 벡터를 조건으로 생성한다는 설명이에요."
+      },
+      {
+       "x": 0.06,
+       "y": 0.5,
+       "w": 0.32,
+       "h": 0.22,
+       "say": "왼쪽 주황 상자들: 인코더 RNN. il a m' entarte 를 한 단어씩 읽어요."
+      },
+      {
+       "x": 0.33,
+       "y": 0.53,
+       "w": 0.09,
+       "h": 0.1,
+       "say": "파란 화살표와 encoding 글자: 여기서 요약 벡터가 디코더로 넘어가요."
+      },
+      {
+       "x": 0.41,
+       "y": 0.38,
+       "w": 0.52,
+       "h": 0.35,
+       "say": "오른쪽 초록 상자들: 디코더 RNN. <s> 부터 시작해 he hit me with a pie 를 만들어요."
+      }
+     ]
+    },
+    {
+     "kind": "prof",
+     "when": "4주차 월요일 1교시",
+     "lines": [
+      "교수님: 핵심은 RNN 2개를 왼쪽과 오른쪽에 연결한다는 거예요. 왼쪽이 인코더, 오른쪽이 디코더예요.",
+      "교수님: 이 벡터 하나가 굉장히 중요한 정보를 담고 있겠죠. 모든 원문 정보를 다 담고 있어야 해요.",
+      "교수님: 번역의 특징은 문장을 전부 다 입력받은 다음에 번역을 시작한다는 거예요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "슬라이드 맨 아래 출처",
+     "items": [
+      "Sutskever et al. 2014, Cho et al. 2014 가 이 구조를 제안한 논문이에요.",
+      "'two RNNs, glued at one vector' 는 'RNN 두 개를 벡터 하나로 붙였다' 는 뜻이에요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "인코더의 출력이 디코더로 넘어가는 통로는?",
+     "choices": [
+      "마지막 은닉 상태 벡터 하나",
+      "입력 문장 전체",
+      "어휘 목록",
+      "손실 함수"
+     ],
+     "a": 0,
+     "why": "그림의 encoding 이 인코더의 마지막 **은닉 상태(Hidden State)**이고, 이것이 유일한 통로예요. 여기가 나중에 병목이 돼요."
+    },
+    {
+     "kind": "english",
+     "head": "답안 문장",
+     "en": "**시퀀스-투-시퀀스 모델(Sequence-to-Sequence Model)**은 **인코더(Encoder)** RNN 이 입력 문장을 읽어 고정 크기 벡터로 압축하고, **디코더(Decoder)** RNN 이 그 벡터를 조건으로 목표 문장을 한 토큰씩 생성하는 구조다.",
+     "ko": "'두 RNN + 벡터 하나' 라는 뼈대를 먼저 쓰고 세부를 붙여요."
+    }
+   ]
+  },
+  {
+   "p": 10,
+   "title": "디코더는 조건부 언어 모델",
+   "terms": [
+    "Conditional Language Model",
+    "Language Model (LM)",
+    "Cross-Entropy",
+    "Loss Function",
+    "End-to-End",
+    "Backpropagation"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "**디코더(Decoder)**는 그냥 **언어 모델(Language Model (LM))**인데, 입력 문장 x 라는 조건이 하나 더 붙은 거예요.",
+      "그래서 **조건부 언어 모델(Conditional Language Model)**이라고 불러요.",
+      "학습은 3주차에 배운 교차 엔트로피 그대로예요."
+     ]
+    },
+    {
+     "kind": "analogy",
+     "head": "조건이 붙은 자판 추천",
+     "scene": "휴대폰 자판이 다음 단어를 추천할 때, 원래는 내가 쓴 앞부분만 봐요. 번역기는 거기에 '원문' 이라는 조건이 하나 더 붙어요.",
+     "map": [
+      [
+       "내가 쓴 앞부분",
+       "앞서 만든 토큰들 y1 ... y(t-1)"
+      ],
+      [
+       "원문이라는 조건",
+       "입력 문장 x"
+      ],
+      [
+       "추천 목록",
+       "다음 토큰의 확률 분포"
+      ]
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "formula",
+     "head": "문장 확률을 쪼개는 식",
+     "tex": "P(y \\mid x) = P(y_1 \\mid x)\\, P(y_2 \\mid y_1, x)\\, P(y_3 \\mid y_1, y_2, x) \\cdots P(y_T \\mid y_1, \\dots, y_{T-1}, x)",
+     "parts": [
+      {
+       "sym": "P(y \\mid x)",
+       "say": "원문 x 를 봤을 때 답 문장 y 전체가 나올 확률"
+      },
+      {
+       "sym": "P(y_1 \\mid x)",
+       "say": "첫 토큰은 x 만 보고 정해요"
+      },
+      {
+       "sym": "P(y_2 \\mid y_1, x)",
+       "say": "두 번째는 x 와 이미 만든 y1 을 보고 정해요"
+      },
+      {
+       "sym": "\\cdots",
+       "say": "끝까지 같은 방식으로 이어져요"
+      },
+      {
+       "sym": "y_T",
+       "say": "마지막 T 번째 토큰"
+      }
+     ],
+     "whole": "매 자리마다 x 가 조건으로 계속 붙는 것, 이게 **조건부 언어 모델(Conditional Language Model)**이에요."
+    },
+    {
+     "kind": "points",
+     "head": "슬라이드 영어와 우리말 뜻",
+     "items": [
+      "conditioned on the source = 원문을 조건으로 삼아서",
+      "factorises the same way an LM does = 언어 모델과 똑같은 방식으로 쪼개진다",
+      "ordinary cross-entropy on the target tokens = 목표 토큰에 대한 평범한 교차 엔트로피",
+      "the gradient flows all the way back = 기울기가 끝까지 거슬러 흐른다"
+     ]
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "formula",
+     "head": "학습 손실",
+     "tex": "J = \\frac{1}{T}\\sum_{t=1}^{T} J_t, \\qquad J_t = -\\log P(y_t^{*} \\mid y_{<t}^{*}, x)",
+     "parts": [
+      {
+       "sym": "J_t",
+       "say": "t 번째 자리의 벌점"
+      },
+      {
+       "sym": "y_t^{*}",
+       "say": "t 번째 자리의 정답 토큰(별표가 정답이라는 표시예요)"
+      },
+      {
+       "sym": "y_{<t}^{*}",
+       "say": "t 보다 앞의 정답 토큰들"
+      },
+      {
+       "sym": "-\\log",
+       "say": "정답에 준 확률이 작을수록 커지는 벌점"
+      },
+      {
+       "sym": "\\frac{1}{T}\\sum",
+       "say": "모든 자리의 벌점을 더해 자리 수로 나눈 평균"
+      }
+     ],
+     "whole": "**교차 엔트로피(Cross-Entropy)** 그대로예요. 3주차 **손실 함수(Loss Function)**와 같은 식이에요."
+    },
+    {
+     "kind": "steps",
+     "head": "벌점을 손으로 계산해 봐요",
+     "given": "정답 확률 0.5, 0.25, 0.8, 0.1 (자연로그를 써요)",
+     "steps": [
+      "네 자리의 정답 확률이 각각 0.5, 0.25, 0.8, 0.1 이라고 해요",
+      "J1 = -log(0.5) = 0.693",
+      "J2 = -log(0.25) = 1.386",
+      "J3 = -log(0.8) = 0.223",
+      "J4 = -log(0.1) = 2.303",
+      "합 = 4.605, 자리 수 4 로 나누면 1.151"
+     ],
+     "answer": "평균 벌점 J = 1.151 이에요. 정답 확률이 클수록 벌점이 작아요."
+    },
+    {
+     "kind": "look",
+     "head": "슬라이드를 짚어 읽어요",
+     "boxes": [
+      {
+       "x": 0.05,
+       "y": 0.19,
+       "w": 0.9,
+       "h": 0.06,
+       "say": "첫 줄: 디코더는 원문에 조건이 걸린 언어 모델이라는 설명이에요."
+      },
+      {
+       "x": 0.05,
+       "y": 0.25,
+       "w": 0.9,
+       "h": 0.09,
+       "say": "둘째 줄: 학습은 평범한 교차 엔트로피, 기울기는 디코더, 다리, 인코더까지 흐른다."
+      },
+      {
+       "x": 0.16,
+       "y": 0.45,
+       "w": 0.7,
+       "h": 0.09,
+       "say": "위 식: 문장 확률을 자리별 확률의 곱으로 쪼갠 식이에요."
+      },
+      {
+       "x": 0.34,
+       "y": 0.58,
+       "w": 0.36,
+       "h": 0.1,
+       "say": "아래 식: 자리별 벌점 J_t 와 그 평균 J 예요."
+      },
+      {
+       "x": 0.24,
+       "y": 0.85,
+       "w": 0.52,
+       "h": 0.06,
+       "say": "맨 아래: one model, one loss, one backward pass 가 **종단간 학습(End-to-End)**의 뜻이에요."
+      }
+     ]
+    },
+    {
+     "kind": "prof",
+     "when": "4주차 월요일 1교시",
+     "lines": [
+      "교수님: 매 단계마다 원문 x 가 추가 조건으로 들어간다는 게 기존 언어 모델과 다른 점이에요.",
+      "교수님: 끝까지 만들고 나서 한 번에 기울기가 업데이트되는 구조를 **종단간 학습(End-to-End)**라고 해요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "J_t 의 값이 가장 큰 경우는?",
+     "choices": [
+      "정답 토큰에 준 확률이 0.01 일 때",
+      "0.9 일 때",
+      "0.5 일 때",
+      "1.0 일 때"
+     ],
+     "a": 0,
+     "why": "-log(0.01) = 4.61 로 가장 커요. 정답에 준 확률이 작을수록 벌점이 커져요."
+    },
+    {
+     "kind": "english",
+     "head": "답안 문장",
+     "en": "**시퀀스-투-시퀀스 모델(Sequence-to-Sequence Model)**의 디코더는 원문 x 를 조건으로 하는 언어 모델이므로 P(y|x) 를 자리별 조건부 확률의 곱으로 쪼갤 수 있고, 학습 손실은 정답 토큰에 대한 교차 엔트로피의 평균이다.",
+     "ko": "'조건이 붙은 언어 모델 + 교차 엔트로피 + **종단간 학습(End-to-End)**' 세 마디로 외워요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "곱으로 쓴 식은 확률, 합으로 쓴 식은 손실이에요. 로그를 씌우면 곱이 합으로 바뀌어요.",
+      "별표가 붙은 y* 는 정답 토큰이라는 뜻이에요. 모델이 만든 토큰이 아니에요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 11,
+   "title": "학습 방법: 교사 강요",
+   "terms": [
+    "Teacher Forcing",
+    "Exposure Bias",
+    "Inference",
+    "Cross-Entropy",
+    "Loss Function"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "학습할 때는 **교사 강요(Teacher Forcing)**를 써요. 모델이 뭐라고 예측했든, 다음 입력으로는 정답 단어를 넣어 줘요.",
+      "선생님이 옆에서 정답을 계속 알려 주는 것과 같아서 이런 이름이에요."
+     ]
+    },
+    {
+     "kind": "analogy",
+     "head": "받아쓰기 연습",
+     "scene": "받아쓰기를 하다가 한 글자 틀려도 선생님이 바로 정답을 알려 주고 다음 글자로 넘어가요. 그래야 뒤쪽 연습도 제대로 할 수 있어요.",
+     "map": [
+      [
+       "선생님이 알려 주는 정답",
+       "정답 토큰을 다음 입력으로 넣기"
+      ],
+      [
+       "한 글자 틀려도 계속 진도",
+       "각 자리의 벌점만 따로 매기기"
+      ],
+      [
+       "실전에서는 알려 주는 사람이 없다",
+       "**노출 편향(Exposure Bias)**"
+      ]
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "compare",
+     "head": "슬라이드 영어와 우리말 뜻",
+     "cols": [
+      "영어 원문",
+      "뜻"
+     ],
+     "rows": [
+      [
+       "we feed the decoder the true previous target word",
+       "디코더에 직전의 진짜 정답 단어를 넣어 준다"
+      ],
+      [
+       "not its own prediction",
+       "모델 자신의 예측이 아니라"
+      ],
+      [
+       "it keeps training stable and parallel over time steps",
+       "학습이 안정되고 시점끼리 병렬로 돌아간다"
+      ],
+      [
+       "at test time the model only ever sees its own output",
+       "시험 때는 모델이 자기 출력만 본다"
+      ],
+      [
+       "this mismatch is called exposure bias",
+       "이 어긋남을 **노출 편향(Exposure Bias)**이라고 한다"
+      ]
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "왜 학습이 병렬이 되나요",
+     "items": [
+      "정답 문장을 이미 알고 있으니, 모든 자리의 입력을 처음부터 다 알 수 있어요.",
+      "그래서 자리마다 기다릴 필요 없이 한꺼번에 계산할 수 있어요.",
+      "반대로 **추론(Inference)** 때는 앞 토큰을 만들어야 다음 입력이 정해지니 순차적이에요."
+     ]
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드를 짚어 읽어요",
+     "boxes": [
+      {
+       "x": 0.05,
+       "y": 0.19,
+       "w": 0.9,
+       "h": 0.06,
+       "say": "첫 줄: 학습 때는 진짜 정답 단어를 넣는다는 정의예요."
+      },
+      {
+       "x": 0.05,
+       "y": 0.25,
+       "w": 0.9,
+       "h": 0.09,
+       "say": "Why 와 The catch: 왜 쓰는지, 그리고 대가가 무엇인지예요."
+      },
+      {
+       "x": 0.21,
+       "y": 0.42,
+       "w": 0.58,
+       "h": 0.09,
+       "say": "gold targets 줄: 위쪽의 he hit me with a pie <e> 가 정답이에요."
+      },
+      {
+       "x": 0.21,
+       "y": 0.45,
+       "w": 0.58,
+       "h": 0.09,
+       "say": "per-step loss 줄: 자리마다 J1 ... J7 벌점을 따로 매겨요."
+      },
+      {
+       "x": 0.21,
+       "y": 0.63,
+       "w": 0.58,
+       "h": 0.09,
+       "say": "fed back in 줄: 아래쪽 입력이 모델 예측이 아니라 정답 단어예요."
+      },
+      {
+       "x": 0.25,
+       "y": 0.75,
+       "w": 0.5,
+       "h": 0.07,
+       "say": "식 J = (1/T) 합 J_t 와 backprop 이 인코더까지 흐른다는 설명이에요."
+      }
+     ]
+    },
+    {
+     "kind": "prof",
+     "when": "4주차 월요일 1교시",
+     "lines": [
+      "교수님: 가장 자연스러운 방법은 모델이 방금 예측한 단어를 다음 입력으로 넣는 건데, 학습 초반에는 모델이 잘 못하겠죠.",
+      "교수님: 그래서 각 토큰마다 지도 학습 형식으로 정답을 주는 걸 교사 강요라고 해요.",
+      "교수님: 학습 환경과 테스트 환경이 다른 이 어긋남을 익스포저 바이어스라고 합니다."
+     ]
+    },
+    {
+     "kind": "bg",
+     "src": "배경 지식",
+     "lines": [
+      "강화 학습은 문장을 다 만든 뒤 마지막에 보상을 줘요. 그래서 어느 토큰이 잘했는지 알기 어려워요.",
+      "교사 강요는 자리마다 바로 벌점을 줄 수 있어서 학습이 훨씬 빠르고 안정적이에요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "교사 강요의 대가로 생기는 문제는?",
+     "choices": [
+      "노출 편향",
+      "기울기 폭발",
+      "과적합",
+      "정보 병목"
+     ],
+     "a": 0,
+     "why": "학습 때는 정답을, 시험 때는 자기 출력을 본다는 어긋남이 **노출 편향(Exposure Bias)**이에요."
+    },
+    {
+     "kind": "exam",
+     "src": "N4 Check Yourself",
+     "q": "Q2. In teacher forcing, what exactly is different between training time and test time?",
+     "qko": "**교사 강요(Teacher Forcing)**에서 학습할 때와 시험할 때가 정확히 무엇이 다른가?",
+     "solve": [
+      "학습할 때는 정답 토큰(gold token)을 다음 입력으로 넣을 수 있어요",
+      "시험(추론)할 때는 정답을 모르니까 모델이 직전에 만든 토큰을 넣어야 해요",
+      "그래서 디코더가 보는 앞부분이 학습과 시험에서 달라져요",
+      "이 어긋남을 **노출 편향(Exposure Bias)**이라고 불러요"
+     ],
+     "answer": "다음 입력이 학습에서는 정답 토큰, 시험에서는 모델 자신의 출력이라는 점이 다르다(노출 편향)."
+    },
+    {
+     "kind": "english",
+     "head": "답안 문장",
+     "en": "**교사 강요(Teacher Forcing)**는 학습 시 디코더의 다음 입력으로 정답 토큰을 넣어 학습을 안정적이고 병렬적으로 만들지만, 추론 시에는 모델 자신의 출력만 보므로 학습과 추론 사이에 어긋남, 곧 **노출 편향(Exposure Bias)**이 생긴다.",
+     "ko": "장점(안정, 병렬)과 단점(노출 편향)을 반드시 함께 써요."
+    }
+   ]
+  },
+  {
+   "p": 12,
+   "title": "디코딩 1: 탐욕적 디코딩",
+   "terms": [
+    "Greedy Decoding",
+    "Inference",
+    "Beam Search"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "이제 학습이 끝난 모델로 문장을 만들어요. 이걸 **추론(Inference)**이라고 해요.",
+      "가장 단순한 방법이 **탐욕적 디코딩(Greedy Decoding)**이에요. 매 순간 확률이 가장 높은 토큰 하나만 골라요."
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "탐욕은 되돌릴 수 없어요",
+     "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 480 270\"><text x=\"240\" y=\"24\" font-size=\"15\" text-anchor=\"middle\" class=\"tb\">탐욕은 되돌릴 수 없어요</text><rect x=\"20\" y=\"54\" width=\"70\" height=\"32\" rx=\"2\" class=\"box2 b1\"/><text x=\"55.0\" y=\"74.55\" font-size=\"13\" text-anchor=\"middle\" class=\"tb b1\">he 0.6</text><rect x=\"20\" y=\"104\" width=\"70\" height=\"32\" rx=\"2\" class=\"box b1\"/><text x=\"55.0\" y=\"124.55\" font-size=\"13\" text-anchor=\"middle\" class=\"tm b1\">I 0.4</text><line x1=\"92\" y1=\"70\" x2=\"121.8\" y2=\"61.7\" class=\"e2 b2\"/><polygon points=\"128,60 119.2,58.3 121.4,66.0\" class=\"arrow b2\"/><line x1=\"92\" y1=\"70\" x2=\"123.6\" y2=\"103.4\" class=\"e b2\"/><polygon points=\"128,108 125.4,99.4 119.6,104.9\" class=\"arrow b2\"/><rect x=\"130\" y=\"44\" width=\"80\" height=\"32\" rx=\"2\" class=\"box b2\"/><text x=\"170.0\" y=\"64.2\" font-size=\"12\" text-anchor=\"middle\" class=\"tm b2\">hit 0.3</text><rect x=\"130\" y=\"92\" width=\"80\" height=\"32\" rx=\"2\" class=\"box b2\"/><text x=\"170.0\" y=\"112.2\" font-size=\"12\" text-anchor=\"middle\" class=\"tm b2\">struck 0.2</text><line x1=\"92\" y1=\"120\" x2=\"123.5\" y2=\"151.5\" class=\"e b3\"/><polygon points=\"128,156 125.2,147.5 119.5,153.2\" class=\"arrow b3\"/><line x1=\"92\" y1=\"120\" x2=\"125.3\" y2=\"190.2\" class=\"e b3\"/><polygon points=\"128,196 128.2,187.1 121.0,190.5\" class=\"arrow b3\"/><rect x=\"130\" y=\"140\" width=\"80\" height=\"32\" rx=\"2\" class=\"box2 b3\"/><text x=\"170.0\" y=\"160.2\" font-size=\"12\" text-anchor=\"middle\" class=\"tb b3\">was 0.9</text><rect x=\"130\" y=\"188\" width=\"80\" height=\"32\" rx=\"2\" class=\"box b3\"/><text x=\"170.0\" y=\"208.2\" font-size=\"12\" text-anchor=\"middle\" class=\"tm b3\">got 0.1</text><text x=\"300\" y=\"60\" font-size=\"13\" text-anchor=\"middle\" class=\"t b4\">he hit = 0.6 x 0.3 = 0.18</text><text x=\"300\" y=\"86\" font-size=\"13\" text-anchor=\"middle\" class=\"tb b4\">I was  = 0.4 x 0.9 = 0.36</text><text x=\"300\" y=\"130\" font-size=\"12\" text-anchor=\"middle\" class=\"tm b4\">탐욕은 첫 칸에서 he 를 골라</text><text x=\"300\" y=\"150\" font-size=\"12\" text-anchor=\"middle\" class=\"tm b4\">I was 로 가는 길을 아예 잃어요</text><text x=\"300\" y=\"186\" font-size=\"13\" text-anchor=\"middle\" class=\"t b5\">빔 서치는 he 와 I 를</text><text x=\"300\" y=\"206\" font-size=\"13\" text-anchor=\"middle\" class=\"t b5\">둘 다 들고 가요</text></svg>",
+     "caption": "첫 칸에서 확률이 높은 he 를 고르면 더 좋은 I was 길을 영영 잃어요.",
+     "builds": 5
+    },
+    {
+     "kind": "analogy",
+     "head": "갈림길에서 눈앞만 보기",
+     "scene": "산에서 갈림길마다 지금 당장 더 편해 보이는 쪽으로만 가요. 나중에 막다른 길이 나와도 되돌아갈 수 없어요.",
+     "map": [
+      [
+       "지금 당장 편한 쪽",
+       "그 자리에서 확률이 가장 높은 토큰"
+      ],
+      [
+       "되돌아갈 수 없음",
+       "한 번 고르면 취소 못 함"
+      ],
+      [
+       "전체로는 더 좋은 길",
+       "전체 문장 확률이 더 높은 다른 후보"
+      ]
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "compare",
+     "head": "슬라이드 영어와 우리말 뜻",
+     "cols": [
+      "영어 원문",
+      "뜻"
+     ],
+     "rows": [
+      [
+       "At each step take the single most likely word",
+       "매 단계마다 가장 그럴듯한 단어 하나를 고른다"
+      ],
+      [
+       "Fast, and often fine",
+       "빠르고, 대개는 괜찮다"
+      ],
+      [
+       "it cannot take anything back",
+       "아무것도 되돌릴 수 없다"
+      ],
+      [
+       "one confident wrong word early on poisons everything that follows",
+       "앞에서 자신 있게 틀린 단어 하나가 뒤 전체를 망친다"
+      ],
+      [
+       "one path through an exponentially large tree",
+       "기하급수적으로 큰 나무에서 길 하나만 따라가기"
+      ]
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "greedy 라는 단어",
+     "items": [
+      "greedy 는 '욕심 많은, 탐욕스러운' 이라는 뜻이에요.",
+      "알고리즘 수업에서 말하는 그 탐욕 알고리즘과 같은 생각이에요.",
+      "지금 이 순간 제일 좋아 보이는 것만 고르는 방식이에요."
+     ]
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "steps",
+     "head": "탐욕이 놓치는 예를 손으로",
+     "given": "첫 자리 he 0.6 / I 0.4, 둘째 자리 위와 같음",
+     "steps": [
+      "첫 자리 확률: he 0.6, I 0.4 → 탐욕은 he 를 골라요",
+      "he 뒤: hit 0.3, struck 0.2",
+      "I 뒤: was 0.9, got 0.1",
+      "he hit 의 전체 확률 = 0.6 x 0.3 = 0.18",
+      "I was 의 전체 확률 = 0.4 x 0.9 = 0.36",
+      "전체로 보면 I was 가 두 배나 좋은데, 탐욕은 그 길을 아예 못 봐요"
+     ],
+     "answer": "국소적으로 최선이 전체적으로 최선을 보장하지 않아요."
+    },
+    {
+     "kind": "look",
+     "head": "슬라이드를 짚어 읽어요",
+     "boxes": [
+      {
+       "x": 0.05,
+       "y": 0.19,
+       "w": 0.9,
+       "h": 0.06,
+       "say": "첫 줄: 매 단계 가장 그럴듯한 단어 하나를 고른다. 빠르고 대개 괜찮다."
+      },
+      {
+       "x": 0.05,
+       "y": 0.24,
+       "w": 0.9,
+       "h": 0.06,
+       "say": "둘째 줄: 되돌릴 수 없다. 앞에서 틀리면 뒤가 다 망가진다."
+      },
+      {
+       "x": 0.06,
+       "y": 0.5,
+       "w": 0.9,
+       "h": 0.13,
+       "say": "가운데 상자들: he hit 까지는 초록(좋음)인데 a 부터 빨강으로 바뀌어요."
+      },
+      {
+       "x": 0.23,
+       "y": 0.65,
+       "w": 0.56,
+       "h": 0.06,
+       "say": "빨간 글씨: 3단계에서 a 를 골랐지만 좋은 이어짐은 me with a pie 였어요."
+      },
+      {
+       "x": 0.2,
+       "y": 0.73,
+       "w": 0.6,
+       "h": 0.06,
+       "say": "그래서 여러 후보를 함께 탐색하자는 제안으로 이어져요."
+      }
+     ]
+    },
+    {
+     "kind": "prof",
+     "when": "4주차 월요일 1교시",
+     "lines": [
+      "교수님: 매 순간은 좋은 선택이지만, 우리가 원하는 건 전체 P(y|x) 를 높이는 거예요.",
+      "교수님: 로컬 베스트가 글로벌 베스트를 보장하지 않는다는 건 너무 자명하죠."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "탐욕적 디코딩의 가장 큰 약점은?",
+     "choices": [
+      "한 번 고른 토큰을 되돌릴 수 없다",
+      "계산이 너무 느리다",
+      "어휘가 커야 한다",
+      "학습이 불안정하다"
+     ],
+     "a": 0,
+     "why": "슬라이드 문장 it cannot take anything back 이 그대로 답이에요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "**탐욕적 디코딩(Greedy Decoding)**는 '나쁜 방법' 이 아니에요. 빠르고 대개 괜찮아서 요즘 **LLM(대규모 언어 모델)**에서도 많이 써요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 13,
+   "title": "디코딩 2: 빔 서치",
+   "terms": [
+    "Beam Search",
+    "Beam Size",
+    "Length Normalization",
+    "Greedy Decoding"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "**빔 서치(Beam Search)**는 후보 하나 대신 좋은 후보 k 개를 함께 들고 가요.",
+      "이 k 를 **빔 크기(Beam Size)**라고 해요. 보통 5에서 10 을 써요."
+     ]
+    },
+    {
+     "kind": "analogy",
+     "head": "등산로 여러 개를 함께 살피기",
+     "scene": "갈림길마다 길 하나만 고르지 않고, 지금까지 가장 유망한 두 길을 계속 들고 가면서 비교해요.",
+     "map": [
+      [
+       "들고 가는 길 개수",
+       "**빔 크기(Beam Size)**"
+      ],
+      [
+       "지금까지의 점수",
+       "로그 확률의 합"
+      ],
+      [
+       "길이 하나만 남을 때",
+       "k = 1, 곧 탐욕적 디코딩"
+      ]
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "compare",
+     "head": "슬라이드 영어와 우리말 뜻",
+     "cols": [
+      "영어 원문",
+      "뜻"
+     ],
+     "rows": [
+      [
+       "Keep the k best partial hypotheses at every step",
+       "매 단계마다 가장 좋은 부분 후보 k 개를 남긴다"
+      ],
+      [
+       "Typical k is 5 to 10",
+       "보통 k 는 5에서 10"
+      ],
+      [
+       "Score is a sum of log-probabilities",
+       "점수는 로그 확률의 합이다"
+      ],
+      [
+       "longer sequences score lower",
+       "길수록 점수가 낮아진다"
+      ],
+      [
+       "divide by length before comparing finished hypotheses",
+       "끝난 후보를 비교하기 전에 길이로 나눈다(**길이 정규화(Length Normalization)**)"
+      ]
+     ]
+    },
+    {
+     "kind": "formula",
+     "head": "부분 후보의 점수",
+     "tex": "\\text{score}(y_{1:t}) = \\sum_{i=1}^{t} \\log P(y_i \\mid y_{<i}, x)",
+     "parts": [
+      {
+       "sym": "\\log P",
+       "say": "각 자리에서 고른 토큰의 확률에 로그를 씌운 값"
+      },
+      {
+       "sym": "\\sum",
+       "say": "지금까지 고른 토큰들의 로그 확률을 모두 더해요"
+      },
+      {
+       "sym": "y_{1:t}",
+       "say": "첫 토큰부터 t 번째까지의 부분 문장"
+      }
+     ],
+     "whole": "확률은 1보다 작으니 로그는 음수예요. 그래서 길어질수록 점수가 계속 내려가요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드의 나무를 짚어 읽어요",
+     "boxes": [
+      {
+       "x": 0.05,
+       "y": 0.19,
+       "w": 0.9,
+       "h": 0.06,
+       "say": "첫 줄: 매 단계 k 개를 남긴다, 보통 5에서 10."
+      },
+      {
+       "x": 0.05,
+       "y": 0.24,
+       "w": 0.9,
+       "h": 0.06,
+       "say": "둘째 줄: 점수는 로그 확률의 합, 길면 낮아지니 길이로 나눠 비교한다."
+      },
+      {
+       "x": 0.17,
+       "y": 0.53,
+       "w": 0.09,
+       "h": 0.07,
+       "say": "<s> 0.0 에서 출발해요."
+      },
+      {
+       "x": 0.28,
+       "y": 0.45,
+       "w": 0.1,
+       "h": 0.2,
+       "say": "t=1: he -0.7 과 I -1.3 두 개를 남겨요(k=2)."
+      },
+      {
+       "x": 0.4,
+       "y": 0.4,
+       "w": 0.12,
+       "h": 0.3,
+       "say": "t=2: he hit -1.6 과 I was -2.9 가 살아남고, 점선 상자는 버려요."
+      },
+      {
+       "x": 0.54,
+       "y": 0.4,
+       "w": 0.14,
+       "h": 0.28,
+       "say": "t=3: he hit me -2.5 와 I was hit -3.5."
+      },
+      {
+       "x": 0.66,
+       "y": 0.4,
+       "w": 0.16,
+       "h": 0.28,
+       "say": "오른쪽 범례: 파랑은 살아남음, 점선은 버림, 초록은 다음으로 넓힘."
+      },
+      {
+       "x": 0.17,
+       "y": 0.72,
+       "w": 0.66,
+       "h": 0.09,
+       "say": "아래 상자: 부분 후보의 점수는 로그 확률의 합이라는 식이에요."
+      }
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "길이 정규화가 왜 필요한가요",
+     "given": "후보 A(길이 3, 합 -2.5), 후보 B(길이 6, 합 -4.2)",
+     "steps": [
+      "끝난 후보 A: 토큰 3개, 로그 확률 합 -2.5",
+      "끝난 후보 B: 토큰 6개, 로그 확률 합 -4.2",
+      "합만 비교하면 -2.5 > -4.2 이므로 짧은 A 가 이겨요",
+      "길이로 나누면 A 는 -2.5 / 3 = -0.833",
+      "B 는 -4.2 / 6 = -0.700",
+      "-0.700 > -0.833 이므로 이번에는 B 가 이겨요"
+     ],
+     "answer": "길이로 나누지 않으면 짧은 문장만 계속 뽑혀요. 그래서 길이 정규화를 해요."
+    },
+    {
+     "kind": "prof",
+     "when": "4주차 월요일 1교시",
+     "lines": [
+      "교수님: 보통 빔은 5에서 10 정도를 많이 쓰고, 그림에서는 k 를 2로 둔 거예요.",
+      "교수님: 로그 확률이 음수라 길이가 길어질수록 점수가 계속 낮아져요. 그래서 길이 정규화를 해요.",
+      "교수님: 빔 서치는 빔 크기를 2, 3만 해도 확실히 그리디보다 훨씬 오래 걸려요. 항상 좋은 건 아니고 트레이드 오프가 있어요."
+     ]
+    },
+    {
+     "kind": "bg",
+     "src": "배경 지식",
+     "lines": [
+      "로그 확률을 쓰는 이유는 아주 작은 확률을 여러 번 곱하면 컴퓨터에서 0 으로 내려앉기 때문이에요.",
+      "곱을 로그로 바꾸면 합이 되고, 숫자가 안정돼요(기초 다지기 4단원)."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "exam",
+     "src": "N4 Check Yourself",
+     "q": "Q3. Beam search with k = 1 is the same as which algorithm? And why must we normalise by length?",
+     "qko": "**빔 크기(Beam Size)** k = 1 인 **빔 서치(Beam Search)**는 어떤 알고리즘과 같고, 왜 **길이 정규화(Length Normalization)**가 필요한가?",
+     "solve": [
+      "k = 1 이면 매 단계마다 후보를 하나만 남겨요",
+      "그건 매 순간 최고만 고르는 **탐욕적 디코딩(Greedy Decoding)**와 똑같아요",
+      "점수는 로그 확률의 합이고 로그 확률은 음수예요",
+      "그래서 문장이 길어질수록 점수가 계속 작아져요",
+      "나누지 않으면 짧은 문장만 뽑히니까 길이로 나눠 비교해요"
+     ],
+     "answer": "k = 1 은 탐욕적 디코딩과 같다. 로그 확률의 합이 길이에 따라 계속 작아져 짧은 문장을 과도하게 선호하므로 길이로 나눈다."
+    },
+    {
+     "kind": "check",
+     "q": "k = 2 인 빔 서치가 매 단계에서 하는 일은?",
+     "choices": [
+      "후보마다 다음 토큰을 뽑아 점수순으로 2개만 남긴다",
+      "항상 가장 높은 1개만 남긴다",
+      "모든 후보를 끝까지 남긴다",
+      "무작위로 2개를 고른다"
+     ],
+     "a": 0,
+     "why": "빔 크기만큼만 남기고 나머지는 가지치기(pruning)해요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "슬라이드 그림은 교수님이 '조금 단순화시켰다' 고 한 그림이에요. 점수만 보면 he struck(-2.3)이 I was(-2.9)보다 높은데, 그림은 가지마다 하나씩 남겼어요.",
+      "원래 빔 서치 논문에는 남기는 수 n 과 뽑는 수 k 가 따로 있어요. 수업에서는 둘을 같다고 보고 k 하나로 설명해요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 14,
+   "title": "번역 평가: BLEU",
+   "terms": [
+    "BLEU",
+    "n-gram",
+    "Brevity Penalty",
+    "Machine Translation (MT)"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "만들어 낸 번역이 좋은지 어떻게 재나요. 가장 많이 쓰인 점수가 **블루 점수(BLEU)**예요.",
+      "사람이 쓴 정답 문장(reference)과 **n-gram(엔그램)**이 얼마나 겹치는지를 세요."
+     ]
+    },
+    {
+     "kind": "analogy",
+     "head": "답안지와 모범답안 겹쳐 보기",
+     "scene": "모범답안과 내 답안을 겹쳐 놓고, 한 단어짜리, 두 단어짜리, 세 단어짜리, 네 단어짜리 표현이 각각 얼마나 똑같이 나왔는지 세요.",
+     "map": [
+      [
+       "모범답안",
+       "reference, 곧 사람이 만든 정답 번역"
+      ],
+      [
+       "내 답안",
+       "output, 곧 모델의 번역"
+      ],
+      [
+       "겹친 표현 세기",
+       "**n-gram(엔그램)** 정밀도 n = 1 에서 4"
+      ],
+      [
+       "너무 짧게 써서 점수 따는 꼼수 막기",
+       "**간결성 페널티(Brevity Penalty)**"
+      ]
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "compare",
+     "head": "슬라이드 영어와 우리말 뜻",
+     "cols": [
+      "영어 원문",
+      "뜻"
+     ],
+     "rows": [
+      [
+       "compares the model output against one or more human references",
+       "모델 출력을 사람이 만든 정답 하나 이상과 비교한다"
+      ],
+      [
+       "counting overlapping n-grams (n = 1...4)",
+       "겹치는 n-gram 을 n = 1 에서 4 까지 센다"
+      ],
+      [
+       "with a brevity penalty so the model cannot win by saying less",
+       "짧게 말해서 이기지 못하도록 간결성 페널티를 둔다"
+      ],
+      [
+       "a good translation that uses different words scores badly",
+       "다른 말로 잘 옮긴 번역도 점수가 나쁘게 나온다"
+      ],
+      [
+       "BLEU rewards being ordinary",
+       "BLEU 는 평범한 번역에 상을 준다"
+      ]
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "슬라이드의 예문",
+     "items": [
+      "reference: the cat is on the mat",
+      "output: the cat the cat on the mat",
+      "1-gram 은 많이 겹치는데 4-gram 은 하나도 안 겹쳐요.",
+      "슬라이드 막대: 0.86, 0.50, 0.20, 0.00"
+     ]
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "steps",
+     "head": "2-gram 정밀도를 손으로 세어 봐요",
+     "given": "reference: the cat is on the mat / output: the cat the cat on the mat",
+     "steps": [
+      "출력의 2-gram: the cat / cat the / the cat / cat on / on the / the mat → 6개",
+      "정답의 2-gram: the cat / cat is / is on / on the / the mat → 5개",
+      "the cat 은 정답에 1번뿐이라 출력에 2번 나와도 1번만 인정해요",
+      "맞은 것: the cat 1개, on the 1개, the mat 1개 = 3개",
+      "2-gram 정밀도 = 3 / 6 = 0.50"
+     ],
+     "answer": "슬라이드 막대의 0.50 과 같아요."
+    },
+    {
+     "kind": "steps",
+     "head": "3-gram 과 4-gram 도 세어 봐요",
+     "steps": [
+      "출력의 3-gram: the cat the / cat the cat / the cat on / cat on the / on the mat → 5개",
+      "정답의 3-gram: the cat is / cat is on / is on the / on the mat → 4개",
+      "맞은 것: on the mat 1개 → 1 / 5 = 0.20",
+      "출력의 4-gram: the cat the cat / cat the cat on / the cat on the / cat on the mat → 4개",
+      "정답의 4-gram 중 같은 것이 하나도 없어요 → 0 / 4 = 0.00"
+     ],
+     "answer": "3-gram 0.20, 4-gram 0.00. BLEU 는 네 정밀도를 곱하므로 하나가 0 이면 전체가 0 이에요."
+    },
+    {
+     "kind": "look",
+     "head": "슬라이드를 짚어 읽어요",
+     "boxes": [
+      {
+       "x": 0.05,
+       "y": 0.19,
+       "w": 0.9,
+       "h": 0.07,
+       "say": "정의 줄: 정답과 겹치는 n-gram 을 세고 간결성 페널티를 붙인다."
+      },
+      {
+       "x": 0.05,
+       "y": 0.28,
+       "w": 0.9,
+       "h": 0.09,
+       "say": "Example 줄: 슬라이드가 든 예문과 그 결과예요."
+      },
+      {
+       "x": 0.05,
+       "y": 0.38,
+       "w": 0.9,
+       "h": 0.06,
+       "say": "It is useful but imperfect: 쓸모 있지만 완벽하지 않다는 경고예요."
+      },
+      {
+       "x": 0.17,
+       "y": 0.52,
+       "w": 0.48,
+       "h": 0.18,
+       "say": "가운데 상자: 위가 reference, 아래가 output 이에요."
+      },
+      {
+       "x": 0.68,
+       "y": 0.45,
+       "w": 0.24,
+       "h": 0.25,
+       "say": "오른쪽 막대: n-gram 정밀도 0.86, 0.50, 0.20, 0.00."
+      },
+      {
+       "x": 0.23,
+       "y": 0.73,
+       "w": 0.54,
+       "h": 0.05,
+       "say": "설명: 유니그램은 괜찮아 보여도 4-gram 은 아니다, BLEU 는 정밀도를 곱하므로 반복이 벌을 받는다."
+      }
+     ]
+    },
+    {
+     "kind": "prof",
+     "when": "4주차 월요일 1교시",
+     "lines": [
+      "교수님: 블루는 레퍼런스 기반 점수라서 사람이 만든 정답 문장이 꼭 하나 필요해요.",
+      "교수님: 모델이 짧은 문장만 내서 정밀도를 높이는 걸 막기 위해 너무 짧은 번역에 페널티를 주는 항이 있어요.",
+      "교수님: 요새는 좀 오래된 지표지만 이미지 캡셔닝 같은 데서는 아직도 쓰이니 알아 두면 좋아요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "BLEU 에서 4-gram 정밀도가 0 이면 어떻게 되나요?",
+     "choices": [
+      "네 정밀도를 곱하므로 BLEU 가 0 이 된다",
+      "1-gram 점수만 쓴다",
+      "간결성 페널티가 사라진다",
+      "점수가 오히려 올라간다"
+     ],
+     "a": 0,
+     "why": "슬라이드: BLEU multiplies the precisions. 하나가 0 이면 곱이 0 이에요."
+    },
+    {
+     "kind": "english",
+     "head": "답안 문장",
+     "en": "**블루 점수(BLEU)**는 모델 번역과 사람이 만든 정답 번역 사이에서 1-gram 부터 4-gram 까지의 겹침(정밀도)을 재고, 너무 짧은 번역을 막기 위해 **간결성 페널티(Brevity Penalty)**를 곱하는 지표다. 뜻이 같아도 다른 표현을 쓰면 점수가 낮게 나오는 한계가 있다.",
+     "ko": "정의(겹침) + 페널티(짧음 방지) + 한계(표현 다양성) 세 마디를 꼭 넣어요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "슬라이드의 1-gram 값은 0.86(6/7)이에요. 중복을 정답에 나온 횟수까지만 세는 규칙을 cat 에도 적용하면 5/7 = 0.71 이 돼요. 시험에서는 슬라이드 숫자를 기준으로 삼아요.",
+      "**블루 점수(BLEU)**가 높다고 언제나 번역이 더 좋은 건 아니에요. 다른 낱말로 잘 옮기면 오히려 점수가 낮아져요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 15,
+   "title": "인코더 디코더는 번역만을 위한 것이 아니에요",
+   "terms": [
+    "Sequence-to-Sequence Model",
+    "Encoder",
+    "Decoder"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "**시퀀스-투-시퀀스 모델(Sequence-to-Sequence Model)**은 특정 과제 이름이 아니라 틀(프레임워크) 이름이에요.",
+      "입력도 줄줄이, 출력도 줄줄이면 무엇이든 같은 구조로 풀 수 있어요."
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "슬라이드의 다섯 가지 예",
+     "cols": [
+      "과제",
+      "인코더가 읽는 것",
+      "디코더가 쓰는 것"
+     ],
+     "rows": [
+      [
+       "Machine translation(번역)",
+       "원문 문장",
+       "목표 문장"
+      ],
+      [
+       "Summarization(요약)",
+       "긴 문서",
+       "짧은 요약"
+      ],
+      [
+       "Dialogue(대화)",
+       "앞선 대화들",
+       "다음 차례의 말"
+      ],
+      [
+       "Speech recognition(음성 인식)",
+       "소리 신호",
+       "글로 받아쓴 것"
+      ],
+      [
+       "Code generation(코드 생성)",
+       "자연어로 쓴 요구",
+       "프로그램 코드"
+      ]
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "points",
+     "head": "슬라이드 영어와 우리말 뜻",
+     "items": [
+      "The same architecture works whenever the input and the output are both sequences = 입력과 출력이 모두 시퀀스면 같은 구조가 통한다",
+      "they need not be the same kind of sequence = 같은 종류의 시퀀스일 필요도 없다",
+      "Learn the pattern once, reuse it for the rest of the course = 한 번 배워 두면 이 수업 내내 다시 쓴다"
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "같은 종류가 아니어도 된다는 말",
+     "items": [
+      "음성 인식은 소리가 들어가고 글이 나와요.",
+      "코드 생성은 우리말 요구가 들어가고 파이썬 코드가 나와요.",
+      "들어가는 것과 나오는 것의 모양(modality)이 달라도 괜찮아요."
+     ]
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드의 표를 짚어 읽어요",
+     "boxes": [
+      {
+       "x": 0.05,
+       "y": 0.19,
+       "w": 0.9,
+       "h": 0.08,
+       "say": "위 줄: 입력과 출력이 모두 시퀀스이면 같은 구조가 통한다."
+      },
+      {
+       "x": 0.06,
+       "y": 0.37,
+       "w": 0.24,
+       "h": 0.06,
+       "say": "왼쪽 열이 과제 이름이에요."
+      },
+      {
+       "x": 0.28,
+       "y": 0.37,
+       "w": 0.36,
+       "h": 0.06,
+       "say": "가운데 주황 상자가 인코더가 읽는 것이에요."
+      },
+      {
+       "x": 0.64,
+       "y": 0.37,
+       "w": 0.3,
+       "h": 0.06,
+       "say": "오른쪽 초록 상자가 디코더가 쓰는 것이에요."
+      },
+      {
+       "x": 0.06,
+       "y": 0.44,
+       "w": 0.88,
+       "h": 0.3,
+       "say": "다섯 줄: 번역, 요약, 대화, 음성 인식, 코드 생성이에요."
+      }
+     ]
+    },
+    {
+     "kind": "prof",
+     "when": "4주차 월요일 1교시",
+     "lines": [
+      "교수님: 기억해야 될 건 시퀀스 투 시퀀스는 개별 태스크가 아니라 인코더 디코더를 갖는 공통 패턴의 프레임워크라는 점이에요.",
+      "교수님: 입력과 출력이 꼭 같은 모달리티일 필요는 없어요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "다음 중 seq2seq 로 풀 수 있는 과제가 아닌 것은?",
+     "choices": [
+      "이미지 한 장을 고양이인지 개인지 분류하기",
+      "긴 문서를 요약하기",
+      "소리를 글로 받아쓰기",
+      "자연어 설명으로 코드 만들기"
+     ],
+     "a": 0,
+     "why": "분류는 출력이 시퀀스가 아니라 칸 하나예요. 나머지 셋은 출력이 시퀀스라서 seq2seq 예요."
+    },
+    {
+     "kind": "english",
+     "head": "답안 문장",
+     "en": "**시퀀스-투-시퀀스 모델(Sequence-to-Sequence Model)**은 특정 과제가 아니라 입력과 출력이 모두 시퀀스인 모든 문제에 쓰이는 **인코더(Encoder)**, **디코더(Decoder)** 프레임워크이며, 번역, 요약, 대화, 음성 인식, 코드 생성 등에 같은 구조가 재사용된다.",
+     "ko": "과제 다섯 개를 외워 두면 나열형 문제에 그대로 써요."
+    }
+   ]
+  },
+  {
+   "p": 16,
+   "title": "정보 병목",
+   "terms": [
+    "Information Bottleneck",
+    "Encoder",
+    "Decoder",
+    "Hidden State",
+    "Attention"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "이제 Part 1 의 결론이에요. **시퀀스-투-시퀀스 모델(Sequence-to-Sequence Model)**의 진짜 약점은 **정보 병목(Information Bottleneck)**이에요.",
+      "**디코더(Decoder)**가 원문에 대해 아는 모든 것이 고정 크기 벡터 하나에 들어가야 해요."
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "문장이 길어도 통로는 그대로",
+     "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 480 270\"><text x=\"240\" y=\"24\" font-size=\"15\" text-anchor=\"middle\" class=\"tb\">문장이 길어도 통로는 그대로</text><rect x=\"20\" y=\"50\" width=\"130\" height=\"26\" rx=\"2\" class=\"n b1\"/><text x=\"85\" y=\"68\" font-size=\"12\" text-anchor=\"middle\" class=\"tl b1\">20단어 문장</text><rect x=\"20\" y=\"140\" width=\"200\" height=\"26\" rx=\"2\" class=\"n b2\"/><text x=\"120\" y=\"158\" font-size=\"12\" text-anchor=\"middle\" class=\"tl b2\">200단어 문단</text><line x1=\"152\" y1=\"63\" x2=\"230.1\" y2=\"97.4\" class=\"e2 b3\"/><polygon points=\"236,100 230.3,93.1 227.1,100.4\" class=\"arrow b3\"/><line x1=\"222\" y1=\"153\" x2=\"234.0\" y2=\"116.1\" class=\"e2 b3\"/><polygon points=\"236,110 229.7,116.4 237.3,118.8\" class=\"arrow b3\"/><rect x=\"238\" y=\"88\" width=\"60\" height=\"30\" rx=\"2\" class=\"n4 b3\"/><text x=\"268\" y=\"108\" font-size=\"12\" text-anchor=\"middle\" class=\"tl b3\">512칸</text><line x1=\"300\" y1=\"103\" x2=\"333.6\" y2=\"103.0\" class=\"e2 b4\"/><polygon points=\"340,103 332.0,99.0 332.0,107.0\" class=\"arrow b4\"/><rect x=\"342\" y=\"82\" width=\"120\" height=\"42\" rx=\"2\" class=\"box2 b4\"/><text x=\"402\" y=\"108\" font-size=\"14\" text-anchor=\"middle\" class=\"tb b4\">디코더</text><text x=\"240\" y=\"196\" font-size=\"13\" text-anchor=\"middle\" class=\"t b4\">칸 수가 같으니 긴 문장일수록 더 많이 버려요</text><text x=\"240\" y=\"222\" font-size=\"12\" text-anchor=\"middle\" class=\"tm b4\">성능이 문장 길이에 따라 무너지는 이유예요</text></svg>",
+     "caption": "20단어든 200단어든 같은 칸 수의 벡터를 지나가야 해요.",
+     "builds": 4
+    },
+    {
+     "kind": "analogy",
+     "head": "좁은 문 하나",
+     "scene": "큰 강당에 사람이 20명이든 200명이든, 나가는 문은 똑같이 하나뿐이에요. 사람이 많을수록 더 많이 밀리고 못 나가는 사람이 생겨요.",
+     "map": [
+      [
+       "강당 안 사람 수",
+       "입력 문장의 길이"
+      ],
+      [
+       "문 하나",
+       "고정 크기 요약 벡터"
+      ],
+      [
+       "못 나간 사람",
+       "버려진 정보"
+      ]
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "compare",
+     "head": "슬라이드 영어와 우리말 뜻",
+     "cols": [
+      "영어 원문",
+      "뜻"
+     ],
+     "rows": [
+      [
+       "Everything the decoder knows about the source has to fit in one fixed-size vector",
+       "디코더가 원문에 대해 아는 모든 것이 고정 크기 벡터 하나에 들어가야 한다"
+      ],
+      [
+       "A 20-word sentence and a 200-word paragraph get the same number of dimensions",
+       "20단어 문장과 200단어 문단이 같은 개수의 차원을 받는다"
+      ],
+      [
+       "performance duly collapses as sentences get longer",
+       "문장이 길어질수록 성능이 그대로 무너진다"
+      ],
+      [
+       "stop forcing the decoder to use only that vector",
+       "디코더가 그 벡터만 쓰도록 강요하지 말자"
+      ]
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "fixed-size 라는 말",
+     "items": [
+      "fixed-size vector 는 '칸 수가 정해진 벡터' 예요. 예를 들어 512칸이면 언제나 512칸이에요.",
+      "입력이 길어져도 칸이 늘지 않아요. 그래서 긴 입력일수록 더 많이 버려야 해요."
+     ]
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드를 짚어 읽어요",
+     "boxes": [
+      {
+       "x": 0.05,
+       "y": 0.19,
+       "w": 0.9,
+       "h": 0.06,
+       "say": "첫 줄: 디코더가 아는 모든 것이 고정 크기 벡터 하나에 들어가야 한다."
+      },
+      {
+       "x": 0.05,
+       "y": 0.25,
+       "w": 0.9,
+       "h": 0.09,
+       "say": "둘째 줄: 20단어든 200단어든 차원이 같아서 길면 성능이 무너진다."
+      },
+      {
+       "x": 0.05,
+       "y": 0.33,
+       "w": 0.9,
+       "h": 0.06,
+       "say": "셋째 줄: 해결은 거의 자명하다. 그 벡터만 쓰도록 강요하지 않는 것."
+      },
+      {
+       "x": 0.09,
+       "y": 0.46,
+       "w": 0.26,
+       "h": 0.1,
+       "say": "빨간 글씨: 하나의 고정 벡터가 원문 전체를 날라야 한다는 경고예요."
+      },
+      {
+       "x": 0.33,
+       "y": 0.56,
+       "w": 0.08,
+       "h": 0.09,
+       "say": "빨간 느낌표 자리가 바로 병목이에요."
+      }
+     ]
+    },
+    {
+     "kind": "prof",
+     "when": "4주차 월요일 1교시",
+     "lines": [
+      "교수님: 인코더는 굉장히 많은 정보를 갖고 있는데, 디코더로 전달되는 통로가 딱 하나의 고정 크기 벡터라는 게 정보 병목의 가장 큰 문제예요.",
+      "교수님: 입력이 짧으면 어느 정도 되겠지만, 문장이 길어질수록 기억해야 할 정보가 훨씬 많아져요.",
+      "교수님: 이걸 해결하기 위해서 **어텐션(Attention)**이라는 기법을 배워 보겠습니다."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "exam",
+     "src": "N4 Check Yourself",
+     "q": "Q1. Why does a fixed-size encoder vector hurt long sentences more than short ones?",
+     "qko": "고정 크기 인코더 벡터는 왜 짧은 문장보다 긴 문장에서 더 해로운가?",
+     "solve": [
+      "입력이 10단어든 1000단어든 디코더로 가는 통로는 같은 크기의 벡터 하나예요",
+      "긴 문장일수록 담아야 할 정보(등장인물, 단어 뜻, 문장 구조)가 훨씬 많아요",
+      "칸 수는 그대로인데 담을 게 늘어나니 잃어버리는 정보가 커져요",
+      "그래서 문장이 길어질수록 번역 성능이 급격히 떨어져요"
+     ],
+     "answer": "입력 길이와 상관없이 통로가 같은 크기라서, 긴 문장일수록 압축 과정에서 잃는 정보가 커지기 때문이다."
+    },
+    {
+     "kind": "english",
+     "head": "답안 문장",
+     "en": "**시퀀스-투-시퀀스 모델(Sequence-to-Sequence Model)**에서 **인코더(Encoder)**의 정보는 고정 크기 벡터 하나를 통해서만 **디코더(Decoder)**로 전달되므로, 문장이 길어질수록 압축 손실이 커지는 **정보 병목(Information Bottleneck)**이 생긴다.",
+     "ko": "'고정 크기 + 유일한 통로 + 길수록 손실' 세 조각을 꼭 넣어요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "**정보 병목(Information Bottleneck)**은 파라미터가 부족해서 생기는 문제가 아니에요. 통로의 크기가 입력 길이에 따라 늘지 않는 게 문제예요."
+     ]
+    }
+   ]
+  }
+ ]
+}

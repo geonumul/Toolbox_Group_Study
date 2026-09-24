@@ -24,6 +24,7 @@ SRC = ROOT.parent.parent / "01_수업자료" / "자연어처리" / "코드와과
 LABS = {
     "N2L": SRC / "02주차" / "Lab0-1_Tokenization and Word Vectors_full.ipynb",
     "N3L": SRC / "03주차" / "Lab2_Neural Nets and RNN Language Models.ipynb",
+    "N4L": SRC / "04주차" / "Lab3_Self-Attention from Scratch_Full.ipynb",
 }
 CHROME = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
 FONT = ROOT.parent.parent / "02_작업" / "그래프신경망" / "번역" / "_tools" / "fonts"
@@ -143,9 +144,12 @@ def shoot(htmlfile, png):
     return im.crop((0, 0, w, min(h, bottom + 34)))
 
 
-def main(img=True):
+def main(img=True, only=None):
+    """only: 만들 덱 이름 목록 (없으면 전부). 예 python build_lab_pages.py N4L"""
     TMP.mkdir(parents=True, exist_ok=True)
     for deck, f in LABS.items():
+        if only and deck not in only:
+            continue
         nb = json.loads(f.read_text(encoding="utf-8"))
         pages = split_pages(nb)
         (W / "labs" / f"{deck}_pages.json").write_text(json.dumps({"deck": deck, "file": f.name, "pages": pages}, ensure_ascii=False, indent=1), encoding="utf-8")
@@ -167,4 +171,4 @@ def main(img=True):
 
 
 if __name__ == "__main__":
-    main("--no-img" not in sys.argv)
+    main("--no-img" not in sys.argv, [a for a in sys.argv[1:] if a in LABS])

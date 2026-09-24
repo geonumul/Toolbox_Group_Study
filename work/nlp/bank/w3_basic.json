@@ -1,0 +1,2042 @@
+[
+ {
+  "id": "w3b-mcq-001",
+  "type": "mcq",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-1 분류와 뉴런",
+  "slides": "N3 p.6",
+  "src": "예상",
+  "q": "창(window) 기반 **NER(개체명 인식)** 분류기에 들어가는 입력으로 가장 적절한 것은?",
+  "c": [
+   "중심 단어 하나의 **단어 벡터(Word Vector)**만",
+   "**중심 단어(Center Word)**와 양옆 단어들의 벡터를 이어 붙인 긴 벡터",
+   "문장 전체를 한 글자씩 적은 문자열",
+   "문장의 품사 태그 목록"
+  ],
+  "a": 1,
+  "e": "슬라이드: 'Concatenated word vectors in, a decision out'. **윈도우(Window)** m=2 면 중심 단어 + 양쪽 2개씩 다섯 단어의 벡터(길이 d)를 이어 붙여 길이 5d 벡터 하나를 만들어요. 모델은 글자 그대로를 먹지 못해요."
+ },
+ {
+  "id": "w3b-mcq-002",
+  "type": "mcq",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-1 분류와 뉴런",
+  "slides": "N3 p.7",
+  "src": "예상",
+  "q": "**로짓(Logit)**(score)에 대한 설명으로 옳지 않은 것은?",
+  "c": [
+   "Wx 로 얻는 날것 점수예요",
+   "음수 값도 나올 수 있어요",
+   "모든 클래스 값을 더하면 항상 1이에요",
+   "**소프트맥스(Softmax)**를 통과시켜야 확률이 돼요"
+  ],
+  "a": 2,
+  "e": "합이 1이 되는 것은 **소프트맥스(Softmax)**를 통과한 뒤의 성질이에요. **로짓(Logit)**은 Wx 라서 음수도 나오고 합도 1이 아니에요. 교수님도 '이 점수 자체는 확률이 아니고 음수도 나올 수 있다' 고 했어요."
+ },
+ {
+  "id": "w3b-mcq-003",
+  "type": "mcq",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-1 분류와 뉴런",
+  "slides": "N3 p.7",
+  "src": "예상",
+  "q": "**교차 엔트로피(Cross-Entropy)** **손실 함수(Loss Function)**를 바르게 설명한 것은?",
+  "c": [
+   "**소프트맥스(Softmax)** 뒤에 정답 클래스 확률의 음의 로그를 붙여 평균 낸 값",
+   "정답 클래스 점수에서 오답 점수를 뺀 값",
+   "모든 클래스 확률을 곱한 값",
+   "정답 클래스 확률을 그대로 더한 값"
+  ],
+  "a": 0,
+  "e": "슬라이드: 'cross-entropy loss (softmax + NLL)'. J(θ) = (1/N) Σ -log P(y_i | x_i) 예요. 정답 확률이 0.9 면 벌점 약 0.11, 0.01 이면 약 4.61 로 확 커져요."
+ },
+ {
+  "id": "w3b-mcq-004",
+  "type": "mcq",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-1 분류와 뉴런",
+  "slides": "N3 p.8",
+  "src": "예상",
+  "q": "'not bad' 같은 표현이 **선형 분류기(Linear Classifier)**에게 어려운 까닭으로 가장 적절한 것은?",
+  "c": [
+   "단어 수가 너무 많아서",
+   "두 단어가 함께 있을 때 뜻이 뒤집히는 상호작용이라서",
+   "**어휘(Vocabulary)**에 없는 단어라서",
+   "문장이 너무 길어서"
+  ],
+  "a": 1,
+  "e": "슬라이드: '\"not bad\" is not the sum of \"not\" and \"bad\"'. **선형 분류기(Linear Classifier)**는 특징의 효과를 따로 더하기만 해서, 'not' 이 뒤 단어에 따라 역할이 바뀌는 상호작용을 잡지 못해요. 그래서 **비선형성(Nonlinearity)**이 필요해요."
+ },
+ {
+  "id": "w3b-mcq-005",
+  "type": "mcq",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-1 분류와 뉴런",
+  "slides": "N3 p.9",
+  "src": "예상",
+  "q": "**뉴런(Neuron)** 하나 안에서 계산이 일어나는 순서로 옳은 것은?",
+  "c": [
+   "**활성화 함수(Activation Function)** → **가중합(Weighted Sum)** → **편향 항(Bias Term)**",
+   "**가중합(Weighted Sum)** → **편향 항(Bias Term)** → **활성화 함수(Activation Function)**",
+   "**편향 항(Bias Term)** → **활성화 함수(Activation Function)** → **가중합(Weighted Sum)**",
+   "**가중합(Weighted Sum)** → **활성화 함수(Activation Function)** → **편향 항(Bias Term)**"
+  ],
+  "a": 1,
+  "e": "h = f(wᵀx + b) 예요. 입력에 **가중치(Weight)**를 곱해 더하고(**가중합(Weighted Sum)**), **편향 항(Bias Term)** b 를 더해 z 를 만든 다음, 그 z 를 **활성화 함수(Activation Function)** f 에 넣어요."
+ },
+ {
+  "id": "w3b-mcq-006",
+  "type": "mcq",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-2 비선형과 MLP",
+  "slides": "N3 p.10",
+  "src": "예상",
+  "q": "**시그모이드(Sigmoid)**에 대한 설명으로 가장 적절한 것은?",
+  "c": [
+   "출력이 0과 1 사이라 확률이나 게이트에 써요",
+   "출력이 -1과 1 사이라 안쪽 층의 기본 선택이에요",
+   "음수 입력을 그대로 통과시켜요",
+   "**트랜스포머(Transformer)**가 기본으로 쓰는 함수예요"
+  ],
+  "a": 0,
+  "e": "σ(z) = 1/(1 + e^(-z)) 는 늘 0과 1 사이예요. -1 ~ 1 은 **하이퍼볼릭 탄젠트(tanh)**, 안쪽 층의 기본은 **ReLU(렐루)**, **트랜스포머(Transformer)**가 쓰는 것은 **GELU(겔루)**예요."
+ },
+ {
+  "id": "w3b-mcq-007",
+  "type": "mcq",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-2 비선형과 MLP",
+  "slides": "N3 p.10",
+  "src": "예상",
+  "q": "**ReLU(렐루)**의 식과 성질로 옳은 것은?",
+  "c": [
+   "ReLU(z) = max(z, 0), 음수는 0으로 끄고 양수 쪽 기울기는 1",
+   "ReLU(z) = min(z, 0), 양수는 0으로 끄고 음수는 그대로",
+   "ReLU(z) = 1/(1 + e^(-z)), 늘 0과 1 사이",
+   "ReLU(z) = z, 어떤 값이든 그대로 통과"
+  ],
+  "a": 0,
+  "e": "슬라이드: 'ReLU: max(0, x), cheap, trains fast, the deep-learning workhorse'. 교수님도 **ReLU(렐루)**가 딥러닝에서 가장 중요한 함수 중 하나라고 했어요. 음수 쪽 기울기가 0이라 뉴런이 꺼진 채 남는 약점이 있어요."
+ },
+ {
+  "id": "w3b-mcq-008",
+  "type": "mcq",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-2 비선형과 MLP",
+  "slides": "N3 p.10",
+  "src": "예상",
+  "q": "**GELU(겔루)**에 대한 슬라이드 설명으로 가장 적절한 것은?",
+  "c": [
+   "**시그모이드(Sigmoid)**보다 더 강하게 눌러 담는 함수",
+   "부드러운 **ReLU(렐루)**이고 **트랜스포머(Transformer)**가 쓰는 함수",
+   "출력이 -1과 1 사이인 오래된 S자 함수",
+   "기울기가 늘 1인 항등 함수"
+  ],
+  "a": 1,
+  "e": "슬라이드: 'GELU: smooth ReLU, what Transformers use (see you in week 4)'. 0 근처가 부드럽게 휘는 **ReLU(렐루)** 라고 보면 돼요."
+ },
+ {
+  "id": "w3b-mcq-009",
+  "type": "mcq",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-2 비선형과 MLP",
+  "slides": "N3 p.11",
+  "src": "예상",
+  "q": "**활성화 함수(Activation Function)** 없이 선형층 두 개를 쌓으면 어떻게 되는가?",
+  "c": [
+   "표현력이 두 배가 된다",
+   "W₂(W₁x) = (W₂W₁)x 처럼 **행렬(Matrix)** 하나와 같아진다",
+   "곡선 **결정 경계(Decision Boundary)**를 그릴 수 있게 된다",
+   "계산이 두 배 느려지지만 성능은 좋아진다"
+  ],
+  "a": 1,
+  "e": "슬라이드: 'stacked linear layers collapse into one affine map, depth buys nothing'. 곱을 묶으면 새 **행렬(Matrix)** W' 하나가 돼요. 그래서 f 가 없으면 깊게 쌓는 의미가 없어요."
+ },
+ {
+  "id": "w3b-mcq-010",
+  "type": "mcq",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-2 비선형과 MLP",
+  "slides": "N3 p.12",
+  "src": "예상",
+  "q": "**MLP(다층 퍼셉트론)**의 순전파 식으로 슬라이드와 맞는 것은?",
+  "c": [
+   "h(1) = W(1)x, h(2) = W(2)h(1), ŷ = U h(2)",
+   "h(1) = f(W(1)x + b(1)), h(2) = f(W(2)h(1) + b(2)), ŷ = softmax(U h(2))",
+   "h(1) = softmax(W(1)x), h(2) = softmax(W(2)h(1)), ŷ = f(U h(2))",
+   "h(1) = f(x + b(1)), h(2) = f(h(1) + b(2)), ŷ = U h(2)"
+  ],
+  "a": 1,
+  "e": "층마다 f(Wx + b) 를 되풀이하고 마지막에 **소프트맥스(Softmax)**로 클래스 확률을 내요. **NER(개체명 인식)** 창 분류기는 단어 벡터 → **MLP(다층 퍼셉트론)** → P(location) 이에요."
+ },
+ {
+  "id": "w3b-mcq-011",
+  "type": "mcq",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-3 텍스트 CNN",
+  "slides": "N3 p.13",
+  "src": "예상",
+  "q": "폭 3짜리 **합성곱 필터(Convolution Filter)**가 강하게 반응했다면 무엇을 찾은 것인가?",
+  "c": [
+   "문장 전체의 길이",
+   "학습된 세 단어(trigram) 패턴",
+   "단어 하나의 철자",
+   "문장의 품사 배열"
+  ],
+  "a": 1,
+  "e": "슬라이드: 'A filter of width 3 is a learned trigram detector, \"was really great\" lights it up'. 폭 k 필터는 연속된 k 단어를 한 번에 봐요."
+ },
+ {
+  "id": "w3b-mcq-012",
+  "type": "mcq",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-3 텍스트 CNN",
+  "slides": "N3 p.13",
+  "src": "예상",
+  "q": "**특징 맵(Feature Map)**에 대한 설명으로 가장 적절한 것은?",
+  "c": [
+   "필터가 문장을 훑으며 창마다 낸 값을 줄 세운 것",
+   "단어마다의 **임베딩(Embedding)**을 모은 표",
+   "클래스별 확률을 모은 것",
+   "필터의 가중치 자체"
+  ],
+  "a": 0,
+  "e": "슬라이드: 'feature map (one value per window)'. 필터를 한 칸씩 미끄러뜨리며 창마다 값 하나를 내고, 그 값들을 모은 것이 **특징 맵(Feature Map)**이에요."
+ },
+ {
+  "id": "w3b-mcq-013",
+  "type": "mcq",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-3 텍스트 CNN",
+  "slides": "N3 p.14",
+  "src": "예상",
+  "q": "**최대 풀링(Max-pooling)**이 하는 일로 가장 적절한 것은?",
+  "c": [
+   "**특징 맵(Feature Map)**의 값을 모두 더한다",
+   "**특징 맵(Feature Map)**에서 가장 센 반응 하나만 남긴다",
+   "**특징 맵(Feature Map)**의 평균을 낸다",
+   "필터의 폭을 늘린다"
+  ],
+  "a": 1,
+  "e": "슬라이드: 'Max-pooling: keep the strongest response, \"did this pattern appear ANYWHERE?\"'. 최댓값만 남고 그 값이 어느 창에서 나왔는지는 버려져요."
+ },
+ {
+  "id": "w3b-mcq-014",
+  "type": "mcq",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-3 텍스트 CNN",
+  "slides": "N3 p.14",
+  "src": "예상",
+  "q": "슬라이드가 든 텍스트 **CNN(합성곱 신경망)**의 한계로 가장 적절한 것은?",
+  "c": [
+   "계산이 느려서 병렬 처리를 못 한다",
+   "**분류(Classification)** 과제에 쓸 수 없다",
+   "창 안의 가까운 곳만 보아 먼 거리 순서를 잡지 못한다",
+   "**어휘(Vocabulary)**가 커지면 쓸 수 없다"
+  ],
+  "a": 2,
+  "e": "슬라이드: 'Limits: local view only, no long-range order'. 장점은 빠름(모든 창 병렬), 위치 무관, **분류(Classification)**에 강함이에요. 먼 순서가 필요하면 **RNN(순환 신경망)**의 recurrence 로 가요."
+ },
+ {
+  "id": "w3b-mcq-015",
+  "type": "mcq",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-3 텍스트 CNN",
+  "slides": "N3 p.14",
+  "src": "예상",
+  "q": "슬라이드가 한 줄로 정리한 **CNN(합성곱 신경망)**과 **RNN(순환 신경망)**의 대비로 옳은 것은?",
+  "c": [
+   "CNN = 기억을 가진 독자, RNN = 병렬 n-gram 탐지기",
+   "CNN = 병렬 **n-gram(엔그램)** 탐지기, RNN = 기억을 가진 독자",
+   "CNN = 확률 분포 생성기, RNN = 문법 검사기",
+   "CNN 과 RNN 은 같은 계산을 한다"
+  ],
+  "a": 1,
+  "e": "슬라이드 마지막 줄: 'CNN = parallel n-gram detectors, RNN (coming up) = a reader with memory'. 두 줄을 짝으로 외워요."
+ },
+ {
+  "id": "w3b-mcq-016",
+  "type": "mcq",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-4 미분과 연쇄 법칙",
+  "slides": "N3 p.17",
+  "src": "예상",
+  "q": "**확률적 경사 하강법(Stochastic Gradient Descent (SGD))** 업데이트 식 θ ← θ - α∇J 에서 θ 에 들어가지 않는 것은?",
+  "c": [
+   "**은닉층(Hidden Layer)**의 W 와 b",
+   "출력층의 U",
+   "입력 **단어 벡터(Word Vector)**",
+   "**학습률(Learning Rate)** α"
+  ],
+  "a": 3,
+  "e": "슬라이드: 'θ now holds EVERYTHING, all the W's and b's, and the word vectors themselves'. α 는 사람이 정하는 보폭이라 **파라미터(Parameter)**가 아니에요."
+ },
+ {
+  "id": "w3b-mcq-017",
+  "type": "mcq",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-4 미분과 연쇄 법칙",
+  "slides": "N3 p.18",
+  "src": "예상",
+  "q": "f(x) = x³ 일 때 x = 2 에서의 기울기는?",
+  "c": [
+   "6",
+   "8",
+   "12",
+   "24"
+  ],
+  "a": 2,
+  "e": "f'(x) = 3x², x = 2 에서 3 × 4 = 12 예요. 슬라이드는 미분을 'nudge x, how much does f move?' 로 설명해요. x 를 0.001 밀어 보면 12.006 이 나와 공식과 맞아요."
+ },
+ {
+  "id": "w3b-mcq-018",
+  "type": "mcq",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-4 미분과 연쇄 법칙",
+  "slides": "N3 p.19",
+  "src": "예상",
+  "q": "입력이 4개, 출력이 3개인 함수의 **야코비안(Jacobian)** 크기로 옳은 것은?",
+  "c": [
+   "4×3",
+   "3×4",
+   "4×4",
+   "3×3"
+  ],
+  "a": 1,
+  "e": "**야코비안(Jacobian)**은 m×n 행렬이고 m = 출력 수, n = 입력 수예요. 행이 출력, 열이 입력이라 3×4 예요. (i, j) 칸은 입력 j 를 밀 때 출력 i 가 움직이는 정도예요."
+ },
+ {
+  "id": "w3b-mcq-019",
+  "type": "mcq",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-4 미분과 연쇄 법칙",
+  "slides": "N3 p.20",
+  "src": "예상",
+  "q": "h = f(z), z = g(x) 일 때 **연쇄 법칙(Chain Rule)**에 따른 ∂h/∂x 는?",
+  "c": [
+   "∂h/∂z + ∂z/∂x",
+   "∂h/∂z × ∂z/∂x",
+   "∂h/∂z ÷ ∂z/∂x",
+   "∂z/∂x × ∂z/∂h"
+  ],
+  "a": 1,
+  "e": "슬라이드: 'One-variable chain rule: multiply derivatives. Vector version: multiply Jacobians'. 교수님이 **연쇄 법칙(Chain Rule)**이 가장 중요하다고 했어요. 한 경로 위의 단계는 곱하고, 여러 경로가 만나는 곳에서만 더해요."
+ },
+ {
+  "id": "w3b-mcq-020",
+  "type": "mcq",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-4 미분과 연쇄 법칙",
+  "slides": "N3 p.21",
+  "src": "예상",
+  "q": "h = f(z) 를 z 로 미분한 **야코비안(Jacobian)**의 모양으로 옳은 것은?",
+  "c": [
+   "**단위 행렬(Identity Matrix)** I",
+   "**대각 행렬(Diagonal Matrix)** diag(f'(z))",
+   "**전치(Transpose)**된 uᵀ",
+   "가중치 **행렬(Matrix)** W"
+  ],
+  "a": 1,
+  "e": "**활성화 함수(Activation Function)**는 칸마다 따로 씌우니까 h_i 는 z_i 에만 영향을 받아요. 그래서 대각선에만 f'(z_i) 가 남는 **대각 행렬(Diagonal Matrix)**이 되고, 이 곱은 **원소별 곱(Hadamard Product)**과 같아요. I 는 ∂(Wx+b)/∂b, W 는 ∂(Wx+b)/∂x, uᵀ 는 ∂(uᵀh)/∂h 예요."
+ },
+ {
+  "id": "w3b-mcq-021",
+  "type": "mcq",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-5 역전파와 계산 그래프",
+  "slides": "N3 p.23",
+  "src": "예상",
+  "q": "풀이 예에서 **오차 신호(Error Signal)** δ 가 뜻하는 것으로 옳은 것은?",
+  "c": [
+   "∂s/∂z, 곧 점수가 z 까지 흘러온 기울기",
+   "∂s/∂b, 곧 편향 항에 대한 기울기만",
+   "∂h/∂x, 곧 입력에 대한 은닉값의 기울기",
+   "**학습률(Learning Rate)** α 와 기울기의 곱"
+  ],
+  "a": 0,
+  "e": "δ = ∂s/∂h × ∂h/∂z = uᵀ ⊙ f'(z)ᵀ = ∂s/∂z 예요. ∂s/∂b 가 마침 δ 와 같은 값이 되지만, δ 의 정의는 z 까지 흘러온 **상류 기울기(Upstream Gradient)**예요."
+ },
+ {
+  "id": "w3b-mcq-022",
+  "type": "mcq",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-5 역전파와 계산 그래프",
+  "slides": "N3 p.24",
+  "src": "예상",
+  "q": "s = uᵀh, h = f(z), z = Wx + b 에서 ∂s/∂x 를 구할 때 δ 에 곱해지는 것은?",
+  "c": [
+   "x",
+   "W",
+   "b",
+   "u"
+  ],
+  "a": 1,
+  "e": "z = Wx + b 를 x 로 미분하면 W 예요. 그래서 ∂s/∂x = δW 이고, x 와 같은 세로 모양으로 맞추면 ∇ₓ = Wᵀδᵀ 예요. ∂s/∂W 에는 반대로 x 가 붙어요."
+ },
+ {
+  "id": "w3b-mcq-023",
+  "type": "mcq",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-5 역전파와 계산 그래프",
+  "slides": "N3 p.25-26",
+  "src": "예상",
+  "q": "역전파 식에 **전치(Transpose)**가 붙는 이유로 슬라이드가 든 것은?",
+  "c": [
+   "계산이 빨라지기 때문",
+   "기울기의 **모양(Shape)**이 해당 변수의 shape 과 같아지도록 차원을 맞추기 위해",
+   "**행렬(Matrix)** 곱의 순서를 바꿀 수 있게 하려고",
+   "메모리를 아끼기 위해"
+  ],
+  "a": 1,
+  "e": "슬라이드: 'because that is what makes the dimensions work out, and that is a feature, not a bug'. 교수님도 전치 위치를 외우기보다 shape 을 맞춘다고 생각하라고 했어요. 파라미터의 기울기는 파라미터와 같은 shape 이어야 W ← W - α∂J/∂W 처럼 뺄 수 있어요."
+ },
+ {
+  "id": "w3b-mcq-024",
+  "type": "mcq",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-5 역전파와 계산 그래프",
+  "slides": "N3 p.31",
+  "src": "예상",
+  "q": "**역전파(Backpropagation)**의 계산 비용에 대한 슬라이드 설명으로 옳은 것은?",
+  "c": [
+   "역방향 한 번의 비용이 순전파 한 번과 비슷하고, 그 한 번에 모든 기울기를 얻는다",
+   "파라미터 개수만큼 순전파를 되풀이해야 한다",
+   "역방향 패스는 순전파보다 백만 배 비싸다",
+   "기울기 계산에는 추가 비용이 전혀 없다"
+  ],
+  "a": 0,
+  "e": "슬라이드: 'one backward pass ≈ the cost of one forward pass, ALL gradients for the price of one'. 파라미터를 하나씩 흔들어 보는 방법은 백만 개면 순전파가 백만 번 필요해요. 이 효율이 딥러닝을 가능하게 했어요."
+ },
+ {
+  "id": "w3b-mcq-025",
+  "type": "mcq",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-5 역전파와 계산 그래프",
+  "slides": "N3L p.6",
+  "src": "예상",
+  "q": "실습 코드 `delta = u * (1 - torch.tanh(z)**2)` 가 계산하는 것으로 가장 적절한 것은?",
+  "c": [
+   "**순전파(Forward Pass)**의 은닉값 h",
+   "**오차 신호(Error Signal)** δ = u ⊙ tanh'(z)",
+   "가중치 **행렬(Matrix)** W 의 기울기",
+   "입력 x 에 대한 기울기"
+  ],
+  "a": 1,
+  "e": "tanh 의 미분이 1 - tanh²(z) 라서 이 줄은 δ = u ⊙ f'(z) 를 그대로 옮긴 것이에요. 이어지는 `dW = torch.outer(delta, x)` 가 ∂s/∂W = δxᵀ, `dx = W.T @ delta` 가 ∂s/∂x = Wᵀδ 예요."
+ },
+ {
+  "id": "w3b-mcq-026",
+  "type": "mcq",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-6 언어 모델과 n-gram",
+  "slides": "N3 p.35",
+  "src": "예상",
+  "q": "**언어 모델(LM)**이 내놓는 것으로 가장 적절한 것은?",
+  "c": [
+   "앞부분이 주어졌을 때 다음 단어의 **확률 분포(Probability Distribution)**",
+   "문장의 문법 오류 목록",
+   "단어의 사전적 뜻풀이",
+   "문장의 감정 점수 하나"
+  ],
+  "a": 0,
+  "e": "슬라이드: 'given a prefix, predict a probability distribution over the next word'. 후보는 **어휘(Vocabulary)** 크기만큼이고 확률을 모두 더하면 1이에요. **확률의 연쇄 법칙(Chain Rule of Probability)**으로 글 전체 확률도 낼 수 있어요."
+ },
+ {
+  "id": "w3b-mcq-027",
+  "type": "mcq",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-6 언어 모델과 n-gram",
+  "slides": "N3 p.36",
+  "src": "예상",
+  "q": "LLM 의 가운데 두 글자 LM 이 뜻하는 것은?",
+  "c": [
+   "Linear Map",
+   "Language Model",
+   "Loss Minimum",
+   "Long Memory"
+  ],
+  "a": 1,
+  "e": "**대규모 언어 모델(LLM)** = Large Language Model 이에요. 슬라이드: 'the middle letters are literally today's topic'. ChatGPT 도 다음 토큰을 거듭 뽑는 **언어 모델(LM)**이에요."
+ },
+ {
+  "id": "w3b-mcq-028",
+  "type": "mcq",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-6 언어 모델과 n-gram",
+  "slides": "N3 p.37",
+  "src": "예상",
+  "q": "4-gram **언어 모델(LM)**이 다음 단어를 맞힐 때 조건으로 보는 단어 수는?",
+  "c": [
+   "2단어",
+   "3단어",
+   "4단어",
+   "문장 전체"
+  ],
+  "a": 1,
+  "e": "**마르코프 가정(Markov Assumption)**에 따라 앞 n-1 개만 봐요. 4-gram 이면 앞 3단어 + 맞힐 1단어 = 4단어 묶음이에요. n 은 묶음 전체 크기라는 점을 헷갈리지 않아요."
+ },
+ {
+  "id": "w3b-mcq-029",
+  "type": "mcq",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-6 언어 모델과 n-gram",
+  "slides": "N3 p.39",
+  "src": "예상",
+  "q": "n-gram 의 **희소성 문제(Sparsity Problem)**에서 분모(앞 문맥)가 말뭉치에 한 번도 없을 때의 대처로 슬라이드가 든 것은?",
+  "c": [
+   "**스무딩(Smoothing)**",
+   "**백오프(Back-off)**",
+   "n 을 더 키우기",
+   "어휘를 줄이기"
+  ],
+  "a": 1,
+  "e": "분자 0 → **스무딩(Smoothing)**, 분모 0 → 더 짧은 문맥으로 물러나는 **백오프(Back-off)** 예요. 짝을 바꿔 외우지 않아요. n 을 키우면 희소성과 저장이 더 나빠져서 실제로는 n ≤ 5 예요."
+ },
+ {
+  "id": "w3b-mcq-030",
+  "type": "mcq",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-6 언어 모델과 n-gram",
+  "slides": "N3 p.40",
+  "src": "예상",
+  "q": "n-gram **언어 모델(LM)**으로 만든 글의 특징으로 슬라이드가 든 것은?",
+  "c": [
+   "문법이 늘 틀린다",
+   "가까이 보면 문법이 맞지만 전체로 보면 앞뒤가 안 맞는다",
+   "늘 같은 문장만 나온다",
+   "긴 문맥을 완벽하게 기억한다"
+  ],
+  "a": 1,
+  "e": "슬라이드: 'locally grammatical but globally incoherent, the 3-word memory shows'. 'today the price of gold is shiny' 처럼 이웃끼리는 자연스럽지만 전체는 어색해요. 생성 고리(뽑고, 붙이고, 반복)는 ChatGPT 와 같아요."
+ },
+ {
+  "id": "w3b-mcq-031",
+  "type": "mcq",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-7 퍼플렉서티",
+  "slides": "N3 p.41",
+  "src": "예상",
+  "q": "**퍼플렉서티(PPL)**와 **교차 엔트로피(Cross-Entropy)** 평균 J 의 관계로 옳은 것은?",
+  "c": [
+   "PPL = exp(J)",
+   "PPL = log(J)",
+   "PPL = 1/J",
+   "PPL = J²"
+  ],
+  "a": 0,
+  "e": "슬라이드: 'Perplexity = exp(cross-entropy loss)'. 학습에 이미 쓰는 바로 그 손실에 exp 만 씌우면 돼서 따로 계산할 게 거의 없어요."
+ },
+ {
+  "id": "w3b-mcq-032",
+  "type": "mcq",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-7 퍼플렉서티",
+  "slides": "N3 p.41",
+  "src": "예상",
+  "q": "**퍼플렉서티(PPL)**의 직관적 뜻으로 가장 적절한 것은?",
+  "c": [
+   "정답을 맞힌 비율",
+   "다음 단어를 고를 때 평균 몇 개 후보 사이에서 헷갈리는지",
+   "학습에 걸린 시간",
+   "모델 **파라미터(Parameter)**의 개수"
+  ],
+  "a": 1,
+  "e": "슬라이드: 'on average, the model is as confused as a fair choice among PPL words'. 1만 단어에 균등하면 PPL 10,000, 좋은 n-gram 은 약 100, 요즘 **대규모 언어 모델(LLM)**은 10 미만이에요(예시)."
+ },
+ {
+  "id": "w3b-mcq-033",
+  "type": "mcq",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-7 퍼플렉서티",
+  "slides": "N3 p.42",
+  "src": "예상",
+  "q": "**퍼플렉서티(PPL)**의 기준점(sanity anchor)으로 옳지 않은 것은?",
+  "c": [
+   "**어휘(Vocabulary)** V 개에 균등한 모델은 PPL = V",
+   "정답에 늘 확률 1을 주는 완벽한 모델은 PPL = 1",
+   "아주 좋은 모델은 PPL 이 0에 가까워질 수 있다",
+   "PPL 이 낮을수록 좋은 모델이다"
+  ],
+  "a": 2,
+  "e": "확률은 1을 넘을 수 없어서 1/P ≥ 1 이고, 그래서 PPL < 1 은 불가능해요. 최솟값이 1 이에요. 정확도와 달리 PPL 은 낮을수록 좋아요."
+ },
+ {
+  "id": "w3b-mcq-034",
+  "type": "mcq",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-7 퍼플렉서티",
+  "slides": "N3 p.42",
+  "src": "예상",
+  "q": "두 모델의 **퍼플렉서티(PPL)** 숫자를 곧바로 비교할 수 있는 조건으로 슬라이드가 든 것은?",
+  "c": [
+   "모델 크기가 같을 때",
+   "같은 평가 데이터, 같은 **어휘(Vocabulary)**, 같은 **토크나이저(Tokenizer)**를 쓸 때",
+   "학습 시간이 같을 때",
+   "**학습률(Learning Rate)**이 같을 때"
+  ],
+  "a": 1,
+  "e": "슬라이드: 'perplexity is only comparable across models that share the SAME vocabulary & tokenizer'. 교수님도 같은 평가 데이터, 같은 어휘, 같은 토크나이저여야 한다고 했어요."
+ },
+ {
+  "id": "w3b-mcq-035",
+  "type": "mcq",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-7 퍼플렉서티",
+  "slides": "N3L p.17",
+  "src": "예상",
+  "q": "실습에서 글자 단위 **RNN(순환 신경망)** **언어 모델(LM)**의 **퍼플렉서티(PPL)**가 25.92, 글자 **어휘(Vocabulary)** 크기가 1945 였다. 이 결과를 바르게 읽은 것은?",
+  "c": [
+   "학습이 전혀 되지 않았다",
+   "학습 전 수준(약 1945)보다 훨씬 낮아 학습이 되었다",
+   "PPL 이 1945 보다 커야 정상이다",
+   "PPL 이 1 이라야 학습이 된 것이다"
+  ],
+  "a": 1,
+  "e": "아무것도 모르는 모델은 균등 분포라 PPL 이 **어휘(Vocabulary)** 크기 V 근처(1945)예요. 25.92 는 그보다 훨씬 낮으니 다음 글자 후보를 평균 26개 정도로 좁혔다는 뜻이에요."
+ },
+ {
+  "id": "w3b-mcq-036",
+  "type": "mcq",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-8 신경망 LM 과 RNN",
+  "slides": "N3 p.44",
+  "src": "예상",
+  "q": "고정 윈도우 신경망 언어 모델(**고정 윈도우 신경망 언어 모델(Fixed-window Neural LM)**)의 식으로 슬라이드와 맞는 것은?",
+  "c": [
+   "e = [e₁; e₂; e₃; e₄], h = f(We + b), ŷ = softmax(Uh)",
+   "e = [e₁; e₂; e₃; e₄], h = softmax(We + b), ŷ = f(Uh)",
+   "h = count(e) / count(prefix), ŷ = h",
+   "h = tanh(W_h h + W_e e), ŷ = softmax(Uh)"
+  ],
+  "a": 0,
+  "e": "창 분류기를 그대로 쓰되 **어휘(Vocabulary)** 전체에 대해 **분류(Classification)**해요. 마지막 보기는 **RNN(순환 신경망)**의 식(p.47)이에요."
+ },
+ {
+  "id": "w3b-mcq-037",
+  "type": "mcq",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-8 신경망 LM 과 RNN",
+  "slides": "N3 p.45",
+  "src": "예상",
+  "q": "슬라이드가 든 고정 윈도우 신경망 **언어 모델(LM)**의 고장난 점으로 옳지 않은 것은?",
+  "c": [
+   "창 밖의 문맥은 여전히 버려진다",
+   "자리마다 W 의 다른 부분을 써서 같은 단어도 자리마다 따로 학습된다",
+   "**희소성 문제(Sparsity Problem)**가 n-gram 보다 심하다",
+   "창이 커지면 모델 크기도 함께 커진다"
+  ],
+  "a": 2,
+  "e": "슬라이드의 'Fixed' 칸: **임베딩(Embedding)** 덕분에 희소성이 사라지고 거대한 횟수 표도 필요 없어요. 고장난 점은 고정된 창과 자리마다 따로 학습되는 가중치예요."
+ },
+ {
+  "id": "w3b-mcq-038",
+  "type": "mcq",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-8 신경망 LM 과 RNN",
+  "slides": "N3 p.46-47",
+  "src": "예상",
+  "q": "**RNN(순환 신경망)**의 핵심 아이디어로 가장 적절한 것은?",
+  "c": [
+   "자리마다 새 가중치를 만들어 쓴다",
+   "같은 (W_h, W_e, U) 를 모든 시점에 다시 쓰며 **은닉 상태(Hidden State)**를 이어 간다",
+   "문장을 모두 이어 붙여 한 번에 계산한다",
+   "**최대 풀링(Max-pooling)**으로 가장 센 값만 남긴다"
+  ],
+  "a": 1,
+  "e": "슬라이드: 'Apply the SAME weights at every step, carrying a hidden state'. 교수님도 매 위치에서 같은 파라미터를 재사용해서 문장이 길어져도 파라미터 수가 늘지 않는다고 했어요."
+ },
+ {
+  "id": "w3b-mcq-039",
+  "type": "mcq",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-8 신경망 LM 과 RNN",
+  "slides": "N3 p.49",
+  "src": "예상",
+  "q": "**RNN(순환 신경망)** **언어 모델(LM)** 학습에서 'teacher forcing' 이 뜻하는 것은?",
+  "c": [
+   "매 시점 모델이 뽑은 단어를 다음 입력으로 넣는 것",
+   "학습 중에는 늘 진짜 앞부분(TRUE prefix)을 조건으로 주는 것",
+   "교사가 정답 라벨을 직접 고치는 것",
+   "**학습률(Learning Rate)**을 점점 줄이는 것"
+  ],
+  "a": 1,
+  "e": "슬라이드: '\"teacher forcing\": we always condition on the TRUE prefix during training'. 매 시점 다음 단어를 예측하고 정답에 대한 **교차 엔트로피(Cross-Entropy)**를 물어요. 모델이 뽑은 것을 다시 넣는 것은 생성(추론)할 때예요."
+ },
+ {
+  "id": "w3b-mcq-040",
+  "type": "mcq",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-8 신경망 LM 과 RNN",
+  "slides": "N3 p.53",
+  "src": "예상",
+  "q": "**기울기 클리핑(Gradient Clipping)**에 대한 설명으로 옳은 것은?",
+  "c": [
+   "**기울기 소실(Vanishing Gradient)**을 고치는 방법이다",
+   "**기울기(Gradient)**의 방향은 그대로 두고 크기만 한계 τ 로 줄이는 방법이다",
+   "기울기를 0으로 만드는 방법이다",
+   "**학습률(Learning Rate)**을 0으로 만드는 방법이다"
+  ],
+  "a": 1,
+  "e": "슬라이드: 'keep the direction, cap the size', 식은 ||g|| > τ 이면 g ← τ g/||g|| 예요. 클리핑은 **기울기 폭발(Exploding Gradient)**을 막고, **기울기 소실(Vanishing Gradient)**은 더 나은 구조(게이트, 어텐션)가 필요해요."
+ },
+ {
+  "id": "w3b-ox-001",
+  "type": "ox",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-1 분류와 뉴런",
+  "slides": "N3 p.6",
+  "src": "예상",
+  "q": "창 기반 **NER(개체명 인식)**에서 **단어 벡터(Word Vector)**가 d = 50 차원이고 **윈도우(Window)** m = 2 이면 이어 붙인 창 벡터의 길이는 250 이다.",
+  "a": true,
+  "e": "중심 단어 + 양쪽 2개씩 = 5단어이고, 5 × 50 = 250 이에요. 창 벡터의 길이는 항상 (단어 수) × d 예요."
+ },
+ {
+  "id": "w3b-ox-002",
+  "type": "ox",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-1 분류와 뉴런",
+  "slides": "N3 p.7",
+  "src": "예상",
+  "q": "**소프트맥스(Softmax)**와 **교차 엔트로피(Cross-Entropy)**는 같은 말이다.",
+  "a": false,
+  "e": "**소프트맥스(Softmax)**는 **로짓(Logit)**을 확률로 바꾸는 함수이고, 거기에 음의 로그 우도(NLL)를 붙인 것이 **교차 엔트로피(Cross-Entropy)** **손실 함수(Loss Function)**예요."
+ },
+ {
+  "id": "w3b-ox-003",
+  "type": "ox",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-1 분류와 뉴런",
+  "slides": "N3 p.7-8",
+  "src": "예상",
+  "q": "W 하나만 곱하는 **소프트맥스(Softmax)** 분류기는 **로지스틱 회귀(Logistic Regression)**와 같은 선형 모델이다.",
+  "a": true,
+  "e": "슬라이드: 'So far this is just logistic regression, a LINEAR machine'. 교수님도 W 가 단 하나의 행렬이라 모델이 선형이라는 점이 중요하다고 했어요."
+ },
+ {
+  "id": "w3b-ox-004",
+  "type": "ox",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-2 비선형과 MLP",
+  "slides": "N3 p.10",
+  "src": "예상",
+  "q": "**시그모이드(Sigmoid)**와 **하이퍼볼릭 탄젠트(tanh)**는 양 끝에서 기울기가 거의 0이라 깊게 쌓으면 **기울기 소실(Vanishing Gradient)**이 생길 수 있다.",
+  "a": true,
+  "e": "σ(4) ≈ 0.98 처럼 이미 1에 붙어 있어 더 커져도 거의 변하지 않아요. 교수님이 짚은 점이고, **ReLU(렐루)**는 양수 쪽 기울기가 늘 1이라 이 문제가 덜해요."
+ },
+ {
+  "id": "w3b-ox-005",
+  "type": "ox",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-2 비선형과 MLP",
+  "slides": "N3 p.10",
+  "src": "예상",
+  "q": "**ReLU(렐루)**는 음수 입력에서 기울기가 0이라 **뉴런(Neuron)**이 꺼진 채 남을 수 있다.",
+  "a": true,
+  "e": "이것을 dying ReLU 라고 해요. 그래서 음수 쪽에도 작은 기울기를 남기는 Leaky ReLU 나 부드러운 **GELU(겔루)**가 나왔어요."
+ },
+ {
+  "id": "w3b-ox-006",
+  "type": "ox",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-2 비선형과 MLP",
+  "slides": "N3 p.11",
+  "src": "예상",
+  "q": "**보편 근사 정리(Universal Approximation Theorem)**는 층만 깊게 쌓으면 **활성화 함수(Activation Function)** 없이도 어떤 함수든 흉내 낼 수 있다는 뜻이다.",
+  "a": false,
+  "e": "정리는 '**은닉층(Hidden Layer)** 뉴런이 충분히 많으면' 이라는 조건이 붙고, 비선형 **활성화 함수(Activation Function)**가 있어야 성립해요. f 가 없으면 층은 **행렬(Matrix)** 하나로 합쳐져요."
+ },
+ {
+  "id": "w3b-ox-007",
+  "type": "ox",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-3 텍스트 CNN",
+  "slides": "N3 p.13",
+  "src": "예상",
+  "q": "**CNN(합성곱 신경망)**은 위치마다 새로운 **합성곱 필터(Convolution Filter)**를 만들어 쓴다.",
+  "a": false,
+  "e": "같은 필터를 문장의 모든 창에 다시 써요. 그래서 같은 패턴이 어디에 있든 똑같이 반응해요."
+ },
+ {
+  "id": "w3b-ox-008",
+  "type": "ox",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-3 텍스트 CNN",
+  "slides": "N3 p.14",
+  "src": "예상",
+  "q": "**최대 풀링(Max-pooling)** 덕분에 **CNN(합성곱 신경망)**은 구절이 문장 어디에서 나왔는지에 둔감해진다.",
+  "a": true,
+  "e": "가장 큰 값 하나만 남기고 그 값이 몇 번째 창에서 나왔는지는 버려요. 이것은 장점이자, 위치 정보가 필요할 때는 단점이에요."
+ },
+ {
+  "id": "w3b-ox-009",
+  "type": "ox",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-3 텍스트 CNN",
+  "slides": "N3 p.14",
+  "src": "예상",
+  "q": "슬라이드는 텍스트 **CNN(합성곱 신경망)**이 감정, 주제 **분류(Classification)**에 실제로 몇 년간 쓰였다고 말한다.",
+  "a": true,
+  "e": "슬라이드: 'used in production for years for sentiment & topic classification'. 모든 창을 동시에 계산해서 빠른 것도 장점이에요."
+ },
+ {
+  "id": "w3b-ox-010",
+  "type": "ox",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-4 미분과 연쇄 법칙",
+  "slides": "N3 p.17",
+  "src": "예상",
+  "q": "딥러닝에서는 W 와 b 뿐 아니라 입력 **단어 벡터(Word Vector)**도 학습 대상이 될 수 있다.",
+  "a": true,
+  "e": "슬라이드: 'deep learning fine-tunes its own input representation'. 다만 미리 학습된 벡터(예: **GloVe(글로브)**)는 얼려 둘 수도 있어요. 얼릴지 말지는 선택이에요."
+ },
+ {
+  "id": "w3b-ox-011",
+  "type": "ox",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-4 미분과 연쇄 법칙",
+  "slides": "N3 p.19",
+  "src": "예상",
+  "q": "**기울기(Gradient)**는 출력이 여러 개일 때 쓰는 말이고, **야코비안(Jacobian)**은 출력이 하나일 때 쓰는 말이다.",
+  "a": false,
+  "e": "거꾸로예요. 출력 1개면 **기울기(Gradient)**(벡터), 출력 여러 개면 **야코비안(Jacobian)**(m×n 행렬)이에요. 야코비안의 한 행이 곧 그 출력의 기울기예요."
+ },
+ {
+  "id": "w3b-ox-012",
+  "type": "ox",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-4 미분과 연쇄 법칙",
+  "slides": "N3 p.20",
+  "src": "예상",
+  "q": "**연쇄 법칙(Chain Rule)**의 벡터 버전에서는 각 층의 **야코비안(Jacobian)**을 더한다.",
+  "a": false,
+  "e": "곱해요. 슬라이드: 'Vector version: multiply Jacobians, order matters, shapes must chain'. 더하는 것은 순전파에서 갈라진 가지가 다시 만날 때예요."
+ },
+ {
+  "id": "w3b-ox-013",
+  "type": "ox",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-5 역전파와 계산 그래프",
+  "slides": "N3 p.23-24",
+  "src": "예상",
+  "q": "∂s/∂b, ∂s/∂W, ∂s/∂x 는 앞부분 **오차 신호(Error Signal)** δ 를 공유하므로 δ 를 한 번만 구해 다시 쓸 수 있다.",
+  "a": true,
+  "e": "슬라이드: 'compute δ once, reuse it everywhere, this reuse is the seed of backpropagation'. ∂s/∂b = δ, ∂s/∂W = δᵀxᵀ, ∂s/∂x = Wᵀδᵀ 예요."
+ },
+ {
+  "id": "w3b-ox-014",
+  "type": "ox",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-5 역전파와 계산 그래프",
+  "slides": "N3 p.26",
+  "src": "예상",
+  "q": "**파라미터(Parameter)**의 **기울기(Gradient)**는 그 파라미터와 같은 **모양(Shape)**을 가져야 한다.",
+  "a": true,
+  "e": "W ← W - α∂J/∂W 처럼 칸마다 빼야 하니 두 표의 크기가 같아야 해요. 교수님이 '이것만 기억하라' 고 한 규칙이에요."
+ },
+ {
+  "id": "w3b-ox-015",
+  "type": "ox",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-5 역전파와 계산 그래프",
+  "slides": "N3 p.30",
+  "src": "예상",
+  "q": "역전파에서 max 노드는 상류 **기울기(Gradient)**를 두 입력에 절반씩 나눠 준다.",
+  "a": false,
+  "e": "max 는 이긴 쪽에만 상류 기울기를 그대로 보내고 진 쪽에는 0을 보내요. 절반씩 나누는 것이 아니라 라우팅이에요. 그대로 나눠 주는 것은 + 노드예요."
+ },
+ {
+  "id": "w3b-ox-016",
+  "type": "ox",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-5 역전파와 계산 그래프",
+  "slides": "N3 p.30",
+  "src": "예상",
+  "q": "순전파에서 한 값이 두 곳에 쓰였다면 역전파에서 그 값의 기울기는 두 기울기를 더한 것이다.",
+  "a": true,
+  "e": "슬라이드: 'branches that MERGE forward will SUM their gradients backward'. 이 규칙이 뒤의 **시간 역전파(BPTT)**에서 W_h 의 기울기를 모든 시점에서 더하는 근거가 돼요."
+ },
+ {
+  "id": "w3b-ox-017",
+  "type": "ox",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-5 역전파와 계산 그래프",
+  "slides": "N3 p.32",
+  "src": "예상",
+  "q": "`loss.backward()` 는 **기울기(Gradient)** 계산과 **파라미터(Parameter)** 업데이트를 한꺼번에 해 준다.",
+  "a": false,
+  "e": "backward 는 **계산 그래프(Computation Graph)**를 거꾸로 걸으며 기울기를 구해 .grad 에 채우기까지예요. 파라미터를 바꾸는 것은 옵티마이저의 step 이에요."
+ },
+ {
+  "id": "w3b-ox-018",
+  "type": "ox",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-6 언어 모델과 n-gram",
+  "slides": "N3 p.37",
+  "src": "예상",
+  "q": "n-gram **언어 모델(LM)**은 **경사 하강법(Gradient Descent)**으로 **임베딩(Embedding)**을 학습해 확률을 구한다.",
+  "a": false,
+  "e": "슬라이드: 'Then just COUNT in a big corpus'. n-gram 은 학습이 아니라 **말뭉치(Corpus)**에서 묶음이 나온 횟수를 세어 나누는 방법이에요."
+ },
+ {
+  "id": "w3b-ox-019",
+  "type": "ox",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-6 언어 모델과 n-gram",
+  "slides": "N3 p.39",
+  "src": "예상",
+  "q": "슬라이드가 든 n-gram 의 세 벽은 **희소성 문제(Sparsity Problem)**, 저장 공간, 유사도 없음이다.",
+  "a": true,
+  "e": "슬라이드: 'Three walls: sparsity, storage, similarity'. 여기에 n-1 단어 밖 문맥을 볼 수 없다는 버려진 문맥 문제가 더해져요."
+ },
+ {
+  "id": "w3b-ox-020",
+  "type": "ox",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-6 언어 모델과 n-gram",
+  "slides": "N3 p.38",
+  "src": "예상",
+  "q": "슬라이드의 예에서 count(students opened their) = 1,000, count(students opened their books) = 400 이면 P(books | students opened their) = 0.40 이다.",
+  "a": true,
+  "e": "400 ÷ 1,000 = 0.40 이에요. exams 는 100 ÷ 1,000 = 0.10 이라, 앞의 proctor 와 clock 이 버려진 탓에 모델은 books 를 더 그럴듯하다고 봐요."
+ },
+ {
+  "id": "w3b-ox-021",
+  "type": "ox",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-7 퍼플렉서티",
+  "slides": "N3 p.41",
+  "src": "예상",
+  "q": "**퍼플렉서티(PPL)**는 값이 클수록 좋은 모델이다.",
+  "a": false,
+  "e": "슬라이드: 'lower is better'. 낮을수록 헷갈리는 후보가 적다는 뜻이에요. 정확도(accuracy)와 방향이 반대라 헷갈리기 쉬워요."
+ },
+ {
+  "id": "w3b-ox-022",
+  "type": "ox",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-7 퍼플렉서티",
+  "slides": "N3 p.41-42",
+  "src": "예상",
+  "q": "**어휘(Vocabulary)** V 개 단어에 모두 똑같은 확률을 주는 모델의 **퍼플렉서티(PPL)**는 V 이다.",
+  "a": true,
+  "e": "각 위치 벌점이 -log(1/V) = log V 라서 평균 J = log V, PPL = exp(log V) = V 예요. 슬라이드의 1만 단어 예에서 PPL 10,000 이에요."
+ },
+ {
+  "id": "w3b-ox-023",
+  "type": "ox",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-7 퍼플렉서티",
+  "slides": "N3 p.42",
+  "src": "예상",
+  "q": "**퍼플렉서티(PPL)**는 정답 확률의 역수를 모두 더해 개수로 나눈 산술 평균이다.",
+  "a": false,
+  "e": "기하 평균이에요. 역수를 모두 곱한 뒤 T 제곱근을 취해요. 슬라이드 예에서 (2 × 4 × 8 × 16)^(1/4) ≈ 5.7 이고, 산술 평균 7.5 는 틀린 답이에요."
+ },
+ {
+  "id": "w3b-ox-024",
+  "type": "ox",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-8 신경망 LM 과 RNN",
+  "slides": "N3 p.45",
+  "src": "예상",
+  "q": "고정 윈도우 신경망 **언어 모델(LM)**은 **임베딩(Embedding)** 덕분에 비슷한 단어끼리 정보를 나눌 수 있다.",
+  "a": true,
+  "e": "슬라이드: 'Embeddings give it what n-grams never had: similar words share fate'. n-gram 의 세 벽 중 희소성과 저장, 유사도 문제를 덜어 줘요."
+ },
+ {
+  "id": "w3b-ox-025",
+  "type": "ox",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-8 신경망 LM 과 RNN",
+  "slides": "N3 p.48",
+  "src": "예상",
+  "q": "**RNN(순환 신경망)** **언어 모델(LM)**의 모델 크기는 문장이 길어질수록 함께 커진다.",
+  "a": false,
+  "e": "표의 'model size' 칸: RNN 은 'independent of sequence length' 예요. 같은 W_h, W_e 를 모든 시점에 다시 쓰기 때문이에요. 크기가 창과 함께 커지는 것은 고정 윈도우 쪽이에요."
+ },
+ {
+  "id": "w3b-ox-026",
+  "type": "ox",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-8 신경망 LM 과 RNN",
+  "slides": "N3 p.50",
+  "src": "예상",
+  "q": "**시간 역전파(BPTT)**에서 W_h 의 **기울기(Gradient)**는 모든 시점에서 나온 기울기를 더한 것이다.",
+  "a": true,
+  "e": "W_h 가 모든 시점에 나타나므로 '갈림길에서는 더한다' 는 2부의 규칙이 그대로 쓰여요. 슬라이드: 'BPTT = part 2's backprop + one summation, you already know it'."
+ },
+ {
+  "id": "w3b-short-001",
+  "type": "short",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-1 분류와 뉴런",
+  "slides": "N3 p.6",
+  "src": "예상",
+  "q": "글에서 사람, 기관, 장소 같은 이름을 찾아 종류를 붙이는 과제를 부르는 이름을 쓰시오. (한국어 또는 영어 약자)",
+  "a": [
+   "개체명 인식",
+   "NER",
+   "Named Entity Recognition",
+   "네임드 엔티티 리코그니션"
+  ],
+  "e": "**NER(개체명 인식)**이에요. 오늘 신경망을 만드는 동안 계속 붙잡고 갈 예제 과제이고, 단어마다 주변 **윈도우(Window)**를 보고 **분류(Classification)**해요."
+ },
+ {
+  "id": "w3b-short-002",
+  "type": "short",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-1 분류와 뉴런",
+  "slides": "N3 p.9",
+  "src": "예상",
+  "q": "**뉴런(Neuron)** 하나의 식 h = f(wᵀx + b) 에서 b 를 부르는 이름을 쓰시오.",
+  "a": [
+   "편향 항",
+   "bias term",
+   "bias",
+   "바이어스"
+  ],
+  "e": "**편향 항(Bias Term)**이에요. 켜지는 기준을 옮겨 주는 숫자예요. 사회적 **편향(Bias)**과는 전혀 다른 말이라 답안에서는 '편향 항' 이라고 쓰는 편이 안전해요."
+ },
+ {
+  "id": "w3b-short-003",
+  "type": "short",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-2 비선형과 MLP",
+  "slides": "N3 p.10",
+  "src": "예상",
+  "q": "안쪽 **은닉층(Hidden Layer)**의 기본 선택으로 교수님이 '딥러닝에서 가장 중요한 함수 중 하나' 라고 한 **활성화 함수(Activation Function)**의 이름을 쓰시오.",
+  "a": [
+   "ReLU",
+   "렐루",
+   "relu",
+   "Rectified Linear Unit"
+  ],
+  "e": "**ReLU(렐루)** 예요. max(z, 0) 으로 음수는 끄고 양수는 그대로 보내요. 계산이 싸고 학습이 빨라서 LLM 이전 대부분의 모델이 썼어요."
+ },
+ {
+  "id": "w3b-short-004",
+  "type": "short",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-2 비선형과 MLP",
+  "slides": "N3 p.11",
+  "src": "예상",
+  "q": "**활성화 함수(Activation Function)** 없이 선형층을 여러 개 쌓아도 표현력이 늘지 않는 까닭을 식 한 줄로 쓰시오.",
+  "a": [
+   "W2(W1x) = (W2W1)x",
+   "W₂(W₁x) = (W₂W₁)x",
+   "W2(W1x)=(W2W1)x",
+   "(W2W1)x",
+   "행렬 하나로 합쳐진다"
+  ],
+  "e": "곱을 묶을 수 있어서 선형층 두 개가 **행렬(Matrix)** 하나 W' 로 합쳐져요. 슬라이드: 'depth buys nothing'."
+ },
+ {
+  "id": "w3b-short-005",
+  "type": "short",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-2 비선형과 MLP",
+  "slides": "N3 p.15",
+  "src": "N3 Check Yourself",
+  "q": "Q2. My hidden layer has 300 units and the input window is 5 words × 100 dims. What is the shape of W(1)? (교수님이 직접 낸 확인 문제)",
+  "a": [
+   "(300, 500)",
+   "300 x 500",
+   "300×500",
+   "300 by 500",
+   "300행 500열"
+  ],
+  "e": "입력 길이는 5 × 100 = 500, **은닉층(Hidden Layer)**은 300 이에요. h(1) = f(W(1)x + b(1)) 에서 W(1)x 가 길이 300 이 되려면 W(1) 은 (300, 500) 이어야 해요. 가중치 개수는 150,000 개이고 b(1) 은 (300,) 예요."
+ },
+ {
+  "id": "w3b-short-006",
+  "type": "short",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-3 텍스트 CNN",
+  "slides": "N3 p.13",
+  "src": "예상",
+  "q": "**합성곱 필터(Convolution Filter)**가 문장을 훑으며 창마다 낸 값들을 줄 세운 것을 무엇이라 하는지 쓰시오.",
+  "a": [
+   "특징 맵",
+   "feature map",
+   "피처 맵",
+   "피처맵"
+  ],
+  "e": "**특징 맵(Feature Map)**이에요. 창 하나에 값 하나가 나오고, 그 위에 **최대 풀링(Max-pooling)**을 걸어 가장 센 반응만 남겨요."
+ },
+ {
+  "id": "w3b-short-007",
+  "type": "short",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-3 텍스트 CNN",
+  "slides": "N3 p.15",
+  "src": "N3 Check Yourself",
+  "q": "Q3. A width-3 CNN filter fires strongly. What kind of pattern did it just detect? (교수님이 직접 낸 확인 문제)",
+  "a": [
+   "trigram",
+   "트라이그램",
+   "세 단어 패턴",
+   "연속된 세 단어 패턴",
+   "학습된 trigram 패턴"
+  ],
+  "e": "폭 3 필터는 연속된 세 단어를 한 번에 보니까, 강하게 반응했다는 것은 필터가 배운 trigram(**n-gram(엔그램)**) 패턴이 거기 있다는 뜻이에요. 슬라이드 예로는 'was really great' 같은 패턴이에요."
+ },
+ {
+  "id": "w3b-short-008",
+  "type": "short",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-3 텍스트 CNN",
+  "slides": "N3 p.14",
+  "src": "예상",
+  "q": "**CNN(합성곱 신경망)**의 강점 세 가지 중, 모든 창을 동시에 계산할 수 있어 생기는 강점을 한 낱말로 쓰시오.",
+  "a": [
+   "병렬",
+   "빠름",
+   "parallel",
+   "병렬 처리",
+   "속도"
+  ],
+  "e": "슬라이드: 'fast (all windows in parallel)'. 나머지 두 강점은 위치 무관(position-independent)과 **분류(Classification)**에 강함이에요."
+ },
+ {
+  "id": "w3b-short-009",
+  "type": "short",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-4 미분과 연쇄 법칙",
+  "slides": "N3 p.19",
+  "src": "예상",
+  "q": "입력 n 개, 출력 m 개인 함수의 편미분을 모은 m×n **행렬(Matrix)**을 무엇이라 하는지 쓰시오.",
+  "a": [
+   "야코비안",
+   "Jacobian",
+   "자코비안",
+   "야코비 행렬"
+  ],
+  "e": "**야코비안(Jacobian)**이에요. 행이 출력, 열이 입력이고 (i, j) 칸은 입력 j 를 밀 때 출력 i 가 움직이는 정도예요. 출력이 하나면 그 한 행이 곧 **기울기(Gradient)**예요."
+ },
+ {
+  "id": "w3b-short-010",
+  "type": "short",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-4 미분과 연쇄 법칙",
+  "slides": "N3 p.20",
+  "src": "예상",
+  "q": "교수님이 3주차에서 '가장 중요하다' 고 짚은, 합성 함수의 미분을 단계별 미분의 곱으로 푸는 규칙의 이름을 쓰시오.",
+  "a": [
+   "연쇄 법칙",
+   "chain rule",
+   "체인 룰",
+   "사슬 법칙"
+  ],
+  "e": "**연쇄 법칙(Chain Rule)**이에요. 벡터 함수에서는 각 층의 **야코비안(Jacobian)**을 곱하고, 이 규칙을 신경망 전체에 체계적으로 적용한 것이 **역전파(Backpropagation)**예요."
+ },
+ {
+  "id": "w3b-short-011",
+  "type": "short",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-4 미분과 연쇄 법칙",
+  "slides": "N3L p.4",
+  "src": "예상",
+  "q": "실습에서 f(x) = x³ + 2x 를 x = 2 에서 미분했을 때 autograd 와 손 공식이 함께 내놓은 값을 숫자로 쓰시오.",
+  "a": [
+   "14",
+   "14.0"
+  ],
+  "e": "f'(x) = 3x² + 2 이므로 3 × 4 + 2 = 14 예요. 실습 셀은 `x.grad.item()` 과 `3*x.item()**2 + 2` 가 같은지 assert 로 확인하고 '✓ they agree' 를 찍어요.",
+  "num": true,
+  "tol": 0.01
+ },
+ {
+  "id": "w3b-short-012",
+  "type": "short",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-5 역전파와 계산 그래프",
+  "slides": "N3 p.23",
+  "src": "예상",
+  "q": "∂s/∂b 와 ∂s/∂W 가 공유하는 앞부분 ∂s/∂h × ∂h/∂z 에 붙인 이름(기호 δ)을 쓰시오.",
+  "a": [
+   "오차 신호",
+   "error signal",
+   "에러 시그널",
+   "상류 기울기",
+   "델타"
+  ],
+  "e": "**오차 신호(Error Signal)** δ 예요. **상류 기울기(Upstream Gradient)** 라고도 해요. 한 번 구해 세 기울기에 다시 쓰는 이 재사용이 **역전파(Backpropagation)**의 씨앗이에요."
+ },
+ {
+  "id": "w3b-short-013",
+  "type": "short",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-5 역전파와 계산 그래프",
+  "slides": "N3 p.29",
+  "src": "예상",
+  "q": "**계산 그래프(Computation Graph)**의 한 노드에서 '하류 기울기 = 상류 기울기 × (  )' 의 빈칸에 들어갈 말을 쓰시오.",
+  "a": [
+   "국소 기울기",
+   "local gradient",
+   "로컬 그레디언트",
+   "로컬 기울기"
+  ],
+  "e": "**국소 기울기(Local Gradient)** ∂y/∂x 예요. 노드는 전체 신경망을 몰라도 자기 입력과 출력만 보고 계산할 수 있어요. 이 성질 덕분에 **자동 미분(Automatic Differentiation (Autodiff))** 도구를 만들 수 있어요."
+ },
+ {
+  "id": "w3b-short-014",
+  "type": "short",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-5 역전파와 계산 그래프",
+  "slides": "N3 p.32",
+  "src": "예상",
+  "q": "손으로 유도한 **기울기(Gradient)**가 맞는지 확인하려고 f(θ+h) 와 f(θ-h) 의 차이로 어림한 기울기와 비교하는 일을 무엇이라 하는지 쓰시오.",
+  "a": [
+   "기울기 검사",
+   "gradient checking",
+   "그레디언트 체킹",
+   "그래디언트 체크"
+  ],
+  "e": "**기울기 검사(Gradient Checking)** 예요. **수치 기울기(Numeric Gradient)**는 느리지만 틀리기가 거의 불가능해서 검사용으로 써요. 식은 (f(θ+h) - f(θ-h)) / 2h, h 는 10^(-4) 쯤이에요."
+ },
+ {
+  "id": "w3b-short-015",
+  "type": "short",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-6 언어 모델과 n-gram",
+  "slides": "N3 p.37",
+  "src": "예상",
+  "q": "다음 단어가 바로 앞 n-1 개 단어에만 달려 있다고 보는 가정의 이름을 쓰시오.",
+  "a": [
+   "마르코프 가정",
+   "Markov assumption",
+   "마코프 가정",
+   "마르코프"
+  ],
+  "e": "**마르코프 가정(Markov Assumption)**이에요. 이 가정 덕분에 n-gram 은 **말뭉치(Corpus)**에서 묶음 횟수를 세어 확률을 구할 수 있지만, n-1 단어 밖의 중요한 단서는 버려져요."
+ },
+ {
+  "id": "w3b-short-016",
+  "type": "short",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-6 언어 모델과 n-gram",
+  "slides": "N3 p.39",
+  "src": "예상",
+  "q": "n-gram 에서 분자(긴 묶음)를 한 번도 못 봐서 확률이 0이 되는 문제를 고치는 방법의 이름을 쓰시오.",
+  "a": [
+   "스무딩",
+   "smoothing",
+   "평활화"
+  ],
+  "e": "**스무딩(Smoothing)**이에요. 못 본 묶음에도 아주 작은 확률을 나눠 줘요. 분모(앞 문맥)를 못 봤을 때는 더 짧은 문맥으로 물러나는 **백오프(Back-off)** 를 써요."
+ },
+ {
+  "id": "w3b-short-017",
+  "type": "short",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-7 퍼플렉서티",
+  "slides": "N3 p.41",
+  "src": "예상",
+  "q": "평균 **교차 엔트로피(Cross-Entropy)** 손실 J 로 **퍼플렉서티(PPL)**를 구하는 식을 쓰시오.",
+  "a": [
+   "PPL = exp(J)",
+   "exp(J)",
+   "e^J",
+   "퍼플렉서티 = exp(손실)",
+   "exp(cross-entropy loss)"
+  ],
+  "e": "슬라이드: 'Perplexity = exp(cross-entropy loss)'. 학습에 이미 쓰는 손실에 exp 만 씌우면 돼요. 반대로 J = log(PPL) 이에요."
+ },
+ {
+  "id": "w3b-short-018",
+  "type": "short",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-7 퍼플렉서티",
+  "slides": "N3 p.42",
+  "src": "예상",
+  "q": "**퍼플렉서티(PPL)**가 가질 수 있는 가장 작은 값을 숫자로 쓰시오.",
+  "a": [
+   "1"
+  ],
+  "e": "정답에 늘 확률 1을 주는 완벽한 모델이면 역수가 모두 1이라 기하 평균도 1 이에요. 확률이 1을 넘을 수 없으니 PPL < 1 은 불가능해요.",
+  "num": true,
+  "tol": 0.01
+ },
+ {
+  "id": "w3b-short-019",
+  "type": "short",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-8 신경망 LM 과 RNN",
+  "slides": "N3 p.56",
+  "src": "N3 Check Yourself",
+  "q": "Q3. In an RNN, how many DIFFERENT weight matrices are applied over a 50-word sentence? (교수님이 직접 낸 확인 문제, 개수를 숫자로)",
+  "a": [
+   "3"
+  ],
+  "e": "**RNN(순환 신경망)**은 같은 (W_h, W_e, U) 를 모든 시점에 다시 써요. 50단어면 적용 횟수는 50번씩이지만 서로 다른 **행렬(Matrix)**은 3개뿐이에요. 그래서 문장이 길어져도 모델 크기가 늘지 않아요.",
+  "num": true,
+  "tol": 0.01
+ },
+ {
+  "id": "w3b-short-020",
+  "type": "short",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-8 신경망 LM 과 RNN",
+  "slides": "N3L p.12",
+  "src": "예상",
+  "q": "실습에서 **RNN(순환 신경망)** 학습 루프에 `nn.utils.clip_grad_norm_(model.parameters(), 5.0)` 을 넣은 까닭이 되는 기법의 이름을 쓰시오.",
+  "a": [
+   "기울기 클리핑",
+   "gradient clipping",
+   "그레디언트 클리핑",
+   "클리핑"
+  ],
+  "e": "**기울기 클리핑(Gradient Clipping)**이에요. **기울기(Gradient)**의 크기가 5를 넘으면 방향은 그대로 두고 크기만 5로 줄여요. **기울기 폭발(Exploding Gradient)** 때문에 한 걸음이 말도 안 되게 커지는 것을 막아요."
+ },
+ {
+  "id": "w3b-essay-001",
+  "type": "essay",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-1 분류와 뉴런",
+  "slides": "N3 p.7-9",
+  "src": "예상",
+  "model": "linear-limit",
+  "q": "**선형 분류기(Linear Classifier)**의 한계를 설명하고, **뉴런(Neuron)**이 그 한계를 어떻게 넘는지 서술하시오.",
+  "answer": "**선형 분류기(Linear Classifier)**는 W 를 한 번 곱할 뿐이어서 곧은 **초평면(Hyperplane)** 경계만 그을 수 있다. 그래서 XOR 처럼 엇갈려 놓인 점들을 가르지 못하고, not bad 처럼 두 단어가 함께 있을 때 뜻이 뒤집히는 상호작용도 잡지 못한다. **뉴런(Neuron)**은 h = f(wᵀx + b) 로, **가중합(Weighted Sum)**에 **편향 항(Bias Term)**을 더한 뒤 **활성화 함수(Activation Function)** f 를 통과시킨다. f 가 공간을 휘게 만들어 곡선 **결정 경계(Decision Boundary)**가 생기고, 특징 사이 상호작용을 표현할 수 있다. 뉴런 하나는 학습된 패턴 탐지기 하나이고, 여러 개를 쌓으면 표현력이 커진다.",
+  "points": [
+   "선형 분류기는 초평면(곧은 경계)만 가능",
+   "XOR 배치는 직선으로 못 가름",
+   "not bad: 특징 사이 상호작용, 단순 합이 아님",
+   "뉴런 = 가중합 + 편향 항 + 활성화 함수",
+   "식 h = f(wᵀx + b)",
+   "f 가 비선형성을 만들어 경계를 휘게 함",
+   "뉴런 하나 = 학습된 패턴 탐지기 하나"
+  ]
+ },
+ {
+  "id": "w3b-essay-002",
+  "type": "essay",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-2 비선형과 MLP",
+  "slides": "N3 p.15",
+  "src": "N3 Check Yourself",
+  "model": "check-linear-stack",
+  "q": "Q1. I stack 10 linear layers with no activation in between. How expressive is the result? (교수님이 직접 낸 확인 문제. 우리말로 답하시오.)",
+  "answer": "선형층 하나는 **행렬(Matrix)** 곱 하나이므로 열 개를 이어 붙이면 W10(...(W2(W1x))) = (W10...W2W1)x 로 묶을 수 있다. 즉 **행렬(Matrix)** 하나짜리 선형 변환과 표현력이 완전히 같다. 깊이를 아무리 늘려도 얻는 것이 없고(depth buys nothing), 여전히 곧은 **초평면(Hyperplane)** 경계만 그을 수 있다. 그래서 층 사이에 **활성화 함수(Activation Function)**를 넣어 **비선형성(Nonlinearity)**을 주어야 한다. f 가 없으면 딥러닝도 없다.",
+  "points": [
+   "선형층 하나 = 행렬 곱 하나",
+   "곱을 묶으면 (W10...W1)x 로 합쳐짐",
+   "선형층 1개와 표현력이 같음",
+   "깊이의 이득이 없음(depth buys nothing)",
+   "여전히 곧은 경계만 가능",
+   "해결: 층 사이에 활성화 함수(비선형성)"
+  ]
+ },
+ {
+  "id": "w3b-essay-003",
+  "type": "essay",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-3 텍스트 CNN",
+  "slides": "N3 p.15",
+  "src": "N3 Check Yourself",
+  "model": "check-maxpool-position",
+  "q": "Q4. Why does max-pooling make the CNN insensitive to WHERE a phrase occurs? (교수님이 직접 낸 확인 문제. 우리말로 답하시오.)",
+  "answer": "**합성곱 필터(Convolution Filter)**는 같은 값으로 문장의 모든 창을 훑어 창마다 값 하나를 내고, 그 값들이 **특징 맵(Feature Map)**이 된다. **최대 풀링(Max-pooling)**은 그중 가장 큰 값 하나만 남기고 나머지를 버리는데, 그 값이 몇 번째 창에서 나왔는지도 함께 버린다. 그래서 같은 구절이 문장 앞에 있든 뒤에 있든 풀링 결과가 같아진다. 결국 풀링은 이 패턴이 어디에서든 나왔나만 묻는 셈이다. 이것은 **분류(Classification)**에는 장점이지만 위치 정보가 필요한 과제에서는 단점이 된다.",
+  "points": [
+   "필터는 모든 위치를 같은 값으로 훑음",
+   "창마다 값 하나 → 특징 맵",
+   "최대 풀링은 최댓값 하나만 남김",
+   "어느 창에서 나왔는지(위치)는 버려짐",
+   "앞에 있든 뒤에 있든 결과가 같음",
+   "did this pattern appear ANYWHERE 만 묻는 것",
+   "분류에는 장점, 위치가 필요하면 단점"
+  ]
+ },
+ {
+  "id": "w3b-essay-004",
+  "type": "essay",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-4 미분과 연쇄 법칙",
+  "slides": "N3 p.18-21",
+  "src": "예상",
+  "model": "chain-rule-jacobian",
+  "q": "미분, **기울기(Gradient)**, **야코비안(Jacobian)**의 관계를 입력과 출력의 개수로 구분해 설명하고, **연쇄 법칙(Chain Rule)**의 벡터 버전을 서술하시오.",
+  "answer": "입력 1개, 출력 1개이면 미분은 숫자 하나인 기울기(slope)이고 x 를 살짝 밀면 f 가 얼마나 움직이나를 뜻한다. 입력 n 개, 출력 1개이면 입력마다의 편미분을 모은 길이 n 의 **기울기(Gradient)** 벡터가 된다. 입력 n 개, 출력 m 개이면 편미분을 m×n 표로 모은 **야코비안(Jacobian)**이 되고, 행은 출력, 열은 입력이다. 신경망의 한 층은 벡터를 벡터로 바꾸므로 그 미분은 야코비안이다. **연쇄 법칙(Chain Rule)**의 한 변수 버전은 단계별 미분을 곱하는 것이고, 벡터 버전은 층마다의 야코비안을 순서대로 곱하는 것이다. 곱하는 순서가 중요하고 크기가 사슬처럼 이어져야 한다. 이 규칙 하나와 shape 장부 정리가 **역전파(Backpropagation)**의 전부이다.",
+  "points": [
+   "입력 1, 출력 1 → 숫자 하나(기울기, slope)",
+   "입력 n, 출력 1 → 길이 n 기울기 벡터",
+   "입력 n, 출력 m → m×n 야코비안",
+   "야코비안은 행 = 출력, 열 = 입력",
+   "신경망 층의 미분은 야코비안",
+   "연쇄 법칙: 단계별 미분(야코비안)을 곱함",
+   "순서가 중요하고 shape 이 이어져야 함"
+  ]
+ },
+ {
+  "id": "w3b-essay-005",
+  "type": "essay",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-5 역전파와 계산 그래프",
+  "slides": "N3 p.22-24",
+  "src": "예상",
+  "model": "backprop-delta-reuse",
+  "q": "s = uᵀh, h = f(z), z = Wx + b 인 신경망에서 ∂s/∂b, ∂s/∂W, ∂s/∂x 를 구하는 과정을 **오차 신호(Error Signal)** δ 를 중심으로 서술하시오.",
+  "answer": "먼저 계산을 단순한 조각으로 나누고 각 변수의 shape 을 적는다. **연쇄 법칙(Chain Rule)**으로 ∂s/∂b = (∂s/∂h)(∂h/∂z)(∂z/∂b) = uᵀ diag(f'(z)) I 이고, 앞의 두 조각 uᵀ ⊙ f'(z)ᵀ 를 δ 라 부른다. 따라서 ∂s/∂b = δ 이다. ∂s/∂W 도 앞의 두 조각이 똑같고 마지막 조각만 x 로 바뀌므로 ∂s/∂W = δᵀxᵀ 인 **외적(Outer Product)**이 되고 크기는 W 와 같다. ∂s/∂x 는 마지막 조각이 W 이므로 δW 이고, x 와 같은 모양으로 세우면 Wᵀδᵀ 가 된다. 세 기울기가 δ 하나를 공유하므로 δ 를 한 번만 계산해 다시 쓰면 되고, 이 재사용이 **역전파(Backpropagation)**의 핵심이다. 입력 **단어 벡터(Word Vector)**도 x ← x - αWᵀδᵀ 로 함께 학습된다.",
+  "points": [
+   "계산을 조각으로 나누고 shape 적기",
+   "∂s/∂h = uᵀ, ∂h/∂z = diag(f'(z)), ∂z/∂b = I",
+   "δ = uᵀ ⊙ f'(z)ᵀ = ∂s/∂z",
+   "∂s/∂b = δ",
+   "∂s/∂W = δᵀxᵀ (외적, W 와 같은 크기)",
+   "∂s/∂x = δW → 세우면 Wᵀδᵀ",
+   "세 기울기가 δ 를 공유, 한 번 구해 재사용",
+   "단어 벡터도 함께 업데이트"
+  ]
+ },
+ {
+  "id": "w3b-essay-006",
+  "type": "essay",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-5 역전파와 계산 그래프",
+  "slides": "N3 p.27-31",
+  "src": "예상",
+  "model": "computation-graph-algorithm",
+  "q": "**계산 그래프(Computation Graph)** 위에서 **역전파(Backpropagation)**가 어떻게 돌아가는지 알고리즘 순서대로 쓰고, 그 계산 비용이 왜 중요한지 서술하시오.",
+  "answer": "**순전파(Forward Pass)**에서는 **위상 순서(Topological Order)**대로 노드를 방문해 값을 계산하고, 그 중간값을 저장한다. **역방향 패스(Backward Pass)**에서는 출력 기울기를 1로 두고 순서를 거꾸로 방문한다. 노드마다 **상류 기울기(Upstream Gradient)**에 자기 **국소 기울기(Local Gradient)**를 곱해 입력 쪽으로 보내고, 여러 가지가 만나는 갈림길에서는 기울기를 더한다. 모든 **파라미터(Parameter)**의 기울기가 모이면 **경사 하강법(Gradient Descent)**으로 한 걸음 고친다. 비용 면에서 역방향 한 번은 순전파 한 번과 비슷한데, 그 한 번으로 모든 기울기를 얻는다. 파라미터를 하나씩 흔들어 보는 방법은 백만 개면 순전파가 백만 번 필요하므로, 이 효율이 딥러닝을 계산상 가능하게 만든 핵심이다.",
+  "points": [
+   "순전파: 위상 순서대로 값 계산, 중간값 저장",
+   "역방향: 출력 기울기 1에서 시작, 역순 방문",
+   "노드마다 상류 × 국소를 곱해 전달",
+   "갈림길에서는 기울기를 더함",
+   "모인 기울기로 경사 하강법 한 걸음",
+   "비용: 역방향 1회는 순전파 1회와 비슷",
+   "한 번에 모든 기울기를 얻음",
+   "하나씩 흔들면 파라미터 수만큼 순전파 필요"
+  ]
+ },
+ {
+  "id": "w3b-essay-007",
+  "type": "essay",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-6 언어 모델과 n-gram",
+  "slides": "N3 p.56",
+  "src": "N3 Check Yourself",
+  "model": "check-unseen-ngram",
+  "q": "Q1. A 5-gram LM sees a test sentence whose 5-gram never occurred in training. What probability does it assign, and what do we do about it? (교수님이 직접 낸 확인 문제. 우리말로 답하시오.)",
+  "answer": "분자인 5-gram 횟수가 0이므로 그 자리의 조건부 확률은 0이 된다. 글 전체의 확률은 각 자리 확률의 곱이므로, 0이 하나라도 있으면 문장 전체의 확률도 0이 되고 **퍼플렉서티(PPL)**를 잴 수 없게 된다. 이것이 **희소성 문제(Sparsity Problem)**이다. 분자가 0일 때는 못 본 묶음에도 아주 작은 확률을 나눠 주는 **스무딩(Smoothing)**을 쓰고, 앞 4단어 문맥 자체를 한 번도 못 봐서 분모가 0이면 더 짧은 문맥으로 물러나는 **백오프(Back-off)** 를 쓴다. 다만 n 이 커질수록 이 문제가 심해져서 실제로는 n 을 5 이하로 쓴다. 근본 해결은 **임베딩(Embedding)**을 쓰는 신경망 **언어 모델(LM)**이다.",
+  "points": [
+   "분자 0 이면 그 자리 확률 0",
+   "곱이므로 문장 전체 확률도 0",
+   "희소성 문제(Sparsity Problem)",
+   "분자 0 대처: 스무딩(Smoothing)",
+   "분모 0 대처: 백오프(Back-off)",
+   "n 이 커질수록 악화, 실제로는 n 을 5 이하로",
+   "근본 해결은 임베딩을 쓰는 신경망 LM"
+  ]
+ },
+ {
+  "id": "w3b-essay-008",
+  "type": "essay",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-7 퍼플렉서티",
+  "slides": "N3 p.56",
+  "src": "N3 Check Yourself",
+  "model": "check-ppl-compare",
+  "q": "Q2. Two LMs report perplexity 40 and 25. Which is better, and when is that comparison meaningless? (교수님이 직접 낸 확인 문제. 우리말로 답하시오.)",
+  "answer": "**퍼플렉서티(PPL)**는 낮을수록 좋으므로 숫자만 보면 25 인 모델이 더 좋다. 25 는 다음 단어를 평균 25개 후보 사이에서 고르는 정도로 헷갈린다는 뜻이다. 그러나 이 비교는 두 모델이 같은 평가 데이터, 같은 **어휘(Vocabulary)**, 같은 **토크나이저(Tokenizer)**를 쓸 때만 뜻이 있다. PPL 은 예측 단위 하나당 값이라, 한 모델이 글자 단위이고 다른 모델이 **서브워드(Subword)** 단위라면 애초에 다른 자로 잰 숫자이다. 실습에서도 글자 모델 PPL 27.48 과 서브워드 모델 PPL 299.07 을 그대로 비교하면 글자 모델이 이긴 것처럼 보이지만, bits per character 로 바꾸면 4.78 대 4.30 으로 서브워드 모델이 더 좋았다.",
+  "points": [
+   "PPL 은 낮을수록 좋으므로 25 가 더 좋음",
+   "25 는 평균 25개 후보 사이의 불확실성",
+   "같은 평가 데이터여야 비교 가능",
+   "같은 어휘(Vocabulary)여야 비교 가능",
+   "같은 토크나이저여야 비교 가능",
+   "PPL 은 예측 단위 하나당 값",
+   "실습 예: 글자 27.48 대 서브워드 299.07, bits/char 로는 4.78 대 4.30"
+  ]
+ },
+ {
+  "id": "w3b-essay-009",
+  "type": "essay",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-8 신경망 LM 과 RNN",
+  "slides": "N3 p.56",
+  "src": "N3 Check Yourself",
+  "model": "check-clipping-vanishing",
+  "q": "Q4. Gradient clipping fixes exploding gradients. Why does it NOT fix vanishing ones? (교수님이 직접 낸 확인 문제. 우리말로 답하시오.)",
+  "answer": "**기울기 클리핑(Gradient Clipping)**은 **기울기(Gradient)**의 크기가 한계 τ 를 넘을 때 방향은 그대로 두고 크기만 τ 로 줄이는 방법이다. 즉 너무 큰 값을 눌러 주는 상한 장치라서 **기울기 폭발(Exploding Gradient)** 때 생기는 말도 안 되는 한 걸음이나 Inf, NaN 을 막아 준다. 그러나 **기울기 소실(Vanishing Gradient)**은 값이 이미 0에 가깝게 사라진 상태이다. 0에 가까운 값에 상한을 걸어도 값이 커지지 않으므로 먼 시점에서 온 학습 신호는 여전히 없다. 클리핑으로는 살릴 수 없고, 정보가 지나갈 길을 만들어 주는 더 나은 구조(**장단기 메모리(LSTM)** 같은 **게이트(Gate)**, 그리고 **어텐션(Attention)**)가 필요하다.",
+  "points": [
+   "클리핑 식: 노름이 τ 를 넘으면 g ← τ g/노름",
+   "방향은 유지하고 크기만 상한으로 자름",
+   "폭발: 너무 큰 값을 눌러 한 걸음을 정상화",
+   "소실: 값이 이미 0에 가까움",
+   "상한을 걸어도 작은 값이 커지지 않음",
+   "먼 거리 학습 신호는 여전히 없음",
+   "해결은 구조 변경: 게이트(LSTM, GRU), 어텐션"
+  ]
+ },
+ {
+  "id": "w3b-essay-010",
+  "type": "essay",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-8 신경망 LM 과 RNN",
+  "slides": "N3 p.46-48",
+  "src": "예상",
+  "model": "rnn-idea-sharing",
+  "q": "**RNN(순환 신경망)**의 두 식을 쓰고, 같은 가중치를 모든 시점에 다시 쓰는 것이 어떤 이점을 주는지 서술하시오.",
+  "answer": "두 식은 h^(t) = tanh(W_h h^(t-1) + W_e e^(t) + b) 와 ŷ^(t) = softmax(U h^(t)) 이다. W_h 는 기억을 앞으로 나르는 역할, W_e 는 새 단어를 받아들이는 역할, tanh 는 값이 튀지 않게 눌러 주는 역할을 한다. **은닉 상태(Hidden State)** h 는 지금까지 읽은 내용을 요약한 메모장이다. 같은 (W_h, W_e, U) 를 모든 시점에 다시 쓰기 때문에 문장 길이에 상관없이 처리할 수 있고, 모델 크기가 문장 길이와 무관하게 일정하다. 또 같은 단어가 어느 자리에 오든 같은 방식으로 처리되어 자리마다 따로 배우는 낭비가 없다. 대신 t 번째 계산이 t-1 을 기다려야 해서 시간 방향으로 병렬 계산을 못 하고, 실제로는 먼 과거의 기억이 흐려진다.",
+  "points": [
+   "h^(t) = tanh(W_h h^(t-1) + W_e e^(t) + b)",
+   "ŷ^(t) = softmax(U h^(t))",
+   "W_h 는 기억 운반, W_e 는 새 단어 흡수, tanh 는 값 억제",
+   "은닉 상태는 지금까지 읽은 것의 요약",
+   "같은 가중치를 모든 시점에 재사용(recurrence)",
+   "어떤 길이의 문장도 처리, 모델 크기가 길이와 무관",
+   "단점: 순차 계산이라 느림, 먼 기억이 흐려짐"
+  ]
+ },
+ {
+  "id": "w3b-calc-001",
+  "type": "calc",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-1 분류와 뉴런",
+  "slides": "N3 p.9-10",
+  "src": "예상",
+  "model": "neuron-relu-forward",
+  "q": "**뉴런(Neuron)**의 식은 h = f(wᵀx + b) 이다. w = [0.5, -1, 0.5], b = 0.5 이다. (1) x = [1, 2, 3] 일 때 z = wᵀx + b, (2) 그 z 에 **ReLU(렐루)**를 쓴 출력, (3) 같은 z 에 **시그모이드(Sigmoid)** 1/(1+e^(-z)) 를 쓴 출력, (4) x = [1, 3, 1] 일 때의 z, (5) 그 z 에 ReLU 를 쓴 출력을 구하시오.",
+  "qko": "곱해서 더하고 b 를 더한 z 를 먼저 구한 뒤 함수에 넣어요. 소수 둘째 자리까지 반올림해요.",
+  "blanks": [
+   {
+    "label": "x = [1, 2, 3] 일 때 z",
+    "ans": 0.5,
+    "tol": 0.01
+   },
+   {
+    "label": "ReLU(z)",
+    "ans": 0.5,
+    "tol": 0.01
+   },
+   {
+    "label": "시그모이드(z)",
+    "ans": 0.62,
+    "tol": 0.01
+   },
+   {
+    "label": "x = [1, 3, 1] 일 때 z",
+    "ans": -1.5,
+    "tol": 0.01
+   },
+   {
+    "label": "그때의 ReLU(z)",
+    "ans": 0.0,
+    "tol": 0.01
+   }
+  ],
+  "steps": [
+   "z = w1x1 + w2x2 + w3x3 + b",
+   "z = 0.5×1 + (-1)×2 + 0.5×3 + 0.5 = 0.5 - 2 + 1.5 + 0.5 = 0.5",
+   "ReLU(0.5) = max(0.5, 0) = 0.5",
+   "시그모이드(0.5) = 1/(1 + e^(-0.5)) ≈ 0.62",
+   "x = [1, 3, 1]: z = 0.5 - 3 + 0.5 + 0.5 = -1.5",
+   "ReLU(-1.5) = max(-1.5, 0) = 0 (뉴런이 꺼져요)"
+  ],
+  "answer": "z = 0.5, ReLU 0.5, 시그모이드 약 0.62, 두 번째 z = -1.5, ReLU 0",
+  "e": "**편향 항(Bias Term)** b 는 **활성화 함수(Activation Function)**에 넣기 전에 더해요. ReLU 를 통과한 뒤에 더하면 틀려요. 또 ReLU 는 음수를 0으로 끄지, 부호만 바꾸는 것이 아니에요."
+ },
+ {
+  "id": "w3b-calc-002",
+  "type": "calc",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-1 분류와 뉴런",
+  "slides": "N3 p.7",
+  "src": "예상",
+  "model": "softmax-cross-entropy",
+  "q": "**NER(개체명 인식)** 분류기가 PERSON 1, LOCATION 3, ORG 0 이라는 **로짓(Logit)**을 냈고 정답은 LOCATION 이다. **소프트맥스(Softmax)** P(y) = exp(s_y) / Σ exp(s_c) 로 세 확률을 구하고, **교차 엔트로피(Cross-Entropy)** 벌점 -log P(정답) 을 구하시오. (자연로그, e ≈ 2.718)",
+  "qko": "점수에 exp 를 씌워 전체 합으로 나누면 확률이고, 정답 확률의 -log 가 벌점이에요. 소수 둘째 자리까지.",
+  "blanks": [
+   {
+    "label": "P(PERSON)",
+    "ans": 0.11,
+    "tol": 0.01
+   },
+   {
+    "label": "P(LOCATION)",
+    "ans": 0.84,
+    "tol": 0.01
+   },
+   {
+    "label": "P(ORG)",
+    "ans": 0.04,
+    "tol": 0.01
+   },
+   {
+    "label": "교차 엔트로피 벌점",
+    "ans": 0.17,
+    "tol": 0.01
+   }
+  ],
+  "steps": [
+   "exp 를 씌워요: e^1 ≈ 2.72, e^3 ≈ 20.09, e^0 = 1",
+   "합 ≈ 2.72 + 20.09 + 1 = 23.80",
+   "P(PERSON) = 2.72 / 23.80 ≈ 0.11",
+   "P(LOCATION) = 20.09 / 23.80 ≈ 0.84",
+   "P(ORG) = 1 / 23.80 ≈ 0.04",
+   "벌점 = -log(0.84) ≈ 0.17"
+  ],
+  "answer": "P(PERSON) ≈ 0.11, P(LOCATION) ≈ 0.84, P(ORG) ≈ 0.04, 벌점 ≈ 0.17",
+  "e": "벌점은 정답 칸 확률만으로 구해요. 세 확률을 모두 더하면 1이 되는지 검산해요. 정답 확률이 0.01 이면 벌점이 약 4.61 로 확 커져요."
+ },
+ {
+  "id": "w3b-calc-003",
+  "type": "calc",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-2 비선형과 MLP",
+  "slides": "N3 p.12, p.15",
+  "src": "예상",
+  "model": "mlp-shape-params",
+  "q": "**MLP(다층 퍼셉트론)**는 h(1) = f(W(1)x + b(1)) 로 계산한다. 입력 창이 5단어 × 100차원이고 **은닉층(Hidden Layer)** 뉴런이 300개일 때 (1) 입력 x 의 길이, (2) W(1) 의 가중치 개수, (3) b(1) 의 칸 수를 구하시오. 또 (4) 슬라이드 그림처럼 입력 4, 은닉 4, 은닉 4, 출력 3 인 작은 신경망의 전체 **파라미터(Parameter)** 개수를 구하시오(마지막 U 에는 편향 항 없음).",
+  "qko": "W 의 shape 은 (출력 뉴런 수, 입력 수)예요. 정수로 답해요.",
+  "blanks": [
+   {
+    "label": "입력 x 의 길이",
+    "ans": 500,
+    "tol": 0.01
+   },
+   {
+    "label": "W(1) 가중치 개수",
+    "ans": 150000,
+    "tol": 0.01
+   },
+   {
+    "label": "b(1) 칸 수",
+    "ans": 300,
+    "tol": 0.01
+   },
+   {
+    "label": "작은 신경망 전체 파라미터 수",
+    "ans": 52,
+    "tol": 0.01
+   }
+  ],
+  "steps": [
+   "입력 길이 = 단어 수 × 차원 = 5 × 100 = 500",
+   "W(1) 의 shape 은 (300, 500) 이므로 가중치 300 × 500 = 150,000",
+   "b(1) 은 은닉 뉴런마다 하나라서 300개",
+   "작은 신경망: W(1) 4×4 = 16, b(1) 4, W(2) 4×4 = 16, b(2) 4, U 3×4 = 12",
+   "16 + 4 + 16 + 4 + 12 = 52"
+  ],
+  "answer": "입력 길이 500, W(1) 가중치 150,000개, b(1) 300개, 작은 신경망 52개",
+  "e": "W 의 shape 은 (300, 500) 이지, (500, 300) 이 아니에요. 식 W(1)x 에서 열 수가 입력 길이와 같아야 곱할 수 있어요. b 의 칸 수는 출력 뉴런 수와 같아요."
+ },
+ {
+  "id": "w3b-calc-004",
+  "type": "calc",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-3 텍스트 CNN",
+  "slides": "N3 p.13-14",
+  "src": "예상",
+  "model": "cnn-feature-map",
+  "q": "문장 'this movie was really great fun' 의 여섯 단어를 각각 숫자 하나로 줄이면 this 0, movie 1, was 0, really 2, great 3, fun -1 이다. 폭 3짜리 **합성곱 필터(Convolution Filter)** [1, 1, 1] 을 한 칸씩 미끄러뜨린다. (1) 창의 개수, (2)~(5) 각 창의 값, (6) **최대 풀링(Max-pooling)** 결과를 구하시오.",
+  "qko": "창 개수는 (단어 수 - 폭 + 1) 이고, 각 창의 값은 세 숫자를 더한 값이에요. 정수로 답해요.",
+  "blanks": [
+   {
+    "label": "창의 개수",
+    "ans": 4,
+    "tol": 0.01
+   },
+   {
+    "label": "this movie was",
+    "ans": 1.0,
+    "tol": 0.01
+   },
+   {
+    "label": "movie was really",
+    "ans": 3.0,
+    "tol": 0.01
+   },
+   {
+    "label": "was really great",
+    "ans": 5.0,
+    "tol": 0.01
+   },
+   {
+    "label": "really great fun",
+    "ans": 4.0,
+    "tol": 0.01
+   },
+   {
+    "label": "최대 풀링 결과",
+    "ans": 5.0,
+    "tol": 0.01
+   }
+  ],
+  "steps": [
+   "창 개수 = 6 - 3 + 1 = 4",
+   "this movie was: 0 + 1 + 0 = 1",
+   "movie was really: 1 + 0 + 2 = 3",
+   "was really great: 0 + 2 + 3 = 5",
+   "really great fun: 2 + 3 + (-1) = 4",
+   "**특징 맵(Feature Map)** = [1, 3, 5, 4], 최대 풀링 → 5"
+  ],
+  "answer": "창 4개, 특징 맵 [1, 3, 5, 4], 최대 풀링 5 ('was really great' 가 가장 셈)",
+  "e": "실제로는 단어마다 벡터이고 필터도 3 × d 숫자 판이라 계산이 더 크지만 모양은 같아요. 창 개수를 단어 수(6)로 세면 틀려요. 최대 풀링은 평균이나 합이 아니라 최댓값이에요."
+ },
+ {
+  "id": "w3b-calc-005",
+  "type": "calc",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-4 미분과 연쇄 법칙",
+  "slides": "N3 p.18-20",
+  "src": "예상",
+  "model": "chain-rule-step",
+  "q": "z = 3x + 1, h = z² 이고 x = 1 이다. (1) z, (2) h, (3) dh/dz, (4) **연쇄 법칙(Chain Rule)**으로 구한 dh/dx 를 구하시오. (dz/dx = 3, d(z²)/dz = 2z 를 쓴다.)",
+  "qko": "값부터 순서대로 구하고, 단계별 미분을 곱해요. 정수로 답해요.",
+  "blanks": [
+   {
+    "label": "z",
+    "ans": 4.0,
+    "tol": 0.01
+   },
+   {
+    "label": "h",
+    "ans": 16.0,
+    "tol": 0.01
+   },
+   {
+    "label": "dh/dz",
+    "ans": 8.0,
+    "tol": 0.01
+   },
+   {
+    "label": "dh/dx",
+    "ans": 24.0,
+    "tol": 0.01
+   }
+  ],
+  "steps": [
+   "순전파: z = 3 × 1 + 1 = 4",
+   "h = 4² = 16",
+   "첫 계단 dz/dx = 3",
+   "둘째 계단 dh/dz = 2z = 2 × 4 = 8",
+   "연쇄 법칙은 곱하기: dh/dx = 8 × 3 = 24",
+   "살짝 밀어 확인: x 를 1.001 로 하면 (4.003)² = 16.024009, 늘어난 양 ÷ 0.001 ≈ 24.01"
+  ],
+  "answer": "z = 4, h = 16, dh/dz = 8, dh/dx = 24",
+  "e": "단계별 미분을 더하지 않고 곱해요(8 + 3 = 11 은 틀린 답). dh/dz 를 구할 때 z 자리에 x 값 1 을 넣으면 안 되고 z 값 4 를 넣어야 해요."
+ },
+ {
+  "id": "w3b-calc-006",
+  "type": "calc",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-5 역전파와 계산 그래프",
+  "slides": "N3 p.22-24",
+  "src": "예상",
+  "model": "backprop-delta-numbers",
+  "q": "s = uᵀh, h = ReLU(z), z = Wx + b 이고 x = [1, 2, 3], W = [[1, 0, 1], [-1, 1, -2]], b = [0, 1], u = [2, 3] 이다. (1) 점수 s, (2) **오차 신호(Error Signal)** δ = u ⊙ f'(z) 의 두 칸, (3) ∂s/∂W 의 1행 2열 값, (4) ∂s/∂x = Wᵀδ 의 첫 칸과 셋째 칸을 구하시오.",
+  "qko": "순전파로 z, h, s 를 먼저 구한 뒤 δ 를 구하고, ∂s/∂W 는 δ 와 x 의 **외적(Outer Product)**이에요. 정수로 답해요.",
+  "blanks": [
+   {
+    "label": "점수 s",
+    "ans": 8.0,
+    "tol": 0.01
+   },
+   {
+    "label": "δ 의 첫 칸",
+    "ans": 2.0,
+    "tol": 0.01
+   },
+   {
+    "label": "δ 의 둘째 칸",
+    "ans": 0.0,
+    "tol": 0.01
+   },
+   {
+    "label": "∂s/∂W 의 1행 2열",
+    "ans": 4.0,
+    "tol": 0.01
+   },
+   {
+    "label": "∂s/∂x 의 첫 칸",
+    "ans": 2.0,
+    "tol": 0.01
+   },
+   {
+    "label": "∂s/∂x 의 셋째 칸",
+    "ans": 2.0,
+    "tol": 0.01
+   }
+  ],
+  "steps": [
+   "Wx = [1×1 + 0×2 + 1×3, -1×1 + 1×2 + (-2)×3] = [4, -5]",
+   "z = Wx + b = [4, -4], h = ReLU(z) = [4, 0], s = 2×4 + 3×0 = 8",
+   "ReLU 의 미분: z 가 양수면 1, 음수면 0 → f'(z) = [1, 0]",
+   "δ = u ⊙ f'(z) = [2×1, 3×0] = [2, 0]",
+   "∂s/∂W = δ 와 x 의 외적: 1행 2 × [1, 2, 3] = [2, 4, 6], 2행 0 × [1, 2, 3] = [0, 0, 0]",
+   "∂s/∂x = Wᵀδ = [1×2 + (-1)×0, 0×2 + 1×0, 1×2 + (-2)×0] = [2, 0, 2]"
+  ],
+  "answer": "s = 8, δ = [2, 0], ∂s/∂W 의 1행 2열 = 4, ∂s/∂x = [2, 0, 2]",
+  "e": "z 가 음수인 칸은 δ 도 0이 되어 그 줄의 기울기가 전부 0이에요. ∂s/∂W 에는 x 가, ∂s/∂x 에는 W 가 붙는다는 점을 바꿔 쓰지 않아요."
+ },
+ {
+  "id": "w3b-calc-007",
+  "type": "calc",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-5 역전파와 계산 그래프",
+  "slides": "N3 p.17",
+  "src": "예상",
+  "model": "gradient-descent-step",
+  "q": "**손실 함수(Loss Function)**가 J(θ) = θ² 이고 지금 θ = 3, **학습률(Learning Rate)** α = 0.1 이다. 업데이트 식 θ ← θ - α∇J 로 한 걸음을 계산한다. (1) 지금 자리의 **기울기(Gradient)**, (2) 한 걸음 뒤의 θ, (3) 한 걸음 뒤의 J 값을 구하시오.",
+  "qko": "J 를 θ 로 미분해 기울기를 구한 뒤 보폭 α 를 곱해 빼요. 소수 둘째 자리까지.",
+  "blanks": [
+   {
+    "label": "기울기 ∇J",
+    "ans": 6.0,
+    "tol": 0.01
+   },
+   {
+    "label": "한 걸음 뒤 θ",
+    "ans": 2.4,
+    "tol": 0.01
+   },
+   {
+    "label": "한 걸음 뒤 J",
+    "ans": 5.76,
+    "tol": 0.01
+   }
+  ],
+  "steps": [
+   "J(θ) = θ² 이므로 ∇J = 2θ",
+   "θ = 3 에서 ∇J = 2 × 3 = 6",
+   "θ ← 3 - 0.1 × 6 = 3 - 0.6 = 2.4",
+   "J 는 3² = 9 에서 2.4² = 5.76 으로 줄어요"
+  ],
+  "answer": "기울기 6, 새 θ = 2.4, 새 J = 5.76 (벌점이 9 에서 5.76 으로 줄어듦)",
+  "e": "기울기 방향은 오르막이라 빼야 내려가요. 더하면 벌점이 커져요. α 를 너무 크게 잡으면 한 걸음에 건너뛰어 오히려 커질 수 있어요."
+ },
+ {
+  "id": "w3b-calc-008",
+  "type": "calc",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-6 언어 모델과 n-gram",
+  "slides": "N3 p.37-39",
+  "src": "예상",
+  "model": "ngram-probability",
+  "q": "4-gram **언어 모델(LM)**에서 **말뭉치(Corpus)**를 세었더니 count(students opened their) = 1,000, count(students opened their books) = 400, count(students opened their exams) = 100, count(students opened their laptops) = 0 이었다. (1) P(books | students opened their), (2) P(exams | ...), (3) P(laptops | ...) 을 구하고, (4) 어떤 단어 w 가 300번 나왔다면 P(w | ...) 를 구하시오.",
+  "qko": "분자는 4단어 묶음 횟수, 분모는 앞 3단어 묶음 횟수예요. 소수 둘째 자리까지.",
+  "blanks": [
+   {
+    "label": "P(books)",
+    "ans": 0.4,
+    "tol": 0.01
+   },
+   {
+    "label": "P(exams)",
+    "ans": 0.1,
+    "tol": 0.01
+   },
+   {
+    "label": "P(laptops)",
+    "ans": 0.0,
+    "tol": 0.01
+   },
+   {
+    "label": "P(w), w 가 300번",
+    "ans": 0.3,
+    "tol": 0.01
+   }
+  ],
+  "steps": [
+   "식: count(앞 3단어 + w) ÷ count(앞 3단어)",
+   "P(books) = 400 ÷ 1,000 = 0.40",
+   "P(exams) = 100 ÷ 1,000 = 0.10",
+   "P(laptops) = 0 ÷ 1,000 = 0 (**희소성 문제(Sparsity Problem)**)",
+   "P(w) = 300 ÷ 1,000 = 0.30"
+  ],
+  "answer": "books 0.40, exams 0.10, laptops 0, 300번인 단어 0.30",
+  "e": "분모는 **말뭉치(Corpus)** 전체 단어 수가 아니라 '앞 3단어 묶음' 이 나온 횟수예요. 확률 0이 하나라도 있으면 문장 전체 확률이 0이 되고, 그래서 **스무딩(Smoothing)**이 필요해요."
+ },
+ {
+  "id": "w3b-calc-009",
+  "type": "calc",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-7 퍼플렉서티",
+  "slides": "N3 p.41-42",
+  "src": "예상",
+  "model": "perplexity",
+  "q": "어떤 **언어 모델(LM)**이 4단어 문장의 실제 정답 단어들에 1/2, 1/4, 1/8, 1/16 의 확률을 주었다. (1) 정답 확률 역수의 곱, (2) **퍼플렉서티(PPL)**, (3) 평균 **교차 엔트로피(Cross-Entropy)** J, (4) **어휘(Vocabulary)** 10,000개에 모두 같은 확률을 주는 모델의 PPL 을 구하시오. (자연로그)",
+  "qko": "역수를 모두 곱한 뒤 단어 수만큼 제곱근을 취해요. PPL = exp(J) 로도 같은 답이 나와요. 소수 둘째 자리까지.",
+  "blanks": [
+   {
+    "label": "역수의 곱",
+    "ans": 1024.0,
+    "tol": 0.01
+   },
+   {
+    "label": "퍼플렉서티",
+    "ans": 5.66,
+    "tol": 0.01
+   },
+   {
+    "label": "평균 교차 엔트로피 J",
+    "ans": 1.73,
+    "tol": 0.01
+   },
+   {
+    "label": "균등 분포 모델의 PPL",
+    "ans": 10000.0,
+    "tol": 0.01
+   }
+  ],
+  "steps": [
+   "역수: 2, 4, 8, 16",
+   "곱: 2 × 4 × 8 × 16 = 1024",
+   "네제곱근: 1024^(1/4) = (2^10)^(1/4) = 2^2.5 ≈ 5.66",
+   "같은 답을 J 로: -log 값의 평균 J = (log2 + log4 + log8 + log16) ÷ 4 ≈ 1.73",
+   "PPL = exp(1.73) ≈ 5.66 (두 길이 같은 답)",
+   "균등: 모든 확률이 1/10,000 이면 PPL = 10,000 = 어휘 크기"
+  ],
+  "answer": "역수의 곱 1024, PPL ≈ 5.66, J ≈ 1.73, 균등 모델 PPL = 10,000",
+  "e": "산술 평균 (2+4+8+16)/4 = 7.5 로 답하면 틀려요. 기하 평균, 곧 곱한 뒤 T 제곱근이에요. PPL 은 낮을수록 좋고 1보다 작을 수는 없어요."
+ },
+ {
+  "id": "w3b-calc-010",
+  "type": "calc",
+  "part": "3",
+  "level": "basic",
+  "unit": "3-8 신경망 LM 과 RNN",
+  "slides": "N3 p.47",
+  "src": "예상",
+  "model": "rnn-hidden-step",
+  "q": "**RNN(순환 신경망)**의 식은 h^(t) = tanh(W_h h^(t-1) + W_e e^(t) + b) 이다. W_h = [[0.5, 0.5], [0, 0.5]], W_e = [[1, 0], [0, 2]], b = [-1, 0], 이전 **은닉 상태(Hidden State)** h^(t-1) = [1, 1], 현재 단어 **임베딩(Embedding)** e^(t) = [0, 0.25] 이다. (1) tanh 안에 들어갈 값(z)의 두 칸과 (2) 새 은닉 상태 h^(t) 의 두 칸을 구하시오. (tanh(0) = 0, tanh(1) ≈ 0.76)",
+  "qko": "W_h h 와 W_e e 를 따로 구해 더하고 b 를 더한 뒤 tanh 를 씌워요. 소수 둘째 자리까지.",
+  "blanks": [
+   {
+    "label": "z 의 첫 칸",
+    "ans": 0.0,
+    "tol": 0.01
+   },
+   {
+    "label": "z 의 둘째 칸",
+    "ans": 1.0,
+    "tol": 0.01
+   },
+   {
+    "label": "h^(t) 의 첫 칸",
+    "ans": 0.0,
+    "tol": 0.01
+   },
+   {
+    "label": "h^(t) 의 둘째 칸",
+    "ans": 0.76,
+    "tol": 0.01
+   }
+  ],
+  "steps": [
+   "W_h h^(t-1) = [0.5×1 + 0.5×1, 0×1 + 0.5×1] = [1, 0.5]",
+   "W_e e^(t) = [1×0 + 0×0.25, 0×0 + 2×0.25] = [0, 0.5]",
+   "더하고 b 를 더하기: z = [1 + 0 - 1, 0.5 + 0.5 + 0] = [0, 1]",
+   "h^(t) = tanh(z) = [tanh(0), tanh(1)] = [0, 0.76]"
+  ],
+  "answer": "z = [0, 1], h^(t) = [0, 0.76]",
+  "e": "이전 **은닉 상태(Hidden State)**와 현재 단어를 각각 다른 **행렬(Matrix)**로 변환해 더해요. W_h 와 W_e 를 바꿔 곱하면 틀려요. 이 (W_h, W_e) 는 모든 시점에서 똑같이 다시 써요."
+ }
+]

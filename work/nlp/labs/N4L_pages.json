@@ -1,0 +1,498 @@
+{
+ "deck": "N4L",
+ "file": "Lab3_Self-Attention from Scratch_Full.ipynb",
+ "pages": [
+  {
+   "p": 1,
+   "title": "Week 4 · Lab 3 — Self-Attention from Scratch",
+   "cells": [
+    {
+     "n": 1,
+     "type": "markdown",
+     "src": "# Week 4 · Lab 3 — Self-Attention from Scratch\n\n**Natural Language Processing (06488-01) · Fall 2026 · Yongil Kim, Dept. of AI, CUK**\n\nToday we build the Transformer block with our own hands: NumPy first, then PyTorch,\nthen we look inside a real pretrained model. We run it together in ~50 minutes.\n\n> 🇰🇷 오늘은 Transformer 블록을 직접 만듭니다. NumPy로 먼저, 그다음 PyTorch로,\n> 마지막에는 **실제 사전학습 모델 안을 들여다봅니다**. 약 50분 동안 **함께 실행하며** 진행합니다.\n\n| Part | Topic · 내용 | Time |\n|---|---|---|\n| **0** | Setup<br>환경 설정 | ~2 min |\n| **1** | Attention in **NumPy**: score → softmax → mix, and why we divide by √d<br>NumPy로 attention 3단계, 그리고 √d로 나누는 이유 | ~8 min |\n| **2** | **Self-attention** with Q/K/V — and the lecture's **three barriers, measured**<br>Q/K/V 자기어텐션 — 강의의 세 가지 장벽을 수치로 확인 | ~10 min |\n| **3** | **PyTorch**: scaled dot-product attention → **multi-head** module<br>PyTorch로 scaled dot-product → multi-head 모듈 조립 | ~10 min |\n| **4** | A complete **mini Transformer block**, trained — and its attention map<br>미니 Transformer 블록 완성·학습, 그리고 attention map 관찰 | ~12 min |\n| **5** | **Real attention heads** inside a pretrained model (DistilBERT)<br>사전학습 모델(DistilBERT)의 실제 attention head 관찰 | ~8 min |\n| | | **50 min** |\n\n> ⚠️ Everything here runs on a **free Colab CPU**. The model we train in Part 4 has\n> ~50k parameters and trains in about **2 seconds**. Part 5 downloads a 250 MB model once.\n>\n> 🇰🇷 전부 **Colab 무료 CPU**에서 돌아갑니다. Part 4에서 학습하는 모델은 파라미터 약 5만 개,\n> 학습 시간 **약 2초**입니다. Part 5에서 250MB 모델을 한 번 내려받습니다.\n\n> **Just run every cell in order.** We walk through them together — please do not rush ahead.\n>\n> 🇰🇷 **셀을 순서대로 실행하세요.** 함께 진행하니 앞서 나가지 마세요.",
+     "out": ""
+    }
+   ]
+  },
+  {
+   "p": 2,
+   "title": "Part 0 — Setup",
+   "cells": [
+    {
+     "n": 2,
+     "type": "markdown",
+     "src": "---\n## Part 0 — Setup\n\nNo GPU needed today. CPU is fine and, for a model this small, often faster.\n\n> 🇰🇷 오늘은 GPU가 필요 없습니다. CPU로 충분하고, 이 정도 크기의 모델은 오히려 CPU가 빠를 때도 있습니다.",
+     "out": ""
+    },
+    {
+     "n": 3,
+     "type": "code",
+     "src": "import math, time\nimport numpy as np\nimport torch\nimport torch.nn as nn\nimport torch.nn.functional as F\nimport matplotlib.pyplot as plt\n\ntorch.manual_seed(0)\nnp.random.seed(0)\ntorch.set_num_threads(2)          # Colab free tier gives us ~2 cores\n\nprint(\"numpy  :\", np.__version__)\nprint(\"torch  :\", torch.__version__)\nprint(\"device : cpu (that is enough for this lab)\")",
+     "out": "numpy  : 2.1.3\ntorch  : 2.11.0+cpu\ndevice : cpu (that is enough for this lab)"
+    }
+   ]
+  },
+  {
+   "p": 3,
+   "title": "1.1 The whole idea in three lines",
+   "cells": [
+    {
+     "n": 4,
+     "type": "markdown",
+     "src": "---\n## Part 1 — Attention in NumPy\n\n### 1.1 The whole idea in three lines\n\nFrom the lecture: **score → softmax → weighted sum**.\n\nA *query* asks a question. Every *key* advertises what it has. The score says how well\nthey match. Softmax turns scores into weights that sum to 1. The output is the weighted\naverage of the *values*.\n\n> 🇰🇷 강의의 세 단계 그대로입니다: **어텐션 점수 구하기 → softmax → 가중합**.\n> *쿼리*가 질문을 던지고, 각 *키*가 자기를 광고하고, 점수가 둘의 일치도를 말해 줍니다.\n> softmax가 점수를 합이 1인 가중치로 바꾸고, 출력은 *값*들의 가중평균입니다.\n\nBelow, the query is almost identical to key #2, so the output should come out almost\nequal to value #2. That is the whole mechanism — nothing is hidden.\n\n> 🇰🇷 아래에서 쿼리는 2번 키와 거의 같습니다. 따라서 출력은 2번 값과 거의 같게 나와야 합니다.\n> 이게 메커니즘의 전부입니다.",
+     "out": ""
+    }
+   ]
+  },
+  {
+   "p": 4,
+   "title": "def softmax(x, axis=-1):",
+   "cells": [
+    {
+     "n": 5,
+     "type": "code",
+     "src": "def softmax(x, axis=-1):\n    x = x - x.max(axis=axis, keepdims=True)      # numerically safe\n    e = np.exp(x)\n    return e / e.sum(axis=axis, keepdims=True)\n\n# four memory slots: each has a key (what it advertises) and a value (what it hands over)\nkeys   = np.array([[ 1., 0., 0.],      # key 0\n                   [ 0., 1., 0.],      # key 1\n                   [ 0., 0., 1.],      # key 2\n                   [-1., 0., 0.]])     # key 3\nvalues = np.array([[10., 0.],\n                   [ 0., 10.],\n                   [ 5.,  5.],\n                   [-9., -9.]])\n\nquery = np.array([0.5, 0.0, 3.0])      # points mostly along key 2\n\nscores  = keys @ query                 # (1) score: how well does each key match?\nweights = softmax(scores)              # (2) softmax: turn scores into a distribution\noutput  = weights @ values             # (3) mix: weighted average of the values\n\nprint(\"scores  :\", np.round(scores, 3))\nprint(\"weights :\", np.round(weights, 3), \" (sum =\", round(weights.sum(), 6), \")\")\nprint(\"output  :\", np.round(output, 2))\nprint(\"value 2 :\", values[2], \"  <- almost exactly what we got back\")",
+     "out": "scores  : [ 0.5  0.   3.  -0.5]\nweights : [0.071 0.043 0.861 0.026]  (sum = 1.0 )\noutput  : [4.78 4.5 ]\nvalue 2 : [5. 5.]   <- almost exactly what we got back"
+    }
+   ]
+  },
+  {
+   "p": 5,
+   "title": "1.2 Sharp weights vs flat weights",
+   "cells": [
+    {
+     "n": 6,
+     "type": "markdown",
+     "src": "### 1.2 Sharp weights vs flat weights\n\nThe same three lines behave very differently depending on how *large* the scores are.\nLarge scores → an almost one-hot distribution (\"look here\"). Small scores → an almost\nuniform distribution (\"everything matters a little\").\n\n> 🇰🇷 점수의 크기(Scale)에 따라 동작이 크게 달라집니다.\n> 점수가 크면 거의 one-hot이 되고(\"하나를 지목\"), 작으면 거의 균등해집니다(\"다 조금씩 중요하다\").\n\nThis matters more than it looks, and it is exactly why the Transformer divides by √d.\n\n> 🇰🇷 이게 생각보다 중요한데, Transformer가 √d로 나누는 이유가 바로 여기 있습니다.",
+     "out": ""
+    },
+    {
+     "n": 7,
+     "type": "code",
+     "src": "base = np.array([2.0, 1.4, 1.0, 0.8, 0.5, 0.3])\n\nfor scale in (0.2, 1.0, 6.0):\n    w = softmax(base * scale)\n    print(f\"scale={scale:>4}  max weight={w.max():.3f}   weights={np.round(w, 3)}\")",
+     "out": "scale= 0.2  max weight=0.202   weights=[0.202 0.179 0.166 0.159 0.15  0.144]\nscale= 1.0  max weight=0.381   weights=[0.381 0.209 0.14  0.115 0.085 0.07 ]\nscale= 6.0  max weight=0.970   weights=[0.97  0.027 0.002 0.001 0.    0.   ]"
+    }
+   ]
+  },
+  {
+   "p": 6,
+   "title": "1.3 Why divide by √d ?",
+   "cells": [
+    {
+     "n": 8,
+     "type": "markdown",
+     "src": "### 1.3 Why divide by √d ?\n\nFrom the lecture: if $q$ and $k$ have independent entries with variance 1, then\n$\\operatorname{Var}(q \\cdot k) = d_k$, so the standard deviation grows like $\\sqrt{d_k}$.\nWith $d_k = 512$ the scores are routinely ±20 — and we just saw what large scores do.\n\n> 🇰🇷 강의 내용입니다. $q$와 $k$의 각 성분이 독립이고 분산이 1이면\n> $\\operatorname{Var}(q \\cdot k) = d_k$ 이므로 표준편차는 $\\sqrt{d_k}$ 로 커집니다.\n> $d_k = 512$ 면 점수가 보통 ±20이 되는데, 큰 점수가 어떤 일을 하는지는 방금 봤습니다.\n\nLet us measure it instead of trusting the formula.\n\n> 🇰🇷 직접 측정해 봅시다.",
+     "out": ""
+    },
+    {
+     "n": 9,
+     "type": "code",
+     "src": "rng = np.random.default_rng(0)\n\nprint(\" d_k    measured sd of q·k    sqrt(d_k)\")\nfor d in (8, 64, 512):\n    q = rng.normal(size=(20000, d))\n    k = rng.normal(size=(20000, d))\n    s = (q * k).sum(axis=1)\n    print(f\"{d:>4}    {s.std():>16.2f}    {math.sqrt(d):>9.2f}\")",
+     "out": " d_k    measured sd of q·k    sqrt(d_k)\n   8                2.86         2.83\n  64                8.02         8.00\n 512               22.57        22.63"
+    }
+   ]
+  },
+  {
+   "p": 7,
+   "title": "for scale in (1.0, 6.0):",
+   "cells": [
+    {
+     "n": 10,
+     "type": "markdown",
+     "src": "And here is why a saturated softmax is a problem: **its gradient almost disappears**.\nA layer that cannot pass a gradient cannot learn.\n\n> 🇰🇷 그리고 softmax가 포화되면 왜 문제냐면, **기울기가 거의 사라지기** 때문입니다.\n> 기울기를 흘려보내지 못하는 층은 학습이 되지 않습니다.",
+     "out": ""
+    },
+    {
+     "n": 11,
+     "type": "code",
+     "src": "for scale in (1.0, 6.0):\n    z = torch.tensor([2.0, 1.4, 1.0, 0.8, 0.5, 0.3]) * scale\n    z.requires_grad_(True)\n    p = z.softmax(-1)\n    p.max().backward()                      # how much does the top weight move?\n    print(f\"scale={scale:>4}   max weight={p.max().item():.4f}   \"\n          f\"largest |gradient|={z.grad.abs().max().item():.3e}\")\n\nprint(\"\\n-> the saturated softmax passes ~8x less gradient. Dividing by sqrt(d_k)\")\nprint(\"   keeps the scores in the range where softmax still has a slope.\")",
+     "out": "scale= 1.0   max weight=0.3811   largest |gradient|=2.359e-01\nscale= 6.0   max weight=0.9702   largest |gradient|=2.891e-02\n\n-> the saturated softmax passes ~8x less gradient. Dividing by sqrt(d_k)\n   keeps the scores in the range where softmax still has a slope."
+    }
+   ]
+  },
+  {
+   "p": 8,
+   "title": "Part 2 — Self-Attention: Q, K, V from one sequence",
+   "cells": [
+    {
+     "n": 12,
+     "type": "markdown",
+     "src": "---\n## Part 2 — Self-Attention: Q, K, V from one sequence\n\nIn Part 1 the keys and values were given to us. In **self-attention** we *make* them:\nevery token produces its own query, key and value through three learned linear maps.\n\n> 🇰🇷 Part 1에서는 키와 값이 임의로 주어졌습니다. 이번 **self-attention**에서는 우리가 직접 만듭니다.\n> 각 토큰이 학습 가능한 Linear mapping 세 개를 통해 자기만의 쿼리·키·값을 내놓습니다.\n\n$$q_i = W^Q x_i, \\qquad k_i = W^K x_i, \\qquad v_i = W^V x_i$$\n\n$$\\text{Attention}(Q,K,V) = \\text{softmax}\\!\\left(\\frac{QK^\\top}{\\sqrt{d_k}}\\right) V$$",
+     "out": ""
+    },
+    {
+     "n": 13,
+     "type": "code",
+     "src": "n, d = 5, 16                    # 5 tokens, 16 dimensions\nX = rng.normal(size=(n, d))     # our \"sentence\": 5 token vectors\n\nWq = rng.normal(size=(d, d)) * 0.3\nWk = rng.normal(size=(d, d)) * 0.3\nWv = rng.normal(size=(d, d)) * 0.3\n\ndef self_attention(X, Wq, Wk, Wv, mask=None):\n    Q, K, V = X @ Wq, X @ Wk, X @ Wv          # three projections of the SAME X\n    scores = Q @ K.T / math.sqrt(Q.shape[-1])  # (n, n) -- every token vs every token\n    if mask is not None:\n        scores = np.where(mask, scores, -np.inf)\n    A = softmax(scores)                        # attention weights, rows sum to 1\n    return A @ V, A\n\nout, A = self_attention(X, Wq, Wk, Wv)\n\nprint(\"X     :\", X.shape, \" (n tokens, d dims)\")\nprint(\"A     :\", A.shape, \" (n x n: row i = where token i looks)\")\nprint(\"out   :\", out.shape)\nprint(\"\\nattention matrix (rows sum to 1):\")\nprint(np.round(A, 2))\nprint(\"row sums:\", np.round(A.sum(axis=1), 6))",
+     "out": "X     : (5, 16)  (n tokens, d dims)\nA     : (5, 5)  (n x n: row i = where token i looks)\nout   : (5, 16)\n\nattention matrix (rows sum to 1):\n[[0.05 0.18 0.62 0.1  0.05]\n [0.01 0.75 0.06 0.01 0.16]\n [0.06 0.09 0.38 0.36 0.11]\n [0.05 0.85 0.01 0.06 0.03]\n [0.15 0.25 0.09 0.31 0.2 ]]\nrow sums: [1. 1. 1. 1. 1.]"
+    }
+   ]
+  },
+  {
+   "p": 9,
+   "title": "2.1 Barrier 1 — self-attention does not know about order",
+   "cells": [
+    {
+     "n": 14,
+     "type": "markdown",
+     "src": "### 2.1 Barrier 1 — self-attention does not know about order\n\nThe lecture claimed self-attention is **permutation-equivariant**: shuffle the input and\nthe output just shuffles the same way. `dog bites man` and `man bites dog` would produce\nthe same set of vectors. Let us check it numerically.\n\n> 🇰🇷 강의에서 self-attention은 **순서에 상관이 없다(permutation-equivariant)** 이라고 했습니다.\n> 입력을 섞으면 출력도 똑같이 섞일 뿐입니다. `dog bites man` 과 `man bites dog` 가\n> 같은 벡터 집합을 내놓는다는 뜻이죠. 수치로 확인해 봅시다.",
+     "out": ""
+    },
+    {
+     "n": 15,
+     "type": "code",
+     "src": "perm = np.array([2, 0, 4, 1, 3])                  # some shuffle\n\nout_shuffled_input, _ = self_attention(X[perm], Wq, Wk, Wv)   # SA(PX)\nout_shuffled_output   = out[perm]                              # P * SA(X)\n\ndiff = np.abs(out_shuffled_input - out_shuffled_output).max()\nprint(f\"max |SA(PX) - P*SA(X)| = {diff:.2e}   <- zero up to float precision\")\nprint(\"\\n-> Order is simply not in the mechanism.\")\nprint(\"   Fix: add a positional encoding to the input (Part 4).\")",
+     "out": "max |SA(PX) - P*SA(X)| = 1.33e-15   <- zero up to float precision\n\n-> Order is simply not in the mechanism.\n   Fix: add a positional encoding to the input (Part 4)."
+    }
+   ]
+  },
+  {
+   "p": 10,
+   "title": "2.2 Barrier 2 — attention can only average, never leave the hull",
+   "cells": [
+    {
+     "n": 16,
+     "type": "markdown",
+     "src": "### 2.2 Barrier 2 — attention can only average, never leave the hull\n\nAttention weights are non-negative and sum to 1, so every output is a **convex\ncombination** of the value vectors: it can never go outside the range the values span.\nStacking more attention layers does not change that — which is why the Transformer\nneeds a feed-forward layer.\n\n> 🇰🇷 attention 가중치는 음수가 아니고 합이 1입니다. 따라서 모든 출력은 값 벡터들의\n> 볼록 결합(convex combination)이고, 값들이 만드는 범위를 절대 벗어날 수 없습니다. attention을 더 쌓아도\n> 마찬가지입니다. Transformer에 feed-forward 층이 필요한 이유입니다.",
+     "out": ""
+    },
+    {
+     "n": 17,
+     "type": "code",
+     "src": "V = X @ Wv\ninside = ((out >= V.min(axis=0) - 1e-9) & (out <= V.max(axis=0) + 1e-9)).all()\nprint(\"all attention weights >= 0 :\", bool((A >= 0).all()))\nprint(\"every row sums to 1        :\", bool(np.allclose(A.sum(1), 1)))\nprint(\"every output stays inside [min V, max V] per dimension :\", bool(inside))\nprint(\"\\n-> Attention MOVES information. The feed-forward layer TRANSFORMS it.\")",
+     "out": "all attention weights >= 0 : True\nevery row sums to 1        : True\nevery output stays inside [min V, max V] per dimension : True\n\n-> Attention MOVES information. The feed-forward layer TRANSFORMS it."
+    }
+   ]
+  },
+  {
+   "p": 11,
+   "title": "2.3 Barrier 3 — masking the future (and the order of operations)",
+   "cells": [
+    {
+     "n": 18,
+     "type": "markdown",
+     "src": "### 2.3 Barrier 3 — masking the future (and the order of operations)\n\nFor a language model, token $i$ must not see tokens $j > i$. We set those scores to\n$-\\infty$ **before** the softmax. A very common bug is to zero the weights *after* the\nsoftmax — then the rows no longer sum to 1 and the \"weighted average\" is no longer an\naverage.\n\n> 🇰🇷 언어모델에서 토큰 $i$ 는 자기보다 뒤의 토큰 $j > i$ 를 보면 안 됩니다.\n> 해당 점수를 softmax **전에** $-\\infty$ 로 만듭니다.\n> 흔한 버그(실수)가 softmax **뒤에** 가중치를 0으로 만드는 것인데, 그러면 행의 합이 1이 아니게 되어\n> 더 이상 \"가중평균\"이 아닙니다.",
+     "out": ""
+    },
+    {
+     "n": 19,
+     "type": "code",
+     "src": "causal = np.tril(np.ones((n, n))) == 1          # True where a token may look\n\nout_masked, A_masked = self_attention(X, Wq, Wk, Wv, mask=causal)\n\nprint(\"RIGHT -- mask before softmax:\")\nprint(np.round(A_masked, 2))\nprint(\"row sums:\", np.round(A_masked.sum(1), 6), \" <- still 1\")\nprint(\"max weight on the future:\", A_masked[~causal].max())\n\nA_wrong = A * causal                             # zero them out AFTER softmax\nprint(\"\\nWRONG -- zero out after softmax:\")\nprint(\"row sums:\", np.round(A_wrong.sum(1), 3), \" <- not 1 any more!\")",
+     "out": "RIGHT -- mask before softmax:\n[[1.   0.   0.   0.   0.  ]\n [0.01 0.99 0.   0.   0.  ]\n [0.12 0.17 0.71 0.   0.  ]\n [0.05 0.88 0.01 0.06 0.  ]\n [0.15 0.25 0.09 0.31 0.2 ]]\nrow sums: [1. 1. 1. 1. 1.]  <- still 1\nmax weight on the future: 0.0\n\nWRONG -- zero out after softmax:\nrow sums: [0.054 0.761 0.529 0.97  1.   ]  <- not 1 any more!"
+    }
+   ]
+  },
+  {
+   "p": 12,
+   "title": "Part 3 — PyTorch: scaled dot-product → multi-head",
+   "cells": [
+    {
+     "n": 20,
+     "type": "markdown",
+     "src": "---\n## Part 3 — PyTorch: scaled dot-product → multi-head\n\nSame maths, now in PyTorch so it can be trained. We write the function ourselves and\nthen check it against PyTorch's own built-in implementation — if they agree to 1e-6,\nwe got it right.\n\n> 🇰🇷 같은 수식을 이제 PyTorch로 옮깁니다. 직접 함수를 작성한 뒤 PyTorch 내장 구현과 대조합니다.\n> 1e-6 수준에서 일치하면 제대로 만든 것입니다.",
+     "out": ""
+    },
+    {
+     "n": 21,
+     "type": "code",
+     "src": "def scaled_dot_product_attention(q, k, v, causal=False):\n    '''q, k, v: (batch, heads, seq, head_dim)'''\n    d_k = q.shape[-1]\n    scores = q @ k.transpose(-2, -1) / math.sqrt(d_k)          # (B, H, T, T)\n    if causal:\n        T = q.shape[-2]\n        future = torch.triu(torch.ones(T, T, dtype=torch.bool), diagonal=1)\n        scores = scores.masked_fill(future, float(\"-inf\"))\n    attn = scores.softmax(dim=-1)\n    return attn @ v, attn\n\nB, T, D, H = 2, 7, 64, 4\nq = torch.randn(B, H, T, D // H)\nk = torch.randn(B, H, T, D // H)\nv = torch.randn(B, H, T, D // H)\n\nours, _ = scaled_dot_product_attention(q, k, v, causal=True)\nref     = F.scaled_dot_product_attention(q, k, v, is_causal=True)   # PyTorch's own\n\nprint(\"ours :\", tuple(ours.shape))\nprint(\"max absolute difference vs PyTorch:\", (ours - ref).abs().max().item())",
+     "out": "ours : (2, 4, 7, 16)\nmax absolute difference vs PyTorch: 2.384185791015625e-07"
+    }
+   ]
+  },
+  {
+   "p": 13,
+   "title": "3.1 Multi-head self-attention as a module",
+   "cells": [
+    {
+     "n": 22,
+     "type": "markdown",
+     "src": "### 3.1 Multi-head self-attention as a module\n\nSplit `d` into `h` heads of size `d/h`, run attention in each independently, concatenate,\nproject back with $W^O$. One `nn.Linear` produces Q, K and V at once — that is the usual\nimplementation trick.\n\n> 🇰🇷 `d` 를 `h` 개의 `d/h` 차원 head로 나누고, 각각에서 독립적으로 attention을 돌린 뒤,\n> 이어 붙이고 $W^O$ 로 다시 사영합니다. `nn.Linear` 하나로 Q·K·V를 한 번에 만드는 것이\n> 흔히 쓰는 구현 요령입니다.",
+     "out": ""
+    },
+    {
+     "n": 23,
+     "type": "code",
+     "src": "class MultiHeadSelfAttention(nn.Module):\n    def __init__(self, d_model, n_heads, causal=True):\n        super().__init__()\n        assert d_model % n_heads == 0, \"d_model must be divisible by n_heads\"\n        self.h, self.d_head, self.causal = n_heads, d_model // n_heads, causal\n        self.qkv  = nn.Linear(d_model, 3 * d_model)   # W^Q, W^K, W^V in one matrix\n        self.proj = nn.Linear(d_model, d_model)       # W^O\n\n    def split_heads(self, t):                          # (B,T,D) -> (B,h,T,D/h)\n        B, T, D = t.shape\n        return t.view(B, T, self.h, self.d_head).transpose(1, 2)\n\n    def forward(self, x):\n        B, T, D = x.shape\n        q, k, v = self.qkv(x).split(D, dim=-1)\n        q, k, v = map(self.split_heads, (q, k, v))\n        out, attn = scaled_dot_product_attention(q, k, v, causal=self.causal)\n        out = out.transpose(1, 2).reshape(B, T, D)     # concat the heads back\n        self.last_attn = attn.detach()                 # keep it so we can look at it\n        return self.proj(out)\n\nmha = MultiHeadSelfAttention(d_model=64, n_heads=4)\nx   = torch.randn(2, 7, 64)\ny   = mha(x)\nprint(\"input  :\", tuple(x.shape))\nprint(\"output :\", tuple(y.shape), \" <- same shape in, same shape out\")\nprint(\"attn   :\", tuple(mha.last_attn.shape), \" (batch, heads, query, key)\")",
+     "out": "input  : (2, 7, 64)\noutput : (2, 7, 64)  <- same shape in, same shape out\nattn   : (2, 4, 7, 7)  (batch, heads, query, key)"
+    }
+   ]
+  },
+  {
+   "p": 14,
+   "title": "3.2 h heads really are free",
+   "cells": [
+    {
+     "n": 24,
+     "type": "markdown",
+     "src": "### 3.2 h heads really are free\n\nThe lecture claimed that because each head uses `d/h` dimensions, `h` heads cost the same\nas one head of full width. Count the parameters and see.\n\n> 🇰🇷 강의에서 각 head가 `d/h` 차원만 쓰기 때문에 head를 h개 써도 전체 차원 head 하나와\n> 비용이 같다고 했습니다. 파라미터를 세어 확인합시다.",
+     "out": ""
+    },
+    {
+     "n": 25,
+     "type": "code",
+     "src": "print(\" n_heads   parameters\")\nfor h in (1, 2, 4, 8, 16):\n    m = MultiHeadSelfAttention(d_model=64, n_heads=h)\n    print(f\"{h:>8}   {sum(p.numel() for p in m.parameters()):>10,}\")\nprint(\"\\n-> identical. h different views of the sentence, at no extra cost.\")",
+     "out": " n_heads   parameters\n       1       16,640\n       2       16,640\n       4       16,640\n       8       16,640\n      16       16,640\n\n-> identical. h different views of the sentence, at no extra cost."
+    }
+   ]
+  },
+  {
+   "p": 15,
+   "title": "4.1 Sinusoidal positional encoding",
+   "cells": [
+    {
+     "n": 26,
+     "type": "markdown",
+     "src": "---\n## Part 4 — A complete mini Transformer block\n\nNow we assemble everything: **positional encoding + Pre-LN block (attention → FFN, each\nwith a residual)**, stack it, and actually train it on a task where we can *see* whether\nattention learned the right thing.\n\n> 🇰🇷 이제 전부 조립합니다. **위치 인코딩 + Pre-LN 블록(attention → FFN, 각각 residual)** 을\n> 쌓고, attention이 제대로 배웠는지 **눈으로 확인할 수 있는** 과제로 실제 학습시킵니다.\n\n### 4.1 Sinusoidal positional encoding\n\nThe heatmap looks striped because neighbouring columns are a **sin/cos pair of the same\nfrequency** — `dim 0` and `dim 1` share a wavelength, `dim 2` and `dim 3` share the next\none, and so on. Low dimensions turn fast, high dimensions turn slowly, so every position\ngets its own unique pattern across the 64 dimensions.\n\n> 🇰🇷 히트맵이 줄무늬처럼 보이는 이유는 이웃한 두 열이 **같은 주파수의 sin/cos 쌍**이기 때문입니다.\n> `dim 0`과 `dim 1`이 같은 파장을 쓰고, `dim 2`와 `dim 3`이 다음 파장을 쓰는 식이죠.\n> 낮은 차원은 빠르게, 높은 차원은 느리게 돕니다. 그래서 위치마다 64차원에 걸쳐 고유한 무늬가 생깁니다.",
+     "out": ""
+    }
+   ]
+  },
+  {
+   "p": 16,
+   "title": "def sinusoidal_pe(max_len, d_model):",
+   "cells": [
+    {
+     "n": 27,
+     "type": "code",
+     "src": "def sinusoidal_pe(max_len, d_model):\n    pe  = torch.zeros(max_len, d_model)\n    pos = torch.arange(max_len).unsqueeze(1).float()\n    div = torch.pow(10000.0, torch.arange(0, d_model, 2).float() / d_model)\n    pe[:, 0::2] = torch.sin(pos / div)\n    pe[:, 1::2] = torch.cos(pos / div)\n    return pe\n\npe = sinusoidal_pe(60, 64)\nfig, ax = plt.subplots(1, 2, figsize=(11, 2.8))\nim = ax[0].imshow(pe, aspect=\"auto\", cmap=\"RdBu_r\", vmin=-1, vmax=1)\nax[0].set_xlabel(\"dimension\"); ax[0].set_ylabel(\"position\")\nax[0].set_title(\"sinusoidal positional encoding\"); fig.colorbar(im, ax=ax[0])\nfor dim, c in [(0, \"tab:red\"), (8, \"tab:blue\"), (24, \"tab:green\")]:\n    ax[1].plot(pe[:, dim], color=c, label=f\"dim {dim}\")\nax[1].legend(); ax[1].set_xlabel(\"position\")\nax[1].set_title(\"each dimension is a wave of its own wavelength\")\nplt.tight_layout(); plt.show()",
+     "out": "<Figure size 1100x280 with 3 Axes>\n[그림 출력]"
+    }
+   ]
+  },
+  {
+   "p": 17,
+   "title": "4.2 The block and the model",
+   "cells": [
+    {
+     "n": 28,
+     "type": "markdown",
+     "src": "### 4.2 The block and the model\n\n`x = x + Attention(LN(x))` then `x = x + FFN(LN(x))` — the **Pre-LN** arrangement from the\nlecture, which is what every modern LLM uses.\n\n> 🇰🇷 `x = x + Attention(LN(x))` 다음 `x = x + FFN(LN(x))` — 강의에서 본 **Pre-LN** 방식이고,\n> 요즘 LLM은 전부 이 배치를 씁니다.",
+     "out": ""
+    },
+    {
+     "n": 29,
+     "type": "code",
+     "src": "class TransformerBlock(nn.Module):\n    def __init__(self, d_model, n_heads):\n        super().__init__()\n        self.ln1  = nn.LayerNorm(d_model)\n        self.attn = MultiHeadSelfAttention(d_model, n_heads, causal=True)\n        self.ln2  = nn.LayerNorm(d_model)\n        self.ffn  = nn.Sequential(\n            nn.Linear(d_model, 4 * d_model), nn.GELU(),\n            nn.Linear(4 * d_model, d_model),\n        )\n\n    def forward(self, x):\n        x = x + self.attn(self.ln1(x))     # residual 1: attention MOVES information\n        x = x + self.ffn(self.ln2(x))      # residual 2: the FFN TRANSFORMS it\n        return x\n\n\nclass MiniTransformer(nn.Module):\n    def __init__(self, vocab, d_model=64, n_heads=1, n_layers=1, max_len=64,\n                 use_pe=True):\n        super().__init__()\n        self.use_pe = use_pe\n        self.emb    = nn.Embedding(vocab, d_model)\n        self.register_buffer(\"pe\", sinusoidal_pe(max_len, d_model))\n        self.blocks = nn.ModuleList([TransformerBlock(d_model, n_heads)\n                                     for _ in range(n_layers)])\n        self.ln_f   = nn.LayerNorm(d_model)\n        self.head   = nn.Linear(d_model, vocab)\n\n    def forward(self, idx):\n        x = self.emb(idx)\n        if self.use_pe:\n            x = x + self.pe[:idx.shape[1]]\n        for b in self.blocks:\n            x = b(x)\n        return self.head(self.ln_f(x))\n\nmodel = MiniTransformer(vocab=11)\nprint(model)\nprint(\"\\nparameters:\", sum(p.numel() for p in model.parameters()))",
+     "out": "MiniTransformer(\n  (emb): Embedding(11, 64)\n  (blocks): ModuleList(\n    (0): TransformerBlock(\n      (ln1): LayerNorm((64,), eps=1e-05, elementwise_affine=True)\n      (attn): MultiHeadSelfAttention(\n        (qkv): Linear(in_features=64, out_features=192, bias=True)\n        (proj): Linear(in_features=64, out_features=64, bias=True)\n      )\n      (ln2): LayerNorm((64,), eps=1e-05, elementwise_affine=True)\n      (ffn): Sequential(\n        (0): Linear(in_features=64, out_features=256, bias=True)\n        (1): GELU(approximate='none')\n        (2): Linear(in_features=256, out_features=64, bias=True)\n      )\n    )\n  )\n  (ln_f): LayerNorm((64,), eps=1e-05, elementwise_affine=True)\n  (head): Linear(in_features=64, out_features=11, bias=True)\n)\n\nparameters: 51531"
+    }
+   ]
+  },
+  {
+   "p": 18,
+   "title": "4.3 A task where we can see the attention: reverse the sequence",
+   "cells": [
+    {
+     "n": 30,
+     "type": "markdown",
+     "src": "### 4.3 A task where we can see the attention: **reverse the sequence**\n\nThe model reads 8 random digits, then a separator `|`, and must then produce the same 8\ndigits **backwards**. It is a pure routing problem: to emit the next symbol, the head has\nto look at exactly one earlier position — and we can plot which one it picked.\n\n> 🇰🇷 모델이 무작위 숫자 8개를 읽고, 구분자 `|` 다음에 그 숫자들을 **거꾸로** 출력해야 합니다.\n> 순수한 정보 라우팅 문제입니다. 다음 기호를 내놓으려면 head가 정확히 한 위치를 봐야 하는데,\n> 어느 위치를 골랐는지 우리가 그림으로 볼 수 있습니다.\n\nExample · 예시:  `3 1 4 1 5 9 2 6 | 6 2 9 5 1 4 1 3`\n\nWe use **one head** here on purpose, so the picture is unambiguous. (Part 3 showed how\nseveral heads work; feel free to rerun this with `n_heads=2` afterwards.)\n\n> 🇰🇷 그림이 명확하도록 여기서는 일부러 **head 1개**를 씁니다.\n> (multi-head는 Part 3에서 봤습니다. 끝나고 `n_heads=2` 로 다시 돌려 봐도 좋습니다.)",
+     "out": ""
+    }
+   ]
+  },
+  {
+   "p": 19,
+   "title": "N_SYM, K = 10, 8            # digits 0..9, copy length 8",
+   "cells": [
+    {
+     "n": 31,
+     "type": "code",
+     "src": "N_SYM, K = 10, 8            # digits 0..9, copy length 8\nSEP, VOCAB = N_SYM, N_SYM + 1\nSEQ_LEN = 2 * K             # model input length (the full sequence is 17, shifted by 1)\n\ndef make_batch(bs, gen):\n    a   = torch.randint(N_SYM, (bs, K), generator=gen)\n    seq = torch.cat([a, torch.full((bs, 1), SEP), a.flip(1)], dim=1)   # a | reverse(a)\n    return seq[:, :-1].contiguous(), seq[:, 1:].contiguous()           # inputs, targets\n\ndef show(row):\n    return \" \".join(\"|\" if int(t) == SEP else str(int(t)) for t in row)\n\ng = torch.Generator().manual_seed(100)\nxb, yb = make_batch(2, g)\nprint(\"input  :\", show(xb[0]))\nprint(\"target :\", show(yb[0]), \"  (= input shifted by one)\")",
+     "out": "input  : 0 2 5 9 5 1 2 8 | 8 2 1 5 9 5 2\ntarget : 2 5 9 5 1 2 8 | 8 2 1 5 9 5 2 0   (= input shifted by one)"
+    }
+   ]
+  },
+  {
+   "p": 20,
+   "title": "def train(use_pe=True, causal=True, n_heads=1, steps=400, seed=0, verbose=True):",
+   "cells": [
+    {
+     "n": 32,
+     "type": "code",
+     "src": "def train(use_pe=True, causal=True, n_heads=1, steps=400, seed=0, verbose=True):\n    torch.manual_seed(seed)\n    gen = torch.Generator().manual_seed(seed + 100)\n    m   = MiniTransformer(VOCAB, d_model=64, n_heads=n_heads,\n                          max_len=SEQ_LEN, use_pe=use_pe)\n    for blk in m.blocks:                       # switch the mask off for the ablation\n        blk.attn.causal = causal\n    opt = torch.optim.AdamW(m.parameters(), lr=3e-3)\n\n    t0 = time.time()\n    for step in range(steps):\n        x, y = make_batch(64, gen)\n        loss = F.cross_entropy(m(x).reshape(-1, VOCAB), y.reshape(-1))\n        opt.zero_grad(); loss.backward(); opt.step()\n    secs = time.time() - t0\n\n    m.eval()\n    gt = torch.Generator().manual_seed(999)\n    x, y = make_batch(512, gt)\n    with torch.no_grad():\n        logits = m(x)\n    # accuracy on the reversed half only\n    acc = (logits.argmax(-1)[:, K:] == y[:, K:]).float().mean().item()\n    # loss on the FIRST half, which is genuinely random -> chance is ln(10) = 2.303\n    first = F.cross_entropy(logits[:, :K - 1].reshape(-1, VOCAB),\n                            y[:, :K - 1].reshape(-1)).item()\n    if verbose:\n        print(f\"trained in {secs:.1f}s | reverse accuracy = {acc:.3f} | \"\n              f\"loss on the random first half = {first:.3f}\")\n    return m, acc, first\n\nmodel, acc, first = train()",
+     "out": "trained in 23.9s | reverse accuracy = 1.000 | loss on the random first half = 2.311"
+    }
+   ]
+  },
+  {
+   "p": 21,
+   "title": "does it actually do the task?",
+   "cells": [
+    {
+     "n": 33,
+     "type": "code",
+     "src": "# does it actually do the task?\nmodel.eval()\ngt = torch.Generator().manual_seed(7)\nx, y = make_batch(1, gt)\nwith torch.no_grad():\n    pred = model(x).argmax(-1)\n\nprint(\"input     :\", show(x[0]))\nprint(\"target    :\", show(y[0]))\nprint(\"predicted :\", show(pred[0]))\nprint(\"\\n(only the part after '|' is learnable — the first half is random noise)\")",
+     "out": "input     : 5 2 1 6 3 7 7 9 | 9 7 7 3 6 1 2\ntarget    : 2 1 6 3 7 7 9 | 9 7 7 3 6 1 2 5\npredicted : 8 8 8 8 8 7 7 | 9 7 7 3 6 1 2 5\n\n(only the part after '|' is learnable — the first half is random noise)"
+    }
+   ]
+  },
+  {
+   "p": 22,
+   "title": "4.4 What did the head learn? Look at the attention map",
+   "cells": [
+    {
+     "n": 34,
+     "type": "markdown",
+     "src": "### 4.4 What did the head learn? Look at the attention map\n\nIf the model solved the task by attention, the second half of the map must show a clean\n**anti-diagonal**: query at position $i$ looking at key at position $15-i$.\n\n> 🇰🇷 모델이 attention으로 과제를 풀었다면, map의 후반부에 깔끔한 **반대각선**이 보여야 합니다.\n> 위치 $i$ 의 쿼리가 위치 $15-i$ 의 키를 보는 형태죠.",
+     "out": ""
+    },
+    {
+     "n": 35,
+     "type": "code",
+     "src": "A = model.blocks[0].attn.last_attn[0, 0]        # (T, T): batch 0, head 0\nlabels = [f\"{i}:{'|' if int(t) == SEP else int(t)}\" for i, t in enumerate(x[0])]\n\nfig, ax = plt.subplots(figsize=(6.6, 5.8))\nim = ax.imshow(A, cmap=\"Blues\", vmin=0, vmax=A.max())\nax.set_xticks(range(SEQ_LEN)); ax.set_xticklabels(labels, rotation=90, fontsize=8)\nax.set_yticks(range(SEQ_LEN)); ax.set_yticklabels(labels, fontsize=8)\nax.set_xlabel(\"key  (what it looks AT)   —  labelled position:symbol\")\nax.set_ylabel(\"query  (the position deciding)\")\nax.set_title(\"our trained head: the anti-diagonal is the reversal\")\nfig.colorbar(im, ax=ax, fraction=0.046)\nplt.tight_layout(); plt.show()\n\n# and the same thing as a number, averaged over 256 sequences\ngt = torch.Generator().manual_seed(555)\nxb, _ = make_batch(256, gt)\nwith torch.no_grad():\n    model(xb)\nA_all = model.blocks[0].attn.last_attn[:, 0]\nqueries = list(range(K, SEQ_LEN - 1))\ncorrect = [SEQ_LEN - 1 - i for i in queries]\nhit  = (A_all[:, queries].argmax(-1) == torch.tensor(correct)).float().mean()\nmass = A_all[:, queries, correct].mean()\nprint(f\"the head's top choice is the correct position {hit*100:.1f}% of the time\")\nprint(f\"and it puts {mass*100:.0f}% of its attention mass exactly there\")",
+     "out": "<Figure size 660x580 with 2 Axes>\n[그림 출력]\nthe head's top choice is the correct position 99.8% of the time\nand it puts 64% of its attention mass exactly there"
+    }
+   ]
+  },
+  {
+   "p": 23,
+   "title": "4.5 The three barriers, now as an experiment",
+   "cells": [
+    {
+     "n": 36,
+     "type": "markdown",
+     "src": "### 4.5 The three barriers, now as an experiment\n\nWe claimed in the lecture that positional encoding and the causal mask are not optional.\nLet us remove them one at a time and measure what happens. Each run takes ~2 seconds.\n\n> 🇰🇷 강의에서 위치 인코딩과 causal 마스크가 선택사항이 아니라고 했습니다.\n> 하나씩 빼 보고 무슨 일이 생기는지 측정해 봅시다. 각 실행에 2초 정도 걸립니다.",
+     "out": ""
+    },
+    {
+     "n": 37,
+     "type": "code",
+     "src": "print(\"baseline (positional encoding + causal mask)\")\n_, acc_base, first_base = train()\n\nprint(\"\\nBARRIER 1 -- no positional encoding:\")\n_, acc_nope, first_nope = train(use_pe=False)\n\nprint(\"\\nBARRIER 3 -- no causal mask:\")\n_, acc_nomask, first_nomask = train(causal=False)\n\nprint(\"\\n\" + \"=\" * 68)\nprint(f\"{'setting':<34}{'reverse acc':>13}{'first-half loss':>19}\")\nprint(\"-\" * 68)\nprint(f\"{'baseline':<34}{acc_base:>13.3f}{first_base:>19.3f}\")\nprint(f\"{'no positional encoding':<34}{acc_nope:>13.3f}{first_nope:>19.3f}\")\nprint(f\"{'no causal mask':<34}{acc_nomask:>13.3f}{first_nomask:>19.3f}\")\nprint(\"=\" * 68)\nprint(f\"chance level for the first half = ln(10) = {math.log(10):.3f}\")",
+     "out": "baseline (positional encoding + causal mask)\ntrained in 23.1s | reverse accuracy = 1.000 | loss on the random first half = 2.311\n\nBARRIER 1 -- no positional encoding:\ntrained in 8.3s | reverse accuracy = 0.298 | loss on the random first half = 2.446\n\nBARRIER 3 -- no causal mask:\ntrained in 7.7s | reverse accuracy = 1.000 | loss on the random first half = 0.000\n\n====================================================================\nsetting                             reverse acc    first-half loss\n--------------------------------------------------------------------\nbaseline                                  1.000              2.311\nno positional encoding                    0.298              2.446\nno causal mask                            1.000              0.000\n====================================================================\nchance level for the first half = ln(10) = 2.303"
+    }
+   ]
+  },
+  {
+   "p": 24,
+   "title": "Read the table carefully — both numbers say something.",
+   "cells": [
+    {
+     "n": 38,
+     "type": "markdown",
+     "src": "Read the table carefully — both numbers say something.\n\n**Barrier 1 (no positional encoding).** Accuracy collapses from ~1.00 to ~0.28. To reverse\na sequence you must know *where* things are, and without the positional encoding the model\nsimply cannot know. The mechanism has no notion of order; we have to put it in the input.\n\n> 🇰🇷 **Barrier 1 (위치 인코딩 없음).** 정확도가 ~1.00에서 ~0.28로 무너집니다.\n> 시퀀스를 뒤집으려면 무엇이 *어디* 있는지 알아야 하는데, 위치 인코딩이 없으면 알 방법이 없습니다.\n> 메커니즘 자체에 순서 개념이 없으니, 입력에 넣어 주는 수밖에 없습니다.\n\n**Barrier 3 (no causal mask).** Accuracy is still ~1.00, so at first glance nothing broke.\nBut look at the other column: the loss on the **random** first half drops to ≈0.00, when\nthe best any honest model can do is ln(10) ≈ 2.303. The model is predicting random digits\nperfectly — which is impossible. It is reading them from the future. This is why a\nlanguage model without a mask learns nothing useful: the task became trivial.\n\n> 🇰🇷 **Barrier 3 (마스크 없음).** 정확도는 여전히 ~1.00이라 언뜻 멀쩡해 보입니다.\n> 그런데 옆 칸을 보세요. **무작위**인 전반부의 손실이 ≈0.00까지 떨어집니다.\n> 정직한 모델이 낼 수 있는 최선은 ln(10) ≈ 2.303인데 말이죠.\n> 무작위 숫자를 완벽히 맞히고 있다는 뜻이고, 이는 불가능합니다. 미래를 읽고 있는 겁니다.\n> 마스크 없는 언어모델이 아무것도 못 배우는 이유가 이것입니다 — 과제가 시시해져 버립니다.\n\n**And barrier 2?** If you remove the FFN from the block, this task still gets ~1.00.\nThat is not a contradiction — reversing a sequence is *pure routing*, and routing is\nexactly what attention alone is good at. The FFN earns its keep on tasks that need the\ntokens **transformed**, not just moved. Attention communicates; the FFN computes.\n\n> 🇰🇷 **Barrier 2는?** 블록에서 FFN을 빼도 이 Task는 여전히 ~1.00이 나옵니다.\n> 모순이 아닙니다. 시퀀스 순서 뒤집기는 *순수한 라우팅*이고, 라우팅은 attention 혼자서 제일 잘하는 일이니까요.\n> FFN은 토큰을 단순히 **옮기는** 게 아니라 **변환해야** 하는 과제에서 값을 합니다.\n> attention은 통신하고, FFN은 계산합니다.",
+     "out": ""
+    }
+   ]
+  },
+  {
+   "p": 25,
+   "title": "Part 5 — Real attention heads",
+   "cells": [
+    {
+     "n": 39,
+     "type": "markdown",
+     "src": "---\n## Part 5 — Real attention heads\n\nOur head learned one clean rule because we gave it one clean job. What do heads look like\nin a model that was trained on all of Wikipedia?\n\nWe load **DistilBERT** (6 layers × 12 heads = 72 heads, 66M parameters) and read its\nattention out directly. First run downloads ~250 MB.\n\n> 🇰🇷 우리 head는 일이 하나뿐이라 규칙 하나를 깔끔하게 배웠습니다.\n> 위키피디아 전체로 학습한 모델의 head는 어떻게 생겼을까요?\n> **DistilBERT**(6층 × 12 head = 72개 head, 파라미터 6,600만)를 불러와 attention을 직접 꺼내 봅니다.\n> 처음 실행할 때 250MB 정도를 내려받습니다.",
+     "out": ""
+    },
+    {
+     "n": 40,
+     "type": "code",
+     "src": "from transformers import AutoTokenizer, AutoModel, logging as hf_logging\nhf_logging.set_verbosity_error()          # keep the output tidy\n\nNAME = \"distilbert-base-uncased\"          # first run downloads ~250 MB\ntok = AutoTokenizer.from_pretrained(NAME)\ntry:\n    bert = AutoModel.from_pretrained(NAME, attn_implementation=\"eager\")\nexcept TypeError:                       # older versions of transformers\n    bert = AutoModel.from_pretrained(NAME)\nbert.eval()\n\nSENT = \"The chef who ran to the store was tired.\"     # the sentence from the lecture\n\ndef attention_for(sentence):\n    enc = tok(sentence, return_tensors=\"pt\")\n    with torch.no_grad():\n        out = bert(**enc, output_attentions=True)\n    A = torch.stack(out.attentions)[:, 0]             # (layers, heads, T, T)\n    return A, tok.convert_ids_to_tokens(enc[\"input_ids\"][0])\n\nA, tokens = attention_for(SENT)\nprint(\"tokens    :\", tokens)\nprint(\"attention :\", tuple(A.shape), \" (layers, heads, query, key)\")",
+     "out": "Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.\nWARNING:huggingface_hub.utils._http:Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.\nconfig.json:   0%|          | 0.00/483 [00:00<?, ?B/s]\ntokenizer_config.json:   0%|          | 0.00/48.0 [00:00<?, ?B/s]\nvocab.txt:   0%|          | 0.00/232k [00:00<?, ?B/s]\ntokenizer.json:   0%|          | 0.00/466k [00:00<?, ?B/s]\nmodel.safetensors: reconstructing file:   0%|          |  0.00B /  268MB            \nmodel.safetensors: downloading bytes:           |  0.00B            \nLoading weights:   0%|          | 0/100 [00:00<?, ?it/s]\ntokens    : ['[CLS]', 'the', 'chef', 'who', 'ran', 'to', 'the', 'store', 'was', 'tired', '.', '[SEP]']\nattention : (6, 12, 12, 12)  (layers, heads, query, key)"
+    }
+   ]
+  },
+  {
+   "p": 26,
+   "title": "5.1 All 12 heads of one layer",
+   "cells": [
+    {
+     "n": 41,
+     "type": "markdown",
+     "src": "### 5.1 All 12 heads of one layer\n\nEvery panel is one head's attention matrix for the same sentence. They are clearly not\ndoing the same thing.\n\n> 🇰🇷 각 패널이 같은 문장에 대한 head 하나의 attention 행렬입니다.\n> 서로 전혀 다른 일을 하고 있는 게 한눈에 보입니다.",
+     "out": ""
+    },
+    {
+     "n": 42,
+     "type": "code",
+     "src": "LAYER = 1\nfig, axes = plt.subplots(2, 6, figsize=(15, 5.2))\nfor h, axx in enumerate(axes.flat):\n    axx.imshow(A[LAYER, h], cmap=\"Blues\", vmin=0, vmax=1)\n    axx.set_title(f\"L{LAYER} H{h}\", fontsize=10)\n    axx.set_xticks([]); axx.set_yticks([])\nfig.suptitle(f\"DistilBERT layer {LAYER}: all 12 heads, same sentence\", y=1.02)\nplt.tight_layout(); plt.show()",
+     "out": "<Figure size 1500x520 with 12 Axes>\n[그림 출력]"
+    }
+   ]
+  },
+  {
+   "p": 27,
+   "title": "5.2 Three heads with a job you can name",
+   "cells": [
+    {
+     "n": 43,
+     "type": "markdown",
+     "src": "### 5.2 Three heads with a job you can name\n\nLet us zoom in on three of them. (Head indices found by scanning all 72 heads — you can\ndo the same scan yourself in the next cell.)\n\n> 🇰🇷 이 중 셋을 확대해 봅시다. (72개 head를 전부 훑어서 고른 것입니다. 다음 셀에서 여러분도 같은 탐색을 할 수 있습니다.)\n\n* **L1 H9 — the next-token head.** Almost the entire row sits on position $i+1$.\n* **L0 H2 — the previous-token head.** The mirror image.\n* **L2 H10 — a subject–verb head.** \"was\" looks back at \"chef\", skipping the whole\n  relative clause \"who ran to the store\". This is the alignment the lecture talked about,\n  and nobody supervised it.\n\n> 🇰🇷 * **L1 H9 — 다음 토큰 head.** 행의 거의 전부가 $i+1$ 위치에 몰려 있습니다.\n> * **L0 H2 — 이전 토큰 head.** 그 거울상입니다.\n> * **L2 H10 — 주어–동사 head.** \"was\"가 관계절 \"who ran to the store\"를 통째로 건너뛰고\n>   \"chef\"를 돌아봅니다. 강의에서 말한 그 정렬이고, 모델에게 아무도 가르쳐 주지 않았습니다.",
+     "out": ""
+    }
+   ]
+  },
+  {
+   "p": 28,
+   "title": "picks = [(1, 9, \"next-token head\"), (0, 2, \"previous-token head\"),",
+   "cells": [
+    {
+     "n": 44,
+     "type": "code",
+     "src": "picks = [(1, 9, \"next-token head\"), (0, 2, \"previous-token head\"),\n         (2, 10, \"subject-verb head\")]\n\nfig, axes = plt.subplots(1, 3, figsize=(15, 4.6))\nfor axx, (l, h, name) in zip(axes, picks):\n    axx.imshow(A[l, h], cmap=\"Blues\", vmin=0, vmax=1)\n    axx.set_xticks(range(len(tokens))); axx.set_xticklabels(tokens, rotation=90, fontsize=8)\n    axx.set_yticks(range(len(tokens))); axx.set_yticklabels(tokens, fontsize=8)\n    axx.set_title(f\"L{l} H{h} — {name}\")\nplt.tight_layout(); plt.show()\n\ni_was, i_chef = tokens.index(\"was\"), tokens.index(\"chef\")\nrow = A[2, 10, i_was]\norder = row.argsort(descending=True)[:3]\nprint(\"L2 H10, the row for 'was' — top 3 keys:\")\nfor j in order:\n    print(f\"   {tokens[j]:<8} {row[j]:.3f}\")",
+     "out": "<Figure size 1500x460 with 3 Axes>\n[그림 출력]\nL2 H10, the row for 'was' — top 3 keys:\n   chef     0.308\n   to       0.228\n   who      0.126"
+    }
+   ]
+  },
+  {
+   "p": 29,
+   "title": "tests = [(\"The students that the teacher praised were happy.\", \"were\", \"students",
+   "cells": [
+    {
+     "n": 45,
+     "type": "markdown",
+     "src": "Does the subject–verb head generalise, or did we just get lucky on one sentence?\nLet us test it on three more sentences with the same structure.\n\n> 🇰🇷 주어–동사 head가 일반화될까요, 아니면 한 문장에서 운이 좋았을 뿐일까요?\n> 같은 구조의 문장 세 개로 더 확인해 봅시다.",
+     "out": ""
+    },
+    {
+     "n": 46,
+     "type": "code",
+     "src": "tests = [(\"The students that the teacher praised were happy.\", \"were\", \"students\"),\n         (\"The dog that chased the cat is sleeping.\",          \"is\",   \"dog\"),\n         (\"The keys to the cabinet are on the table.\",         \"are\",  \"keys\")]\n\nprint(\"L2 H10 — where does the verb look?\")\nfor sent, verb, subj in tests:\n    Ai, ti = attention_for(sent)\n    row = Ai[2, 10, ti.index(verb)]\n    rank = row.argsort(descending=True).tolist().index(ti.index(subj)) + 1\n    top3 = [ti[j] for j in row.argsort(descending=True)[:3]]\n    print(f\"  '{verb}' -> subject '{subj}' has weight {row[ti.index(subj)]:.3f}, \"\n          f\"rank {rank}   (top 3: {top3})\")\n\nprint(\"\\n-> The subject is always in the top 3, usually first or second.\")\nprint(\"   Strong, but not a rule the model follows perfectly. Be honest about that.\")",
+     "out": "L2 H10 — where does the verb look?\n  'were' -> subject 'students' has weight 0.253, rank 2   (top 3: ['praised', 'students', 'that'])\n  'is' -> subject 'dog' has weight 0.206, rank 2   (top 3: ['chased', 'dog', 'cat'])\n  'are' -> subject 'keys' has weight 0.686, rank 1   (top 3: ['keys', 'to', 'the'])\n\n-> The subject is always in the top 3, usually first or second.\n   Strong, but not a rule the model follows perfectly. Be honest about that."
+    }
+   ]
+  },
+  {
+   "p": 30,
+   "title": "5.3 And many heads do almost nothing",
+   "cells": [
+    {
+     "n": 47,
+     "type": "markdown",
+     "src": "### 5.3 And many heads do almost nothing\n\nThe lecture mentioned that a surprising number of heads can be pruned with no loss. Here\nis one way to see it: some heads dump nearly all their attention on `[CLS]` / `[SEP]`,\nwhich carry no content. That is attention's version of \"no opinion\".\n\n> 🇰🇷 강의에서 상당수 head는 잘라내도 성능이 떨어지지 않는다고 했습니다. 확인하는 방법 하나는,\n> 내용이 없는 `[CLS]` / `[SEP]` 에 attention을 거의 다 쏟아붓는 head를 찾는 것입니다.\n> attention 판 \"의견 없음\"인 셈이죠.",
+     "out": ""
+    },
+    {
+     "n": 48,
+     "type": "code",
+     "src": "i_cls, i_sep = tokens.index(\"[CLS]\"), tokens.index(\"[SEP]\")\nmass = A[:, :, :, [i_cls, i_sep]].sum(-1).mean(-1)          # (layers, heads)\n\nfig, ax = plt.subplots(figsize=(8, 2.8))\nim = ax.imshow(mass, cmap=\"Oranges\", vmin=0, vmax=1, aspect=\"auto\")\nax.set_xlabel(\"head\"); ax.set_ylabel(\"layer\")\nax.set_title(\"share of attention spent on [CLS] / [SEP]\")\nfig.colorbar(im, ax=ax)\nplt.tight_layout(); plt.show()\n\nflat = mass.flatten()\nprint(f\"average over all {flat.numel()} heads : {flat.mean():.2f}\")\nprint(f\"heads spending more than 70% there   : {(flat > 0.7).float().mean()*100:.0f}%\")\nl, h = divmod(int(flat.argmax()), mass.shape[1])\nprint(f\"the most extreme one                 : L{l} H{h} at {flat.max():.2f}\")",
+     "out": "<Figure size 800x280 with 2 Axes>\n[그림 출력]\naverage over all 72 heads : 0.49\nheads spending more than 70% there   : 14%\nthe most extreme one                 : L2 H3 at 0.93"
+    }
+   ]
+  },
+  {
+   "p": 31,
+   "title": "5.4 One warning before you go",
+   "cells": [
+    {
+     "n": 49,
+     "type": "markdown",
+     "src": "### 5.4 One warning before you go\n\nAttention weights show you **where information was pulled from**, not **why the model\nanswered the way it did**. A head pointing at \"chef\" is suggestive, not proof. There is a\nreal research literature arguing both sides of *\"attention is not explanation\"* — enjoy\nthe pictures, but do not over-claim from them.\n\n> 🇰🇷 attention 가중치는 **정보를 어디서 가져왔는지**를 보여 줄 뿐,\n> **모델이 왜 그렇게 답했는지**를 보여 주지 않습니다.\n> head가 \"chef\"를 가리킨다는 건 시사적일 뿐 증명은 아닙니다.\n> *\"attention is not explanation\"* 을 두고 양쪽을 다투는 연구 문헌이 실제로 있습니다.\n> 그림은 즐기되, 거기서 과한 주장을 끌어내지는 마세요.",
+     "out": ""
+    }
+   ]
+  },
+  {
+   "p": 32,
+   "title": "Next week · 다음 주",
+   "cells": [
+    {
+     "n": 50,
+     "type": "markdown",
+     "src": "---\n## Wrap-up — what you built today\n\n1. **Attention** = score → softmax → weighted sum. Three lines of NumPy.\n2. **√d_k** is not decoration: without it the softmax saturates and the gradient dies.\n3. **Self-attention** makes Q, K, V from one sequence with three learned matrices.\n4. The three barriers, each measured by you:\n   * no order → **permutation-equivariant** (diff ≈ 1e-7), fixed by positional encoding\n   * only averaging → outputs stay inside the hull of the values, fixed by the **FFN**\n   * sees the future → mask to $-\\infty$ **before** the softmax\n5. **Multi-head** attention costs the same as one head — checked by counting parameters.\n6. A **complete Pre-LN Transformer block**, trained in ~2 seconds, whose attention map you\n   could read.\n7. **Real heads** in DistilBERT: next-token, previous-token, subject–verb, and a lot of\n   heads doing nothing much.\n\n> 🇰🇷 오늘 만든 것 정리\n> 1. **attention** = 점수 → softmax → 가중합. NumPy 세 줄.\n> 2. **√d_k** 는 장식이 아닙니다. 없으면 softmax가 포화되고 기울기가 죽습니다.\n> 3. **self-attention** 은 학습 행렬 세 개로 한 시퀀스에서 Q·K·V를 만듭니다.\n> 4. 세 가지 장벽을 직접 측정했습니다 — 순서 없음(순열 등변, 오차 ≈ 1e-7) → 위치 인코딩 /\n>    평균만 냄(값들의 볼록껍질 안) → FFN / 미래를 봄 → softmax **전에** $-\\infty$ 마스킹.\n> 5. **multi-head** 는 head 하나와 비용이 같습니다. 파라미터를 세어 확인했습니다.\n> 6. **Pre-LN Transformer 블록**을 완성해 2초 만에 학습시키고, attention map을 읽었습니다.\n> 7. DistilBERT의 **실제 head들** — 다음 토큰, 이전 토큰, 주어–동사, 그리고 별일 안 하는 head들.\n\n### 🔧 If you want to keep playing (optional)\n\n* Rerun Part 4 with `n_heads=2` and plot both heads. Do they split the work?\n* Make the reverse task longer (`K = 12`). Does one layer still manage?\n* In Part 5, try a Korean sentence with `klue/bert-base` and look for a head that links\n  a 조사 to its 명사.\n\n> 🇰🇷 **더 해보고 싶다면 (선택)**\n> * Part 4를 `n_heads=2` 로 다시 돌려 두 head를 함께 그려 보세요. 각 Head가 일을 나눠 맡나요?\n> * Task 길이를 늘려 보세요 (`K = 12`). 한 층으로도 되나요?\n> * Part 5에서 `klue/bert-base` 로 한국어 문장을 넣고, 조사와 명사를 잇는 head를 찾아보세요.\n\n### Next week · 다음 주\n\n**Pre-trained Language Models** — BERT, GPT, T5. The block you just built, trained on\neverything, then fine-tuned. In Lab 4 you will fine-tune a Korean BERT on NSMC.\n\n> 🇰🇷 **사전학습 언어모델** — BERT·GPT·T5. 오늘 만든 그 블록을 세상의 모든 텍스트로 학습시킨 뒤\n> 미세조정하는 이야기입니다. Lab 4에서는 한국어 BERT를 NSMC로 미세조정합니다.",
+     "out": ""
+    }
+   ]
+  }
+ ]
+}
