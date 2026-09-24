@@ -1,0 +1,8 @@
+{
+ "layout": "slide",
+ "gap_spaces": true,
+ "all_lines": true,
+ "glossary": [],
+ "glossary_units": ["terms/1.json", "terms/2.json", "terms/3.json", "terms/4.json", "terms/5.json", "terms/6.json"],
+ "corpus": ["bank/*.json"]
+}
