@@ -2,3 +2,4 @@ work/*/_src/
 인수인계/
 __pycache__/
 desktop-pet/*.zip
+node_modules/
