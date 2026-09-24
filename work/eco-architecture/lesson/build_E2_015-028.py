@@ -1,0 +1,926 @@
+# -*- coding: utf-8 -*-
+"""E2(3주차 2강 친환경 재료) 15~28쪽 회독 레슨 생성.
+
+자료: _src/png/E2/p015~p028.png (그림 직접 확인), recall/_ocr/E2.json, notes/slides_w3.json (w3-5 ~ w3-7).
+E2 는 녹음이 없으므로 prof 장면을 쓰지 않는다.
+분류표(p16, p21, p24, p27)는 같은 표에 강조만 옮겨 가며 네 번 나온다. 표 내용은 슬라이드 그림에서 확인했다.
+"""
+import json
+import pathlib
+import sys
+
+HERE = pathlib.Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE))
+from eco_glossary import pick, label  # noqa: E402
+
+L = label
+
+GLOSS_NAMES = [
+    "Wood", "Breathability", "Micropore", "Preservative", "Formalin", "Phenol",
+    "Structural Panel", "Plywood", "Oriented Strand Board",
+    "Glue Laminated Timbers", "집성재", "Laminated Veneer Lumber",
+    "I-Joist", "Preservative-treated Wood",
+    "Earth Architecture", "Humidity Control", "Heat Storage",
+]
+
+SPELL = "자연에서 빌려 쓰고, 돌려주며 순환시켜요."
+
+# 분류표(p16, p21, p24, p27)의 O 표시. 슬라이드 그림에서 그대로 옮겼다.
+TABLE_ROWS = [
+    ("바닥", ["O", "O", "O", "O", "O"]),
+    ("벽", ["O", "", "O", "O", ""]),
+    ("천정", ["O", "", "O", "", ""]),
+    ("데크", ["O", "", "", "", "O"]),
+    ("지붕", ["O", "O", "O", "O", ""]),
+    ("사이딩", ["O", "", "", "", "O"]),
+    ("거푸집", ["O", "", "O", "", ""]),
+]
+TABLE_COLS = ["구조용 판넬", "글루렘", "LVL", "I-joist", "방부목"]
+
+# ---------------------------------------------------------------- 그림(SVG)
+
+SVG_PORE = (
+    '<svg viewBox="0 0 480 270" xmlns="http://www.w3.org/2000/svg">'
+    '<rect x="20" y="58" width="200" height="132" rx="2" class="n3 b1"/>'
+    '<circle cx="60" cy="94" r="5" class="n b1"/><circle cx="96" cy="120" r="5" class="n b1"/>'
+    '<circle cx="140" cy="90" r="5" class="n b1"/><circle cx="180" cy="130" r="5" class="n b1"/>'
+    '<circle cx="70" cy="160" r="5" class="n b1"/><circle cx="126" cy="164" r="5" class="n b1"/>'
+    '<circle cx="186" cy="86" r="5" class="n b1"/><circle cx="160" cy="160" r="5" class="n b1"/>'
+    '<text x="120" y="46" font-size="15" text-anchor="middle" class="tb b1">나무 속 작은 구멍</text>'
+    '<line x1="40" y1="230" x2="83" y2="201" class="e2 b2"/>'
+    '<polygon points="90,196 85,205 80,197" class="arrow b2"/>'
+    '<line x1="150" y1="196" x2="193" y2="225" class="e2 b2"/>'
+    '<polygon points="200,230 190,229 195,221" class="arrow b2"/>'
+    '<text x="120" y="252" font-size="14" text-anchor="middle" class="t b2">습기와 공기가 드나들어요</text>'
+    '<rect x="250" y="52" width="220" height="40" rx="2" class="box2 b3"/>'
+    '<text x="360" y="77" font-size="15" text-anchor="middle" class="tb b3">건축 수명 100년 이상</text>'
+    '<rect x="250" y="108" width="220" height="40" rx="2" class="box2 b3"/>'
+    '<text x="360" y="133" font-size="15" text-anchor="middle" class="tb b3">건축재료의 95%까지 대체</text>'
+    '<rect x="250" y="164" width="220" height="40" rx="2" class="box b3"/>'
+    '<text x="360" y="189" font-size="15" text-anchor="middle" class="tb b3">약점: 부패, 벌레, 버섯, 불</text>'
+    '</svg>'
+)
+
+SVG_GLULAM = (
+    '<svg viewBox="0 0 480 270" xmlns="http://www.w3.org/2000/svg">'
+    '<text x="240" y="24" font-size="15" text-anchor="middle" class="tb">작은 각재로 긴 보를 만들어요</text>'
+    '<rect x="30" y="52" width="80" height="18" rx="2" class="n3 b1"/>'
+    '<rect x="118" y="52" width="80" height="18" rx="2" class="n3 b1"/>'
+    '<rect x="206" y="52" width="80" height="18" rx="2" class="n3 b1"/>'
+    '<text x="360" y="66" font-size="14" text-anchor="middle" class="t b1">두께 5cm 미만 각재</text>'
+    '<rect x="30" y="100" width="256" height="18" rx="2" class="n2 b2"/>'
+    '<text x="360" y="114" font-size="14" text-anchor="middle" class="t b2">끝을 이어 긴 판재로</text>'
+    '<rect x="30" y="146" width="256" height="14" rx="2" class="n2 b3"/>'
+    '<rect x="30" y="162" width="256" height="14" rx="2" class="n2 b3"/>'
+    '<rect x="30" y="178" width="256" height="14" rx="2" class="n2 b3"/>'
+    '<text x="360" y="176" font-size="14" text-anchor="middle" class="t b3">접착제로 적층, 접착</text>'
+    '<path d="M30 240 Q158 200 286 240" class="e2 b3" fill="none"/>'
+    '<text x="158" y="262" font-size="14" text-anchor="middle" class="tm b3">직선과 곡선 모양으로</text>'
+    '</svg>'
+)
+
+SVG_GRAIN = (
+    '<svg viewBox="0 0 480 270" xmlns="http://www.w3.org/2000/svg">'
+    '<text x="120" y="26" font-size="15" text-anchor="middle" class="tb b1">합판: 결을 교차해서</text>'
+    '<text x="360" y="26" font-size="15" text-anchor="middle" class="tb b2">LVL: 결을 나란하게</text>'
+    '<rect x="30" y="50" width="180" height="30" rx="2" class="n3 b1"/>'
+    '<line x1="40" y1="60" x2="200" y2="60" class="e b1"/><line x1="40" y1="70" x2="200" y2="70" class="e b1"/>'
+    '<rect x="30" y="90" width="180" height="30" rx="2" class="n3 b1"/>'
+    '<line x1="60" y1="94" x2="60" y2="116" class="e b1"/><line x1="100" y1="94" x2="100" y2="116" class="e b1"/>'
+    '<line x1="140" y1="94" x2="140" y2="116" class="e b1"/><line x1="180" y1="94" x2="180" y2="116" class="e b1"/>'
+    '<rect x="30" y="130" width="180" height="30" rx="2" class="n3 b1"/>'
+    '<line x1="40" y1="140" x2="200" y2="140" class="e b1"/><line x1="40" y1="150" x2="200" y2="150" class="e b1"/>'
+    '<rect x="270" y="50" width="180" height="30" rx="2" class="n3 b2"/>'
+    '<line x1="280" y1="60" x2="440" y2="60" class="e b2"/><line x1="280" y1="70" x2="440" y2="70" class="e b2"/>'
+    '<rect x="270" y="90" width="180" height="30" rx="2" class="n3 b2"/>'
+    '<line x1="280" y1="100" x2="440" y2="100" class="e b2"/><line x1="280" y1="110" x2="440" y2="110" class="e b2"/>'
+    '<rect x="270" y="130" width="180" height="30" rx="2" class="n3 b2"/>'
+    '<line x1="280" y1="140" x2="440" y2="140" class="e b2"/><line x1="280" y1="150" x2="440" y2="150" class="e b2"/>'
+    '<text x="120" y="196" font-size="14" text-anchor="middle" class="tm b1">강도를 높여요</text>'
+    '<text x="360" y="196" font-size="14" text-anchor="middle" class="tm b2">보, 서까래, 플랜지</text>'
+    '<line x1="270" y1="226" x2="441" y2="226" class="e2 b2"/>'
+    '<polygon points="450,226 441,231 441,221" class="arrow b2"/>'
+    '<text x="360" y="220" font-size="13" text-anchor="middle" class="tm b2">길이 방향</text>'
+    '</svg>'
+)
+
+SVG_IJOIST = (
+    '<svg viewBox="0 0 480 270" xmlns="http://www.w3.org/2000/svg">'
+    '<text x="240" y="24" font-size="16" text-anchor="middle" class="tb">I-Joist 단면</text>'
+    '<rect x="150" y="44" width="180" height="34" rx="2" class="n2 b1"/>'
+    '<rect x="150" y="204" width="180" height="34" rx="2" class="n2 b1"/>'
+    '<text x="418" y="64" font-size="15" text-anchor="middle" class="tb b1">플랜지: LVL</text>'
+    '<rect x="226" y="78" width="28" height="126" rx="2" class="n3 b2"/>'
+    '<text x="400" y="146" font-size="15" text-anchor="middle" class="tb b2">웹: 합판, OSB</text>'
+    '<line x1="348" y1="140" x2="267" y2="140" class="e2 b2"/>'
+    '<polygon points="258,140 267,135 267,145" class="arrow b2"/>'
+    '<text x="82" y="136" font-size="15" text-anchor="middle" class="t b3">가볍고 길게</text>'
+    '<text x="82" y="160" font-size="15" text-anchor="middle" class="t b3">바닥, 지붕 구조용</text>'
+    '</svg>'
+)
+
+# ---------------------------------------------------------------- 쪽별 내용
+
+SLIDES = []
+
+
+def add(p, title, terms, pass1, pass2, pass3):
+    SLIDES.append({"p": p, "title": title, "terms": terms,
+                   "pass1": pass1, "pass2": pass2, "pass3": pass3, "pass4": []})
+
+
+def table_compare(head):
+    return {"kind": "compare", "head": head,
+            "cols": ["건축부위"] + TABLE_COLS,
+            "rows": [[name] + ["O" if c else "-" for c in cells] for name, cells in TABLE_ROWS]}
+
+
+# ---- p15 목재의 특성
+add(
+    15, L("Wood") + " 의 특성 8가지와 단점 3가지",
+    ["Wood", "Breathability", "Micropore", "Preservative", "Phenol", "Formalin"],
+    [
+        {"kind": "say", "lines": [
+            "2장 천연 건축재료가 시작돼요. 첫 재료는 " + L("Wood") + " 예요.",
+            "이 쪽의 이야기는 하나예요. 나무는 숨을 쉬는 재료예요.",
+            "숨을 쉬니까 좋고, 숨을 쉬니까 물에 약해요. 장점과 단점이 한 뿌리예요.",
+        ]},
+        {"kind": "analogy", "head": "나무는 숨 쉬는 피부예요",
+         "scene": "사람 피부에는 땀구멍이 있어서 숨을 쉬고 땀을 내요. 나무에도 아주 작은 구멍이 있어서 공기와 습기가 드나들어요.",
+         "map": [
+             ["피부의 땀구멍", L("Micropore")],
+             ["피부가 숨 쉬는 것", L("Breathability")],
+             ["땀을 머금는 속옷", "습기를 흡수하는 " + L("Wood")],
+             ["피부에 바르는 독한 화장품", "유독성 " + L("Preservative") + " 와 접합제"],
+         ]},
+        {"kind": "figure", "head": "숨 쉬는 " + L("Wood"), "svg": SVG_PORE,
+         "caption": L("Micropore") + " 로 습기와 공기가 드나들어요. 오른쪽은 외울 숫자 두 개와 약점이에요.",
+         "builds": 3},
+    ],
+    [
+        {"kind": "points", "head": L("Wood") + " 의 특성 1~4 (슬라이드 번호 그대로)", "items": [
+            "1) 재생될 수 있는 건축재료 중에서 가장 비중 있는 재료예요. 괄호에 (많이 쓰임) 이라고 적혀 있어요.",
+            "2) 인간에게 쾌적함을 주는 긍정적 영향: 자연성, 친근한 색채, 고유의 향 (실험).",
+            "3) 높은 " + L("Breathability") + " 및 흡수 능력: " + L("Micropore") + " 덕분이에요.",
+            "4) 가변성과 응용성이 뛰어나 부분적인 교체, 전면적인 개조 등이 용이해요.",
+        ]},
+        {"kind": "points", "head": L("Wood") + " 의 특성 5~8", "items": [
+            "5) 건축 수명 100년 이상 가능해요.",
+            "6) 생산현장이 널리 분포하여 에너지 절약적이에요.",
+            "7) 적용 범위가 넓음: 모든 건축재료의 95%까지 대체 가능하고 구조재부터 장식까지 써요.",
+            "8) 직접 재활용 가능, 자연으로 순환 용이해요.",
+            "8) 괄호: 유독성 " + L("Preservative") + " 와 접합제를 사용하면 안 돼요.",
+        ]},
+        {"kind": "points", "head": L("Wood") + " 의 단점 3가지", "items": [
+            "1) 산업용 가공 시, 유독성 접합제(" + L("Phenol") + " 또는 " + L("Formalin") + ")가 첨가되어 인체에 해로울 가능성이 있어요.",
+            "2) 부적합 가공 시, 목재의 질이 떨어지고 목재 자체에서 유해 성분이 발산될 가능성이 있어요.",
+            "3) 부패되기 쉽고, 벌레나 버섯, 화재에 취약해요.",
+        ]},
+        {"kind": "compare", "head": "장점과 단점을 짝지어 봐요",
+         "cols": ["장점", "그 반대편 단점"],
+         "rows": [
+             [L("Breathability") + " 와 흡수 능력", "부패되기 쉬움"],
+             ["자연으로 순환 용이", "유독성 " + L("Preservative") + " 와 접합제를 쓰면 순환이 어려움"],
+             ["인간에게 쾌적함", "가공 때 " + L("Phenol") + ", " + L("Formalin") + " 은 인체에 해로울 가능성"],
+             ["적용 범위 95%", "벌레, 버섯, 화재에 취약"],
+         ]},
+        {"kind": "look", "head": "슬라이드 짚어 읽기", "boxes": [
+            {"x": 0.095, "y": 0.222, "w": 0.13, "h": 0.05,
+             "say": "윗덩어리 제목이에요. 여기부터 여덟 줄이 " + L("Wood") + " 의 특성이에요."},
+            {"x": 0.065, "y": 0.275, "w": 0.86, "h": 0.17,
+             "say": "1)부터 4)까지예요. 3) 에 " + L("Breathability") + " 와 " + L("Micropore") + " 가 나와요."},
+            {"x": 0.065, "y": 0.49, "w": 0.82, "h": 0.20,
+             "say": "5)부터 8)까지예요. 숫자 두 개, 100년과 95% 가 여기 있어요."},
+            {"x": 0.095, "y": 0.755, "w": 0.10, "h": 0.05,
+             "say": "아랫덩어리 제목 '단점' 이에요. 세 줄뿐이라 통째로 외우기 좋아요."},
+            {"x": 0.065, "y": 0.808, "w": 0.87, "h": 0.16,
+             "say": "단점 1)2)3) 이에요. 1) 은 '산업용 가공 시' 라는 조건이 앞에 붙어 있어요."},
+        ]},
+    ],
+    [
+        {"kind": "check", "q": L("Micropore") + " 덕분에 " + L("Wood") + " 가 갖는 특성은?",
+         "choices": ["높은 " + L("Breathability") + " 및 흡수 능력", "불에 강함", "벌레에 강함", "접합제가 필요 없음"], "a": 0,
+         "why": "슬라이드 3) 은 '높은 통기성 및 흡수 능력 : 미세 기공' 이에요."},
+        {"kind": "check", "q": L("Wood") + " 특성에 나온 숫자로 옳은 것은?",
+         "choices": ["건축 수명 50년, 건축재료의 50% 대체", "건축 수명 100년 이상, 건축재료의 95%까지 대체",
+                     "건축 수명 30년, 건축재료의 100% 대체", "건축 수명 100년 이상, 건축재료의 59%까지 대체"], "a": 1,
+         "why": "5) 건축 수명 100년 이상 가능, 7) 모든 건축재료의 95%까지 대체 가능이에요."},
+        {"kind": "english", "head": "시험 답안에 쓸 문장",
+         "en": "목재는 재생될 수 있는 건축재료 중 가장 비중이 크고, 미세 기공에 의한 높은 통기성과 흡수 능력을 가지며, 건축 수명 100년 이상, 모든 건축재료의 95%까지 대체가 가능하다.",
+         "ko": "특성 여덟 줄 중 1), 3), 5), 7) 네 줄만 써도 핵심이 들어가요.",
+         "tip": "'가장 많이 - 숨 쉬고 - 100년 - 95%' 네 마디로 외워요."},
+        {"kind": "warn", "head": "헷갈리기 쉬운 점", "items": [
+            "유독성 접합제는 " + L("Phenol") + " 또는 " + L("Formalin") + " 이에요. 둘 중 하나만 써도 되지만 이름을 바꾸면 틀려요.",
+            "95% 는 적용 범위(대체 가능 비율), 100년은 건축 수명이에요. 숫자를 바꿔 내기 좋아요.",
+            L("Wood") + " 는 부패, 벌레, 버섯, 화재에 약해요. 튼튼하다고 불에 강한 것은 아니에요.",
+        ]},
+    ],
+)
+
+# ---- p16 분류표 (구조용 판넬 강조)
+add(
+    16, "목구조에 사용되는 목재의 분류표",
+    ["Structural Panel", "Glue Laminated Timbers", "Laminated Veneer Lumber", "I-Joist", "Preservative-treated Wood"],
+    [
+        {"kind": "say", "lines": [
+            "여기부터 27쪽까지는 목구조에 쓰는 가공 목재 다섯 가지를 봐요.",
+            "이 쪽은 그 다섯 가지를 한 표에 모은 지도예요.",
+            "가로는 재료 다섯, 세로는 건축부위 일곱이고 쓰는 곳에 동그라미가 있어요.",
+        ]},
+        {"kind": "analogy", "head": "나무로 만든 블록 장난감이에요",
+         "scene": "작은 나무 조각을 겹겹이 붙이면 길고 크고 휘어진 모양도 만들 수 있어요. 붙이는 방향에 따라 튼튼함도 달라져요.",
+         "map": [
+             ["얇은 종이를 엇갈려 붙인 두꺼운 종이", L("Structural Panel")],
+             ["작은 막대를 이어 붙여 만든 긴 막대", L("Glue Laminated Timbers")],
+             ["결을 한 방향으로 모은 막대", L("Laminated Veneer Lumber")],
+             ["알파벳 I 모양 블록", L("I-Joist")],
+             ["비를 맞아도 되게 약을 바른 막대", L("Preservative-treated Wood")],
+         ]},
+    ],
+    [
+        {"kind": "points", "head": "표 읽는 법", "items": [
+            "가로 머리줄은 " + L("Structural Panel") + ", 글루렘, LVL, I-joist, 방부목 다섯이에요.",
+            "세로 이름줄은 바닥, 벽, 천정, 데크, 지붕, 사이딩, 거푸집 일곱이에요.",
+            "칸에 O 가 있으면 그 부위에 그 재료를 쓴다는 뜻이에요.",
+            "이 쪽에서는 왼쪽 부위 이름과 " + L("Structural Panel") + " 열이 노랗게 강조돼 있어요.",
+        ]},
+        table_compare("분류표를 글자로 옮겼어요 (O 는 사용, - 는 표에 빈칸)"),
+        {"kind": "points", "head": L("Structural Panel") + " 열만 보면", "items": [
+            "일곱 부위 모두에 O 가 있어요. 표에서 가장 넓게 쓰이는 재료예요.",
+            "바닥, 벽, 천정, 데크, 지붕, 사이딩, 거푸집 전부예요.",
+            "그래서 이 쪽이 " + L("Structural Panel") + " 설명(17쪽)으로 이어져요.",
+        ]},
+        {"kind": "look", "head": "슬라이드 짚어 읽기", "boxes": [
+            {"x": 0.11, "y": 0.225, "w": 0.38, "h": 0.05,
+             "say": "소제목 '목구조에 사용되는 목재의 분류' 예요. 21, 24, 27쪽에 같은 표가 또 나와요."},
+            {"x": 0.11, "y": 0.315, "w": 0.81, "h": 0.072,
+             "say": "표 머리줄이에요. 왼쪽부터 구조용 판넬, 글루렘, LVL, I-joist, 방부목이에요."},
+            {"x": 0.11, "y": 0.315, "w": 0.14, "h": 0.54,
+             "say": "노란 타원이 친 왼쪽 열이에요. 바닥, 벽, 천정, 데크, 지붕, 사이딩, 거푸집 일곱 부위예요."},
+            {"x": 0.24, "y": 0.315, "w": 0.15, "h": 0.54,
+             "say": "노란 네모가 친 " + L("Structural Panel") + " 열이에요. 일곱 칸 모두 O 예요."},
+            {"x": 0.11, "y": 0.385, "w": 0.81, "h": 0.07,
+             "say": "바닥 줄이에요. 다섯 재료 모두 O 인 유일한 줄이에요."},
+        ]},
+    ],
+    [
+        {"kind": "check", "q": "분류표에서 일곱 부위 모두에 O 가 있는 재료는?",
+         "choices": [L("Structural Panel"), L("Glue Laminated Timbers"), L("I-Joist"), L("Preservative-treated Wood")], "a": 0,
+         "why": "구조용 판넬 열만 바닥, 벽, 천정, 데크, 지붕, 사이딩, 거푸집 일곱 칸이 다 O 예요."},
+        {"kind": "check", "q": "다섯 재료가 모두 O 인 건축부위는?",
+         "choices": ["바닥", "벽", "지붕", "거푸집"], "a": 0,
+         "why": "바닥 줄만 구조용 판넬, 글루렘, LVL, I-joist, 방부목 다섯이 모두 O 예요."},
+        {"kind": "warn", "head": "헷갈리기 쉬운 점", "items": [
+            "표 머리줄은 '글루렘' 이라고 적혀 있고, 18쪽 본문은 '글루램' 이라고 적혀 있어요. 같은 재료예요.",
+            "슬라이드는 '천정' 이라고 적었어요. 흔히 쓰는 말은 천장이지만 표기는 슬라이드를 따라요.",
+            "빈칸은 '못 쓴다' 가 아니라 표에 O 가 없다는 뜻이에요. 표 문제는 표대로 답해요.",
+        ]},
+    ],
+)
+
+# ---- p17 구조용 판넬
+add(
+    17, "1) " + L("Structural Panel") + ": " + L("Plywood") + " 와 " + L("Oriented Strand Board"),
+    ["Structural Panel", "Plywood", "Oriented Strand Board", "I-Joist"],
+    [
+        {"kind": "say", "lines": [
+            "다섯 재료 중 첫 번째, " + L("Structural Panel") + " 이에요.",
+            "얇은 나무를 여러 겹 붙여 만든 넓은 판이에요.",
+            "겹쳐 붙이니까 휘지도 처지지도 않고 충격에 강해져요.",
+        ]},
+    ],
+    [
+        {"kind": "points", "head": L("Structural Panel") + " 을 그대로 읽어요", "items": [
+            "종류: " + L("Plywood") + ", " + L("Oriented Strand Board") + ", 집성판넬 등이에요.",
+            "강도와 내구성이 우수해요. 휨, 처짐, 부서짐 등이 거의 없고 충격에 강해요.",
+            "다양하게 사용돼요: 바닥, 벽, 천정, 거푸집용, 가구, " + L("I-Joist") + " 웹 부분 등이에요.",
+        ]},
+        {"kind": "compare", "head": L("Plywood") + " 와 " + L("Oriented Strand Board") + " 의 차이",
+         "cols": ["이름", "만드는 법 (슬라이드 그대로)"],
+         "rows": [
+             [L("Plywood"), "얇은 목재 단판을 각 단판의 결 방향이 서로 교차되도록 적층해요. 그래서 강도가 올라가요."],
+             [L("Oriented Strand Board"), "접착제를 사용하여 나무조각들로 패널을 만들어내요."],
+         ]},
+        {"kind": "points", "head": "아래 사진 세 장", "items": [
+            "왼쪽은 " + L("Plywood") + " 예요. 옆면에 얇은 층이 여러 겹 보여요.",
+            "가운데는 " + L("Oriented Strand Board") + " 예요. 나무 조각이 얼룩덜룩 붙어 있어요.",
+            "오른쪽은 집성판넬이에요. 긴 나뭇조각을 나란히 이어 붙인 모양이에요.",
+        ]},
+        {"kind": "look", "head": "슬라이드 짚어 읽기", "boxes": [
+            {"x": 0.068, "y": 0.225, "w": 0.18, "h": 0.05,
+             "say": "제목 줄이에요. 1) 구조용 판넬이에요."},
+            {"x": 0.10, "y": 0.285, "w": 0.33, "h": 0.05,
+             "say": "종류 세 가지. 합판, OSB 판넬, 집성판넬 등이에요."},
+            {"x": 0.10, "y": 0.345, "w": 0.77, "h": 0.05,
+             "say": "강도와 내구성이 우수. 휨, 처짐, 부서짐이 거의 없고 충격에 강해요."},
+            {"x": 0.10, "y": 0.405, "w": 0.75, "h": 0.05,
+             "say": "쓰는 곳. 바닥, 벽, 천정, 거푸집용, 가구, " + L("I-Joist") + " 웹 부분 등이에요."},
+            {"x": 0.10, "y": 0.465, "w": 0.85, "h": 0.05,
+             "say": "시험 단골 줄. " + L("Plywood") + " 는 결 방향이 서로 교차되도록 적층해요."},
+            {"x": 0.105, "y": 0.525, "w": 0.70, "h": 0.05,
+             "say": L("Oriented Strand Board") + " 는 접착제로 나무조각들을 붙여 패널을 만들어요."},
+        ]},
+    ],
+    [
+        {"kind": "check", "q": "'얇은 목재 단판을 각 단판의 결 방향이 서로 교차되도록 적층' 한 것은?",
+         "choices": [L("Plywood"), L("Oriented Strand Board"), "집성판넬", L("Preservative-treated Wood")], "a": 0,
+         "why": "결을 교차해 쌓는 것이 " + L("Plywood") + " 예요. 그래서 강도가 올라가요."},
+        {"kind": "check", "q": L("Structural Panel") + " 의 쓰임으로 슬라이드에 적히지 않은 것은?",
+         "choices": ["거푸집용", "가구", L("I-Joist") + " 웹 부분", "옥외 조경물"], "a": 3,
+         "why": "옥외 조경물은 26쪽 " + L("Preservative-treated Wood") + " 의 쓰임이에요."},
+        {"kind": "warn", "head": "헷갈리기 쉬운 점", "items": [
+            L("Plywood") + " 는 결 교차, " + L("Laminated Veneer Lumber") + " 은 결 평행이에요. 22쪽과 짝지어 외워요.",
+            L("Oriented Strand Board") + " 의 핵심 낱말은 '접착제' 와 '나무조각' 이에요.",
+            "본문 쓰임에는 지붕과 사이딩이 없지만 분류표에는 O 가 있어요. 표 문제는 표대로 답해요.",
+        ]},
+    ],
+)
+
+# ---- p18 글루램 본문
+add(
+    18, "2) " + L("Glue Laminated Timbers"),
+    ["Glue Laminated Timbers", "집성재"],
+    [
+        {"kind": "say", "lines": [
+            "두 번째 재료, " + L("Glue Laminated Timbers") + " 예요.",
+            "작은 나무 토막을 이어 붙여 아주 길고 휘어진 보까지 만드는 재료예요.",
+            "우리말 이름은 " + L("집성재") + " 예요. 접착가공목재라는 뜻이에요.",
+        ]},
+        {"kind": "figure", "head": "작은 각재가 큰 보가 되기까지", "svg": SVG_GLULAM,
+         "caption": "두께 5cm 미만 각재를 끝끼리 이어 긴 판재로 만들고, 접착제로 겹겹이 붙여 직선과 곡선을 만들어요.",
+         "builds": 3},
+    ],
+    [
+        {"kind": "points", "head": L("Glue Laminated Timbers") + " 를 그대로 읽어요", "items": [
+            "두께 5cm 미만의 각재를 접착해서 만든 목재예요.",
+            "괄호 설명: " + L("집성재") + " 는 접착가공목재를 말해요.",
+            "서로 끝부분 이음을 함으로써 긴 길이의 판재를 만들어요.",
+            "그 뒤 접착제로 서로 적층 또는 접착하여 직선, 곡선모양으로 다양하게 생산해요.",
+            "우수한 강도 및 내구성이 있어서 구조용으로 적절해요.",
+        ]},
+        {"kind": "steps", "head": "만드는 순서를 네 걸음으로",
+         "given": "재료는 두께 5cm 미만의 각재예요.",
+         "steps": [
+             "첫째, 각재의 끝부분끼리 이음을 해서 길게 만들어요.",
+             "둘째, 그렇게 긴 길이의 판재를 얻어요.",
+             "셋째, 접착제로 판재를 서로 적층하거나 접착해요.",
+             "넷째, 직선 모양이나 곡선 모양으로 다양하게 생산해요.",
+         ],
+         "answer": "우수한 강도 및 내구성을 가져서 구조용으로 적절해요."},
+        {"kind": "points", "head": "아래 사진 두 장", "items": [
+            "왼쪽은 공장 바닥에 세워 둔 아치 모양 부재예요. 휘어진 모양을 만들 수 있다는 증거예요.",
+            "오른쪽은 물결처럼 굽이치는 지붕 구조예요.",
+            "둘 다 " + L("Glue Laminated Timbers") + " 로만 가능한 곡선이에요.",
+        ]},
+        {"kind": "look", "head": "슬라이드 짚어 읽기", "boxes": [
+            {"x": 0.068, "y": 0.225, "w": 0.43, "h": 0.05,
+             "say": "제목 줄. 2) 글루램 (Glue Laminated Timbers) 이에요. 영어 이름까지 외워요."},
+            {"x": 0.10, "y": 0.285, "w": 0.78, "h": 0.05,
+             "say": "숫자가 나오는 줄이에요. 두께 5cm 미만의 각재를 접착해서 만들어요."},
+            {"x": 0.10, "y": 0.345, "w": 0.86, "h": 0.115,
+             "say": "끝부분 이음으로 긴 판재를 만든 뒤 적층 또는 접착해서 직선, 곡선모양을 만들어요."},
+            {"x": 0.068, "y": 0.465, "w": 0.49, "h": 0.05,
+             "say": "우수한 강도 및 내구성이라 구조용으로 적절하다는 줄이에요."},
+            {"x": 0.05, "y": 0.55, "w": 0.45, "h": 0.43,
+             "say": "왼쪽 사진. 공장에 세워 둔 아치 부재예요."},
+            {"x": 0.51, "y": 0.55, "w": 0.44, "h": 0.43,
+             "say": "오른쪽 사진. 굽이치는 물결 모양 지붕이에요."},
+        ]},
+    ],
+    [
+        {"kind": "check", "q": L("Glue Laminated Timbers") + " 를 만드는 각재의 두께는?",
+         "choices": ["두께 5cm 미만", "두께 5cm 이상", "두께 10cm 미만", "두께 제한 없음"], "a": 0,
+         "why": "슬라이드는 '두께 5cm 미만의 각재를 접착해서 만든 목재' 라고 했어요."},
+        {"kind": "english", "head": "시험 답안에 쓸 문장",
+         "en": "글루램은 두께 5cm 미만의 각재를 접착해서 만든 집성재로, 끝부분 이음으로 긴 판재를 만든 뒤 접착제로 적층하여 직선과 곡선 모양으로 생산하며 강도와 내구성이 우수해 구조용으로 적절하다.",
+         "ko": "5cm 미만, " + L("집성재") + ", 직선과 곡선, 구조용 네 가지가 들어가야 해요.",
+         "tip": "'작게 잘라 - 길게 이어 - 겹겹이 붙여 - 휘어서' 로 순서를 외워요."},
+        {"kind": "warn", "head": "헷갈리기 쉬운 점", "items": [
+            "'5cm 이상' 이 아니라 '5cm 미만' 이에요. 부등호를 바꿔 내기 좋아요.",
+            L("집성재") + " 는 괄호 안 우리말 이름이에요. 접착가공목재라는 뜻이에요.",
+            "분류표에서 " + L("Glue Laminated Timbers") + " 는 바닥과 지붕 두 곳만 O 예요.",
+        ]},
+    ],
+)
+
+# ---- p19 글루램 공장 사진
+add(
+    19, L("Glue Laminated Timbers") + " 공장 사진: 진짜 이렇게 생겼어요",
+    ["Glue Laminated Timbers", "집성재"],
+    [
+        {"kind": "say", "lines": [
+            "앞 쪽과 같은 제목에 사진만 크게 붙인 쪽이에요.",
+            "글로 읽은 " + L("Glue Laminated Timbers") + " 가 실제로 어떻게 생겼는지 보여 줘요.",
+            "남는 문장은 하나예요. 두께 5cm 미만의 각재를 접착해서 만든 목재예요.",
+        ]},
+    ],
+    [
+        {"kind": "points", "head": "사진에서 볼 것", "items": [
+            "두 사진 모두 공장 안에 쌓아 둔 큰 부재예요.",
+            "왼쪽 사진의 노란 동그라미 안을 보면 끝면에 얇은 층이 겹겹이 보여요.",
+            "그 층 하나하나가 두께 5cm 미만의 각재예요. 이것이 " + L("집성재") + " 의 모습이에요.",
+            "오른쪽 사진에는 줄자를 대고 길이를 적어 둔 외국어 글자가 있어요. 13,8 미터로 읽혀요.",
+        ]},
+        {"kind": "look", "head": "슬라이드 짚어 읽기", "boxes": [
+            {"x": 0.068, "y": 0.225, "w": 0.43, "h": 0.05,
+             "say": "제목은 18쪽과 같아요. 2) 글루램 (Glue Laminated Timbers) 이에요."},
+            {"x": 0.10, "y": 0.285, "w": 0.78, "h": 0.05,
+             "say": "남아 있는 글은 이 한 줄뿐이에요. 두께 5cm 미만의 각재를 접착해서 만든 목재."},
+            {"x": 0.01, "y": 0.41, "w": 0.48, "h": 0.56,
+             "say": "왼쪽 사진. 노란 동그라미가 부재 끝면을 가리켜요. 겹겹이 붙인 층이 보여요."},
+            {"x": 0.50, "y": 0.41, "w": 0.49, "h": 0.56,
+             "say": "오른쪽 사진. 줄자를 길게 대어 부재의 길이를 재고 있어요."},
+        ]},
+    ],
+    [
+        {"kind": "check", "q": "왼쪽 사진의 노란 동그라미가 보여 주는 것은?",
+         "choices": ["부재 끝면에 겹겹이 붙은 각재 층", "나무의 옹이", "접착제 통", "톱날 자국"], "a": 0,
+         "why": "끝면에 층이 여러 겹 보이는 것이 " + L("Glue Laminated Timbers") + " 가 " + L("집성재") + " 라는 증거예요."},
+    ],
+)
+
+# ---- p20 글루램 실내 사진
+add(
+    20, L("Glue Laminated Timbers") + " 로 지은 실내: 곡선이 되는 나무",
+    ["Glue Laminated Timbers"],
+    [
+        {"kind": "say", "lines": [
+            "제목만 있고 사진 한 장이 쪽을 가득 채운 쪽이에요.",
+            L("Glue Laminated Timbers") + " 로 지은 실내를 보여 줘요.",
+            "이 쪽의 이야기는 하나예요. 나무도 이렇게 휘어질 수 있어요.",
+        ]},
+    ],
+    [
+        {"kind": "points", "head": "사진에서 볼 것", "items": [
+            "기둥이 위로 갈수록 부드럽게 휘어져 아치를 이루고 있어요.",
+            "이 곡선은 통나무 하나를 깎아서는 만들기 어려워요.",
+            "얇은 판재를 겹겹이 붙이면서 휘었기 때문에 가능한 모양이에요.",
+            "18쪽에서 읽은 '직선, 곡선모양으로 다양하게 생산' 이 바로 이 모습이에요.",
+        ]},
+        {"kind": "look", "head": "슬라이드 짚어 읽기", "boxes": [
+            {"x": 0.07, "y": 0.215, "w": 0.43, "h": 0.06,
+             "say": "제목만 남아 있어요. 2) 글루램 (Glue Laminated Timbers) 이에요."},
+            {"x": 0.07, "y": 0.32, "w": 0.86, "h": 0.66,
+             "say": "사진 한 장이에요. 휘어진 기둥과 아치, 그리고 그 위를 덮은 나무 천정이 보여요."},
+        ]},
+    ],
+    [
+        {"kind": "check", "q": "이 쪽 사진이 보여 주는 " + L("Glue Laminated Timbers") + " 의 장점은?",
+         "choices": ["직선뿐 아니라 곡선 모양으로도 생산할 수 있다", "불에 타지 않는다",
+                     "약품 처리가 필요 없다", "값이 가장 싸다"], "a": 0,
+         "why": "18쪽 본문의 '직선, 곡선모양으로 다양하게 생산' 을 사진으로 보여 주는 쪽이에요."},
+    ],
+)
+
+# ---- p21 분류표 (글루램 강조)
+add(
+    21, "분류표 다시 보기: " + L("Glue Laminated Timbers") + " 열",
+    ["Glue Laminated Timbers", "Structural Panel"],
+    [
+        {"kind": "say", "lines": [
+            "16쪽과 똑같은 표가 다시 나왔어요. 강조된 자리만 달라졌어요.",
+            "이번에는 글루렘 열에 노란 네모가 쳐져 있어요.",
+            "방금 배운 " + L("Glue Laminated Timbers") + " 가 어디에 쓰이는지 확인하는 쪽이에요.",
+        ]},
+    ],
+    [
+        {"kind": "points", "head": "글루렘 열만 읽어요", "items": [
+            "바닥에 O 가 있어요.",
+            "지붕에 O 가 있어요.",
+            "벽, 천정, 데크, 사이딩, 거푸집은 빈칸이에요.",
+            "곧 " + L("Glue Laminated Timbers") + " 는 표에서 O 가 가장 적은 재료예요. 두 곳뿐이에요.",
+        ]},
+        {"kind": "compare", "head": "O 개수로 견주어 봐요",
+         "cols": ["재료", "O 가 있는 부위", "개수"],
+         "rows": [
+             [L("Structural Panel"), "바닥, 벽, 천정, 데크, 지붕, 사이딩, 거푸집", "7"],
+             ["글루렘", "바닥, 지붕", "2"],
+         ]},
+        {"kind": "look", "head": "슬라이드 짚어 읽기", "boxes": [
+            {"x": 0.11, "y": 0.225, "w": 0.38, "h": 0.05,
+             "say": "소제목은 16쪽과 같아요. 목구조에 사용되는 목재의 분류예요."},
+            {"x": 0.38, "y": 0.315, "w": 0.14, "h": 0.072,
+             "say": "노란 네모가 글루렘 머리칸으로 옮겨 왔어요."},
+            {"x": 0.38, "y": 0.385, "w": 0.14, "h": 0.47,
+             "say": "글루렘 열이에요. 맨 위 바닥과 다섯째 줄 지붕에만 O 가 있어요."},
+            {"x": 0.11, "y": 0.385, "w": 0.81, "h": 0.07,
+             "say": "바닥 줄. 글루렘도 여기에 O 가 있어요."},
+            {"x": 0.11, "y": 0.652, "w": 0.81, "h": 0.07,
+             "say": "지붕 줄. 글루렘의 두 번째 O 가 여기예요."},
+        ]},
+    ],
+    [
+        {"kind": "check", "q": "분류표에서 " + L("Glue Laminated Timbers") + " 에 O 가 있는 부위는?",
+         "choices": ["바닥, 지붕", "바닥, 벽", "데크, 사이딩", "천정, 거푸집"], "a": 0,
+         "why": "글루렘 열은 바닥과 지붕 두 칸만 O 예요. 표에서 가장 적어요."},
+        {"kind": "warn", "head": "헷갈리기 쉬운 점", "items": [
+            "표의 이름은 '글루렘', 본문의 이름은 '글루램' 이에요. 같은 " + L("Glue Laminated Timbers") + " 예요.",
+            "O 가 적다고 덜 중요한 재료가 아니에요. 구조용 큰 부재에 쓰는 재료예요.",
+            "표에서 O 가 가장 많은 것은 " + L("Structural Panel") + " 의 일곱 곳이에요.",
+        ]},
+    ],
+)
+
+# ---- p22 LVL 본문 + 그림
+add(
+    22, "3) " + L("Laminated Veneer Lumber") + ": 결을 나란히 쌓아요",
+    ["Laminated Veneer Lumber", "Plywood", "I-Joist"],
+    [
+        {"kind": "say", "lines": [
+            "세 번째 재료, " + L("Laminated Veneer Lumber") + " 이에요.",
+            "얇은 나무 한 장을 단판이라고 해요. 그 단판을 결이 나란하게 쌓은 재료예요.",
+            "한 줄 비교로 외워요. " + L("Plywood") + " 는 엇갈려 쌓고, LVL 은 나란히 쌓아요.",
+        ]},
+        {"kind": "figure", "head": "결 방향이 갈라요", "svg": SVG_GRAIN,
+         "caption": L("Plywood") + " 는 층마다 결이 엇갈리고, " + L("Laminated Veneer Lumber") + " 은 모든 층의 결이 길이 방향으로 나란해요.",
+         "builds": 2},
+    ],
+    [
+        {"kind": "points", "head": L("Laminated Veneer Lumber") + " 을 그대로 읽어요", "items": [
+            "얇은 목재 단판을 나뭇결이 길이 방향에 평행하도록 적층해요.",
+            "그렇게 만든 큰 장작 형태를 최종 사용될 제품의 크기로 잘라 만든 것이에요.",
+            "보, 서까래, " + L("I-Joist") + " 플랜지 부분 등에 사용해요.",
+        ]},
+        {"kind": "points", "head": "아래 그림 읽는 법", "items": [
+            "왼쪽 더미에 Veneer 라고 적혀 있어요. 얇은 단판을 쌓아 놓은 모습이에요.",
+            "가운데 덩어리에 LVL 이라고 적혀 있어요. 단판을 붙여 만든 큰 덩어리예요.",
+            "오른쪽 위 조각에는 Vertical (Longitudinal) 이라고 적혀 있어요.",
+            "오른쪽 아래 조각에는 Horizontal direction (Horizontal) 이라고 적혀 있어요.",
+            "곧 큰 덩어리를 세로나 가로 방향으로 잘라서 제품을 만든다는 그림이에요.",
+        ]},
+        {"kind": "look", "head": "슬라이드 짚어 읽기", "boxes": [
+            {"x": 0.068, "y": 0.228, "w": 0.42, "h": 0.05,
+             "say": "제목 줄. 3) LVL (Laminated Veneer Lumber) 이에요."},
+            {"x": 0.10, "y": 0.285, "w": 0.84, "h": 0.115,
+             "say": "시험 단골 줄. 나뭇결이 길이 방향에 평행하도록 적층하여 만든 큰 장작 형태예요."},
+            {"x": 0.105, "y": 0.405, "w": 0.46, "h": 0.05,
+             "say": "쓰는 곳. 보, 서까래, " + L("I-Joist") + " 플랜지 부분 등이에요."},
+            {"x": 0.17, "y": 0.55, "w": 0.28, "h": 0.35,
+             "say": "Veneer, 곧 얇은 단판 더미예요. 여기서 출발해요."},
+            {"x": 0.42, "y": 0.63, "w": 0.25, "h": 0.28,
+             "say": "가운데 LVL 덩어리예요. 단판이 나란히 붙어 있어요."},
+            {"x": 0.66, "y": 0.52, "w": 0.30, "h": 0.45,
+             "say": "오른쪽 두 조각. 세로(Vertical)와 가로(Horizontal) 방향으로 잘라 쓴다는 뜻이에요."},
+        ]},
+    ],
+    [
+        {"kind": "check", "q": "'얇은 목재 단판을 나뭇결이 길이 방향에 평행하도록 적층' 한 목재는?",
+         "choices": [L("Plywood"), "OSB 판넬", L("Laminated Veneer Lumber"), "방부목"], "a": 2,
+         "why": L("Laminated Veneer Lumber") + " 은 결을 나란하게, " + L("Plywood") + " 는 결을 교차해서 쌓아요."},
+        {"kind": "check", "q": L("Laminated Veneer Lumber") + " 을 쓰는 곳으로 슬라이드에 적힌 것은?",
+         "choices": ["보, 서까래, " + L("I-Joist") + " 플랜지", "담장과 발코니", "거푸집과 가구만", "지붕 기와"], "a": 0,
+         "why": "슬라이드는 '보, 서까래, I-Joist 플랜지 부분 등에 사용' 이라고 했어요."},
+        {"kind": "warn", "head": "헷갈리기 쉬운 점", "items": [
+            "결 방향을 바꿔 내기 딱 좋아요. 교차는 " + L("Plywood") + ", 평행은 " + L("Laminated Veneer Lumber") + " 이에요.",
+            "'큰 장작 형태' 는 만드는 중간 모습이에요. 그것을 제품 크기로 잘라서 써요.",
+            L("I-Joist") + " 에서 LVL 이 쓰이는 자리는 플랜지예요. 웹이 아니에요.",
+        ]},
+    ],
+)
+
+# ---- p23 LVL 사진
+add(
+    23, L("Laminated Veneer Lumber") + " 실물 사진",
+    ["Laminated Veneer Lumber", "I-Joist"],
+    [
+        {"kind": "say", "lines": [
+            "앞 쪽과 글은 같고 그림만 실물 사진으로 바뀐 쪽이에요.",
+            L("Laminated Veneer Lumber") + " 이 실제로 어떤 모습인지 보여 줘요.",
+            "왼쪽은 잘라 놓은 제품, 오른쪽은 집에 설치된 모습이에요.",
+        ]},
+    ],
+    [
+        {"kind": "points", "head": "사진에서 볼 것", "items": [
+            "왼쪽 사진은 두께와 폭이 다른 여러 제품을 계단처럼 세워 놓은 모습이에요.",
+            "옆면을 보면 얇은 층이 나란히 붙어 있어요. 결이 평행하다는 뜻이에요.",
+            "오른쪽 사진은 바닥 구조에 보가 걸린 모습이에요. 금속 철물로 이어 놓았어요.",
+            "옆에 세로로 서 있는 부재들이 " + L("I-Joist") + " 예요. 25쪽에서 다시 만나요.",
+        ]},
+        {"kind": "look", "head": "슬라이드 짚어 읽기", "boxes": [
+            {"x": 0.068, "y": 0.228, "w": 0.42, "h": 0.05,
+             "say": "제목은 22쪽과 같아요. 3) LVL (Laminated Veneer Lumber) 이에요."},
+            {"x": 0.10, "y": 0.285, "w": 0.84, "h": 0.115,
+             "say": "글도 22쪽과 같아요. 나뭇결이 길이 방향에 평행하도록 적층한 큰 장작 형태예요."},
+            {"x": 0.01, "y": 0.50, "w": 0.42, "h": 0.44,
+             "say": "왼쪽 사진. 크기가 다른 제품들을 세워 놓았어요. 옆면에 얇은 층이 보여요."},
+            {"x": 0.43, "y": 0.50, "w": 0.55, "h": 0.44,
+             "say": "오른쪽 사진. 바닥 구조에 보가 걸려 있고 금속 철물로 고정돼 있어요."},
+        ]},
+    ],
+    [
+        {"kind": "check", "q": "왼쪽 사진에서 " + L("Laminated Veneer Lumber") + " 의 옆면이 보여 주는 것은?",
+         "choices": ["얇은 층이 나란히 붙어 있는 모습", "나무 조각이 얼룩덜룩한 모습",
+                     "약품을 바른 초록색 겉면", "속이 빈 관 모양"], "a": 0,
+         "why": "결이 길이 방향에 평행하도록 단판을 쌓았기 때문에 옆면에 층이 나란히 보여요."},
+    ],
+)
+
+# ---- p24 분류표 (LVL 강조)
+add(
+    24, "분류표 다시 보기: " + L("Laminated Veneer Lumber") + " 열",
+    ["Laminated Veneer Lumber", "Glue Laminated Timbers"],
+    [
+        {"kind": "say", "lines": [
+            "같은 분류표가 세 번째로 나왔어요. 이번에는 LVL 열이 노랗게 강조돼 있어요.",
+            "방금 배운 " + L("Laminated Veneer Lumber") + " 이 어디에 쓰이는지 확인하는 쪽이에요.",
+        ]},
+    ],
+    [
+        {"kind": "points", "head": "LVL 열만 읽어요", "items": [
+            "바닥, 벽, 천정에 O 가 있어요.",
+            "지붕에도 O 가 있어요.",
+            "거푸집에도 O 가 있어요.",
+            "빈칸은 데크와 사이딩 두 곳이에요. 바깥에 드러나는 부위가 빠졌어요.",
+        ]},
+        {"kind": "compare", "head": "LVL 과 " + L("Glue Laminated Timbers") + " 를 견주어 봐요",
+         "cols": ["재료", "O 가 있는 부위", "개수"],
+         "rows": [
+             [L("Laminated Veneer Lumber"), "바닥, 벽, 천정, 지붕, 거푸집", "5"],
+             [L("Glue Laminated Timbers"), "바닥, 지붕", "2"],
+         ]},
+        {"kind": "look", "head": "슬라이드 짚어 읽기", "boxes": [
+            {"x": 0.11, "y": 0.225, "w": 0.38, "h": 0.05,
+             "say": "소제목은 그대로예요. 목구조에 사용되는 목재의 분류."},
+            {"x": 0.515, "y": 0.315, "w": 0.14, "h": 0.072,
+             "say": "노란 네모가 LVL 머리칸으로 옮겨 왔어요."},
+            {"x": 0.515, "y": 0.385, "w": 0.14, "h": 0.47,
+             "say": "LVL 열이에요. 바닥, 벽, 천정, 지붕, 거푸집 다섯 칸에 O 가 있어요."},
+            {"x": 0.11, "y": 0.518, "w": 0.81, "h": 0.07,
+             "say": "천정 줄이에요. 구조용 판넬과 LVL 둘만 O 예요."},
+            {"x": 0.11, "y": 0.785, "w": 0.81, "h": 0.07,
+             "say": "거푸집 줄이에요. 여기도 구조용 판넬과 LVL 둘만 O 예요."},
+        ]},
+    ],
+    [
+        {"kind": "check", "q": "분류표에서 천정과 거푸집에 O 가 있는 재료 두 가지는?",
+         "choices": ["구조용 판넬과 LVL", "글루렘과 방부목", "I-joist 와 방부목", "LVL 과 글루렘"], "a": 0,
+         "why": "천정 줄과 거푸집 줄은 " + L("Structural Panel") + " 과 " + L("Laminated Veneer Lumber") + " 두 칸에만 O 가 있어요."},
+    ],
+)
+
+# ---- p25 I-Joist
+add(
+    25, "4) " + L("I-Joist") + ": 알파벳 I 를 닮은 보",
+    ["I-Joist", "Plywood", "Oriented Strand Board", "Laminated Veneer Lumber"],
+    [
+        {"kind": "say", "lines": [
+            "네 번째 재료, " + L("I-Joist") + " 예요. 이름 그대로 단면이 알파벳 I 를 닮았어요.",
+            "앞에서 배운 재료 두 가지를 합쳐 만든 보예요.",
+            "가운데 세로판은 판재, 위아래 가로판은 LVL 이에요.",
+        ]},
+        {"kind": "figure", "head": L("I-Joist") + " 는 두 재료의 합작", "svg": SVG_IJOIST,
+         "caption": "위아래 플랜지는 " + L("Laminated Veneer Lumber") + ", 가운데 웹은 " + L("Plywood") + " 나 " + L("Oriented Strand Board") + " 예요.",
+         "builds": 3},
+    ],
+    [
+        {"kind": "points", "head": L("I-Joist") + " 를 그대로 읽어요", "items": [
+            "웹: " + L("Plywood") + " 나 " + L("Oriented Strand Board") + " 예요.",
+            "플랜지: " + L("Laminated Veneer Lumber") + " 을 사용하여 만들어지는 재료예요.",
+            "시공 간단, 경량, 긴 길이의 제품 생산 가능이에요.",
+            "바닥 또는 지붕구조용 자재로 사용해요.",
+        ]},
+        {"kind": "compare", "head": "웹과 플랜지 자리 외우기",
+         "cols": ["자리", "어디에 있나", "무슨 재료인가"],
+         "rows": [
+             ["웹(Web)", "가운데 세로판", L("Plywood") + " 나 " + L("Oriented Strand Board")],
+             ["플랜지(Flanges)", "위아래 가로판", L("Laminated Veneer Lumber")],
+         ]},
+        {"kind": "points", "head": "아래 사진과 오른쪽 그림", "items": [
+            "왼쪽 사진은 지붕 아래에 나란히 걸린 부재들이에요. 가운데가 얼룩덜룩한 판으로 보여요.",
+            "오른쪽 그림에는 Flanges 와 Web 이라는 글자와 화살표가 있어요.",
+            "화살표가 위아래 가로판을 Flanges, 가운데 세로판을 Web 으로 가리켜요.",
+            "가운데를 얇게 비워서 무게를 줄인 것이 " + L("I-Joist") + " 의 요령이에요.",
+        ]},
+        {"kind": "look", "head": "슬라이드 짚어 읽기", "boxes": [
+            {"x": 0.065, "y": 0.225, "w": 0.29, "h": 0.05,
+             "say": "제목 줄. 4) I-Joist (아이조이스트) 예요."},
+            {"x": 0.10, "y": 0.285, "w": 0.27, "h": 0.05,
+             "say": "웹 : 합판이나 OSB 판넬. 가운데 세로판 이야기예요."},
+            {"x": 0.10, "y": 0.345, "w": 0.44, "h": 0.05,
+             "say": "플랜지 : LVL 사용하여 만들어지는 재료. 위아래 가로판 이야기예요."},
+            {"x": 0.10, "y": 0.405, "w": 0.48, "h": 0.05,
+             "say": "장점 세 가지. 시공 간단, 경량, 긴 길이의 제품 생산 가능."},
+            {"x": 0.10, "y": 0.465, "w": 0.39, "h": 0.05,
+             "say": "쓰는 곳. 바닥 또는 지붕구조용 자재로 사용해요."},
+            {"x": 0.60, "y": 0.44, "w": 0.38, "h": 0.52,
+             "say": "오른쪽 그림이에요. Flanges 와 Web 이 화살표로 표시돼 있어요."},
+        ]},
+    ],
+    [
+        {"kind": "check", "q": L("I-Joist") + " 의 플랜지에 쓰는 재료는?",
+         "choices": [L("Laminated Veneer Lumber"), L("Plywood"), L("Oriented Strand Board"), "방부목"], "a": 0,
+         "why": "웹은 " + L("Plywood") + " 나 " + L("Oriented Strand Board") + ", 플랜지는 " + L("Laminated Veneer Lumber") + " 이에요."},
+        {"kind": "check", "q": "슬라이드가 든 " + L("I-Joist") + " 의 장점이 아닌 것은?",
+         "choices": ["시공 간단", "경량", "긴 길이의 제품 생산 가능", "불연성"], "a": 3,
+         "why": "장점은 시공 간단, 경량, 긴 길이의 제품 생산 가능 세 가지예요. 불에 관한 말은 없어요."},
+        {"kind": "english", "head": "시험 답안에 쓸 문장",
+         "en": "I-Joist 는 웹에 합판이나 OSB 판넬을, 플랜지에 LVL 을 사용하여 만드는 재료로, 시공이 간단하고 가벼우며 긴 길이의 제품 생산이 가능해 바닥 또는 지붕구조용 자재로 사용한다.",
+         "ko": "웹과 플랜지의 재료를 바꿔 쓰지 않는 것이 점수의 갈림길이에요.",
+         "tip": "'가운데는 판, 위아래는 LVL' 로 위치와 재료를 묶어서 외워요."},
+        {"kind": "warn", "head": "헷갈리기 쉬운 점", "items": [
+            "웹과 플랜지를 바꿔 쓰면 틀려요. 웹은 판재, 플랜지는 " + L("Laminated Veneer Lumber") + " 이에요.",
+            "본문은 '바닥 또는 지붕구조용' 이라고 했지만 분류표에는 벽에도 O 가 있어요.",
+            "슬라이드 표기는 'I-Joist (아이조이스트)' 이고, 분류표 머리칸은 'I-joist' 예요.",
+        ]},
+    ],
+)
+
+# ---- p26 방부목
+add(
+    26, "5) " + L("Preservative-treated Wood"),
+    ["Preservative-treated Wood", "Wood", "Preservative"],
+    [
+        {"kind": "say", "lines": [
+            "다섯 번째이자 마지막 재료, " + L("Preservative-treated Wood") + " 이에요.",
+            "비를 맞는 곳에 쓰려고 약품을 처리한 나무예요.",
+            "15쪽에서 본 " + L("Wood") + " 의 단점 '부패되기 쉬움' 을 메우려는 재료예요.",
+        ]},
+    ],
+    [
+        {"kind": "points", "head": L("Preservative-treated Wood") + " 을 그대로 읽어요", "items": [
+            "습기에 의한 부패를 막기 위해 인공적으로 약품을 처리한 목재예요.",
+            "발코니, 담장, 옥외 조경물 등에 사용해요.",
+            "쓰는 곳이 모두 바깥이라는 점을 기억해요.",
+        ]},
+        {"kind": "points", "head": "아래 사진 두 장", "items": [
+            "왼쪽은 데크 바닥을 가까이 찍은 사진이에요. 나뭇결이 그대로 보여요.",
+            "오른쪽은 관광안내소 건물과 그 앞 데크예요. 바닥과 벽 마감에 나무를 썼어요.",
+            "둘 다 비와 습기를 맞는 자리예요. 그래서 " + L("Preservative-treated Wood") + " 을 써요.",
+        ]},
+        {"kind": "look", "head": "슬라이드 짚어 읽기", "boxes": [
+            {"x": 0.068, "y": 0.225, "w": 0.12, "h": 0.05,
+             "say": "제목 줄. 5) 방부목이에요. 다섯 재료 중 유일하게 영어 이름이 없어요."},
+            {"x": 0.10, "y": 0.285, "w": 0.70, "h": 0.05,
+             "say": "정의 줄. 습기에 의한 부패를 막기 위해 인공적으로 약품을 처리한 목재예요."},
+            {"x": 0.10, "y": 0.345, "w": 0.41, "h": 0.05,
+             "say": "쓰는 곳. 발코니, 담장, 옥외 조경물 등이에요."},
+            {"x": 0.02, "y": 0.48, "w": 0.50, "h": 0.47,
+             "say": "왼쪽 사진. 바깥 데크 바닥을 가까이 찍었어요."},
+            {"x": 0.54, "y": 0.48, "w": 0.44, "h": 0.47,
+             "say": "오른쪽 사진. 길가 안내소 건물과 그 앞 나무 데크예요."},
+        ]},
+    ],
+    [
+        {"kind": "check", "q": L("Preservative-treated Wood") + " 을 쓰는 곳으로 슬라이드에 적힌 것은?",
+         "choices": ["발코니, 담장, 옥외 조경물", "거푸집과 가구", "천정과 벽", "지붕 기와"], "a": 0,
+         "why": "슬라이드는 '발코니, 담장, 옥외 조경물 등에 사용' 이라고 했어요. 모두 바깥 자리예요."},
+        {"kind": "warn", "head": "헷갈리기 쉬운 점", "items": [
+            L("Preservative-treated Wood") + " 은 '인공적으로 약품을 처리한' 목재예요. 천연 그대로가 아니에요.",
+            "15쪽 8) 에서는 유독성 " + L("Preservative") + " 를 쓰면 안 된다고 했어요. 두 이야기를 함께 기억해요.",
+            "분류표에서 " + L("Preservative-treated Wood") + " 은 바닥, 데크, 사이딩 세 곳에 O 가 있어요.",
+        ]},
+    ],
+)
+
+# ---- p27 분류표 (I-joist, 방부목 강조)
+add(
+    27, "분류표 마무리: " + L("I-Joist") + " 와 " + L("Preservative-treated Wood") + " 열",
+    ["I-Joist", "Preservative-treated Wood", "Structural Panel", "Glue Laminated Timbers", "Laminated Veneer Lumber"],
+    [
+        {"kind": "say", "lines": [
+            "같은 분류표의 마지막 등장이에요. 이번에는 오른쪽 두 열이 함께 강조돼 있어요.",
+            "다섯 재료를 다 배웠으니 표 전체를 한 번에 읽을 수 있어요.",
+        ]},
+        {"kind": "recap", "items": [
+            L("Structural Panel") + ": 합판, OSB 판넬, 집성판넬. 일곱 부위 모두.",
+            L("Glue Laminated Timbers") + ": 5cm 미만 각재를 접착. 바닥, 지붕.",
+            L("Laminated Veneer Lumber") + ": 결을 길이 방향에 평행하게 적층. 바닥, 벽, 천정, 지붕, 거푸집.",
+            L("I-Joist") + ": 웹은 판재, 플랜지는 LVL. 바닥, 벽, 지붕.",
+            L("Preservative-treated Wood") + ": 약품 처리한 목재. 바닥, 데크, 사이딩.",
+        ]},
+    ],
+    [
+        {"kind": "points", "head": "오른쪽 두 열을 읽어요", "items": [
+            L("I-Joist") + " 열: 바닥, 벽, 지붕 세 칸에 O 가 있어요.",
+            L("Preservative-treated Wood") + " 열: 바닥, 데크, 사이딩 세 칸에 O 가 있어요.",
+            "둘 다 세 칸씩이지만 자리가 달라요. I-joist 는 안쪽 구조, 방부목은 바깥쪽이에요.",
+            "데크와 사이딩에 O 가 있는 재료는 구조용 판넬과 방부목 둘뿐이에요.",
+        ]},
+        table_compare("다섯 재료의 분류표 전체 (O 는 사용, - 는 표에 빈칸)"),
+        {"kind": "look", "head": "슬라이드 짚어 읽기", "boxes": [
+            {"x": 0.11, "y": 0.225, "w": 0.38, "h": 0.05,
+             "say": "소제목은 그대로예요. 목구조에 사용되는 목재의 분류."},
+            {"x": 0.648, "y": 0.315, "w": 0.272, "h": 0.072,
+             "say": "노란 네모가 오른쪽 두 머리칸을 함께 감쌌어요. I-joist 와 방부목이에요."},
+            {"x": 0.648, "y": 0.385, "w": 0.14, "h": 0.47,
+             "say": L("I-Joist") + " 열이에요. 바닥, 벽, 지붕 세 칸에 O 가 있어요."},
+            {"x": 0.787, "y": 0.385, "w": 0.133, "h": 0.47,
+             "say": L("Preservative-treated Wood") + " 열이에요. 바닥, 데크, 사이딩 세 칸에 O 가 있어요."},
+            {"x": 0.11, "y": 0.585, "w": 0.81, "h": 0.07,
+             "say": "데크 줄이에요. 구조용 판넬과 방부목 둘만 O 예요."},
+            {"x": 0.11, "y": 0.718, "w": 0.81, "h": 0.07,
+             "say": "사이딩 줄이에요. 여기도 구조용 판넬과 방부목 둘만 O 예요."},
+        ]},
+    ],
+    [
+        {"kind": "check", "q": "데크와 사이딩에 O 가 있는 재료 두 가지는?",
+         "choices": ["구조용 판넬과 방부목", "LVL 과 I-joist", "글루렘과 LVL", "I-joist 와 방부목"], "a": 0,
+         "why": "바깥에 드러나는 데크와 사이딩에는 " + L("Structural Panel") + " 과 " + L("Preservative-treated Wood") + " 만 O 가 있어요."},
+        {"kind": "check", "q": "분류표에서 " + L("I-Joist") + " 에 O 가 있는 부위는?",
+         "choices": ["바닥, 벽, 지붕", "바닥, 데크, 사이딩", "바닥, 지붕", "천정, 거푸집"], "a": 0,
+         "why": "I-joist 열은 바닥, 벽, 지붕 세 칸이에요. 바닥, 데크, 사이딩은 방부목이에요."},
+        {"kind": "english", "head": "시험 답안에 쓸 문장",
+         "en": "목구조에 사용되는 목재는 구조용 판넬, 글루램, LVL, I-Joist, 방부목 다섯 가지이며, 구조용 판넬은 일곱 부위 모두에, 방부목은 바닥과 데크, 사이딩에 사용된다.",
+         "ko": "다섯 이름을 순서대로 쓰고, 가장 넓게 쓰이는 것과 바깥에 쓰이는 것을 덧붙이면 좋아요.",
+         "tip": "'판넬 - 글루램 - LVL - I - 방부' 다섯 마디로 순서를 외워요."},
+        {"kind": "warn", "head": "헷갈리기 쉬운 점", "items": [
+            L("I-Joist") + " 와 " + L("Preservative-treated Wood") + " 은 둘 다 O 가 세 개지만 자리가 완전히 달라요.",
+            "표에서 벽에 O 가 있는 재료는 구조용 판넬, LVL, I-joist 세 가지예요.",
+            "본문 설명과 표가 어긋나는 곳이 있어요. 표를 묻는 문제는 표대로 답해요.",
+        ]},
+    ],
+)
+
+# ---- p28 흙의 특성
+add(
+    28, "흙의 특성 5가지와 단점 2가지",
+    ["Earth Architecture", "Humidity Control", "Heat Storage", "Wood", "Breathability"],
+    [
+        {"kind": "say", "lines": [
+            "천연 건축재료의 두 번째, 흙으로 넘어가요.",
+            "이 쪽의 이야기는 하나예요. 흙은 숨 쉬고 열을 머금는 재료예요.",
+            "대신 약점도 분명해요. 물이에요.",
+        ]},
+        {"kind": "analogy", "head": "흙벽은 뚝배기예요",
+         "scene": "뚝배기는 늦게 데워지고 늦게 식어요. 흙벽도 낮의 열을 머금었다가 천천히 내놓아요. 습기도 먹었다 내놓아요.",
+         "map": [
+             ["늦게 데워지고 늦게 식는 뚝배기", L("Heat Storage")],
+             ["물기를 먹었다 내놓는 스펀지", L("Humidity Control")],
+             ["흙 알갱이 사이의 틈", "공극, 그래서 공기 정화"],
+             ["비를 맞으면 풀어지는 흙덩이", "수분에 취약함"],
+         ]},
+    ],
+    [
+        {"kind": "points", "head": "흙의 특성 1~3 (슬라이드 번호 그대로)", "items": [
+            "1) 천연의 습도 조절기능: 실내의 습도를 쾌적하게 유지해요. 이것이 " + L("Humidity Control") + " 이에요.",
+            "2) 단열과 축열기능: 여름에는 최고기온이 실외보다 3~10도 정도 낮아요.",
+            "2) 이어서: 겨울에는 최저기온이 실외보다 5~7도 정도 높은 온도를 유지해요.",
+            "3) 공기 정화 기능: 흙의 미립자에 공극이 많아 공기교환이 용이하고 오염물질 제거 효과가 있어요.",
+        ]},
+        {"kind": "points", "head": "흙의 특성 4~5", "items": [
+            "4) 항균과 방충 효과: 토양 미생물과 효소작용에 의해요.",
+            "5) 폐기물 발생 없음: 건축물 폐기 시 자연으로 환원돼요.",
+            "5) 가 1강에서 배운 재료 순환 그 자체예요. " + L("Earth Architecture") + " 은 다 쓰면 흙으로 돌아가요.",
+            "주문도 그대로예요. " + SPELL,
+        ]},
+        {"kind": "steps", "head": L("Heat Storage") + " 숫자를 손으로 써 봐요",
+         "given": "예시 날씨로 여름 바깥 최고 33도, 겨울 바깥 최저 영하 5도를 가정해요. (연습용 가정이에요)",
+         "steps": [
+             "여름은 3~10도 낮으니 33 빼기 10 은 23, 33 빼기 3 은 30 이에요.",
+             "그래서 흙집 안 최고기온은 약 23도에서 30도 사이예요.",
+             "겨울은 5~7도 높으니 영하 5 더하기 5 는 0, 영하 5 더하기 7 은 2 예요.",
+             "그래서 흙집 안 최저기온은 약 0도에서 2도 사이예요.",
+         ],
+         "answer": "여름은 3~10도 낮게, 겨울은 5~7도 높게 유지해요."},
+        {"kind": "points", "head": "흙의 단점 2가지와 마무리 화살표", "items": [
+            "1) 수분에 취약함: 재료 사용 위치나 방법을 면밀히 검토할 필요가 있어요.",
+            "2) 갈라짐 현상: 배합비율과 건조 시 주의가 필요해요.",
+            "화살표 줄: 건축재료로 사용할 경우, 건축부위별로 요구되는 성능 및 물성 확인이 필요해요.",
+            "이 화살표가 다음 쪽으로 이어져요. " + L("Earth Architecture") + " 의 공법 이야기가 뒤따라요.",
+        ]},
+        {"kind": "look", "head": "슬라이드 짚어 읽기", "boxes": [
+            {"x": 0.095, "y": 0.222, "w": 0.12, "h": 0.05,
+             "say": "윗덩어리 제목 '흙의 특성' 이에요. 아래 다섯 줄이 이어져요."},
+            {"x": 0.065, "y": 0.275, "w": 0.85, "h": 0.17,
+             "say": "1) 과 2) 예요. 2) 는 두 줄이고 숫자 3~10도와 5~7도가 여기 있어요."},
+            {"x": 0.065, "y": 0.435, "w": 0.82, "h": 0.11,
+             "say": "3) 공기 정화와 4) 항균, 방충이에요. 까닭이 각각 공극, 토양 미생물과 효소작용이에요."},
+            {"x": 0.065, "y": 0.54, "w": 0.56, "h": 0.05,
+             "say": "5) 폐기물 발생 없음이에요. 건축물 폐기 시 자연으로 환원돼요."},
+            {"x": 0.095, "y": 0.648, "w": 0.10, "h": 0.05,
+             "say": "아랫덩어리 제목 '단점' 이에요. 두 줄뿐이에요."},
+            {"x": 0.065, "y": 0.70, "w": 0.78, "h": 0.16,
+             "say": "단점 두 줄과 마무리 화살표예요. 건축부위별 성능과 물성을 확인해야 한다고 했어요."},
+        ]},
+    ],
+    [
+        {"kind": "check", "q": "흙의 단열과 축열기능에 대한 설명으로 옳은 것은?",
+         "choices": ["여름 최고기온이 실외보다 5~7도 낮다", "여름 최고기온이 실외보다 3~10도 정도 낮다",
+                     "겨울 최저기온이 실외보다 3~10도 낮다", "겨울과 여름 모두 실외와 같다"], "a": 1,
+         "why": "여름은 3~10도 정도 낮고, 겨울 최저기온은 5~7도 정도 높아요. 숫자 짝을 바꾸면 틀려요."},
+        {"kind": "check", "q": "흙의 공기 정화 기능의 까닭으로 슬라이드가 든 것은?",
+         "choices": ["흙의 미립자에 공극이 많아서", "토양 미생물과 효소작용 때문에",
+                     "습도를 조절해서", "폐기물이 없어서"], "a": 0,
+         "why": "공기 정화는 '공극', 항균과 방충은 '토양 미생물과 효소작용' 이에요. 까닭을 바꿔 내기 좋아요."},
+        {"kind": "english", "head": "시험 답안에 쓸 문장",
+         "en": "흙은 천연의 습도 조절기능, 단열과 축열기능, 공기 정화 기능, 항균과 방충 효과, 폐기물 발생 없음의 특성을 가지며, 수분에 취약하고 갈라짐 현상이 생기는 단점이 있다.",
+         "ko": "특성 다섯 가지 이름과 단점 두 가지를 한 문장에 넣으면 돼요.",
+         "tip": "'습도 - 열 - 공기 - 균 - 폐기물' 다섯 글자로 특성을 외워요.",
+         },
+        {"kind": "warn", "head": "헷갈리기 쉬운 점", "items": [
+            "여름 3~10도 낮게, 겨울 5~7도 높게예요. 두 숫자를 서로 바꿔 내기 딱 좋아요.",
+            "나무는 " + L("Breathability") + " 가 높았고, 흙은 공극이 많아요. 까닭이 서로 달라요.",
+            "마지막 화살표는 다음 쪽으로 넘기는 줄이에요. 부위별 성능 표는 이 쪽에 없어요.",
+        ]},
+    ],
+)
+
+# ---------------------------------------------------------------- 저장
+
+DATA = {"deck": "E2", "from": 15, "to": 28, "glossary": pick(*GLOSS_NAMES), "slides": SLIDES}
+
+out = HERE / "E2_015-028.json"
+with open(out, "w", encoding="utf-8", newline="\n") as f:
+    json.dump(DATA, f, ensure_ascii=False, indent=1)
+    f.write("\n")
+print("wrote", out, len(SLIDES), "slides")

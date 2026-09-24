@@ -25,8 +25,11 @@ const go = async h => { w.location.hash = h; await wait(60); };
 (async () => {
   await wait(50);
   console.log('home cards:', $$('.wcard').length, 'plan cells:', $$('.pcell').length, 'tools:', $$('.tool').length);
-  for (const wk of ['0', '1', '2', '3', '4']) { await go('#/week/' + wk); console.log('week', wk, 'ptiles', $$('.ptile').length, 'units', $$('.ucard').length, 'qbtns', $$('.qbtn').length); }
-  await go('#/quiz?week=2&level=basic&mode=all&start=1&n=0');
+  const meta = w.GNN_META || w.SDT_META;   // GNN 저장소는 GNN_META, 과목 사이트는 SDT_META
+  const weeks = (meta.weeks || []).map(x => String(x.id));
+  for (const wk of weeks) { await go('#/week/' + wk); console.log('week', wk, 'ptiles', $$('.ptile').length, 'units', $$('.ucard').length, 'qbtns', $$('.qbtn').length); }
+  const qweek = weeks.find(x => (meta.units || {})[x]) || weeks[0];   // 문제가 있는 주차 하나를 골라 풀어 본다
+  await go('#/quiz?week=' + qweek + '&level=basic&mode=all&start=1&n=0');
   let types = {}, guard = 0;
   while (guard++ < 400) {
     const card = $('#qstage .card'); if (!card) { console.log('no card'); break; }
@@ -39,15 +42,14 @@ const go = async h => { w.location.hash = h; await wait(60); };
     else { $('#showKey').click(); $$('#qstage .kitem input').slice(0, 1).forEach(c => { c.checked = true; c.dispatchEvent(new w.Event('change', { bubbles: true })); }); $('#grade').click(); }
   }
   console.log('types', types, 'badge', $('#wrongBadge').textContent);
-  await go('#/quiz?week=2&unit=%EC%9A%A9%EC%96%B4&start=1');
+  await go('#/quiz?week=' + qweek + '&unit=%EC%9A%A9%EC%96%B4&start=1');
   console.log('term quiz first:', ($('#qstage .qtext') || {}).textContent);
-  await go('#/mock?week=2'); $('#mockGo').click(); await wait(20); console.log('mock label:', ($('#qstage .mocklbl') || {}).textContent);
+  await go('#/mock?week=' + qweek); $('#mockGo').click(); await wait(20); console.log('mock label:', ($('#qstage .mocklbl') || {}).textContent);
   await go('#/wrong'); console.log('wrong items:', $$('.witem').length); $('#retryWrong').click(); await wait(20); console.log('retry card:', !!$('#qstage .card'));
-  await go('#/terms/2'); console.log('term card:', !!$('#fcard'), ($('.whead p') || {}).textContent); if ($('#fcard')) { $('#fcard').click(); $('#fKnow').click(); console.log('after know:', ($('.whead p') || {}).textContent); }
+  await go('#/terms/' + qweek); console.log('term card:', !!$('#fcard'), ($('.whead p') || {}).textContent); if ($('#fcard')) { $('#fcard').click(); $('#fKnow').click(); console.log('after know:', ($('.whead p') || {}).textContent); }
   await go('#/terms/all'); console.log('all terms card:', !!$('#fcard'));
   await go('#/exams'); console.log('exams cards:', $$('#exams .card').length);
   await go('#/tips'); console.log('tips cards:', $$('#tips .card').length);
-  const meta = w.GNN_META;
   for (const deck of Object.keys(meta.decks)) {
     if (!meta.decks[deck].have) continue;
     for (const pass of [1, 2, 3, 4]) {
