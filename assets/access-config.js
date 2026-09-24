@@ -12,7 +12,9 @@ window.SDT_ACCESS = {
     {slug: "interior-construction", key: "sdt_interior_v1", name: "실내디자인시공과실무"},
     {slug: "iot-smart-home", key: "sdt_iot_v1", name: "IoT 스마트홈"},
     {slug: "eco-architecture", key: "sdt_eco_v1", name: "친환경건축"},
-    {slug: "signals-systems", key: "sdt_sigsys_v1", name: "신호및시스템"}
+    {slug: "signals-systems", key: "sdt_sigsys_v1", name: "신호및시스템"},
+    {slug: "nlp", key: "sdt_nlp_v1", name: "자연어처리"},
+    {slug: "org-psychology", key: "sdt_orgpsy_v1", name: "조직심리학"}
   ],
   plans: [
     {kind: "subject", name: "과목별 이용권", desc: "과목 하나를 60일 동안 열어요. 중간고사나 기말고사 하나를 준비하기에 맞아요.", days: 60, price: "6,900원"},
