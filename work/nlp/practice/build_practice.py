@@ -442,6 +442,10 @@ def code(text):
     return {"cell_type": "code", "metadata": {}, "execution_count": None, "outputs": [], "source": text.splitlines(True)}
 
 
+def pseudo_block(e):
+    return "```\n" + "\n".join(e["pseudo"]) + "\n```"
+
+
 def notebook(spec, solved=False):
     cells = [md(f"# {spec['title']}\n\n" + spec["intro"]), code(spec["setup"])]
     for e in spec["ex"]:
@@ -449,9 +453,28 @@ def notebook(spec, solved=False):
         if e.get("think"):
             body += "\n\n### 생각 순서 (코드 치기 전에 말로 읊어요)\n\n" + "\n".join(
                 f"{i + 1}. {t}" for i, t in enumerate(e["think"]))
-        cells += [md(body), code(e["sol"] if solved else e["todo"]), md("**확인 셀**: 실행해서 맞았는지 봐요."), code(e["check"])]
-    sol = "## 정답 코드\n\n먼저 스스로 풀어 보고, 막혔을 때만 봐요.\n\n" + "\n\n".join(
-        f"**{e['md'].splitlines()[0].lstrip('# ')}**\n\n```python\n{e['sol']}\n```" for e in spec["ex"])
+        first = e.get("pseudo_first", False)
+        if e.get("pseudo") and not first and e.get("pseudo_show", True):
+            body += "\n\n### 의사코드 (한 줄이 파이썬 한 줄이 돼요)\n\n" + pseudo_block(e)
+        if e.get("next"):
+            body += "\n\n> **나중에 여기서 만나요** " + e["next"]
+        cells.append(md(body))
+        if first:
+            if e.get("pseudo_show", True):
+                cells.append(md("### 의사코드 먼저\n\n코드를 치기 전에 아래 줄을 종이에 옮겨 적어요. 한 줄이 파이썬 한 줄이 돼요.\n\n"
+                                + pseudo_block(e)))
+            else:
+                cells.append(md("### 의사코드 먼저\n\n이번에는 순서를 스스로 세워 봐요. 위 **생각 순서**를 보고 의사코드를 서너 줄로 적은 다음에 코드를 쳐요. "
+                                "모범 의사코드는 맨 아래 정답 모음에 있어요."))
+        cells += [code(e["sol"] if solved else e["todo"]), md("**확인 셀**: 실행해서 맞았는지 봐요."), code(e["check"])]
+    blocks = []
+    for e in spec["ex"]:
+        head = e["md"].splitlines()[0].lstrip("# ")
+        b = f"**{head}**\n\n"
+        if e.get("pseudo"):
+            b += "의사코드\n\n" + pseudo_block(e) + "\n\n"
+        blocks.append(b + f"```python\n{e['sol']}\n```")
+    sol = "## 정답 코드\n\n먼저 스스로 풀어 보고, 막혔을 때만 봐요.\n\n" + "\n\n".join(blocks)
     cells.append(md(sol))
     return {"cells": cells, "metadata": {"colab": {"provenance": []}, "kernelspec": {"display_name": "Python 3", "name": "python3"},
                                          "language_info": {"name": "python"}}, "nbformat": 4, "nbformat_minor": 0}
@@ -459,12 +482,20 @@ def notebook(spec, solved=False):
 
 def main(test=False):
     OUT.mkdir(parents=True, exist_ok=True)
-    for spec in (W2, W3, W4):
+    for spec in (WB, W2, W3, W4):
         for e in spec["ex"]:
             assert "None" in e["todo"] and "TODO" in e["todo"], e["md"][:20]
             assert e["todo"] != e["sol"], e["md"][:20]
         if spec is W4:
             assert all(e.get("think") for e in spec["ex"]), "W4 는 문제마다 생각 순서가 있어야 해요"
+        if spec is WB:
+            for e in spec["ex"]:
+                head = e["md"][:24]
+                assert e.get("think") and e.get("pseudo"), f"{head}: 생각 순서와 의사코드가 둘 다 있어야 해요"
+                assert e.get("next"), f"{head}: 나중에 어디서 만나는지 한 줄이 있어야 해요"
+                if e.get("pseudo_first"):
+                    assert "pseudo_show" in e, f"{head}: 쓰기형 문제는 pseudo_show 를 정해 줘야 해요"
+            assert len(spec["ex"]) == 10, "기초 다지기는 열 단원에 한 문제씩이에요"
         nb = notebook(spec)
         raw = json.dumps(nb, ensure_ascii=False, indent=1)
         bad = [c for c in BAD if c in raw]
