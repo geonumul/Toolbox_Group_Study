@@ -63,11 +63,11 @@ class Bank:
         raw = json.dumps(self.items, ensure_ascii=False, indent=1)
         for ch in BAD_CHARS:
             assert ch not in raw, f"금지 문자 {ch!r}"
-        # 유형은 키에 넣지 않는다. 한쪽이 객관식이고 한쪽이 단답이어도 학생에게는 같은 문제다
-        # (tools/checkers/bank_check.py 와 같은 기준).
+        # 한 파일은 한 주차다. 같은 주차 안에서 같은 사실을 객관식과 단답으로 두 번 묻는 것은
+        # work/_rules/문제은행_작성규칙.md 가 허용하는 형태이므로 유형을 키에 넣는다.
         qs = {}
         for it in self.items:
-            key = " ".join(str(it["q"]).split())
+            key = (it["type"], it["q"])
             assert key not in qs, f"질문 중복: {it['q'][:40]}"
             qs[key] = 1
         (HERE / name).write_text(raw, encoding="utf-8")
