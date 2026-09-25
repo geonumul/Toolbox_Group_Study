@@ -224,7 +224,9 @@
       const g = ctx.g, P = g.P;
       const route = { 2: ['sensor', 'sw'], 3: ['sw', 'plug'], 4: ['plug', 'hub'], 6: ['sensor', 'sw', 'light', 'hub'] }[s];
       // 글자를 -36 만큼 띄워요. 점이 상자 한가운데 내려앉으므로 -15 이면 상자 이름과 겹쳐요
-      if (route) putPacket(g.pk, u.along(route.map(id => P[id]), seg(k, 0, 0.9)), 1 - (s === 4 || s === 6 ? seg(k, 0.92, 1) : 0), '22°C', -36);
+      // 도착하면 점은 사라지고 받은 상자에 불이 들어와요 (s4, s6 이 하던 것을 s2, s3 도 똑같이 해요).
+      // 점이 상자 한가운데 남아 있으면 상자 이름(스위치, 플러그)을 덮어요
+      if (route) putPacket(g.pk, u.along(route.map(id => P[id]), seg(k, 0, 0.9)), 1 - seg(k, 0.92, 1), '22°C', -36);
       else if (s === 1) putPacket(g.pk, u.pt(P.sensor, [205, 128], seg(k, 0.2, 0.8)), seg(k, 0.1, 0.3) * (1 - seg(k, 0.8, 1)), '22°C', -36);
       else putPacket(g.pk, P.sensor, 0, '', -36);
       const plugOff = at(s, k, 5) > 0.4;

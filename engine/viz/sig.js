@@ -431,7 +431,8 @@
       u.txt(g.sumA, '[' + ys.join(', ') + ']');
       u.op(g.sumA, seg(so, 0.8, 1));
       g.arr.forEach((a, i) => {
-        u.setArrow(a, [40 + i * 30, 110], [238, IM.rows[i] - 6], seg(at(s, k, 1), i * 0.25, i * 0.25 + 0.6));
+        // 화살촉을 182 에서 멈춰요. 238 이면 줄 이름('도장 3')과 배열 글자 위에 화살촉이 얹혀요
+        u.setArrow(a, [40 + i * 30, 110], [182, IM.rows[i] - 6], seg(at(s, k, 1), i * 0.25, i * 0.25 + 0.6));
         a.g.setAttribute('class', 'vz-arr' + (s === i + 2 ? '' : ' mu'));
       });
       u.txt(g.chk, s >= 6 ? '길이 3+2-1 = 4, 합 1+3+3+1 = 8 = 4 x 2' : '');
@@ -683,7 +684,8 @@
       /* 누적 합 표시 */
       if (swp >= 0) {
         const nx = X(u.lerp(-2, 4.6, swp));
-        u.set(g.mark, { points: [nx, ST.r3 + 10, nx - 7, ST.r3 + 24, nx + 7, ST.r3 + 24].map(u.r).join(',') });
+        // 눈금 숫자(r3 + 16 자리)보다 아래에 둬요. +10 이면 세모가 -2 눈금 위에 올라앉아요
+        u.set(g.mark, { points: [nx, ST.r3 + 22, nx - 7, ST.r3 + 36, nx + 7, ST.r3 + 36].map(u.r).join(',') });
         u.op(g.mark, 1);
         u.txt(g.tot, '합 ' + (swp * 6.6 >= 2 ? '1' : '0'));
         u.op(g.tot, 1);

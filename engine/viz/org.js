@@ -260,7 +260,10 @@
     },
     draw(ctx, s, k) {
       const g = ctx.g;
-      const spot = [[30, 80], [73, 80], [230, 80], [397, 80], [397, 80], [397, 80], [397, 80]];
+      // 사람 점은 칸 한가운데가 아니라 칸 왼쪽 안쪽에 서요 (상자 왼쪽 + 12).
+      // 한가운데면 단계 이름(선행 사회화, 대면, 변화와 습득) 위에 올라앉아 이름을 못 읽어요.
+      // org.socialdim 의 여섯 칸이 쓰는 자리와 같은 규칙이에요
+      const spot = [[10, 80], [22, 80], [176, 80], [336, 80], [336, 80], [336, 80], [336, 80]];
       const q = u.pt(spot[Math.max(0, s - 1)], spot[s], seg(k, 0, 0.8));
       u.set(g.who, { cx: q[0], cy: q[1] });
       u.op(g.who, s <= 3 ? 1 : 0.35);
@@ -468,7 +471,9 @@
     },
     draw(ctx, s, k) {
       const g = ctx.g;
-      const spot = [[74, 52]].concat(g.B.map(b => b.at)).concat([[406, 52]]);
+      // 양 끝(이방인, 조직 구성원)도 여섯 칸과 같게 상자 왼쪽 안쪽에 서요.
+      // 상자 한가운데면 이름표 글자를 덮어요 (이방인 상자 14~134, 조직 구성원 상자 346~466)
+      const spot = [[26, 52]].concat(g.B.map(b => b.at)).concat([[358, 52]]);
       const q = u.pt(spot[Math.max(0, s - 1)], spot[s], seg(k, 0, 0.8));
       u.set(g.who, { cx: q[0], cy: q[1] });
       g.B.forEach((b, i) => {
