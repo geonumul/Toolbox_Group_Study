@@ -4,6 +4,7 @@
 계산 문항의 정답은 모두 파이썬으로 다시 계산해 손으로 적은 값과 assert 로 비교한다.
 """
 import json, os, math
+import optshuffle
 from collections import Counter
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -802,6 +803,43 @@ for t, arr in (("mcq", M), ("ox", O), ("short", S), ("essay", E), ("calc", C)):
     for i, q in enumerate(arr, 1):
         q["id"] = f"wbb-{t}-{i:03d}"
         basic.append(q)
+
+# ---------------- 보기 자리 섞기와 id 고정
+# 정답이 한 자리에 몰리면 내용을 몰라도 같은 번호만 찍어 맞힐 수 있다. 그래서 파일에
+# 쓰기 직전에 보기 자리를 섞는다(까닭과 예외는 optshuffle.py 에).
+optshuffle.shuffle_bank(exam)
+optshuffle.shuffle_bank(basic)
+# wbe- id 는 ex() 에 적은 기출 번호에서 나오므로 자리와 무관하다. 반면 wbb- id 는 목록
+# 안 자리로 매기므로, 문항을 맨 뒤가 아닌 곳에 끼우면 그 뒤 id 가 한 칸씩 밀려 학생이
+# 푼 기록과 오답노트가 엉뚱한 문항을 가리킨다. 그래서 두 목록 모두 박아 둔다.
+IDS_EXAM = [
+    "wbe-mcq-001", "wbe-mcq-002", "wbe-mcq-003", "wbe-mcq-004", "wbe-mcq-005", "wbe-mcq-006",
+    "wbe-short-007", "wbe-short-008", "wbe-short-009", "wbe-essay-010", "wbe-essay-011", "wbe-essay-012",
+    "wbe-essay-013", "wbe-essay-014", "wbe-calc-015",
+]
+IDS_BASIC = [
+    "wbb-mcq-001", "wbb-mcq-002", "wbb-mcq-003", "wbb-mcq-004", "wbb-mcq-005", "wbb-mcq-006",
+    "wbb-mcq-007", "wbb-mcq-008", "wbb-mcq-009", "wbb-mcq-010", "wbb-mcq-011", "wbb-mcq-012",
+    "wbb-mcq-013", "wbb-mcq-014", "wbb-mcq-015", "wbb-mcq-016", "wbb-mcq-017", "wbb-mcq-018",
+    "wbb-mcq-019", "wbb-mcq-020", "wbb-mcq-021", "wbb-mcq-022", "wbb-mcq-023", "wbb-mcq-024",
+    "wbb-mcq-025", "wbb-mcq-026", "wbb-mcq-027", "wbb-mcq-028", "wbb-mcq-029", "wbb-mcq-030",
+    "wbb-mcq-031", "wbb-mcq-032", "wbb-mcq-033", "wbb-mcq-034", "wbb-mcq-035", "wbb-mcq-036",
+    "wbb-mcq-037", "wbb-mcq-038", "wbb-mcq-039", "wbb-mcq-040", "wbb-mcq-041", "wbb-mcq-042",
+    "wbb-mcq-043", "wbb-ox-001", "wbb-ox-002", "wbb-ox-003", "wbb-ox-004", "wbb-ox-005",
+    "wbb-ox-006", "wbb-ox-007", "wbb-ox-008", "wbb-ox-009", "wbb-ox-010", "wbb-ox-011",
+    "wbb-ox-012", "wbb-ox-013", "wbb-ox-014", "wbb-ox-015", "wbb-ox-016", "wbb-ox-017",
+    "wbb-ox-018", "wbb-ox-019", "wbb-ox-020", "wbb-ox-021", "wbb-ox-022", "wbb-ox-023",
+    "wbb-ox-024", "wbb-ox-025", "wbb-ox-026", "wbb-short-001", "wbb-short-002", "wbb-short-003",
+    "wbb-short-004", "wbb-short-005", "wbb-short-006", "wbb-short-007", "wbb-short-008", "wbb-short-009",
+    "wbb-short-010", "wbb-short-011", "wbb-short-012", "wbb-short-013", "wbb-short-014", "wbb-short-015",
+    "wbb-short-016", "wbb-short-017", "wbb-short-018", "wbb-short-019", "wbb-essay-001", "wbb-essay-002",
+    "wbb-essay-003", "wbb-essay-004", "wbb-essay-005", "wbb-essay-006", "wbb-essay-007", "wbb-essay-008",
+    "wbb-essay-009", "wbb-essay-010", "wbb-calc-001", "wbb-calc-002", "wbb-calc-003", "wbb-calc-004",
+    "wbb-calc-005", "wbb-calc-006", "wbb-calc-007", "wbb-calc-008", "wbb-calc-009", "wbb-calc-010",
+    "wbb-calc-011",
+]
+optshuffle.check_ids(exam, IDS_EXAM)
+optshuffle.check_ids(basic, IDS_BASIC)
 
 # ---------------- 자체 점검
 BAD = ["—", "–", "·", "・"]

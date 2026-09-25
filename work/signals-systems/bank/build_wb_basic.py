@@ -463,4 +463,28 @@ E(U10, "S3 p.22-24", "이산 컨볼루션 $y[n]=\\sum_k x[k]h[n-k]$ 를 손으�
   "먼저 $h[k]$ 를 $k=0$ 기준으로 뒤집어 $h[-k]$ 를 만든다. 다음 $n$ 만큼 밀어 $h[n-k]$ 를 만든다. 겹치는 칸마다 $x[k]$ 와 $h[n-k]$ 를 곱한다. 곱한 값을 모두 더하면 $y[n]$ 이다. 이것을 $n$ 마다 반복하고, 겹치는 칸이 없으면 $0$ 이다.",
   ["뒤집기 $h[-k]$", "밀기 $h[n-k]$", "곱하기", "더하기", "$n$ 마다 반복", "겹치지 않으면 $0$"], "컨볼루션 합")
 
-B.save("wb_basic.json")
+# id 는 Bank 가 목록 안 자리로 매긴다. 문항을 맨 뒤가 아닌 곳에 끼우면 그 뒤 같은 유형의
+# id 가 한 칸씩 밀려 학생이 푼 기록과 오답노트가 엉뚱한 문항을 가리키므로 박아 둔다.
+IDS = [
+    "wbb-calc-001", "wbb-calc-002", "wbb-calc-003", "wbb-calc-004", "wbb-calc-005", "wbb-calc-006",
+    "wbb-calc-007", "wbb-calc-008", "wbb-calc-009", "wbb-calc-010", "wbb-calc-011", "wbb-calc-012",
+    "wbb-calc-013", "wbb-calc-014", "wbb-calc-015", "wbb-calc-016", "wbb-calc-017", "wbb-calc-018",
+    "wbb-calc-019", "wbb-calc-020", "wbb-calc-021", "wbb-calc-022", "wbb-calc-023", "wbb-calc-024",
+    "wbb-calc-025", "wbb-calc-026", "wbb-calc-027", "wbb-calc-028", "wbb-calc-029", "wbb-calc-030",
+    "wbb-calc-031", "wbb-calc-032", "wbb-calc-033", "wbb-calc-034", "wbb-calc-035", "wbb-calc-036",
+    "wbb-calc-037", "wbb-calc-038", "wbb-calc-039", "wbb-calc-040", "wbb-calc-041", "wbb-calc-042",
+    "wbb-calc-043", "wbb-calc-044", "wbb-mcq-001", "wbb-mcq-002", "wbb-mcq-003", "wbb-mcq-004",
+    "wbb-mcq-005", "wbb-mcq-006", "wbb-mcq-007", "wbb-mcq-008", "wbb-mcq-009", "wbb-mcq-010",
+    "wbb-mcq-011", "wbb-mcq-012", "wbb-mcq-013", "wbb-mcq-014", "wbb-mcq-015", "wbb-mcq-016",
+    "wbb-mcq-017", "wbb-mcq-018", "wbb-mcq-019", "wbb-mcq-020", "wbb-mcq-021", "wbb-mcq-022",
+    "wbb-mcq-023", "wbb-mcq-024", "wbb-mcq-025", "wbb-mcq-026", "wbb-mcq-027", "wbb-mcq-028",
+    "wbb-mcq-029", "wbb-mcq-030", "wbb-mcq-031", "wbb-mcq-032", "wbb-mcq-033", "wbb-mcq-034",
+    "wbb-ox-001", "wbb-ox-002", "wbb-ox-003", "wbb-ox-004", "wbb-ox-005", "wbb-ox-006",
+    "wbb-ox-007", "wbb-ox-008", "wbb-ox-009", "wbb-ox-010", "wbb-ox-011", "wbb-ox-012",
+    "wbb-ox-013", "wbb-ox-014", "wbb-ox-015", "wbb-ox-016", "wbb-ox-017", "wbb-ox-018",
+    "wbb-ox-019", "wbb-ox-020", "wbb-ox-021", "wbb-short-001", "wbb-short-002", "wbb-short-003",
+    "wbb-short-004", "wbb-short-005", "wbb-short-006", "wbb-short-007", "wbb-short-008", "wbb-short-009",
+    "wbb-short-010", "wbb-short-011", "wbb-short-012", "wbb-short-013", "wbb-short-014", "wbb-short-015",
+    "wbb-essay-001", "wbb-essay-002", "wbb-essay-003", "wbb-essay-004", "wbb-essay-005", "wbb-essay-006",
+]
+B.save("wb_basic.json", IDS)

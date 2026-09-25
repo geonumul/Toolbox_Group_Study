@@ -4,6 +4,7 @@
 계산 문항은 아래에서 실제로 계산하고 assert 로 확인한다.
 """
 import json, os
+import optshuffle
 from collections import defaultdict
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -647,6 +648,27 @@ add("calc", U7, "I2 p.24-25", model="Dashboard",
 # 금지 문자 자체 점검 후 저장
 # =====================================================================
 BAD = ["—", "–", "·", "・"]
+# ------------------------------------------------- 보기 자리 섞기와 id 고정
+# 정답이 한 자리에 몰리면 내용을 몰라도 같은 번호만 찍어 맞힐 수 있다.
+# 그래서 파일에 쓰기 직전에 보기 자리를 섞는다(까닭과 예외는 optshuffle.py 에).
+optshuffle.shuffle_bank(bank)
+# id 는 위에서 목록 안 자리로 매긴다. 문항을 맨 뒤가 아닌 곳에 끼우면 그 뒤 id 가
+# 한 칸씩 밀려 학생이 푼 기록과 오답노트가 엉뚱한 문항을 가리킨다. 그래서 박아 둔다.
+IDS = [
+    "w2h-mcq-001", "w2h-mcq-002", "w2h-mcq-003", "w2h-mcq-004", "w2h-mcq-005", "w2h-mcq-006",
+    "w2h-mcq-007", "w2h-mcq-008", "w2h-mcq-009", "w2h-mcq-010", "w2h-mcq-011", "w2h-mcq-012",
+    "w2h-mcq-013", "w2h-mcq-014", "w2h-mcq-015", "w2h-mcq-016", "w2h-mcq-017", "w2h-mcq-018",
+    "w2h-mcq-019", "w2h-ox-001", "w2h-ox-002", "w2h-ox-003", "w2h-ox-004", "w2h-ox-005",
+    "w2h-ox-006", "w2h-ox-007", "w2h-ox-008", "w2h-ox-009", "w2h-ox-010", "w2h-ox-011",
+    "w2h-ox-012", "w2h-ox-013", "w2h-ox-014", "w2h-ox-015", "w2h-ox-016", "w2h-ox-017",
+    "w2h-short-001", "w2h-short-002", "w2h-short-003", "w2h-short-004", "w2h-short-005", "w2h-short-006",
+    "w2h-short-007", "w2h-short-008", "w2h-short-009", "w2h-short-010", "w2h-short-011", "w2h-essay-001",
+    "w2h-essay-002", "w2h-essay-003", "w2h-essay-004", "w2h-essay-005", "w2h-essay-006", "w2h-essay-007",
+    "w2h-essay-008", "w2h-calc-001", "w2h-calc-002", "w2h-calc-003", "w2h-calc-004", "w2h-calc-005",
+    "w2h-calc-006", "w2h-calc-007", "w2h-calc-008", "w2h-calc-009", "w2h-calc-010",
+]
+optshuffle.check_ids(bank, IDS)
+
 txt = json.dumps(bank, ensure_ascii=False)
 for ch in BAD:
     assert ch not in txt, f"금지 문자 {ch!r}"

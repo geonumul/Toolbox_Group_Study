@@ -233,4 +233,19 @@ Es(V2, "S2 p.14", "이산시간 척도 변환 $x[3n+6]$ 이 연속시간 척도 
    "연속시간 $x(3t)$ 는 모양이 그대로 세 배 압축되지만, 이산시간에서는 정수 칸만 있으므로 $x[3n]$ 은 세 칸마다 하나만 뽑고 나머지를 버린다. 슬라이드의 삼각 신호에서 $3n+6$ 이 삼각형 안의 정수가 되는 것은 $n=-2$ 뿐이어서 $y[n]=\\delta[n+2]$ 가 된다. 이렇게 버린 칸은 되돌릴 수 없다.",
    ["연속시간은 모양 보존 압축", "이산시간은 칸을 버림", "$x[3n]$: 세 칸마다 하나", "슬라이드 결과 $\\delta[n+2]$", "$n=-2$ 만 남는 이유", "되돌릴 수 없음"], "시간 척도 변환", src="예제 (S2 p.14)")
 
-B.save("w2_hard.json")
+# id 는 Bank 가 목록 안 자리로 매긴다. 문항을 맨 뒤가 아닌 곳에 끼우면 그 뒤 같은 유형의
+# id 가 한 칸씩 밀려 학생이 푼 기록과 오답노트가 엉뚱한 문항을 가리키므로 박아 둔다.
+IDS = [
+    "w2h-calc-001", "w2h-calc-002", "w2h-calc-003", "w2h-calc-004", "w2h-calc-005", "w2h-calc-006",
+    "w2h-calc-007", "w2h-calc-008", "w2h-calc-009", "w2h-calc-010", "w2h-calc-011", "w2h-calc-012",
+    "w2h-calc-013", "w2h-calc-014", "w2h-calc-015", "w2h-calc-016", "w2h-calc-017", "w2h-calc-018",
+    "w2h-calc-019", "w2h-calc-020", "w2h-calc-021", "w2h-calc-022", "w2h-calc-023", "w2h-calc-024",
+    "w2h-calc-025", "w2h-mcq-001", "w2h-mcq-002", "w2h-mcq-003", "w2h-mcq-004", "w2h-mcq-005",
+    "w2h-mcq-006", "w2h-mcq-007", "w2h-mcq-008", "w2h-mcq-009", "w2h-mcq-010", "w2h-mcq-011",
+    "w2h-mcq-012", "w2h-mcq-013", "w2h-mcq-014", "w2h-mcq-015", "w2h-ox-001", "w2h-ox-002",
+    "w2h-ox-003", "w2h-ox-004", "w2h-ox-005", "w2h-ox-006", "w2h-ox-007", "w2h-ox-008",
+    "w2h-ox-009", "w2h-ox-010", "w2h-short-001", "w2h-short-002", "w2h-short-003", "w2h-short-004",
+    "w2h-short-005", "w2h-short-006", "w2h-short-007", "w2h-short-008", "w2h-essay-001", "w2h-essay-002",
+    "w2h-essay-003", "w2h-essay-004", "w2h-essay-005",
+]
+B.save("w2_hard.json", IDS)

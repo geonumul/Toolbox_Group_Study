@@ -6,6 +6,7 @@
 슬라이드에 없는 숫자(축척 환산, 넓이, 원가 덧셈)는 직접 만든 쉬운 예시 숫자이며 문제에 '예시'라고 밝힌다.
 계산 문항의 답은 아래에서 실제로 계산해 assert 로 확인한다."""
 import json, pathlib, random, sys
+import optshuffle
 from collections import Counter
 
 sys.stdout.reconfigure(encoding="utf-8")
@@ -503,6 +504,32 @@ assert len({(q["type"], " ".join(q["q"].split())) for q in bank}) == len(bank), 
 for q in bank:
     if q["type"] == "mcq":
         assert len(set(q["c"])) == 4, q["id"]
+
+# ------------------------------------------------- 보기 자리 섞기와 id 고정
+# 정답이 한 자리에 몰리면 내용을 몰라도 같은 번호만 찍어 맞힐 수 있다.
+# 그래서 파일에 쓰기 직전에 보기 자리를 섞는다(까닭과 예외는 optshuffle.py 에).
+optshuffle.shuffle_bank(bank)
+# id 는 위에서 목록 안 자리로 매긴다. 문항을 맨 뒤가 아닌 곳에 끼우면 그 뒤 id 가
+# 한 칸씩 밀려 학생이 푼 기록과 오답노트가 엉뚱한 문항을 가리킨다. 그래서 박아 둔다.
+IDS = [
+    "wbb-mcq-001", "wbb-mcq-002", "wbb-mcq-003", "wbb-mcq-004", "wbb-mcq-005", "wbb-mcq-006",
+    "wbb-mcq-007", "wbb-mcq-008", "wbb-mcq-009", "wbb-mcq-010", "wbb-mcq-011", "wbb-mcq-012",
+    "wbb-mcq-013", "wbb-mcq-014", "wbb-mcq-015", "wbb-mcq-016", "wbb-mcq-017", "wbb-mcq-018",
+    "wbb-mcq-019", "wbb-mcq-020", "wbb-mcq-021", "wbb-mcq-022", "wbb-mcq-023", "wbb-mcq-024",
+    "wbb-mcq-025", "wbb-mcq-026", "wbb-mcq-027", "wbb-mcq-028", "wbb-mcq-029", "wbb-mcq-030",
+    "wbb-mcq-031", "wbb-mcq-032", "wbb-mcq-033", "wbb-mcq-034", "wbb-mcq-035", "wbb-mcq-036",
+    "wbb-mcq-037", "wbb-ox-001", "wbb-ox-002", "wbb-ox-003", "wbb-ox-004", "wbb-ox-005",
+    "wbb-ox-006", "wbb-ox-007", "wbb-ox-008", "wbb-ox-009", "wbb-ox-010", "wbb-ox-011",
+    "wbb-ox-012", "wbb-ox-013", "wbb-ox-014", "wbb-ox-015", "wbb-ox-016", "wbb-ox-017",
+    "wbb-ox-018", "wbb-ox-019", "wbb-ox-020", "wbb-ox-021", "wbb-ox-022", "wbb-ox-023",
+    "wbb-ox-024", "wbb-ox-025", "wbb-ox-026", "wbb-ox-027", "wbb-ox-028", "wbb-short-001",
+    "wbb-short-002", "wbb-short-003", "wbb-short-004", "wbb-short-005", "wbb-short-006", "wbb-short-007",
+    "wbb-short-008", "wbb-short-009", "wbb-short-010", "wbb-short-011", "wbb-short-012", "wbb-short-013",
+    "wbb-short-014", "wbb-short-015", "wbb-essay-001", "wbb-essay-002", "wbb-essay-003", "wbb-essay-004",
+    "wbb-essay-005", "wbb-essay-006", "wbb-essay-007", "wbb-calc-001", "wbb-calc-002", "wbb-calc-003",
+    "wbb-calc-004",
+]
+optshuffle.check_ids(bank, IDS)
 
 raw = json.dumps(bank, ensure_ascii=False, indent=1)
 for ch in (chr(0x2014), chr(0x2013), chr(0x00B7), chr(0x30FB)):

@@ -3,6 +3,7 @@
 사용: python build_u456.py  ->  같은 폴더 u456.json
 mcq 는 보기 첫 번째가 정답으로 적혀 있고, id 로 정한 고정 난수로 섞는다(다시 돌려도 같은 결과)."""
 import json, random, pathlib, hashlib
+import optshuffle
 
 OUT = pathlib.Path(__file__).with_name("u456.json")
 
@@ -358,6 +359,46 @@ def build():
                 else:
                     unit, q, pts, ans = row
                     out.append({"id": qid, "type": "essay", "part": part, "unit": unit, "q": q, "points": pts, "answer": ans, "level": "basic"})
+    # ------------------------------------------------- 보기 자리 섞기와 id 고정
+    # 정답이 한 자리에 몰리면 내용을 몰라도 같은 번호만 찍어 맞힐 수 있다.
+    # 그래서 파일에 쓰기 직전에 보기 자리를 섞는다(까닭과 예외는 optshuffle.py 에).
+    optshuffle.shuffle_bank(out)
+    # id 는 위에서 목록 안 자리로 매긴다. 문항을 맨 뒤가 아닌 곳에 끼우면 그 뒤 id 가
+    # 한 칸씩 밀려 학생이 푼 기록과 오답노트가 엉뚱한 문항을 가리킨다. 그래서 박아 둔다.
+    IDS = [
+        "u4-mcq-001", "u4-mcq-002", "u4-mcq-003", "u4-mcq-004", "u4-mcq-005", "u4-mcq-006",
+        "u4-mcq-007", "u4-mcq-008", "u4-mcq-009", "u4-mcq-010", "u4-mcq-011", "u4-mcq-012",
+        "u4-mcq-013", "u4-mcq-014", "u4-mcq-015", "u4-mcq-016", "u4-mcq-017", "u4-mcq-018",
+        "u4-mcq-019", "u4-mcq-020", "u4-mcq-021", "u4-mcq-022", "u4-mcq-023", "u4-mcq-024",
+        "u4-mcq-025", "u4-ox-001", "u4-ox-002", "u4-ox-003", "u4-ox-004", "u4-ox-005",
+        "u4-ox-006", "u4-ox-007", "u4-ox-008", "u4-ox-009", "u4-ox-010", "u4-ox-011",
+        "u4-ox-012", "u4-ox-013", "u4-ox-014", "u4-ox-015", "u4-short-001", "u4-short-002",
+        "u4-short-003", "u4-short-004", "u4-short-005", "u4-short-006", "u4-short-007", "u4-short-008",
+        "u4-short-009", "u4-short-010", "u4-short-011", "u4-short-012", "u4-short-013", "u4-short-014",
+        "u4-short-015", "u4-essay-001", "u4-essay-002", "u4-essay-003", "u4-essay-004", "u4-essay-005",
+        "u5-mcq-001", "u5-mcq-002", "u5-mcq-003", "u5-mcq-004", "u5-mcq-005", "u5-mcq-006",
+        "u5-mcq-007", "u5-mcq-008", "u5-mcq-009", "u5-mcq-010", "u5-mcq-011", "u5-mcq-012",
+        "u5-mcq-013", "u5-mcq-014", "u5-mcq-015", "u5-mcq-016", "u5-mcq-017", "u5-mcq-018",
+        "u5-mcq-019", "u5-mcq-020", "u5-mcq-021", "u5-mcq-022", "u5-mcq-023", "u5-mcq-024",
+        "u5-mcq-025", "u5-ox-001", "u5-ox-002", "u5-ox-003", "u5-ox-004", "u5-ox-005",
+        "u5-ox-006", "u5-ox-007", "u5-ox-008", "u5-ox-009", "u5-ox-010", "u5-ox-011",
+        "u5-ox-012", "u5-ox-013", "u5-ox-014", "u5-ox-015", "u5-short-001", "u5-short-002",
+        "u5-short-003", "u5-short-004", "u5-short-005", "u5-short-006", "u5-short-007", "u5-short-008",
+        "u5-short-009", "u5-short-010", "u5-short-011", "u5-short-012", "u5-short-013", "u5-short-014",
+        "u5-short-015", "u5-essay-001", "u5-essay-002", "u5-essay-003", "u5-essay-004", "u5-essay-005",
+        "u6-mcq-001", "u6-mcq-002", "u6-mcq-003", "u6-mcq-004", "u6-mcq-005", "u6-mcq-006",
+        "u6-mcq-007", "u6-mcq-008", "u6-mcq-009", "u6-mcq-010", "u6-mcq-011", "u6-mcq-012",
+        "u6-mcq-013", "u6-mcq-014", "u6-mcq-015", "u6-mcq-016", "u6-mcq-017", "u6-mcq-018",
+        "u6-mcq-019", "u6-mcq-020", "u6-mcq-021", "u6-mcq-022", "u6-mcq-023", "u6-mcq-024",
+        "u6-mcq-025", "u6-ox-001", "u6-ox-002", "u6-ox-003", "u6-ox-004", "u6-ox-005",
+        "u6-ox-006", "u6-ox-007", "u6-ox-008", "u6-ox-009", "u6-ox-010", "u6-ox-011",
+        "u6-ox-012", "u6-ox-013", "u6-ox-014", "u6-ox-015", "u6-short-001", "u6-short-002",
+        "u6-short-003", "u6-short-004", "u6-short-005", "u6-short-006", "u6-short-007", "u6-short-008",
+        "u6-short-009", "u6-short-010", "u6-short-011", "u6-short-012", "u6-short-013", "u6-short-014",
+        "u6-short-015", "u6-essay-001", "u6-essay-002", "u6-essay-003", "u6-essay-004", "u6-essay-005",
+    ]
+    optshuffle.check_ids(out, IDS)
+
     OUT.write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
     from collections import Counter
     print(len(out), dict(Counter((q["part"], q["type"]) for q in out)))

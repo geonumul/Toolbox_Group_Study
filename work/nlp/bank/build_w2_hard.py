@@ -3,6 +3,7 @@
 출력: work/nlp/bank/w2_hard.json
 계산 문항은 아래에서 실제로 계산하고 assert 로 확인한다."""
 import json, math, os
+import optshuffle
 from collections import Counter
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -712,5 +713,26 @@ ox(U1, "N2 p.8",
    "10만 개든 100만 개든 꼬리는 계속 남고, 잘린 꼬리는 [UNK] 가 돼요. 그래서 어휘는 나열이 아니라 만들어야 해요(서브워드).")
 
 # =====================================================================
+# ------------------------------------------------- 보기 자리 섞기와 id 고정
+# 정답이 한 자리에 몰리면 내용을 몰라도 같은 번호만 찍어 맞힐 수 있다.
+# 그래서 파일에 쓰기 직전에 보기 자리를 섞는다(까닭과 예외는 optshuffle.py 에).
+optshuffle.shuffle_bank(bank)
+# id 는 위에서 목록 안 자리로 매긴다. 문항을 맨 뒤가 아닌 곳에 끼우면 그 뒤 id 가
+# 한 칸씩 밀려 학생이 푼 기록과 오답노트가 엉뚱한 문항을 가리킨다. 그래서 박아 둔다.
+IDS = [
+    "w2h-mcq-001", "w2h-mcq-002", "w2h-mcq-003", "w2h-mcq-004", "w2h-mcq-005", "w2h-mcq-006",
+    "w2h-mcq-007", "w2h-mcq-008", "w2h-mcq-009", "w2h-mcq-010", "w2h-mcq-011", "w2h-mcq-012",
+    "w2h-mcq-013", "w2h-mcq-014", "w2h-mcq-015", "w2h-mcq-016", "w2h-mcq-017", "w2h-mcq-018",
+    "w2h-mcq-019", "w2h-mcq-020", "w2h-mcq-021", "w2h-mcq-022", "w2h-ox-001", "w2h-ox-002",
+    "w2h-ox-003", "w2h-ox-004", "w2h-ox-005", "w2h-ox-006", "w2h-ox-007", "w2h-ox-008",
+    "w2h-ox-009", "w2h-ox-010", "w2h-ox-011", "w2h-ox-012", "w2h-ox-013", "w2h-ox-014",
+    "w2h-short-001", "w2h-short-002", "w2h-short-003", "w2h-short-004", "w2h-short-005", "w2h-short-006",
+    "w2h-short-007", "w2h-short-008", "w2h-short-009", "w2h-short-010", "w2h-essay-001", "w2h-essay-002",
+    "w2h-essay-003", "w2h-essay-004", "w2h-essay-005", "w2h-essay-006", "w2h-calc-001", "w2h-calc-002",
+    "w2h-calc-003", "w2h-calc-004", "w2h-calc-005", "w2h-calc-006", "w2h-calc-007", "w2h-mcq-023",
+    "w2h-ox-015", "w2h-ox-016", "w2h-ox-017",
+]
+optshuffle.check_ids(bank, IDS)
+
 json.dump(bank, open(OUT, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
 print(OUT, len(bank), dict(Counter(q["type"] for q in bank)))

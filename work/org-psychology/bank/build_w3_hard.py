@@ -307,4 +307,19 @@ E(V8, "O3 p.21-26", "신입 구성원이 **직접 질문하기** 를 피하고 �
    "역할 모호성의 정의", "역할 갈등의 정의"],
   "정보추구의 사회적 비용과 간접적 책략")
 
-B.save("w3_hard.json")
+# id 는 Bank 가 목록 안 자리로 매긴다. 문항을 맨 뒤가 아닌 곳에 끼우면 그 뒤 같은 유형의
+# id 가 한 칸씩 밀려 학생이 푼 기록과 오답노트가 엉뚱한 문항을 가리키므로 박아 둔다.
+IDS = [
+    "w3h-mcq-001", "w3h-mcq-002", "w3h-mcq-003", "w3h-mcq-004", "w3h-mcq-005", "w3h-mcq-006",
+    "w3h-mcq-007", "w3h-mcq-008", "w3h-mcq-009", "w3h-mcq-010", "w3h-mcq-011", "w3h-mcq-012",
+    "w3h-mcq-013", "w3h-mcq-014", "w3h-mcq-015", "w3h-mcq-016", "w3h-mcq-017", "w3h-mcq-018",
+    "w3h-mcq-019", "w3h-mcq-020", "w3h-mcq-021", "w3h-mcq-022", "w3h-mcq-023", "w3h-mcq-024",
+    "w3h-ox-001", "w3h-ox-002", "w3h-ox-003", "w3h-ox-004", "w3h-ox-005", "w3h-ox-006",
+    "w3h-ox-007", "w3h-ox-008", "w3h-ox-009", "w3h-ox-010", "w3h-ox-011", "w3h-ox-012",
+    "w3h-short-001", "w3h-short-002", "w3h-short-003", "w3h-short-004", "w3h-short-005", "w3h-short-006",
+    "w3h-short-007", "w3h-short-008", "w3h-short-009", "w3h-short-010", "w3h-short-011", "w3h-short-012",
+    "w3h-short-013", "w3h-short-014", "w3h-short-015", "w3h-short-016", "w3h-short-017", "w3h-short-018",
+    "w3h-short-019", "w3h-short-020", "w3h-essay-001", "w3h-essay-002", "w3h-essay-003", "w3h-essay-004",
+    "w3h-essay-005", "w3h-essay-006",
+]
+B.save("w3_hard.json", IDS)

@@ -3,7 +3,8 @@
 
 이 과목은 계산 문항이 없어서 calc 도우미를 두지 않는다.
 """
-import json, pathlib, random, zlib
+import json, pathlib
+import optshuffle
 
 HERE = pathlib.Path(__file__).resolve().parent
 BAD_CHARS = "—–·・"   # em dash, en dash, 가운뎃점 2종
@@ -28,10 +29,7 @@ class Bank:
     def mcq(self, unit, slides, q, c, a, e, src=None):
         assert len(c) == 4 and len(set(c)) == 4 and 0 <= a < 4, q
         d = self._base("mcq", unit, slides, src)
-        rnd = random.Random(zlib.crc32(d["id"].encode()))   # 정답 자리를 고르게 섞는다 (id 로 고정)
-        order = list(range(4))
-        rnd.shuffle(order)
-        d.update(q=q, c=[c[i] for i in order], a=order.index(a), e=e)
+        d.update(q=q, c=c, a=a, e=e)
         self.items.append(d)
 
     def ox(self, unit, slides, q, a, e, src=None):
@@ -59,7 +57,12 @@ class Bank:
         d.update(q=q, answer=answer, points=points, model=model)
         self.items.append(d)
 
-    def save(self, name):
+    def save(self, name, ids):
+        """ids 는 만들어질 문항의 id 목록이다(optshuffle.check_ids 설명 참고)."""
+        # 정답이 한 자리에 몰리면 내용을 몰라도 같은 번호만 찍어 맞힐 수 있다. 그래서
+        # 파일에 쓰기 직전에 보기 자리를 섞는다(까닭과 예외는 optshuffle.py 에).
+        optshuffle.shuffle_bank(self.items)
+        optshuffle.check_ids(self.items, ids)
         raw = json.dumps(self.items, ensure_ascii=False, indent=1)
         for ch in BAD_CHARS:
             assert ch not in raw, f"금지 문자 {ch!r}"

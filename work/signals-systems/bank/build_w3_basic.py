@@ -354,4 +354,26 @@ E(U8, "S3 p.71-72", "계단 응답과 임펄스 응답의 관계를 이산시간
   "이산시간에서 계단 응답은 $s[n]=u[n]*h[n]=\\sum_{k\\le n}h[k]$ 로 임펄스 응답의 누적 합이고, 거꾸로 $h[n]=s[n]-s[n-1]$ 로 1차 차분이다. 연속시간에서는 $s(t)=\\int_{-\\infty}^{t}h(\\tau)d\\tau$ 로 누적 적분이고, $h(t)=\\frac{ds(t)}{dt}$ 로 미분이다.",
   ["$s=u*h$", "DT: 누적 합", "DT: $h=s[n]-s[n-1]$", "CT: 누적 적분", "CT: $h=ds/dt$", "누산기(적분기)에 $h$ 를 넣은 것과 같음"], "계단 응답")
 
-B.save("w3_basic.json")
+# id 는 Bank 가 목록 안 자리로 매긴다. 문항을 맨 뒤가 아닌 곳에 끼우면 그 뒤 같은 유형의
+# id 가 한 칸씩 밀려 학생이 푼 기록과 오답노트가 엉뚱한 문항을 가리키므로 박아 둔다.
+IDS = [
+    "w3b-calc-001", "w3b-calc-002", "w3b-calc-003", "w3b-calc-004", "w3b-calc-005", "w3b-calc-006",
+    "w3b-calc-007", "w3b-calc-008", "w3b-calc-009", "w3b-calc-010", "w3b-calc-011", "w3b-calc-012",
+    "w3b-calc-013", "w3b-calc-014", "w3b-calc-015", "w3b-calc-016", "w3b-calc-017", "w3b-calc-018",
+    "w3b-calc-019", "w3b-calc-020", "w3b-calc-021", "w3b-calc-022", "w3b-calc-023", "w3b-calc-024",
+    "w3b-calc-025", "w3b-calc-026", "w3b-calc-027", "w3b-calc-028", "w3b-calc-029", "w3b-calc-030",
+    "w3b-calc-031", "w3b-calc-032", "w3b-calc-033", "w3b-calc-034", "w3b-calc-035", "w3b-mcq-001",
+    "w3b-mcq-002", "w3b-mcq-003", "w3b-mcq-004", "w3b-mcq-005", "w3b-mcq-006", "w3b-mcq-007",
+    "w3b-mcq-008", "w3b-mcq-009", "w3b-mcq-010", "w3b-mcq-011", "w3b-mcq-012", "w3b-mcq-013",
+    "w3b-mcq-014", "w3b-mcq-015", "w3b-mcq-016", "w3b-mcq-017", "w3b-mcq-018", "w3b-mcq-019",
+    "w3b-mcq-020", "w3b-mcq-021", "w3b-mcq-022", "w3b-mcq-023", "w3b-mcq-024", "w3b-mcq-025",
+    "w3b-mcq-026", "w3b-mcq-027", "w3b-mcq-028", "w3b-mcq-029", "w3b-mcq-030", "w3b-ox-001",
+    "w3b-ox-002", "w3b-ox-003", "w3b-ox-004", "w3b-ox-005", "w3b-ox-006", "w3b-ox-007",
+    "w3b-ox-008", "w3b-ox-009", "w3b-ox-010", "w3b-ox-011", "w3b-ox-012", "w3b-ox-013",
+    "w3b-ox-014", "w3b-ox-015", "w3b-ox-016", "w3b-ox-017", "w3b-ox-018", "w3b-ox-019",
+    "w3b-ox-020", "w3b-ox-021", "w3b-short-001", "w3b-short-002", "w3b-short-003", "w3b-short-004",
+    "w3b-short-005", "w3b-short-006", "w3b-short-007", "w3b-short-008", "w3b-short-009", "w3b-short-010",
+    "w3b-short-011", "w3b-short-012", "w3b-short-013", "w3b-short-014", "w3b-short-015", "w3b-essay-001",
+    "w3b-essay-002", "w3b-essay-003", "w3b-essay-004", "w3b-essay-005", "w3b-essay-006",
+]
+B.save("w3_basic.json", IDS)

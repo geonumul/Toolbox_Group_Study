@@ -374,4 +374,26 @@ E(U6, "O1 p.7", "1주차부터 8주차까지의 수업내용을 주차별로 쓰
    "5주차 생산적 행동", "6주차 한글날과 워크숍", "7주차 반생산적 행동", "8주차 중간고사"],
   "주별 수업내용")
 
-B.save("w1_basic.json")
+# id 는 Bank 가 목록 안 자리로 매긴다. 문항을 맨 뒤가 아닌 곳에 끼우면 그 뒤 같은 유형의
+# id 가 한 칸씩 밀려 학생이 푼 기록과 오답노트가 엉뚱한 문항을 가리키므로 박아 둔다.
+IDS = [
+    "w1b-mcq-001", "w1b-mcq-002", "w1b-mcq-003", "w1b-mcq-004", "w1b-mcq-005", "w1b-mcq-006",
+    "w1b-mcq-007", "w1b-mcq-008", "w1b-mcq-009", "w1b-mcq-010", "w1b-mcq-011", "w1b-mcq-012",
+    "w1b-mcq-013", "w1b-mcq-014", "w1b-mcq-015", "w1b-mcq-016", "w1b-mcq-017", "w1b-mcq-018",
+    "w1b-mcq-019", "w1b-mcq-020", "w1b-mcq-021", "w1b-mcq-022", "w1b-mcq-023", "w1b-mcq-024",
+    "w1b-mcq-025", "w1b-mcq-026", "w1b-mcq-027", "w1b-mcq-028", "w1b-mcq-029", "w1b-mcq-030",
+    "w1b-mcq-031", "w1b-mcq-032", "w1b-mcq-033", "w1b-mcq-034", "w1b-mcq-035", "w1b-mcq-036",
+    "w1b-mcq-037", "w1b-mcq-038", "w1b-mcq-039", "w1b-mcq-040", "w1b-mcq-041", "w1b-mcq-042",
+    "w1b-ox-001", "w1b-ox-002", "w1b-ox-003", "w1b-ox-004", "w1b-ox-005", "w1b-ox-006",
+    "w1b-ox-007", "w1b-ox-008", "w1b-ox-009", "w1b-ox-010", "w1b-ox-011", "w1b-ox-012",
+    "w1b-ox-013", "w1b-ox-014", "w1b-ox-015", "w1b-ox-016", "w1b-ox-017", "w1b-ox-018",
+    "w1b-ox-019", "w1b-ox-020", "w1b-ox-021", "w1b-ox-022", "w1b-ox-023", "w1b-short-001",
+    "w1b-short-002", "w1b-short-003", "w1b-short-004", "w1b-short-005", "w1b-short-006", "w1b-short-007",
+    "w1b-short-008", "w1b-short-009", "w1b-short-010", "w1b-short-011", "w1b-short-012", "w1b-short-013",
+    "w1b-short-014", "w1b-short-015", "w1b-short-016", "w1b-short-017", "w1b-short-018", "w1b-short-019",
+    "w1b-short-020", "w1b-short-021", "w1b-short-022", "w1b-short-023", "w1b-short-024", "w1b-short-025",
+    "w1b-short-026", "w1b-short-027", "w1b-short-028", "w1b-short-029", "w1b-short-030", "w1b-short-031",
+    "w1b-short-032", "w1b-short-033", "w1b-short-034", "w1b-essay-001", "w1b-essay-002", "w1b-essay-003",
+    "w1b-essay-004", "w1b-essay-005", "w1b-essay-006",
+]
+B.save("w1_basic.json", IDS)

@@ -370,4 +370,22 @@ E(U6, "S1 p.28", "오일러 공식을 쓰고, 각 부분이 무엇을 뜻하는�
   "오른쪽의 $\\cos\\theta$ 가 실수부, $\\sin\\theta$ 가 허수부이다. 그래서 $e^{j\\theta}$ 는 복소평면에서 반지름 $1$ 인 원 위의 점이고, $\\theta$ 가 커지면 원 위를 돈다. 교수님은 이 공식을 꼭 외우라고 했다.",
   ["$e^{j\\theta}=\\cos\\theta+j\\sin\\theta$", "$j$ 는 허수 단위", "실수부 $\\cos\\theta$", "허수부 $\\sin\\theta$", "크기 $1$, 원 위의 점", "$\\theta$ 가 커지면 회전"], "오일러 공식")
 
-B.save("w1_basic.json")
+# id 는 Bank 가 목록 안 자리로 매긴다. 문항을 맨 뒤가 아닌 곳에 끼우면 그 뒤 같은 유형의
+# id 가 한 칸씩 밀려 학생이 푼 기록과 오답노트가 엉뚱한 문항을 가리키므로 박아 둔다.
+IDS = [
+    "w1b-calc-001", "w1b-calc-002", "w1b-calc-003", "w1b-calc-004", "w1b-calc-005", "w1b-calc-006",
+    "w1b-calc-007", "w1b-calc-008", "w1b-calc-009", "w1b-calc-010", "w1b-calc-011", "w1b-mcq-001",
+    "w1b-mcq-002", "w1b-mcq-003", "w1b-mcq-004", "w1b-mcq-005", "w1b-mcq-006", "w1b-mcq-007",
+    "w1b-mcq-008", "w1b-mcq-009", "w1b-mcq-010", "w1b-mcq-011", "w1b-mcq-012", "w1b-mcq-013",
+    "w1b-mcq-014", "w1b-mcq-015", "w1b-mcq-016", "w1b-mcq-017", "w1b-mcq-018", "w1b-mcq-019",
+    "w1b-mcq-020", "w1b-mcq-021", "w1b-mcq-022", "w1b-mcq-023", "w1b-mcq-024", "w1b-mcq-025",
+    "w1b-mcq-026", "w1b-mcq-027", "w1b-mcq-028", "w1b-mcq-029", "w1b-mcq-030", "w1b-mcq-031",
+    "w1b-mcq-032", "w1b-ox-001", "w1b-ox-002", "w1b-ox-003", "w1b-ox-004", "w1b-ox-005",
+    "w1b-ox-006", "w1b-ox-007", "w1b-ox-008", "w1b-ox-009", "w1b-ox-010", "w1b-ox-011",
+    "w1b-ox-012", "w1b-ox-013", "w1b-ox-014", "w1b-ox-015", "w1b-ox-016", "w1b-ox-017",
+    "w1b-ox-018", "w1b-ox-019", "w1b-ox-020", "w1b-short-001", "w1b-short-002", "w1b-short-003",
+    "w1b-short-004", "w1b-short-005", "w1b-short-006", "w1b-short-007", "w1b-short-008", "w1b-short-009",
+    "w1b-short-010", "w1b-short-011", "w1b-short-012", "w1b-short-013", "w1b-essay-001", "w1b-essay-002",
+    "w1b-essay-003", "w1b-essay-004", "w1b-essay-005", "w1b-essay-006", "w1b-essay-007",
+]
+B.save("w1_basic.json", IDS)

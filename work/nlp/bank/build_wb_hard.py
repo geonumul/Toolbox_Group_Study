@@ -4,6 +4,7 @@
 basic 보다 한 단계 위: 개념 두세 개를 엮기, 비슷한 것 구별, 사례에 적용, 왜 를 묻기.
 계산 문항 정답은 아래에서 numpy/python 으로 실제 계산하고 assert 로 확인한다."""
 import json, math, os
+import optshuffle
 import numpy as np
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -672,6 +673,28 @@ short(B10, "기초 b-10", "파이썬에서 값을 세어 주는, `collections` �
       "`from collections import Counter` 로 가져와요. BPE 에서 쌍을 셀 때 써요.")
 
 # =====================================================================
+# ------------------------------------------------- 보기 자리 섞기와 id 고정
+# 정답이 한 자리에 몰리면 내용을 몰라도 같은 번호만 찍어 맞힐 수 있다.
+# 그래서 파일에 쓰기 직전에 보기 자리를 섞는다(까닭과 예외는 optshuffle.py 에).
+optshuffle.shuffle_bank(bank)
+# id 는 위에서 목록 안 자리로 매긴다. 문항을 맨 뒤가 아닌 곳에 끼우면 그 뒤 id 가
+# 한 칸씩 밀려 학생이 푼 기록과 오답노트가 엉뚱한 문항을 가리킨다. 그래서 박아 둔다.
+IDS = [
+    "wbh-mcq-001", "wbh-mcq-002", "wbh-mcq-003", "wbh-mcq-004", "wbh-mcq-005", "wbh-mcq-006",
+    "wbh-mcq-007", "wbh-mcq-008", "wbh-mcq-009", "wbh-mcq-010", "wbh-mcq-011", "wbh-mcq-012",
+    "wbh-mcq-013", "wbh-mcq-014", "wbh-mcq-015", "wbh-mcq-016", "wbh-mcq-017", "wbh-mcq-018",
+    "wbh-mcq-019", "wbh-mcq-020", "wbh-ox-001", "wbh-ox-002", "wbh-ox-003", "wbh-ox-004",
+    "wbh-ox-005", "wbh-ox-006", "wbh-ox-007", "wbh-ox-008", "wbh-ox-009", "wbh-ox-010",
+    "wbh-ox-011", "wbh-ox-012", "wbh-ox-013", "wbh-ox-014", "wbh-short-001", "wbh-short-002",
+    "wbh-short-003", "wbh-short-004", "wbh-short-005", "wbh-short-006", "wbh-short-007", "wbh-short-008",
+    "wbh-short-009", "wbh-short-010", "wbh-essay-001", "wbh-essay-002", "wbh-essay-003", "wbh-essay-004",
+    "wbh-essay-005", "wbh-essay-006", "wbh-essay-007", "wbh-essay-008", "wbh-calc-001", "wbh-calc-002",
+    "wbh-calc-003", "wbh-calc-004", "wbh-calc-005", "wbh-calc-006", "wbh-calc-007", "wbh-calc-008",
+    "wbh-calc-009", "wbh-calc-010", "wbh-calc-011", "wbh-calc-012", "wbh-mcq-021", "wbh-ox-015",
+    "wbh-short-011", "wbh-ox-016", "wbh-ox-017", "wbh-mcq-022", "wbh-short-012",
+]
+optshuffle.check_ids(bank, IDS)
+
 raw = json.dumps(bank, ensure_ascii=False, indent=1)
 for ch in ("—", "–", "·", "・"):
     assert ch not in raw, ch

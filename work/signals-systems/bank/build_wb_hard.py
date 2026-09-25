@@ -220,4 +220,19 @@ E(U10, "S3 p.24", "짧은 두 수열의 컨볼루션을 손으로 계산하는 �
   "입력의 칸마다 임펄스 응답을 그 값만큼 곱해 한 줄씩 적고, 각 줄을 칸 번호에 맞춰 한 칸씩 밀어 쓴 뒤 세로로 더한다. 이것이 뒤집고, 밀고, 곱하고, 더하는 과정과 같은 결과를 준다. 결과의 시작 칸 번호는 두 신호의 시작 칸 번호를 더한 값이고, 길이는 $N+M-1$ 이다. 겹치는 칸이 없으면 그 자리의 값은 $0$ 이다.",
   ["입력 칸마다 $h$ 를 곱해 한 줄", "칸 번호에 맞춰 밀어 쓰기", "세로로 더하기", "뒤집기, 밀기, 곱하기, 더하기와 같음", "시작 칸 = 시작 칸의 합", "길이 = $N+M-1$"], "컨볼루션 합")
 
-B.save("wb_hard.json")
+# id 는 Bank 가 목록 안 자리로 매긴다. 문항을 맨 뒤가 아닌 곳에 끼우면 그 뒤 같은 유형의
+# id 가 한 칸씩 밀려 학생이 푼 기록과 오답노트가 엉뚱한 문항을 가리키므로 박아 둔다.
+IDS = [
+    "wbh-calc-001", "wbh-calc-002", "wbh-calc-003", "wbh-calc-004", "wbh-calc-005", "wbh-calc-006",
+    "wbh-calc-007", "wbh-calc-008", "wbh-calc-009", "wbh-calc-010", "wbh-calc-011", "wbh-calc-012",
+    "wbh-calc-013", "wbh-calc-014", "wbh-calc-015", "wbh-calc-016", "wbh-calc-017", "wbh-calc-018",
+    "wbh-calc-019", "wbh-calc-020", "wbh-calc-021", "wbh-calc-022", "wbh-calc-023", "wbh-calc-024",
+    "wbh-mcq-001", "wbh-mcq-002", "wbh-mcq-003", "wbh-mcq-004", "wbh-mcq-005", "wbh-mcq-006",
+    "wbh-mcq-007", "wbh-mcq-008", "wbh-mcq-009", "wbh-mcq-010", "wbh-mcq-011", "wbh-mcq-012",
+    "wbh-mcq-013", "wbh-mcq-014", "wbh-mcq-015", "wbh-ox-001", "wbh-ox-002", "wbh-ox-003",
+    "wbh-ox-004", "wbh-ox-005", "wbh-ox-006", "wbh-ox-007", "wbh-ox-008", "wbh-ox-009",
+    "wbh-ox-010", "wbh-short-001", "wbh-short-002", "wbh-short-003", "wbh-short-004", "wbh-short-005",
+    "wbh-short-006", "wbh-short-007", "wbh-short-008", "wbh-essay-001", "wbh-essay-002", "wbh-essay-003",
+    "wbh-essay-004", "wbh-essay-005",
+]
+B.save("wb_hard.json", IDS)

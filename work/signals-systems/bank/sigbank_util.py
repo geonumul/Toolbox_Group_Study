@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """신호및시스템 문제은행 생성 도우미 (build_*.py 가 함께 쓴다)"""
-import json, pathlib, random, re, zlib
+import json, pathlib, re
+import optshuffle
 
 HERE = pathlib.Path(__file__).resolve().parent
 
@@ -23,9 +24,7 @@ class Bank:
     def mcq(self, unit, slides, q, c, a, e, src=None):
         assert len(c) == 4 and len(set(c)) == 4 and 0 <= a < 4
         d = self._base("mcq", unit, slides, src)
-        rnd = random.Random(zlib.crc32(d["id"].encode()))   # 정답 자리를 고르게 섞는다 (id 로 고정, 다시 빌드해도 같음)
-        order = list(range(4)); rnd.shuffle(order)
-        d.update(q=q, c=[c[i] for i in order], a=order.index(a), e=e); self.items.append(d)
+        d.update(q=q, c=c, a=a, e=e); self.items.append(d)
 
     def ox(self, unit, slides, q, a, e, src=None):
         assert isinstance(a, bool)
@@ -49,7 +48,12 @@ class Bank:
         d = self._base("calc", unit, slides, src); d.update(q=q, qko=qko, blanks=bl, steps=steps, answer=answer, e=e, model=model)
         self.items.append(d)
 
-    def save(self, name):
+    def save(self, name, ids):
+        """ids 는 만들어질 문항의 id 목록이다(optshuffle.check_ids 설명 참고)."""
+        # 정답이 한 자리에 몰리면 내용을 몰라도 같은 번호만 찍어 맞힐 수 있다. 그래서
+        # 파일에 쓰기 직전에 보기 자리를 섞는다(까닭과 예외는 optshuffle.py 에).
+        optshuffle.shuffle_bank(self.items)
+        optshuffle.check_ids(self.items, ids)
         raw = json.dumps(self.items, ensure_ascii=False, indent=1)
         for ch in "—–·":
             assert ch not in raw, ch

@@ -298,4 +298,29 @@ E(V9, "S2 p.79-83", "$y=3x$, $y=3x^2$, $y=3x+2$ 가 선형인지 각각 판단�
   "$y=3x$ 는 $a x_1+bx_2$ 를 넣으면 $3ax_1+3bx_2=ay_1+by_2$ 라 선형이다. $y=3x^2$ 는 $(x_1+x_2)^2=x_1^2+2x_1x_2+x_2^2$ 의 교차항 때문에 가산성이 깨져 비선형이다. $y=3x+2$ 는 $0$ 을 넣어도 $2$ 가 나와 동차성이 깨지므로 비선형이다.",
   ["$3x$ 선형", "근거: 합과 배가 보존", "$3x^2$ 비선형", "교차항 $2x_1x_2$", "$3x+2$ 비선형", "$0$ 입력에 $2$ 출력"], "선형성")
 
-B.save("w2_basic.json")
+# id 는 Bank 가 목록 안 자리로 매긴다. 문항을 맨 뒤가 아닌 곳에 끼우면 그 뒤 같은 유형의
+# id 가 한 칸씩 밀려 학생이 푼 기록과 오답노트가 엉뚱한 문항을 가리키므로 박아 둔다.
+IDS = [
+    "w2b-calc-001", "w2b-calc-002", "w2b-calc-003", "w2b-calc-004", "w2b-calc-005", "w2b-calc-006",
+    "w2b-calc-007", "w2b-calc-008", "w2b-calc-009", "w2b-calc-010", "w2b-calc-011", "w2b-calc-012",
+    "w2b-calc-013", "w2b-calc-014", "w2b-calc-015", "w2b-calc-016", "w2b-calc-017", "w2b-calc-018",
+    "w2b-calc-019", "w2b-calc-020", "w2b-calc-021", "w2b-calc-022", "w2b-calc-023", "w2b-calc-024",
+    "w2b-calc-025", "w2b-calc-026", "w2b-calc-027", "w2b-calc-028", "w2b-calc-029", "w2b-calc-030",
+    "w2b-calc-031", "w2b-calc-032", "w2b-calc-033", "w2b-calc-034", "w2b-calc-035", "w2b-calc-036",
+    "w2b-calc-037", "w2b-calc-038", "w2b-calc-039", "w2b-calc-040", "w2b-calc-041", "w2b-calc-042",
+    "w2b-calc-043", "w2b-calc-044", "w2b-mcq-001", "w2b-mcq-002", "w2b-mcq-003", "w2b-mcq-004",
+    "w2b-mcq-005", "w2b-mcq-006", "w2b-mcq-007", "w2b-mcq-008", "w2b-mcq-009", "w2b-mcq-010",
+    "w2b-mcq-011", "w2b-mcq-012", "w2b-mcq-013", "w2b-mcq-014", "w2b-mcq-015", "w2b-mcq-016",
+    "w2b-mcq-017", "w2b-mcq-018", "w2b-mcq-019", "w2b-mcq-020", "w2b-mcq-021", "w2b-mcq-022",
+    "w2b-mcq-023", "w2b-mcq-024", "w2b-mcq-025", "w2b-mcq-026", "w2b-mcq-027", "w2b-mcq-028",
+    "w2b-mcq-029", "w2b-mcq-030", "w2b-mcq-031", "w2b-mcq-032", "w2b-mcq-033", "w2b-mcq-034",
+    "w2b-mcq-035", "w2b-mcq-036", "w2b-mcq-037", "w2b-mcq-038", "w2b-ox-001", "w2b-ox-002",
+    "w2b-ox-003", "w2b-ox-004", "w2b-ox-005", "w2b-ox-006", "w2b-ox-007", "w2b-ox-008",
+    "w2b-ox-009", "w2b-ox-010", "w2b-ox-011", "w2b-ox-012", "w2b-ox-013", "w2b-ox-014",
+    "w2b-ox-015", "w2b-ox-016", "w2b-ox-017", "w2b-ox-018", "w2b-ox-019", "w2b-ox-020",
+    "w2b-ox-021", "w2b-short-001", "w2b-short-002", "w2b-short-003", "w2b-short-004", "w2b-short-005",
+    "w2b-short-006", "w2b-short-007", "w2b-short-008", "w2b-short-009", "w2b-short-010", "w2b-short-011",
+    "w2b-short-012", "w2b-short-013", "w2b-short-014", "w2b-short-015", "w2b-essay-001", "w2b-essay-002",
+    "w2b-essay-003", "w2b-essay-004", "w2b-essay-005", "w2b-essay-006",
+]
+B.save("w2_basic.json", IDS)

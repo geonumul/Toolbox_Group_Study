@@ -207,4 +207,17 @@ E(U5, "O1 p.6", "출석과 과제 규정을 지키지 않았을 때 생기는 �
    "12주차 수업 전까지 제출", "1주차 결석은 감점 없음"],
   "출석과 과제 규정")
 
-B.save("w1_hard.json")
+# id 는 Bank 가 목록 안 자리로 매긴다. 문항을 맨 뒤가 아닌 곳에 끼우면 그 뒤 같은 유형의
+# id 가 한 칸씩 밀려 학생이 푼 기록과 오답노트가 엉뚱한 문항을 가리키므로 박아 둔다.
+IDS = [
+    "w1h-mcq-001", "w1h-mcq-002", "w1h-mcq-003", "w1h-mcq-004", "w1h-mcq-005", "w1h-mcq-006",
+    "w1h-mcq-007", "w1h-mcq-008", "w1h-mcq-009", "w1h-mcq-010", "w1h-mcq-011", "w1h-mcq-012",
+    "w1h-mcq-013", "w1h-mcq-014", "w1h-mcq-015", "w1h-mcq-016", "w1h-mcq-017", "w1h-mcq-018",
+    "w1h-ox-001", "w1h-ox-002", "w1h-ox-003", "w1h-ox-004", "w1h-ox-005", "w1h-ox-006",
+    "w1h-ox-007", "w1h-ox-008", "w1h-ox-009", "w1h-ox-010", "w1h-ox-011", "w1h-short-001",
+    "w1h-short-002", "w1h-short-003", "w1h-short-004", "w1h-short-005", "w1h-short-006", "w1h-short-007",
+    "w1h-short-008", "w1h-short-009", "w1h-short-010", "w1h-short-011", "w1h-short-012", "w1h-short-013",
+    "w1h-short-014", "w1h-short-015", "w1h-essay-001", "w1h-essay-002", "w1h-essay-003", "w1h-essay-004",
+    "w1h-essay-005",
+]
+B.save("w1_hard.json", IDS)

@@ -14,6 +14,7 @@ IDS 는 원본 순서 그대로의 id 목록이라, 순서나 번호가 어긋�
       python tools/checkers/bank_history.py work/iot-smart-home/bank/wx_expected.json
 """
 import json, pathlib
+import optshuffle
 from collections import Counter
 
 OUT = pathlib.Path(__file__).with_name("wx_expected.json")
@@ -375,6 +376,11 @@ def build():
             assert ch not in s, (q["id"], repr(ch))
 
     # 원본이 CRLF 이고 끝에 개행이 없다. newline="" 로 직접 맞춘다.
+    # ------------------------------------------------- 보기 자리 섞기
+    # 정답이 한 자리에 몰리면 내용을 몰라도 같은 번호만 찍어 맞힐 수 있다. 그래서
+    # 파일에 쓰기 직전에 보기 자리를 섞는다(까닭과 예외는 optshuffle.py 에). id 는 IDS 가 지킨다.
+    optshuffle.shuffle_bank(ITEMS)
+
     txt = json.dumps(ITEMS, ensure_ascii=False, indent=1).replace("\n", "\r\n")
     with open(OUT, "w", encoding="utf-8", newline="") as f:
         f.write(txt)

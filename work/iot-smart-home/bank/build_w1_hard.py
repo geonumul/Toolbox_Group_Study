@@ -3,6 +3,7 @@
 근거: I1 슬라이드 p.1-35, 용어해설집 v2026.05, 필기 가이드북 1권, 기술기준.
 w1_prev.json(basic) 과 겹치지 않게 개념 엮기, 비슷한 것 구별, 사례 적용 위주로 만든다."""
 import json, os, math
+import optshuffle
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, "w1_hard.json")
@@ -766,6 +767,27 @@ calc(U4, "I1 p.12", "MFi 인증 비용",
      "연회비 99달러까지 개수만큼 곱하는 실수(99 × 2,500)를 조심하세요. 슬라이드에는 로열티 금액이 없으므로 4달러는 계산용 가정 값입니다. 이런 비용이 애플의 한계인 '고가의 인증 장벽'과 '제한된 기기 선택지'로 이어집니다.")
 
 # =====================================================================
+# ------------------------------------------------- 보기 자리 섞기와 id 고정
+# 정답이 한 자리에 몰리면 내용을 몰라도 같은 번호만 찍어 맞힐 수 있다.
+# 그래서 파일에 쓰기 직전에 보기 자리를 섞는다(까닭과 예외는 optshuffle.py 에).
+optshuffle.shuffle_bank(bank)
+# id 는 위에서 목록 안 자리로 매긴다. 문항을 맨 뒤가 아닌 곳에 끼우면 그 뒤 id 가
+# 한 칸씩 밀려 학생이 푼 기록과 오답노트가 엉뚱한 문항을 가리킨다. 그래서 박아 둔다.
+IDS = [
+    "w1h-mcq-001", "w1h-mcq-002", "w1h-mcq-003", "w1h-mcq-004", "w1h-mcq-005", "w1h-mcq-006",
+    "w1h-mcq-007", "w1h-mcq-008", "w1h-mcq-009", "w1h-mcq-010", "w1h-mcq-011", "w1h-mcq-012",
+    "w1h-mcq-013", "w1h-mcq-014", "w1h-mcq-015", "w1h-mcq-016", "w1h-mcq-017", "w1h-mcq-018",
+    "w1h-mcq-019", "w1h-mcq-020", "w1h-ox-001", "w1h-ox-002", "w1h-ox-003", "w1h-ox-004",
+    "w1h-ox-005", "w1h-ox-006", "w1h-ox-007", "w1h-ox-008", "w1h-ox-009", "w1h-ox-010",
+    "w1h-ox-011", "w1h-ox-012", "w1h-ox-013", "w1h-ox-014", "w1h-ox-015", "w1h-ox-016",
+    "w1h-ox-017", "w1h-ox-018", "w1h-short-001", "w1h-short-002", "w1h-short-003", "w1h-short-004",
+    "w1h-short-005", "w1h-short-006", "w1h-short-007", "w1h-short-008", "w1h-short-009", "w1h-essay-001",
+    "w1h-essay-002", "w1h-essay-003", "w1h-essay-004", "w1h-essay-005", "w1h-essay-006", "w1h-essay-007",
+    "w1h-essay-008", "w1h-calc-001", "w1h-calc-002", "w1h-calc-003", "w1h-calc-004", "w1h-calc-005",
+    "w1h-calc-006", "w1h-calc-007", "w1h-calc-008", "w1h-calc-009", "w1h-calc-010",
+]
+optshuffle.check_ids(bank, IDS)
+
 json.dump(bank, open(OUT, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
 
 BAD = ["—", "–", "·", "・"]

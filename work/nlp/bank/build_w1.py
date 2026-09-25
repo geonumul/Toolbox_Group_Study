@@ -3,6 +3,7 @@
 근거: 슬라이드 N1 (work/nlp/_src/N1.txt, png), 녹음 01주차_1_월_OT.txt. 계산은 assert.
 """
 import json, pathlib
+import optshuffle
 
 W = pathlib.Path(__file__).resolve().parent
 U1, U2, U3, U4, U5, U6 = "1-1 강의 운영과 평가", "1-2 자연어처리란", "1-3 언어가 어려운 이유", "1-4 한국어 NLP", "1-5 역사: 시작, 규칙, 통계", "1-6 역사: 신경망에서 LLM 까지"
@@ -226,7 +227,41 @@ CALC_H = [
 
 basic = mk("basic", B + OX_B + SH_B + ES_B + CALC_B)
 hard = mk("hard", H + OX_H + SH_H + ES_H + CALC_H)
+# ------------------------------------------------- 보기 자리 섞기와 id 고정
+# 정답이 한 자리에 몰리면 내용을 몰라도 같은 번호만 찍어 맞힐 수 있다. 그래서 파일에
+# 쓰기 직전에 보기 자리를 섞는다(까닭과 예외는 optshuffle.py 에).
+# id 는 mk() 가 목록 안 자리로 매긴다. 문항을 맨 뒤가 아닌 곳에 끼우면 그 뒤 같은 유형의
+# id 가 한 칸씩 밀려 학생이 푼 기록과 오답노트가 엉뚱한 문항을 가리키므로 박아 둔다.
+IDS_BASIC = [
+    "w1b-mcq-001", "w1b-mcq-002", "w1b-mcq-003", "w1b-mcq-004", "w1b-mcq-005", "w1b-mcq-006",
+    "w1b-mcq-007", "w1b-mcq-008", "w1b-mcq-009", "w1b-mcq-010", "w1b-mcq-011", "w1b-mcq-012",
+    "w1b-mcq-013", "w1b-mcq-014", "w1b-mcq-015", "w1b-mcq-016", "w1b-mcq-017", "w1b-mcq-018",
+    "w1b-mcq-019", "w1b-mcq-020", "w1b-mcq-021", "w1b-mcq-022", "w1b-mcq-023", "w1b-mcq-024",
+    "w1b-mcq-025", "w1b-mcq-026", "w1b-mcq-027", "w1b-mcq-028", "w1b-mcq-029", "w1b-mcq-030",
+    "w1b-mcq-031", "w1b-mcq-032", "w1b-mcq-033", "w1b-mcq-034", "w1b-mcq-035", "w1b-mcq-036",
+    "w1b-mcq-037", "w1b-mcq-038", "w1b-ox-001", "w1b-ox-002", "w1b-ox-003", "w1b-ox-004",
+    "w1b-ox-005", "w1b-ox-006", "w1b-ox-007", "w1b-ox-008", "w1b-ox-009", "w1b-ox-010",
+    "w1b-ox-011", "w1b-ox-012", "w1b-ox-013", "w1b-ox-014", "w1b-ox-015", "w1b-ox-016",
+    "w1b-ox-017", "w1b-ox-018", "w1b-ox-019", "w1b-ox-020", "w1b-ox-021", "w1b-ox-022",
+    "w1b-short-001", "w1b-short-002", "w1b-short-003", "w1b-short-004", "w1b-short-005", "w1b-short-006",
+    "w1b-short-007", "w1b-short-008", "w1b-short-009", "w1b-short-010", "w1b-short-011", "w1b-short-012",
+    "w1b-short-013", "w1b-short-014", "w1b-short-015", "w1b-essay-001", "w1b-essay-002", "w1b-essay-003",
+    "w1b-essay-004", "w1b-essay-005", "w1b-essay-006", "w1b-calc-001",
+]
+IDS_HARD = [
+    "w1h-mcq-001", "w1h-mcq-002", "w1h-mcq-003", "w1h-mcq-004", "w1h-mcq-005", "w1h-mcq-006",
+    "w1h-mcq-007", "w1h-mcq-008", "w1h-mcq-009", "w1h-mcq-010", "w1h-mcq-011", "w1h-mcq-012",
+    "w1h-mcq-013", "w1h-mcq-014", "w1h-mcq-015", "w1h-ox-001", "w1h-ox-002", "w1h-ox-003",
+    "w1h-ox-004", "w1h-ox-005", "w1h-ox-006", "w1h-ox-007", "w1h-ox-008", "w1h-ox-009",
+    "w1h-ox-010", "w1h-short-001", "w1h-short-002", "w1h-short-003", "w1h-short-004", "w1h-short-005",
+    "w1h-short-006", "w1h-short-007", "w1h-short-008", "w1h-essay-001", "w1h-essay-002", "w1h-essay-003",
+    "w1h-essay-004", "w1h-essay-005", "w1h-calc-001", "w1h-calc-002",
+]
+IDS = {"w1_basic.json": IDS_BASIC, "w1_hard.json": IDS_HARD}
+
 for name, arr in (("w1_basic.json", basic), ("w1_hard.json", hard)):
+    optshuffle.shuffle_bank(arr)
+    optshuffle.check_ids(arr, IDS[name])
     raw = json.dumps(arr, ensure_ascii=False, indent=1)
     for ch in ("—", "–", "·"):
         assert ch not in raw

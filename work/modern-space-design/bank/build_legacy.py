@@ -10,6 +10,7 @@ ANSWERS 는 essay 40문항의 모범답안이다. build() 가 points 다음 자�
 검사: python tools/checkers/bank_check.py work/modern-space-design/bank/legacy.json (저장소 최상위에서)
 """
 import json, pathlib
+import optshuffle
 
 OUT = pathlib.Path(__file__).with_name("legacy.json")
 
@@ -842,6 +843,11 @@ def build():
         s = json.dumps(q, ensure_ascii=False)
         for ch in ("\u2014", "\u2013", "\u00b7", "\u2022", "\u30fb"):
             assert ch not in s, (q["id"], repr(ch))
+
+    # ------------------------------------------------- 보기 자리 섞기
+    # 정답이 한 자리에 몰리면 내용을 몰라도 같은 번호만 찍어 맞힐 수 있다. 그래서
+    # 파일에 쓰기 직전에 보기 자리를 섞는다(까닭과 예외는 optshuffle.py 에). id 는 ITEMS 에 박혀 있다.
+    optshuffle.shuffle_bank(out)
 
     OUT.write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
     from collections import Counter

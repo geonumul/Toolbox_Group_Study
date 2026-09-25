@@ -4,6 +4,7 @@ basic 보다 한 단계 위: 개념 두세 개 엮기, 비슷한 것 구별, 사
 사실 출처: 슬라이드 E2 p.1~p.55
 """
 import json, os, sys
+import optshuffle
 
 sys.stdout.reconfigure(encoding="utf-8")
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -260,6 +261,26 @@ assert (2026 - 1995, 2026 - 1990, 1995 - 1990) == (31, 36, 5)
 
 
 def main():
+    # ------------------------------------------------- 보기 자리 섞기와 id 고정
+    # 정답이 한 자리에 몰리면 내용을 몰라도 같은 번호만 찍어 맞힐 수 있다.
+    # 그래서 파일에 쓰기 직전에 보기 자리를 섞는다(까닭과 예외는 optshuffle.py 에).
+    optshuffle.shuffle_bank(Q)
+    # id 는 위에서 목록 안 자리로 매긴다. 문항을 맨 뒤가 아닌 곳에 끼우면 그 뒤 id 가
+    # 한 칸씩 밀려 학생이 푼 기록과 오답노트가 엉뚱한 문항을 가리킨다. 그래서 박아 둔다.
+    IDS = [
+        "w3h-mcq-001", "w3h-mcq-002", "w3h-mcq-003", "w3h-mcq-004", "w3h-mcq-005", "w3h-mcq-006",
+        "w3h-mcq-007", "w3h-mcq-008", "w3h-mcq-009", "w3h-mcq-010", "w3h-mcq-011", "w3h-mcq-012",
+        "w3h-mcq-013", "w3h-mcq-014", "w3h-mcq-015", "w3h-mcq-016", "w3h-ox-001", "w3h-ox-002",
+        "w3h-ox-003", "w3h-ox-004", "w3h-ox-005", "w3h-ox-006", "w3h-ox-007", "w3h-ox-008",
+        "w3h-ox-009", "w3h-ox-010", "w3h-ox-011", "w3h-ox-012", "w3h-ox-013", "w3h-short-001",
+        "w3h-short-002", "w3h-short-003", "w3h-short-004", "w3h-short-005", "w3h-short-006", "w3h-short-007",
+        "w3h-short-008", "w3h-short-009", "w3h-essay-001", "w3h-essay-002", "w3h-essay-003", "w3h-essay-004",
+        "w3h-essay-005", "w3h-essay-006", "w3h-essay-007", "w3h-essay-008", "w3h-calc-001", "w3h-calc-002",
+        "w3h-calc-003", "w3h-calc-004", "w3h-calc-005", "w3h-calc-006", "w3h-calc-007", "w3h-calc-008",
+        "w3h-calc-009", "w3h-calc-010",
+    ]
+    optshuffle.check_ids(Q, IDS)
+
     raw = json.dumps(Q, ensure_ascii=False, indent=1)
     for ch in ("—", "–", "·", "・"):
         assert ch not in raw, repr(ch)

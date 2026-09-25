@@ -282,4 +282,19 @@ S(V3, "O2 p.6", "군대 알파와 군대 베타 검사를 만든 사람의 이�
   ["Robert Yerkes", "Yerkes", "로버트 여키스", "여키스", "로버트 여크스"],
   "슬라이드에 'Robert Yerkes and the Army Alpha(군대 알파) and Army Beta Tests(군대 베타) to screen recruits' 라고 적혀 있어요. 인물 이름이 작은 글씨로 들어간 자리예요.")
 
-B.save("w2_hard.json")
+# id 는 Bank 가 목록 안 자리로 매긴다. 문항을 맨 뒤가 아닌 곳에 끼우면 그 뒤 같은 유형의
+# id 가 한 칸씩 밀려 학생이 푼 기록과 오답노트가 엉뚱한 문항을 가리키므로 박아 둔다.
+IDS = [
+    "w2h-mcq-001", "w2h-mcq-002", "w2h-mcq-003", "w2h-mcq-004", "w2h-mcq-005", "w2h-mcq-006",
+    "w2h-mcq-007", "w2h-mcq-008", "w2h-mcq-009", "w2h-mcq-010", "w2h-mcq-011", "w2h-mcq-012",
+    "w2h-mcq-013", "w2h-mcq-014", "w2h-mcq-015", "w2h-mcq-016", "w2h-mcq-017", "w2h-mcq-018",
+    "w2h-mcq-019", "w2h-mcq-020", "w2h-mcq-021", "w2h-mcq-022", "w2h-mcq-023", "w2h-mcq-024",
+    "w2h-ox-001", "w2h-ox-002", "w2h-ox-003", "w2h-ox-004", "w2h-ox-005", "w2h-ox-006",
+    "w2h-ox-007", "w2h-ox-008", "w2h-ox-009", "w2h-ox-010", "w2h-ox-011", "w2h-short-001",
+    "w2h-short-002", "w2h-short-003", "w2h-short-004", "w2h-short-005", "w2h-short-006", "w2h-short-007",
+    "w2h-short-008", "w2h-short-009", "w2h-short-010", "w2h-short-011", "w2h-short-012", "w2h-short-013",
+    "w2h-short-014", "w2h-short-015", "w2h-short-016", "w2h-short-017", "w2h-short-018", "w2h-essay-001",
+    "w2h-essay-002", "w2h-essay-003", "w2h-essay-004", "w2h-essay-005", "w2h-mcq-025", "w2h-ox-012",
+    "w2h-short-019", "w2h-short-020",
+]
+B.save("w2_hard.json", IDS)

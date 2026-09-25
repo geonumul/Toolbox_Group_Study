@@ -5,6 +5,7 @@ hard 는 개념 두세 개를 엮거나, 비슷한 것을 구별하거나, 사�
 사실 출처는 강의 슬라이드 글자층(_src/txt/U1~U6.txt)과 정리노트(_src/txt/note.txt)뿐이다.
 mcq 는 보기 첫 번째가 정답으로 적혀 있고, id 로 정한 고정 난수로 섞는다."""
 import hashlib
+import optshuffle
 import json
 import pathlib
 import random
@@ -277,6 +278,24 @@ def build():
         assert len(set(c)) == 4, c
     assert len({q["id"] for q in out}) == len(out)
     assert len({(q["type"], q["q"]) for q in out}) == len(out), "질문 중복"
+
+    # ------------------------------------------------- 보기 자리 섞기와 id 고정
+    # 정답이 한 자리에 몰리면 내용을 몰라도 같은 번호만 찍어 맞힐 수 있다.
+    # 그래서 파일에 쓰기 직전에 보기 자리를 섞는다(까닭과 예외는 optshuffle.py 에).
+    optshuffle.shuffle_bank(out)
+    # id 는 위에서 목록 안 자리로 매긴다. 문항을 맨 뒤가 아닌 곳에 끼우면 그 뒤 id 가
+    # 한 칸씩 밀려 학생이 푼 기록과 오답노트가 엉뚱한 문항을 가리킨다. 그래서 박아 둔다.
+    IDS = [
+        "wbh-mcq-001", "wbh-mcq-002", "wbh-mcq-003", "wbh-mcq-004", "wbh-mcq-005", "wbh-mcq-006",
+        "wbh-mcq-007", "wbh-mcq-008", "wbh-mcq-009", "wbh-mcq-010", "wbh-mcq-011", "wbh-mcq-012",
+        "wbh-mcq-013", "wbh-mcq-014", "wbh-mcq-015", "wbh-ox-001", "wbh-ox-002", "wbh-ox-003",
+        "wbh-ox-004", "wbh-ox-005", "wbh-ox-006", "wbh-ox-007", "wbh-ox-008", "wbh-ox-009",
+        "wbh-ox-010", "wbh-ox-011", "wbh-ox-012", "wbh-short-001", "wbh-short-002", "wbh-short-003",
+        "wbh-short-004", "wbh-short-005", "wbh-short-006", "wbh-short-007", "wbh-short-008", "wbh-essay-001",
+        "wbh-essay-002", "wbh-essay-003", "wbh-essay-004", "wbh-essay-005", "wbh-essay-006", "wbh-essay-007",
+        "wbh-essay-008",
+    ]
+    optshuffle.check_ids(out, IDS)
 
     OUT.write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
     print(len(out), dict(Counter(q["type"] for q in out)))

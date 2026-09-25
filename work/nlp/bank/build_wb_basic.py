@@ -3,6 +3,7 @@
 출력: work/nlp/bank/wb_basic.json
 계산 문항 정답은 아래에서 numpy/python 으로 실제 계산하고 assert 로 확인한다."""
 import json, math, os
+import optshuffle
 import numpy as np
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -863,6 +864,37 @@ calc(B10, "기초 b-10", "torch-shape",
      "전치를 해도 원소 개수는 그대로 15개예요.")
 
 # =====================================================================
+# ------------------------------------------------- 보기 자리 섞기와 id 고정
+# 정답이 한 자리에 몰리면 내용을 몰라도 같은 번호만 찍어 맞힐 수 있다.
+# 그래서 파일에 쓰기 직전에 보기 자리를 섞는다(까닭과 예외는 optshuffle.py 에).
+optshuffle.shuffle_bank(bank)
+# id 는 위에서 목록 안 자리로 매긴다. 문항을 맨 뒤가 아닌 곳에 끼우면 그 뒤 id 가
+# 한 칸씩 밀려 학생이 푼 기록과 오답노트가 엉뚱한 문항을 가리킨다. 그래서 박아 둔다.
+IDS = [
+    "wbb-mcq-001", "wbb-mcq-002", "wbb-mcq-003", "wbb-mcq-004", "wbb-mcq-005", "wbb-mcq-006",
+    "wbb-mcq-007", "wbb-mcq-008", "wbb-mcq-009", "wbb-mcq-010", "wbb-mcq-011", "wbb-mcq-012",
+    "wbb-mcq-013", "wbb-mcq-014", "wbb-mcq-015", "wbb-mcq-016", "wbb-mcq-017", "wbb-mcq-018",
+    "wbb-mcq-019", "wbb-mcq-020", "wbb-mcq-021", "wbb-mcq-022", "wbb-mcq-023", "wbb-mcq-024",
+    "wbb-mcq-025", "wbb-mcq-026", "wbb-mcq-027", "wbb-mcq-028", "wbb-mcq-029", "wbb-mcq-030",
+    "wbb-mcq-031", "wbb-mcq-032", "wbb-mcq-033", "wbb-mcq-034", "wbb-mcq-035", "wbb-mcq-036",
+    "wbb-mcq-037", "wbb-ox-001", "wbb-ox-002", "wbb-ox-003", "wbb-ox-004", "wbb-ox-005",
+    "wbb-ox-006", "wbb-ox-007", "wbb-ox-008", "wbb-ox-009", "wbb-ox-010", "wbb-ox-011",
+    "wbb-ox-012", "wbb-ox-013", "wbb-ox-014", "wbb-ox-015", "wbb-ox-016", "wbb-ox-017",
+    "wbb-ox-018", "wbb-ox-019", "wbb-ox-020", "wbb-ox-021", "wbb-ox-022", "wbb-short-001",
+    "wbb-short-002", "wbb-short-003", "wbb-short-004", "wbb-short-005", "wbb-short-006", "wbb-short-007",
+    "wbb-short-008", "wbb-short-009", "wbb-short-010", "wbb-short-011", "wbb-short-012", "wbb-short-013",
+    "wbb-short-014", "wbb-short-015", "wbb-short-016", "wbb-essay-001", "wbb-essay-002", "wbb-essay-003",
+    "wbb-essay-004", "wbb-essay-005", "wbb-essay-006", "wbb-essay-007", "wbb-essay-008", "wbb-essay-009",
+    "wbb-essay-010", "wbb-calc-001", "wbb-calc-002", "wbb-calc-003", "wbb-calc-004", "wbb-calc-005",
+    "wbb-calc-006", "wbb-calc-007", "wbb-calc-008", "wbb-calc-009", "wbb-calc-010", "wbb-calc-011",
+    "wbb-calc-012", "wbb-mcq-038", "wbb-mcq-039", "wbb-mcq-040", "wbb-mcq-041", "wbb-mcq-042",
+    "wbb-mcq-043", "wbb-mcq-044", "wbb-mcq-045", "wbb-mcq-046", "wbb-ox-023", "wbb-ox-024",
+    "wbb-ox-025", "wbb-ox-026", "wbb-ox-027", "wbb-ox-028", "wbb-short-017", "wbb-short-018",
+    "wbb-short-019", "wbb-short-020", "wbb-short-021", "wbb-short-022", "wbb-short-023", "wbb-calc-013",
+    "wbb-calc-014", "wbb-calc-015",
+]
+optshuffle.check_ids(bank, IDS)
+
 raw = json.dumps(bank, ensure_ascii=False, indent=1)
 for ch in ("—", "–", "·", "・"):
     assert ch not in raw, ch

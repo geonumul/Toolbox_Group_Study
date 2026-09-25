@@ -3,6 +3,7 @@
 출력: work/nlp/bank/w3_basic.json
 계산 문항 정답은 아래에서 numpy/python 으로 실제 계산하고 assert 로 확인한다."""
 import json, math, os
+import optshuffle
 import numpy as np
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -1036,6 +1037,34 @@ calc(U8, "N3 p.47", "rnn-hidden-step",
      "이전 **은닉 상태(Hidden State)**와 현재 단어를 각각 다른 **행렬(Matrix)**로 변환해 더해요. W_h 와 W_e 를 바꿔 곱하면 틀려요. 이 (W_h, W_e) 는 모든 시점에서 똑같이 다시 써요.")
 
 # =====================================================================
+# ------------------------------------------------- 보기 자리 섞기와 id 고정
+# 정답이 한 자리에 몰리면 내용을 몰라도 같은 번호만 찍어 맞힐 수 있다.
+# 그래서 파일에 쓰기 직전에 보기 자리를 섞는다(까닭과 예외는 optshuffle.py 에).
+optshuffle.shuffle_bank(bank)
+# id 는 위에서 목록 안 자리로 매긴다. 문항을 맨 뒤가 아닌 곳에 끼우면 그 뒤 id 가
+# 한 칸씩 밀려 학생이 푼 기록과 오답노트가 엉뚱한 문항을 가리킨다. 그래서 박아 둔다.
+IDS = [
+    "w3b-mcq-001", "w3b-mcq-002", "w3b-mcq-003", "w3b-mcq-004", "w3b-mcq-005", "w3b-mcq-006",
+    "w3b-mcq-007", "w3b-mcq-008", "w3b-mcq-009", "w3b-mcq-010", "w3b-mcq-011", "w3b-mcq-012",
+    "w3b-mcq-013", "w3b-mcq-014", "w3b-mcq-015", "w3b-mcq-016", "w3b-mcq-017", "w3b-mcq-018",
+    "w3b-mcq-019", "w3b-mcq-020", "w3b-mcq-021", "w3b-mcq-022", "w3b-mcq-023", "w3b-mcq-024",
+    "w3b-mcq-025", "w3b-mcq-026", "w3b-mcq-027", "w3b-mcq-028", "w3b-mcq-029", "w3b-mcq-030",
+    "w3b-mcq-031", "w3b-mcq-032", "w3b-mcq-033", "w3b-mcq-034", "w3b-mcq-035", "w3b-mcq-036",
+    "w3b-mcq-037", "w3b-mcq-038", "w3b-mcq-039", "w3b-mcq-040", "w3b-ox-001", "w3b-ox-002",
+    "w3b-ox-003", "w3b-ox-004", "w3b-ox-005", "w3b-ox-006", "w3b-ox-007", "w3b-ox-008",
+    "w3b-ox-009", "w3b-ox-010", "w3b-ox-011", "w3b-ox-012", "w3b-ox-013", "w3b-ox-014",
+    "w3b-ox-015", "w3b-ox-016", "w3b-ox-017", "w3b-ox-018", "w3b-ox-019", "w3b-ox-020",
+    "w3b-ox-021", "w3b-ox-022", "w3b-ox-023", "w3b-ox-024", "w3b-ox-025", "w3b-ox-026",
+    "w3b-short-001", "w3b-short-002", "w3b-short-003", "w3b-short-004", "w3b-short-005", "w3b-short-006",
+    "w3b-short-007", "w3b-short-008", "w3b-short-009", "w3b-short-010", "w3b-short-011", "w3b-short-012",
+    "w3b-short-013", "w3b-short-014", "w3b-short-015", "w3b-short-016", "w3b-short-017", "w3b-short-018",
+    "w3b-short-019", "w3b-short-020", "w3b-essay-001", "w3b-essay-002", "w3b-essay-003", "w3b-essay-004",
+    "w3b-essay-005", "w3b-essay-006", "w3b-essay-007", "w3b-essay-008", "w3b-essay-009", "w3b-essay-010",
+    "w3b-calc-001", "w3b-calc-002", "w3b-calc-003", "w3b-calc-004", "w3b-calc-005", "w3b-calc-006",
+    "w3b-calc-007", "w3b-calc-008", "w3b-calc-009", "w3b-calc-010",
+]
+optshuffle.check_ids(bank, IDS)
+
 json.dump(bank, open(OUT, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
 from collections import Counter as _C
 print(OUT, len(bank), dict(_C(q["type"] for q in bank)))

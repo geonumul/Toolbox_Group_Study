@@ -13,6 +13,7 @@ r"""1주차(I1) basic 문제은행 재생성기. 실행: python build_w1_prev.py
      points 배열이 채점 항목이므로 answer 는 그 항목을 순서대로 담는다.
 """
 import json, os
+import optshuffle
 from collections import Counter
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -214,6 +215,11 @@ for q, qid in zip(src, IDS):
     bank.append(it)
 
 assert len(ESSAY) == sum(1 for q in bank if q["type"] == "essay"), "ESSAY 개수 불일치"
+
+# ------------------------------------------------- 보기 자리 섞기
+# 정답이 한 자리에 몰리면 내용을 몰라도 같은 번호만 찍어 맞힐 수 있다. 그래서
+# 파일에 쓰기 직전에 보기 자리를 섞는다(까닭과 예외는 optshuffle.py 에). id 는 IDS 가 지킨다.
+optshuffle.shuffle_bank(bank)
 
 json.dump(bank, open(OUT, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
 

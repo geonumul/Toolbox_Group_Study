@@ -586,4 +586,30 @@ C(U9, "기초 다지기 b-9", "설문 회수율",
   "회수율 24%, 미회수 380부",
   "회수율이 낮으면 표집 편파가 커진다는 점까지 같이 기억하세요.")
 
-B.save("wb_basic.json")
+# id 는 Bank 가 목록 안 자리로 매긴다. 문항을 맨 뒤가 아닌 곳에 끼우면 그 뒤 같은 유형의
+# id 가 한 칸씩 밀려 학생이 푼 기록과 오답노트가 엉뚱한 문항을 가리키므로 박아 둔다.
+IDS = [
+    "wbb-mcq-001", "wbb-mcq-002", "wbb-mcq-003", "wbb-mcq-004", "wbb-mcq-005", "wbb-mcq-006",
+    "wbb-mcq-007", "wbb-mcq-008", "wbb-mcq-009", "wbb-mcq-010", "wbb-mcq-011", "wbb-mcq-012",
+    "wbb-mcq-013", "wbb-mcq-014", "wbb-mcq-015", "wbb-mcq-016", "wbb-mcq-017", "wbb-mcq-018",
+    "wbb-mcq-019", "wbb-mcq-020", "wbb-mcq-021", "wbb-mcq-022", "wbb-mcq-023", "wbb-mcq-024",
+    "wbb-mcq-025", "wbb-mcq-026", "wbb-mcq-027", "wbb-mcq-028", "wbb-mcq-029", "wbb-mcq-030",
+    "wbb-mcq-031", "wbb-mcq-032", "wbb-mcq-033", "wbb-mcq-034", "wbb-mcq-035", "wbb-mcq-036",
+    "wbb-mcq-037", "wbb-mcq-038", "wbb-mcq-039", "wbb-mcq-040", "wbb-mcq-041", "wbb-mcq-042",
+    "wbb-mcq-043", "wbb-mcq-044", "wbb-mcq-045", "wbb-mcq-046", "wbb-mcq-047", "wbb-mcq-048",
+    "wbb-mcq-049", "wbb-mcq-050", "wbb-mcq-051", "wbb-mcq-052", "wbb-mcq-053", "wbb-mcq-054",
+    "wbb-mcq-055", "wbb-mcq-056", "wbb-mcq-057", "wbb-mcq-058", "wbb-mcq-059", "wbb-mcq-060",
+    "wbb-ox-001", "wbb-ox-002", "wbb-ox-003", "wbb-ox-004", "wbb-ox-005", "wbb-ox-006",
+    "wbb-ox-007", "wbb-ox-008", "wbb-ox-009", "wbb-ox-010", "wbb-ox-011", "wbb-ox-012",
+    "wbb-ox-013", "wbb-ox-014", "wbb-ox-015", "wbb-ox-016", "wbb-ox-017", "wbb-ox-018",
+    "wbb-ox-019", "wbb-ox-020", "wbb-ox-021", "wbb-ox-022", "wbb-ox-023", "wbb-ox-024",
+    "wbb-ox-025", "wbb-ox-026", "wbb-ox-027", "wbb-ox-028", "wbb-short-001", "wbb-short-002",
+    "wbb-short-003", "wbb-short-004", "wbb-short-005", "wbb-short-006", "wbb-short-007", "wbb-short-008",
+    "wbb-short-009", "wbb-short-010", "wbb-short-011", "wbb-short-012", "wbb-short-013", "wbb-short-014",
+    "wbb-short-015", "wbb-short-016", "wbb-short-017", "wbb-short-018", "wbb-short-019", "wbb-short-020",
+    "wbb-short-021", "wbb-short-022", "wbb-short-023", "wbb-short-024", "wbb-short-025", "wbb-short-026",
+    "wbb-short-027", "wbb-short-028", "wbb-short-029", "wbb-short-030", "wbb-essay-001", "wbb-essay-002",
+    "wbb-essay-003", "wbb-essay-004", "wbb-essay-005", "wbb-essay-006", "wbb-calc-001", "wbb-calc-002",
+    "wbb-calc-003", "wbb-calc-004",
+]
+B.save("wb_basic.json", IDS)

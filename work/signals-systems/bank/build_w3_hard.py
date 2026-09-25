@@ -290,4 +290,18 @@ E(U9, "S3 p.75-82", "선형 상수계수 차분방정식으로 인과 LTI 시스
   "차분방정식만으로는 해가 하나로 정해지지 않아서 보조 조건이 필요하다. 인과 LTI 시스템이 되려면 입력이 들어오기 전에는 출력도 $0$ 이라는 초기 휴지 조건을 준다. 예제 2.15 $y[n]=x[n]+\\frac12y[n-1]$ 에 $x=K\\delta[n]$ 을 넣으면 $y[-1]=0$ 에서 시작해 $y[0]=K$, $y[1]=\\frac12K$, $y[2]=\\left(\\frac12\\right)^2K$ 로 되풀이된다. 따라서 $h[n]=\\left(\\frac12\\right)^nu[n]$ 이다.",
   ["해가 하나로 안 정해짐", "초기 휴지 조건의 뜻", "인과성과 연결", "되풀이(재귀) 계산", "$y[0]=K$, $y[1]=K/2$", "$h[n]=(1/2)^nu[n]$"], "차분방정식")
 
-B.save("w3_hard.json")
+# id 는 Bank 가 목록 안 자리로 매긴다. 문항을 맨 뒤가 아닌 곳에 끼우면 그 뒤 같은 유형의
+# id 가 한 칸씩 밀려 학생이 푼 기록과 오답노트가 엉뚱한 문항을 가리키므로 박아 둔다.
+IDS = [
+    "w3h-calc-001", "w3h-calc-002", "w3h-calc-003", "w3h-calc-004", "w3h-calc-005", "w3h-calc-006",
+    "w3h-calc-007", "w3h-calc-008", "w3h-calc-009", "w3h-calc-010", "w3h-calc-011", "w3h-calc-012",
+    "w3h-calc-013", "w3h-calc-014", "w3h-calc-015", "w3h-calc-016", "w3h-calc-017", "w3h-calc-018",
+    "w3h-calc-019", "w3h-calc-020", "w3h-calc-021", "w3h-calc-022", "w3h-mcq-001", "w3h-mcq-002",
+    "w3h-mcq-003", "w3h-mcq-004", "w3h-mcq-005", "w3h-mcq-006", "w3h-mcq-007", "w3h-mcq-008",
+    "w3h-mcq-009", "w3h-mcq-010", "w3h-mcq-011", "w3h-mcq-012", "w3h-mcq-013", "w3h-mcq-014",
+    "w3h-mcq-015", "w3h-ox-001", "w3h-ox-002", "w3h-ox-003", "w3h-ox-004", "w3h-ox-005",
+    "w3h-ox-006", "w3h-ox-007", "w3h-ox-008", "w3h-ox-009", "w3h-ox-010", "w3h-short-001",
+    "w3h-short-002", "w3h-short-003", "w3h-short-004", "w3h-short-005", "w3h-short-006", "w3h-short-007",
+    "w3h-short-008", "w3h-essay-001", "w3h-essay-002", "w3h-essay-003", "w3h-essay-004", "w3h-essay-005",
+]
+B.save("w3_hard.json", IDS)

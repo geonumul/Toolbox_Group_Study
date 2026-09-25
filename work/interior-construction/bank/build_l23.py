@@ -3,6 +3,7 @@
 사용: python work/interior-construction/bank/build_l23.py
 사실은 강의 PDF(_src/text_2.txt, text_3.txt, 슬라이드 그림)에서만 가져옴."""
 import json, pathlib, random, sys
+import optshuffle
 
 sys.stdout.reconfigure(encoding="utf-8")
 HERE = pathlib.Path(__file__).resolve().parent
@@ -264,6 +265,44 @@ def build(part, units, mcq, ox, short, essay, pre):
 
 
 bank = build("2", U2, MCQ2, OX2, SHORT2, ESSAY2, "l2") + build("3", U3, MCQ3, OX3, SHORT3, ESSAY3, "l3")
+# ------------------------------------------------- 보기 자리 섞기와 id 고정
+# 정답이 한 자리에 몰리면 내용을 몰라도 같은 번호만 찍어 맞힐 수 있다.
+# 그래서 파일에 쓰기 직전에 보기 자리를 섞는다(까닭과 예외는 optshuffle.py 에).
+optshuffle.shuffle_bank(bank)
+# id 는 위에서 목록 안 자리로 매긴다. 문항을 맨 뒤가 아닌 곳에 끼우면 그 뒤 id 가
+# 한 칸씩 밀려 학생이 푼 기록과 오답노트가 엉뚱한 문항을 가리킨다. 그래서 박아 둔다.
+IDS = [
+    "l2-mcq-001", "l2-mcq-002", "l2-mcq-003", "l2-mcq-004", "l2-mcq-005", "l2-mcq-006",
+    "l2-mcq-007", "l2-mcq-008", "l2-mcq-009", "l2-mcq-010", "l2-mcq-011", "l2-mcq-012",
+    "l2-mcq-013", "l2-mcq-014", "l2-mcq-015", "l2-mcq-016", "l2-mcq-017", "l2-mcq-018",
+    "l2-mcq-019", "l2-mcq-020", "l2-mcq-021", "l2-mcq-022", "l2-mcq-023", "l2-mcq-024",
+    "l2-mcq-025", "l2-mcq-026", "l2-mcq-027", "l2-mcq-028", "l2-mcq-029", "l2-mcq-030",
+    "l2-mcq-031", "l2-mcq-032", "l2-mcq-033", "l2-mcq-034", "l2-mcq-035", "l2-mcq-036",
+    "l2-mcq-037", "l2-mcq-038", "l2-mcq-039", "l2-mcq-040", "l2-mcq-041", "l2-mcq-042",
+    "l2-mcq-043", "l2-mcq-044", "l2-mcq-045", "l2-mcq-046", "l2-mcq-047", "l2-ox-001",
+    "l2-ox-002", "l2-ox-003", "l2-ox-004", "l2-ox-005", "l2-ox-006", "l2-ox-007",
+    "l2-ox-008", "l2-ox-009", "l2-ox-010", "l2-ox-011", "l2-ox-012", "l2-ox-013",
+    "l2-ox-014", "l2-ox-015", "l2-ox-016", "l2-ox-017", "l2-ox-018", "l2-ox-019",
+    "l2-ox-020", "l2-ox-021", "l2-ox-022", "l2-ox-023", "l2-ox-024", "l2-short-001",
+    "l2-short-002", "l2-short-003", "l2-short-004", "l2-short-005", "l2-short-006", "l2-short-007",
+    "l2-short-008", "l2-short-009", "l2-short-010", "l2-short-011", "l2-short-012", "l2-short-013",
+    "l2-short-014", "l2-short-015", "l2-essay-001", "l2-essay-002", "l2-essay-003", "l2-essay-004",
+    "l2-essay-005", "l3-mcq-001", "l3-mcq-002", "l3-mcq-003", "l3-mcq-004", "l3-mcq-005",
+    "l3-mcq-006", "l3-mcq-007", "l3-mcq-008", "l3-mcq-009", "l3-mcq-010", "l3-mcq-011",
+    "l3-mcq-012", "l3-mcq-013", "l3-mcq-014", "l3-mcq-015", "l3-mcq-016", "l3-mcq-017",
+    "l3-mcq-018", "l3-mcq-019", "l3-mcq-020", "l3-mcq-021", "l3-mcq-022", "l3-mcq-023",
+    "l3-mcq-024", "l3-mcq-025", "l3-mcq-026", "l3-mcq-027", "l3-mcq-028", "l3-mcq-029",
+    "l3-mcq-030", "l3-mcq-031", "l3-mcq-032", "l3-mcq-033", "l3-mcq-034", "l3-mcq-035",
+    "l3-mcq-036", "l3-mcq-037", "l3-ox-001", "l3-ox-002", "l3-ox-003", "l3-ox-004",
+    "l3-ox-005", "l3-ox-006", "l3-ox-007", "l3-ox-008", "l3-ox-009", "l3-ox-010",
+    "l3-ox-011", "l3-ox-012", "l3-ox-013", "l3-ox-014", "l3-ox-015", "l3-ox-016",
+    "l3-ox-017", "l3-ox-018", "l3-ox-019", "l3-ox-020", "l3-short-001", "l3-short-002",
+    "l3-short-003", "l3-short-004", "l3-short-005", "l3-short-006", "l3-short-007", "l3-short-008",
+    "l3-short-009", "l3-short-010", "l3-short-011", "l3-short-012", "l3-short-013", "l3-short-014",
+    "l3-short-015", "l3-essay-001", "l3-essay-002", "l3-essay-003", "l3-essay-004", "l3-essay-005",
+]
+optshuffle.check_ids(bank, IDS)
+
 BAD = (chr(0x2014), chr(0x2013), chr(0xB7))
 s = json.dumps(bank, ensure_ascii=False)
 assert not any(c in s for c in BAD), "금지 문자"

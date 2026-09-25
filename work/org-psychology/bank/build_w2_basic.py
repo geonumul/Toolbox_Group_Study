@@ -665,4 +665,38 @@ E(V9, "O2 p.30", "메타분석의 세 가지 문제를 쓰고, 그중 서류 서
    "치우친 결론", "file drawer effect 의 순서", "서랍 서류 효과는 틀린 표기"],
   "메타분석의 문제", src="강조")
 
-B.save("w2_basic.json")
+# id 는 Bank 가 목록 안 자리로 매긴다. 문항을 맨 뒤가 아닌 곳에 끼우면 그 뒤 같은 유형의
+# id 가 한 칸씩 밀려 학생이 푼 기록과 오답노트가 엉뚱한 문항을 가리키므로 박아 둔다.
+IDS = [
+    "w2b-mcq-001", "w2b-mcq-002", "w2b-mcq-003", "w2b-mcq-004", "w2b-mcq-005", "w2b-mcq-006",
+    "w2b-mcq-007", "w2b-mcq-008", "w2b-mcq-009", "w2b-mcq-010", "w2b-mcq-011", "w2b-mcq-012",
+    "w2b-mcq-013", "w2b-mcq-014", "w2b-mcq-015", "w2b-mcq-016", "w2b-mcq-017", "w2b-mcq-018",
+    "w2b-mcq-019", "w2b-mcq-020", "w2b-mcq-021", "w2b-mcq-022", "w2b-mcq-023", "w2b-mcq-024",
+    "w2b-mcq-025", "w2b-mcq-026", "w2b-mcq-027", "w2b-mcq-028", "w2b-mcq-029", "w2b-mcq-030",
+    "w2b-mcq-031", "w2b-mcq-032", "w2b-mcq-033", "w2b-mcq-034", "w2b-mcq-035", "w2b-mcq-036",
+    "w2b-mcq-037", "w2b-mcq-038", "w2b-mcq-039", "w2b-mcq-040", "w2b-mcq-041", "w2b-mcq-042",
+    "w2b-mcq-043", "w2b-mcq-044", "w2b-mcq-045", "w2b-mcq-046", "w2b-mcq-047", "w2b-mcq-048",
+    "w2b-mcq-049", "w2b-mcq-050", "w2b-mcq-051", "w2b-mcq-052", "w2b-mcq-053", "w2b-mcq-054",
+    "w2b-mcq-055", "w2b-mcq-056", "w2b-mcq-057", "w2b-mcq-058", "w2b-mcq-059", "w2b-mcq-060",
+    "w2b-mcq-061", "w2b-mcq-062", "w2b-mcq-063", "w2b-mcq-064", "w2b-mcq-065", "w2b-mcq-066",
+    "w2b-mcq-067", "w2b-mcq-068", "w2b-mcq-069", "w2b-mcq-070", "w2b-mcq-071", "w2b-mcq-072",
+    "w2b-mcq-073", "w2b-mcq-074", "w2b-mcq-075", "w2b-mcq-076", "w2b-mcq-077", "w2b-mcq-078",
+    "w2b-mcq-079", "w2b-mcq-080", "w2b-mcq-081", "w2b-mcq-082", "w2b-mcq-083", "w2b-mcq-084",
+    "w2b-mcq-085", "w2b-mcq-086", "w2b-mcq-087", "w2b-mcq-088", "w2b-mcq-089", "w2b-mcq-090",
+    "w2b-mcq-091", "w2b-mcq-092", "w2b-ox-001", "w2b-ox-002", "w2b-ox-003", "w2b-ox-004",
+    "w2b-ox-005", "w2b-ox-006", "w2b-ox-007", "w2b-ox-008", "w2b-ox-009", "w2b-ox-010",
+    "w2b-ox-011", "w2b-ox-012", "w2b-ox-013", "w2b-ox-014", "w2b-ox-015", "w2b-ox-016",
+    "w2b-ox-017", "w2b-ox-018", "w2b-ox-019", "w2b-ox-020", "w2b-ox-021", "w2b-ox-022",
+    "w2b-ox-023", "w2b-ox-024", "w2b-ox-025", "w2b-ox-026", "w2b-ox-027", "w2b-ox-028",
+    "w2b-ox-029", "w2b-ox-030", "w2b-ox-031", "w2b-ox-032", "w2b-short-001", "w2b-short-002",
+    "w2b-short-003", "w2b-short-004", "w2b-short-005", "w2b-short-006", "w2b-short-007", "w2b-short-008",
+    "w2b-short-009", "w2b-short-010", "w2b-short-011", "w2b-short-012", "w2b-short-013", "w2b-short-014",
+    "w2b-short-015", "w2b-short-016", "w2b-short-017", "w2b-short-018", "w2b-short-019", "w2b-short-020",
+    "w2b-short-021", "w2b-short-022", "w2b-short-023", "w2b-short-024", "w2b-short-025", "w2b-short-026",
+    "w2b-short-027", "w2b-short-028", "w2b-short-029", "w2b-short-030", "w2b-short-031", "w2b-short-032",
+    "w2b-short-033", "w2b-short-034", "w2b-short-035", "w2b-short-036", "w2b-short-037", "w2b-short-038",
+    "w2b-short-039", "w2b-short-040", "w2b-short-041", "w2b-short-042", "w2b-short-043", "w2b-short-044",
+    "w2b-short-045", "w2b-short-046", "w2b-short-047", "w2b-short-048", "w2b-essay-001", "w2b-essay-002",
+    "w2b-essay-003", "w2b-essay-004", "w2b-essay-005", "w2b-essay-006", "w2b-essay-007",
+]
+B.save("w2_basic.json", IDS)

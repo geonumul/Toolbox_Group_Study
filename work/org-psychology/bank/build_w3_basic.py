@@ -7,8 +7,8 @@ O3 p.12-29 는 수업에서 다루지 않고 온라인 강의로 넘어간 부�
 """
 import json
 import pathlib
-import random
-import zlib
+
+import optshuffle
 
 HERE = pathlib.Path(__file__).resolve().parent
 
@@ -34,10 +34,7 @@ class Bank:
     def mcq(self, unit, slides, q, c, a, e, src=None):
         assert len(c) == 4 and len(set(c)) == 4 and 0 <= a < 4, q
         d = self._base("mcq", unit, slides, src)
-        rnd = random.Random(zlib.crc32(d["id"].encode()))
-        order = list(range(4))
-        rnd.shuffle(order)
-        d.update(q=q, c=[c[i] for i in order], a=order.index(a), e=e)
+        d.update(q=q, c=c, a=a, e=e)
         self.items.append(d)
 
     def ox(self, unit, slides, q, a, e, src=None):
@@ -58,7 +55,12 @@ class Bank:
         d.update(q=q, answer=answer, points=points, model=model)
         self.items.append(d)
 
-    def save(self, name):
+    def save(self, name, ids):
+        """ids 는 만들어질 문항의 id 목록이다(optshuffle.check_ids 설명 참고)."""
+        # 정답이 한 자리에 몰리면 내용을 몰라도 같은 번호만 찍어 맞힐 수 있다. 그래서
+        # 파일에 쓰기 직전에 보기 자리를 섞는다(까닭과 예외는 optshuffle.py 에).
+        optshuffle.shuffle_bank(self.items)
+        optshuffle.check_ids(self.items, ids)
         raw = json.dumps(self.items, ensure_ascii=False, indent=1)
         for ch in "—–·・":
             assert ch not in raw, ch
@@ -936,4 +938,30 @@ b.essay(U8, "O3 p.20-24",
          "관찰", "감시", "위장된 대화", "Miller & Jablin, 1991"],
         "정보추구 책략")
 
-b.save("w3_basic.json")
+# id 는 Bank 가 목록 안 자리로 매긴다. 문항을 맨 뒤가 아닌 곳에 끼우면 그 뒤 같은 유형의
+# id 가 한 칸씩 밀려 학생이 푼 기록과 오답노트가 엉뚱한 문항을 가리키므로 박아 둔다.
+IDS = [
+    "w3b-mcq-001", "w3b-mcq-002", "w3b-mcq-003", "w3b-mcq-004", "w3b-mcq-005", "w3b-ox-001",
+    "w3b-ox-002", "w3b-ox-003", "w3b-short-001", "w3b-short-002", "w3b-short-003", "w3b-short-004",
+    "w3b-ox-004", "w3b-mcq-006", "w3b-mcq-007", "w3b-mcq-008", "w3b-mcq-009", "w3b-mcq-010",
+    "w3b-ox-005", "w3b-ox-006", "w3b-ox-007", "w3b-ox-008", "w3b-short-005", "w3b-short-006",
+    "w3b-short-007", "w3b-short-008", "w3b-essay-001", "w3b-mcq-011", "w3b-mcq-012", "w3b-mcq-013",
+    "w3b-mcq-014", "w3b-mcq-015", "w3b-ox-009", "w3b-ox-010", "w3b-ox-011", "w3b-ox-012",
+    "w3b-ox-013", "w3b-short-009", "w3b-short-010", "w3b-short-011", "w3b-short-012", "w3b-essay-002",
+    "w3b-mcq-016", "w3b-mcq-017", "w3b-mcq-018", "w3b-mcq-019", "w3b-mcq-020", "w3b-mcq-021",
+    "w3b-ox-014", "w3b-ox-015", "w3b-ox-016", "w3b-short-013", "w3b-short-014", "w3b-short-015",
+    "w3b-short-016", "w3b-essay-003", "w3b-mcq-022", "w3b-mcq-023", "w3b-mcq-024", "w3b-mcq-025",
+    "w3b-mcq-026", "w3b-ox-017", "w3b-ox-018", "w3b-ox-019", "w3b-ox-020", "w3b-ox-021",
+    "w3b-short-017", "w3b-short-018", "w3b-short-019", "w3b-short-020", "w3b-essay-004", "w3b-mcq-027",
+    "w3b-mcq-028", "w3b-mcq-029", "w3b-mcq-030", "w3b-ox-022", "w3b-ox-023", "w3b-ox-024",
+    "w3b-short-021", "w3b-short-022", "w3b-short-023", "w3b-short-024", "w3b-ox-025", "w3b-ox-026",
+    "w3b-mcq-031", "w3b-mcq-032", "w3b-mcq-033", "w3b-mcq-034", "w3b-mcq-035", "w3b-mcq-036",
+    "w3b-mcq-037", "w3b-mcq-038", "w3b-mcq-039", "w3b-ox-027", "w3b-ox-028", "w3b-ox-029",
+    "w3b-ox-030", "w3b-ox-031", "w3b-ox-032", "w3b-short-025", "w3b-short-026", "w3b-short-027",
+    "w3b-short-028", "w3b-short-029", "w3b-essay-005", "w3b-mcq-040", "w3b-mcq-041", "w3b-mcq-042",
+    "w3b-mcq-043", "w3b-mcq-044", "w3b-mcq-045", "w3b-mcq-046", "w3b-mcq-047", "w3b-mcq-048",
+    "w3b-mcq-049", "w3b-mcq-050", "w3b-mcq-051", "w3b-ox-033", "w3b-ox-034", "w3b-ox-035",
+    "w3b-ox-036", "w3b-ox-037", "w3b-ox-038", "w3b-ox-039", "w3b-ox-040", "w3b-short-030",
+    "w3b-short-031", "w3b-short-032", "w3b-short-033", "w3b-short-034", "w3b-short-035", "w3b-essay-006",
+]
+b.save("w3_basic.json", IDS)

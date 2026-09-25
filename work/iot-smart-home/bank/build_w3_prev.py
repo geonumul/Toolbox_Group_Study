@@ -17,6 +17,7 @@ r"""3주차(I3) basic 문제은행 재생성기. 실행: python build_w3_prev.py
      (tools\checkers\bank_history.py 가 이것을 잡는다).
 """
 import json, os
+import optshuffle
 from collections import Counter
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -295,6 +296,11 @@ assert len({q["id"] for q in bank}) == len(bank), "id 중복"
 # 한 파일은 한 주차다. 같은 주차 안에서 같은 사실을 객관식과 단답으로 두 번 묻는 것은
 # work\_rules\문제은행_작성규칙.md 가 허용하는 형태이므로 유형을 키에 넣는다.
 assert len({(q["type"], " ".join(q["q"].split())) for q in bank}) == len(bank), "같은 유형의 질문 문장 중복"
+
+# ------------------------------------------------- 보기 자리 섞기
+# 정답이 한 자리에 몰리면 내용을 몰라도 같은 번호만 찍어 맞힐 수 있다. 그래서
+# 파일에 쓰기 직전에 보기 자리를 섞는다(까닭과 예외는 optshuffle.py 에). id 는 IDS 가 지킨다.
+optshuffle.shuffle_bank(bank)
 
 json.dump(bank, open(OUT, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
 

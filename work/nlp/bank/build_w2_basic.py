@@ -3,6 +3,7 @@
 출력: work/nlp/bank/w2_basic.json
 계산 문항은 아래에서 실제로 계산하고 assert 로 확인한다."""
 import json, math, os
+import optshuffle
 from collections import Counter
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -834,6 +835,33 @@ calc(U7, "N2 p.41, p.48", "word-analogy",
      "a 를 빼고 b 를 더해요(b - a + c). 순서를 바꿔 man - woman + king 으로 하면 (4, -1) 이 되어 틀려요.")
 
 # =====================================================================
+# ------------------------------------------------- 보기 자리 섞기와 id 고정
+# 정답이 한 자리에 몰리면 내용을 몰라도 같은 번호만 찍어 맞힐 수 있다.
+# 그래서 파일에 쓰기 직전에 보기 자리를 섞는다(까닭과 예외는 optshuffle.py 에).
+optshuffle.shuffle_bank(bank)
+# id 는 위에서 목록 안 자리로 매긴다. 문항을 맨 뒤가 아닌 곳에 끼우면 그 뒤 id 가
+# 한 칸씩 밀려 학생이 푼 기록과 오답노트가 엉뚱한 문항을 가리킨다. 그래서 박아 둔다.
+IDS = [
+    "w2b-mcq-001", "w2b-mcq-002", "w2b-mcq-003", "w2b-mcq-004", "w2b-mcq-005", "w2b-mcq-006",
+    "w2b-mcq-007", "w2b-mcq-008", "w2b-mcq-009", "w2b-mcq-010", "w2b-mcq-011", "w2b-mcq-012",
+    "w2b-mcq-013", "w2b-mcq-014", "w2b-mcq-015", "w2b-mcq-016", "w2b-mcq-017", "w2b-mcq-018",
+    "w2b-mcq-019", "w2b-mcq-020", "w2b-mcq-021", "w2b-mcq-022", "w2b-mcq-023", "w2b-mcq-024",
+    "w2b-mcq-025", "w2b-mcq-026", "w2b-mcq-027", "w2b-mcq-028", "w2b-mcq-029", "w2b-mcq-030",
+    "w2b-mcq-031", "w2b-mcq-032", "w2b-mcq-033", "w2b-mcq-034", "w2b-mcq-035", "w2b-mcq-036",
+    "w2b-mcq-037", "w2b-mcq-038", "w2b-mcq-039", "w2b-mcq-040", "w2b-ox-001", "w2b-ox-002",
+    "w2b-ox-003", "w2b-ox-004", "w2b-ox-005", "w2b-ox-006", "w2b-ox-007", "w2b-ox-008",
+    "w2b-ox-009", "w2b-ox-010", "w2b-ox-011", "w2b-ox-012", "w2b-ox-013", "w2b-ox-014",
+    "w2b-ox-015", "w2b-ox-016", "w2b-ox-017", "w2b-ox-018", "w2b-ox-019", "w2b-ox-020",
+    "w2b-ox-021", "w2b-ox-022", "w2b-ox-023", "w2b-ox-024", "w2b-ox-025", "w2b-short-001",
+    "w2b-short-002", "w2b-short-003", "w2b-short-004", "w2b-short-005", "w2b-short-006", "w2b-short-007",
+    "w2b-short-008", "w2b-short-009", "w2b-short-010", "w2b-short-011", "w2b-short-012", "w2b-short-013",
+    "w2b-short-014", "w2b-short-015", "w2b-short-016", "w2b-short-017", "w2b-short-018", "w2b-short-019",
+    "w2b-essay-001", "w2b-essay-002", "w2b-essay-003", "w2b-essay-004", "w2b-essay-005", "w2b-essay-006",
+    "w2b-essay-007", "w2b-calc-001", "w2b-calc-002", "w2b-calc-003", "w2b-calc-004", "w2b-calc-005",
+    "w2b-calc-006", "w2b-calc-007",
+]
+optshuffle.check_ids(bank, IDS)
+
 json.dump(bank, open(OUT, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
 from collections import Counter as _C
 print(OUT, len(bank), dict(_C(q["type"] for q in bank)))

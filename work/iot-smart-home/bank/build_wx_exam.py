@@ -11,6 +11,11 @@ ITEMS 는 wx_exam.json 을 한 줄에 한 문항씩 그대로 옮긴 것이고 i
 IDS 는 원본 순서 그대로의 id 목록이라, 순서나 번호가 어긋나면 build() 가 멈춘다.
 출력은 원본과 바이트 단위로 같다(utf-8, indent=1, ensure_ascii=False, 줄끝 CRLF, 끝에 개행 없음).
 
+다른 문제은행과 달리 이 파일만 optshuffle 로 보기 자리를 섞지 않는다. 시험지에 인쇄된
+보기 차례 그대로라야 학생이 공식 정답('3번')과 맞춰 볼 수 있기 때문이다. 자리를 섞으면
+학생 눈에는 우리 쪽이 틀린 것으로 보인다. 정답 자리도 [11, 4, 14, 11] 이라 한 자리만
+찍어서는 맞힐 수 없으니 그대로 두어도 괜찮다. 기출이 아닌 wx_expected.json 은 섞는다.
+
 검사: python tools/checkers/bank_check.py work/iot-smart-home/bank/wx_exam.json (저장소 최상위에서)
       python tools/checkers/bank_history.py work/iot-smart-home/bank/wx_exam.json
 """

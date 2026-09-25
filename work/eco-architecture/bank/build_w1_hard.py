@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """친환경건축 1주차 hard 문제은행 생성기. 출력: w1_hard.json (같은 폴더)"""
 import json, os
+import optshuffle
 
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "w1_hard.json")
 
@@ -624,6 +625,26 @@ add("calc", U3, "E1 p.16", model="석유 판매액 지수",
            "해석: 생산량은 약 절반인데 판매액은 약 2.16배라서, 소비국은 비싸게 적게 사고 산유국은 더 버는 구조예요."],
     answer="(1) 54.04% (2) 216.14",
     e="12개월 감산을 5 × 12 = 60% 감소(40%)로 계산하는 실수가 많아요. 12개월 연속 감산 이행은 계산용 가정이에요.")
+
+# ------------------------------------------------- 보기 자리 섞기와 id 고정
+# 정답이 한 자리에 몰리면 내용을 몰라도 같은 번호만 찍어 맞힐 수 있다.
+# 그래서 파일에 쓰기 직전에 보기 자리를 섞는다(까닭과 예외는 optshuffle.py 에).
+optshuffle.shuffle_bank(bank)
+# id 는 위에서 목록 안 자리로 매긴다. 문항을 맨 뒤가 아닌 곳에 끼우면 그 뒤 id 가
+# 한 칸씩 밀려 학생이 푼 기록과 오답노트가 엉뚱한 문항을 가리킨다. 그래서 박아 둔다.
+IDS = [
+    "w1h-mcq-001", "w1h-mcq-002", "w1h-mcq-003", "w1h-mcq-004", "w1h-mcq-005", "w1h-mcq-006",
+    "w1h-mcq-007", "w1h-mcq-008", "w1h-mcq-009", "w1h-mcq-010", "w1h-mcq-011", "w1h-mcq-012",
+    "w1h-mcq-013", "w1h-mcq-014", "w1h-mcq-015", "w1h-mcq-016", "w1h-mcq-017", "w1h-ox-001",
+    "w1h-ox-002", "w1h-ox-003", "w1h-ox-004", "w1h-ox-005", "w1h-ox-006", "w1h-ox-007",
+    "w1h-ox-008", "w1h-ox-009", "w1h-ox-010", "w1h-ox-011", "w1h-ox-012", "w1h-ox-013",
+    "w1h-ox-014", "w1h-ox-015", "w1h-short-001", "w1h-short-002", "w1h-short-003", "w1h-short-004",
+    "w1h-short-005", "w1h-short-006", "w1h-short-007", "w1h-short-008", "w1h-short-009", "w1h-essay-001",
+    "w1h-essay-002", "w1h-essay-003", "w1h-essay-004", "w1h-essay-005", "w1h-essay-006", "w1h-essay-007",
+    "w1h-essay-008", "w1h-essay-009", "w1h-calc-001", "w1h-calc-002", "w1h-calc-003", "w1h-calc-004",
+    "w1h-calc-005", "w1h-calc-006", "w1h-calc-007", "w1h-calc-008", "w1h-calc-009", "w1h-calc-010",
+]
+optshuffle.check_ids(bank, IDS)
 
 # ---------------------------------------------------------------- 저장
 BAD = ["—", "–", "·", "・"]
