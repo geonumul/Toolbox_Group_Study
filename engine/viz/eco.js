@@ -541,10 +541,11 @@
       g.spk = [0, 1].map(i => tag(ctx.svg, 350, 70 + i * 60, 90, 40, '스피커', '60 dB'));
       g.sum = u.el(ctx.svg, 'text', { x: 350, y: 208, 'text-anchor': 'middle', class: 'vz-tb' }, '');
       g.no = u.el(ctx.svg, 'text', { x: 350, y: 232, 'text-anchor': 'middle', class: 'vz-tc' }, '120 dB 아님');
-      g.wall = u.el(ctx.svg, 'rect', { x: 300, y: 40, height: 220, class: 'vz-wall' });
+      // 벽을 290 에 두어야 가장 두꺼울 때(44)도 오른쪽에 '넘어온 소리' 글자 자리가 남아요
+      g.wall = u.el(ctx.svg, 'rect', { x: 290, y: 40, height: 220, class: 'vz-wall' });
       g.inA = u.arrow(ctx.svg, 'cr'); g.refA = [u.arrow(ctx.svg, 'mu'), u.arrow(ctx.svg, 'mu')]; g.absT = u.el(ctx.svg, 'text', { class: 'vz-tt' }, '흡음');
       g.trA = u.arrow(ctx.svg, 'cr');
-      g.labels = [u.el(ctx.svg, 'text', { x: 160, y: 60, class: 'vz-tm' }, '확산'), u.el(ctx.svg, 'text', { x: 420, y: 130, 'text-anchor': 'middle', class: 'vz-tc' }, '')];
+      g.labels = [u.el(ctx.svg, 'text', { x: 160, y: 60, class: 'vz-tm' }, '확산'), u.el(ctx.svg, 'text', { x: 474, y: 130, 'text-anchor': 'end', class: 'vz-tc' }, '')];
       g.inDb = u.el(ctx.svg, 'text', { x: 150, y: 170, 'text-anchor': 'middle', class: 'vz-tb' }, '옆집 60 dB');
     },
     draw(ctx, s, k) {
@@ -567,17 +568,17 @@
       u.set(g.wall, { width: thick }); u.op(g.wall, wv);
       u.op(g.inDb, wv);
       const p3 = s === 3 ? k : s > 3 ? 1 : 0;
-      u.setArrow(g.inA, [100, 150], [296, 150], seg(p3, 0, 0.4)); u.op(g.inA.g, wv * (p3 > 0 ? 1 : 0));
-      u.setArrow(g.refA[0], [290, 140], [200, 70], seg(p3, 0.4, 0.8)); u.op(g.refA[0].g, wv * (p3 > 0.4 ? 1 : 0));
-      u.setArrow(g.refA[1], [290, 160], [210, 230], seg(p3, 0.4, 0.8)); u.op(g.refA[1].g, wv * (p3 > 0.4 ? 1 : 0));
+      u.setArrow(g.inA, [100, 150], [286, 150], seg(p3, 0, 0.4)); u.op(g.inA.g, wv * (p3 > 0 ? 1 : 0));
+      u.setArrow(g.refA[0], [280, 140], [200, 70], seg(p3, 0.4, 0.8)); u.op(g.refA[0].g, wv * (p3 > 0.4 ? 1 : 0));
+      u.setArrow(g.refA[1], [280, 160], [210, 230], seg(p3, 0.4, 0.8)); u.op(g.refA[1].g, wv * (p3 > 0.4 ? 1 : 0));
       u.set(g.absT, { x: 250, y: 184 }); u.op(g.absT, wv * seg(p3, 0.6, 1));
       u.op(g.labels[0], wv * seg(p3, 0.6, 1));
       const tl = 20 * Math.log10(m * 500) - 47;
       const left = 60 - tl;
       const tr = s === 4 ? seg(k, 0.2, 1) : 0;
-      u.setArrow(g.trA, [300 + thick + 4, 150], [300 + thick + 4 + Math.max(10, (left + 10) * 1.4), 150], tr);
+      u.setArrow(g.trA, [290 + thick + 4, 150], [290 + thick + 4 + Math.max(10, (left + 10) * 1.4), 150], tr);
       g.trA.l.style.strokeWidth = u.r(Math.max(1, (left + 10) / 8)) + 'px';
-      u.txt(g.labels[1], '넘어온 소리 약 ' + Math.max(0, Math.round(left)) + ' dB'); u.set(g.labels[1], { x: 420, y: 130 }); u.op(g.labels[1], tr);
+      u.txt(g.labels[1], '넘어온 소리 약 ' + Math.max(0, Math.round(left)) + ' dB'); u.set(g.labels[1], { x: 474, y: 130 }); u.op(g.labels[1], tr);
     },
   });
 })();

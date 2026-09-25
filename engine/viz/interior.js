@@ -286,11 +286,19 @@
       g.own = tag(ctx.svg, 60, 130, 96, 50, '발주자', '맡기는 사람');
       g.mid = tag(ctx.svg, 215, 130, 118, 60, '', '');
       g.mid2 = tag(ctx.svg, 215, 130, 118, 60, '', '');
+      // 만들 때 작은 글자가 비어 있어서 tag 가 이름을 가운데(y + 5)에 두었어요.
+      // 그리면서 작은 글자를 채우니 두 줄이 겹쳐요. 두 줄짜리 자리로 올려요
+      [g.mid, g.mid2].forEach(b => u.set(b.t, { y: b.y - 2 }));
       g.T = [0, 1, 2, 3, 4].map(i => tag(ctx.svg, 395, 30 + i * 50, 140, 40, '', ''));
       g.A = [0, 1, 2, 3, 4].map(() => u.arrow(ctx.svg));
       g.A0 = u.arrow(ctx.svg, 'tl');
       g.money = u.el(ctx.svg, 'g');
-      g.bars = [['재료비', 6000, 'vz-k0'], ['노무비', 3000, 'vz-k2'], ['장비, 경비', 1000, 'vz-k1'], ['보수', 1000, 'vz-k3']].map(([n, v, c], i) => ({ r: u.el(g.money, 'rect', { y: 250, height: 26, class: 'vz-bar ' + c }), t: u.el(g.money, 'text', { y: 244, class: 'vz-ts' }, n), v }));
+      // '장비, 경비' 는 글자가 자기 칸(40)보다 길어서 다음 칸 이름과 겹쳐요. 칸 오른쪽 끝에 맞춰 왼쪽으로 늘여요
+      g.bars = [['재료비', 6000, 'vz-k0'], ['노무비', 3000, 'vz-k2'], ['장비, 경비', 1000, 'vz-k1'], ['보수', 1000, 'vz-k3']].map(([n, v, c], i) => ({
+        r: u.el(g.money, 'rect', { y: 250, height: 26, class: 'vz-bar ' + c }),
+        t: u.el(g.money, 'text', i === 2 ? { y: 244, 'text-anchor': 'end', class: 'vz-ts' } : { y: 244, class: 'vz-ts' }, n),
+        v, w: v / 11000 * 440, end: i === 2,
+      }));
       g.moneyT = u.el(g.money, 'text', { x: 470, y: 294, 'text-anchor': 'end', class: 'vz-tb' }, '');
       g.area = u.el(ctx.svg, 'g');
       g.tiles = Array.from({ length: 120 }, (_, i) => u.el(g.area, 'rect', { x: 150 + (i % 20) * 16, y: 60 + Math.floor(i / 20) * 16, width: 14, height: 14, class: 'vz-bar tl' }));
@@ -333,10 +341,10 @@
       const m = s === 7 ? k : 0;
       let x = 20;
       g.bars.forEach((b, i) => {
-        const w = b.v / 11000 * 440 * seg(m, i * 0.22, i * 0.22 + 0.3);
-        u.set(b.r, { x, width: w }); u.set(b.t, { x });
+        const w = b.w * seg(m, i * 0.22, i * 0.22 + 0.3);
+        u.set(b.r, { x, width: w }); u.set(b.t, { x: b.end ? x + b.w - 8 : x });
         u.op(b.t, w > 1 ? 1 : 0);
-        x += b.v / 11000 * 440;
+        x += b.w;
       });
       const sumNow = g.bars.reduce((acc, b, i) => acc + b.v * (seg(m, i * 0.22, i * 0.22 + 0.3) >= 1 ? 1 : 0), 0);
       u.txt(g.moneyT, '합계 ' + sumNow.toLocaleString('en-US') + '만 원');

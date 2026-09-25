@@ -27,6 +27,7 @@
 | `tools/build_site.py` (`viz_page`) | `work/<과목>/pages/viz_<페이지>.json` 이 있으면 빌드할 때 그 페이지(정리노트, 답안 팁) 항목 안에 그림을 넣어요 |
 | `tools/checkers/slide_check.py`, `lesson_check.py` | `viz` kind 를 알아보고, 슬라이드의 그림 이름이 등록돼 있는지 봐요 |
 | `tools/checkers/viz_check.js` | jsdom 단위 시험. 묶음 이름을 안 주면 `engine/viz` 의 묶음을 전부 봐요 |
+| `tools/checkers/viz_layout.js` | 헤드리스 크롬 자리 시험. jsdom 은 배치 엔진이 없어 `getBBox` 가 0 이라 못 보는 글자 겹침, viewBox 밖으로 나감, 가림을 봐요. 묶음 이름 쓰는 법은 위와 같아요 |
 
 ## JSON 모양 (프레임 하나)
 
@@ -192,7 +193,8 @@ python tools/viz_tool.py check-gnn     # 같은지만 확인
 ## 확인하는 법
 
 - 단위 시험 (jsdom): `node tools/checkers/viz_check.js` (묶음 이름을 주면 그것만, 안 주면 전부). 모든 그림을 붙이고 상태를 끝까지 넘긴 뒤 거꾸로 돌아오며 SVG 가 같은지, 조절값을 바꿔도 오류가 없고 상태 수가 그대로인지, `id` 속성과 금지 문자와 `NaN`, `undefined` 가 없는지 봐요. 확인용 훅: 프레임 요소 `.vz` 의 `_viz` 에 `finish()`, `snapshot()`, `pose(s, k)`, `set(key, value)`, `state()` 가 있어요. 시험할 때는 `SDTViz.freeze = true` 로 장식 움직임을 멈춰요.
-- **jsdom 이 못 보는 것**: jsdom 은 글자 크기를 재지 않아서(`getBBox` 가 0) 글자가 서로 겹치거나 viewBox 를 벗어나는 것을 못 잡아요. 그건 진짜 브라우저로 봐야 해요. 헤드리스 크롬으로 상태마다 `getBBox` 를 재서 겹침과 밖으로 나감을 보는 방법은 아래 스크린샷 항목을 봐요. 실제로 이 방법으로만 잡힌 것: `nlp.tokenize` 의 값 글자가 오른쪽으로 6 넘어감, `nlp.posenc` 의 `pos` 축 이름이 눈금 `12` 를 덮음.
+- 자리 시험 (진짜 크롬): `node tools/checkers/viz_layout.js` (묶음 이름을 주면 그것만, 안 주면 전부). 검사용 페이지를 임시 폴더에 만들고 헤드리스 크롬으로 열어(`--headless=old --dump-dom`) 상태마다 진짜 `getBBox` 를 재요. 글자가 viewBox 를 벗어났는지, 글자끼리 작은 쪽 넓이의 25% 넘게 겹쳤는지, 글자가 나중에 그려진 불투명한 도형에 가려졌는지(글자 가로 다섯 지점을 `elementFromPoint` 로 찍어요), `NaN` 이나 `undefined` 가 섞였는지 봐요. 그림 하나씩 붙였다 떼며 봐요. 여러 개를 쌓으면 아래쪽 그림이 창 밖으로 나가서 `elementFromPoint` 가 `null` 을 돌려주고, 가림 검사가 조용히 건너뛰어져요. 크롬을 못 찾으면 `CHROME` 환경변수로 `chrome.exe` 경로를 주세요.
+- **두 시험이 따로 있는 이유**: jsdom 에는 배치 엔진이 없어서 `getBBox` 가 늘 0 이에요. 그래서 `viz_check.js` 는 글자가 서로 겹치거나 viewBox 를 벗어나는 것을 구조적으로 못 봐요. 아무리 고쳐도 못 봐요. 진짜 배치를 아는 `viz_layout.js` 만 그것을 봐요. 거꾸로 되돌리기와 조절값 시험, 금지 문자 검사는 `viz_check.js` 만 봐요. 서로를 대신하지 못하니 둘 다 돌려요. 실제로 크롬으로만 잡힌 것: `nlp.tokenize` 의 값 글자가 오른쪽으로 6 넘어감, `nlp.posenc` 의 `pos` 축 이름이 눈금 `12` 를 덮음, `org.feldman` 의 사람 점이 단계 이름 위에 올라앉음.
 - 사이트 시험: 과목 정리 슬라이드를 열어 `.vz` 가 붙는지, 다음/이전으로 같은 모습인지, 오류가 없는지.
 - 스크린샷: 헤드리스 Chrome 으로 1280, 390 폭. `pose(s, 0.6)` 으로 움직이는 중간 모습을 찍어 봐요.
   - 크롬 쓰는 법이 까다로워요. `--dump-dom` 은 `--headless=old` 에서만 되고, `--screenshot` 은 `--headless=new` 에서만 돼요.
@@ -278,4 +280,4 @@ python tools/viz_tool.py check-gnn     # 같은지만 확인
 1. 과목 자료(정리 슬라이드, 정리노트, 손계산)에서 움직여 보여 줄 개념과 숫자를 고른다.
 2. `engine/viz/<묶음>.js` 에 그림을 등록하고 `README.md` 표에 한 줄 더한다.
 3. 정리 슬라이드가 있으면 `notes/viz_place.json` + `viz_tool.py place`, 정리노트만 있으면 `pages/viz_note.json` + `viz_tool.py check-page`.
-4. `slide_check.py` 와 빌드, jsdom 시험(viz_checks), 1280 과 390 스크린샷.
+4. `slide_check.py` 와 빌드, jsdom 시험(`viz_check.js`)과 크롬 자리 시험(`viz_layout.js`), 1280 과 390 스크린샷.

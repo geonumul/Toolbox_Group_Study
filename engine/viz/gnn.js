@@ -271,7 +271,12 @@
         let p = pos[d.id], o = 0;
         if (s === 1) { p = u.pt(pos[d.id], pos[1], seg(k, 0, 0.9)); o = 1; }
         else if (s === 2) { p = u.pt(pos[1], agg, seg(k, 0, 0.45)); o = 1 - seg(k, 0.55, 0.8); }
-        if (s === 1 || s === 2) { const off = { 2: -10, 3: 0, 4: 10 }[d.id]; p = [p[0] + off * (s === 2 ? 1 - seg(k, 0, 0.45) : seg(k, 0.6, 1)), p[1]]; }
+        // 도착한 쪽지는 노드 1 위에 겹쳐 앉지 않고 노드 둘레에 자리를 잡아요 (노드 반지름 26 + 점 반지름 13)
+        if (s === 1 || s === 2) {
+          const off = { 2: [0, -44], 3: [-32, 30], 4: [32, 30] }[d.id];
+          const f = s === 2 ? 1 - seg(k, 0, 0.45) : seg(k, 0.5, 1);
+          p = [p[0] + off[0] * f, p[1] + off[1] * f];
+        }
         u.set(d.c, { cx: p[0], cy: p[1] }); u.set(d.t, { x: p[0], y: p[1] + 5 }); u.txt(d.t, x0[d.id]); u.op(d.g, o);
       });
       g.back.forEach(d => {
@@ -495,13 +500,13 @@
       SM.E.forEach(([a, b]) => u.el(ge, 'line', { x1: g.pos[a][0], y1: g.pos[a][1], x2: g.pos[b][0], y2: g.pos[b][1], class: 'vz-e' + (a === 3 && b === 4 ? ' on' : '') }));
       g.nodes = g.pos.map(p => u.node(ctx.svg, p[0], p[1], 21, ''));
       g.nodes.forEach(nd => { nd.t.setAttribute('class', 'vz-nt vz-ts'); nd.t.style.fill = '#17182C'; });
-      const X0 = 300, X1 = 468, Y0 = 60, Y1 = 230;
+      const X0 = 300, X1 = 452, Y0 = 60, Y1 = 230;   // X1 이 468 이면 '30층' 눈금이 viewBox 밖으로 나가요
       g.ch = { X0, X1, Y0, Y1 };
       u.el(ctx.svg, 'text', { x: X0 - 14, y: 34, class: 'vz-tb' }, '값의 차이 (최대 - 최소)');
       u.el(ctx.svg, 'path', { d: 'M' + X0 + ' ' + Y0 + ' V' + Y1 + ' H' + X1, class: 'vz-axis' });
       u.el(ctx.svg, 'text', { x: X0, y: Y1 + 20, 'text-anchor': 'middle', class: 'vz-ts' }, '0');
       u.el(ctx.svg, 'text', { x: X1, y: Y1 + 20, 'text-anchor': 'middle', class: 'vz-ts' }, '30층');
-      u.el(ctx.svg, 'text', { x: X0 - 8, y: Y0 + 5, 'text-anchor': 'end', class: 'vz-ts' }, '1');
+      u.el(ctx.svg, 'text', { x: X0 - 16, y: Y0 + 5, 'text-anchor': 'end', class: 'vz-ts' }, '1');   // -8 이면 0층일 때 표시 점이 이 숫자를 덮어요
       const pts = SM.H.map((h, L) => [X0 + (X1 - X0) * L / 30, Y1 - (Y1 - Y0) * spread(h)]);
       u.el(ctx.svg, 'path', { d: 'M' + pts.map(p => u.r(p[0]) + ' ' + u.r(p[1])).join(' L'), class: 'vz-curve' });
       g.mark = u.el(ctx.svg, 'circle', { r: 8, class: 'vz-dot cr' });
@@ -878,6 +883,8 @@
         u.set(g.hull[i], { x: box[c][0], y: box[c][1], width: box[c][2], height: box[c][3] });
         return u.el(ctx.svg, 'text', { x: box[c][0] + box[c][2] / 2, y: box[c][1] - 7, 'text-anchor': 'middle', class: 'vz-ta' }, '군집 ' + (i + 1));
       });
+      // 군집 2 는 아래쪽 가운데라 이름표가 아래 설명줄과 같은 높이예요. 상자 왼쪽으로 옮겨요
+      u.set(g.tag[1], { x: 150, y: 242 });
       g.msg = u.el(ctx.svg, 'text', { x: 240, y: 166, 'text-anchor': 'middle', class: 'vz-tb' }, '');
     },
     draw(ctx, s, k) {

@@ -280,17 +280,20 @@
     draw(ctx, s, k) {
       const g = ctx.g;
       g.dense.forEach((d, i) => u.op(d, s === 0 ? 1 : s === 1 ? 1 - seg(k, 0, 0.5) : 0));
-      const c = at(s, k, 1);
+      // 확대 그림(g.zoom)은 화면을 통째로 덮는 불투명한 판이에요.
+      // 그 아래 도시 그림을 opacity 1 로 두면 눈에는 안 보여도 자리 시험에는 겹친 글자로 잡혀요.
+      // hid 를 곱해 확대 그림이 덮이는 만큼 같이 사라지게 해요 (보이는 모습은 그대로예요)
+      const z = at(s, k, 4), hid = 1 - z;
+      const c = at(s, k, 1) * hid;
       u.op(g.center, c); u.op(g.centerT, c); u.op(g.centerP, c);
       const sp = at(s, k, 2);
       g.sat.forEach((st, i) => {
-        const o = seg(sp, i * 0.12, i * 0.12 + 0.35);
+        const o = seg(sp, i * 0.12, i * 0.12 + 0.35) * hid;
         u.op(st.c, o); u.op(st.t, o);
-        u.op(st.rail, at(s, k, 3));
+        u.op(st.rail, at(s, k, 3) * hid);
         st.rail.setAttribute('class', 'vz-e' + (s === 3 ? ' on' : ''));
       });
-      u.op(g.ringRail, at(s, k, 3));
-      const z = at(s, k, 4);
+      u.op(g.ringRail, at(s, k, 3) * hid);
       u.op(g.zoom, z);
       u.op(g.park, 1); u.op(g.parkT, 1);
       g.roads.forEach((r, i) => u.op(r, seg(z, 0.4 + i * 0.08, 0.6 + i * 0.08)));

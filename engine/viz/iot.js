@@ -21,9 +21,10 @@
     const g = u.el(parent, 'g');
     return { g, c: u.el(g, 'circle', { r: 9, class: 'vz-dot ' + (cls || '') }), t: u.el(g, 'text', { 'text-anchor': 'middle', class: 'vz-ts' }, '') };
   }
-  function putPacket(p, xy, o, label) {
+  /* dy 를 주면 글자를 점에서 그만큼 띄워요 (기본 -15). 상자 위에 내려앉는 그림은 더 띄워야 해요 */
+  function putPacket(p, xy, o, label, dy) {
     u.set(p.c, { cx: xy[0], cy: xy[1] });
-    u.set(p.t, { x: xy[0], y: xy[1] - 15 });
+    u.set(p.t, { x: xy[0], y: xy[1] + (dy == null ? -15 : dy) });
     u.txt(p.t, label || '');
     u.op(p.g, o);
   }
@@ -222,9 +223,10 @@
     draw(ctx, s, k) {
       const g = ctx.g, P = g.P;
       const route = { 2: ['sensor', 'sw'], 3: ['sw', 'plug'], 4: ['plug', 'hub'], 6: ['sensor', 'sw', 'light', 'hub'] }[s];
-      if (route) putPacket(g.pk, u.along(route.map(id => P[id]), seg(k, 0, 0.9)), 1 - (s === 4 || s === 6 ? seg(k, 0.92, 1) : 0), '22°C');
-      else if (s === 1) putPacket(g.pk, u.pt(P.sensor, [205, 128], seg(k, 0.2, 0.8)), seg(k, 0.1, 0.3) * (1 - seg(k, 0.8, 1)), '22°C');
-      else putPacket(g.pk, P.sensor, 0, '');
+      // 글자를 -36 만큼 띄워요. 점이 상자 한가운데 내려앉으므로 -15 이면 상자 이름과 겹쳐요
+      if (route) putPacket(g.pk, u.along(route.map(id => P[id]), seg(k, 0, 0.9)), 1 - (s === 4 || s === 6 ? seg(k, 0.92, 1) : 0), '22°C', -36);
+      else if (s === 1) putPacket(g.pk, u.pt(P.sensor, [205, 128], seg(k, 0.2, 0.8)), seg(k, 0.1, 0.3) * (1 - seg(k, 0.8, 1)), '22°C', -36);
+      else putPacket(g.pk, P.sensor, 0, '', -36);
       const plugOff = at(s, k, 5) > 0.4;
       const used = s === 2 ? ['sensor-sw'] : s === 3 ? ['sensor-sw', 'sw-plug'] : s === 4 ? ['sensor-sw', 'sw-plug', 'plug-hub'] : s === 6 || s === 7 ? ['sensor-sw', 'sw-light', 'light-hub'] : [];
       g.links.forEach(L => {
@@ -281,19 +283,22 @@
       g.hub = tag(ctx.svg, 44, my + 34, 64, 40, '허브');
       g.walls = [0, 1, 2].map(i => u.el(ctx.svg, 'rect', { x: 150 + i * 60, y: my + 6, width: 12, height: 58, class: 'vz-wall' }));
       g.sig = [['hi', 'on'], ['lo', 'tl']].map(([key, c], i) => ({ key, segs: [0, 1, 2, 3].map(() => u.el(ctx.svg, 'line', { class: 'vz-e ' + c })), y: my + 22 + i * 26 }));
-      g.meter = { x0: 110, x1: 460, y: 282 };
+      // 위로는 벽 그림(y 240 까지), 아래로는 viewBox 330. 눈금 숫자와 아래 표시 글자가 둘 다 들어가는 자리예요
+      g.meter = { x0: 110, x1: 460, y: 276 };
       const M = g.meter, dbx = db => M.x0 + (M.x1 - M.x0) * (db + 90) / 60;
       g.dbx = dbx;
       u.el(ctx.svg, 'rect', { x: dbx(-90), y: M.y, width: dbx(-75) - dbx(-90), height: 10, class: 'vz-bar cr' });
       u.el(ctx.svg, 'rect', { x: dbx(-75), y: M.y, width: dbx(-50) - dbx(-75), height: 10, class: 'vz-bar am' });
       u.el(ctx.svg, 'rect', { x: dbx(-50), y: M.y, width: dbx(-30) - dbx(-50), height: 10, class: 'vz-bar ok' });
-      [-90, -75, -50, -30].forEach(v => u.el(ctx.svg, 'text', { x: dbx(v), y: M.y + 26, 'text-anchor': 'middle', class: 'vz-ts' }, String(v)));
       u.el(ctx.svg, 'text', { x: 12, y: M.y + 10, class: 'vz-ts' }, '받은 세기 dBm');
       g.mk = [['2.4GHz', 'on'], ['900MHz', 'tl']].map(([name, c], i) => ({
         tri: u.el(ctx.svg, 'polygon', { class: 'vz-bar' + (c === 'tl' ? ' tl' : '') }),
         t: u.el(ctx.svg, 'text', { 'text-anchor': 'middle', class: c === 'tl' ? 'vz-tt' : 'vz-ta' }, ''),
         up: i === 0,
       }));
+      // 눈금 숫자는 표시 세모보다 나중에 그려요. 막대 바로 아래라 세모가 지나가는 자리인데,
+      // 먼저 그리면 세모가 숫자를 덮어요 (예: 벽 두 장에서 900MHz 세모가 -50 위에 올라앉아요)
+      [-90, -75, -50, -30].forEach(v => u.el(ctx.svg, 'text', { x: dbx(v), y: M.y + 26, 'text-anchor': 'middle', class: 'vz-ts' }, String(v)));
       g.sensor = tag(ctx.svg, 440, my + 34, 58, 40, '센서');
       g.meterG = [g.hub.g, g.sensor.g];
     },
@@ -330,8 +335,9 @@
       g.mk.forEach((m, i) => {
         const loss = i === 0 ? LOSS.hi : LOSS.lo, db = RSSI0 - loss * wv;
         const x = g.dbx(Math.max(-90, db)), y = g.meter.y;
-        u.set(m.tri, { points: m.up ? [x, y - 2, x - 7, y - 14, x + 7, y - 14].join(',') : [x, y + 12, x - 7, y + 24, x + 7, y + 24].join(',') });
-        u.set(m.t, { x, y: m.up ? y - 18 : y + 40 });
+        // 세모 폭을 좁혀요. 아래쪽 세모가 바로 밑 눈금 숫자(-50 등) 바로 옆을 지나가요
+        u.set(m.tri, { points: m.up ? [x, y - 2, x - 5, y - 14, x + 5, y - 14].join(',') : [x, y + 12, x - 5, y + 24, x + 5, y + 24].join(',') });
+        u.set(m.t, { x, y: m.up ? y - 18 : y + 48 });   // 아래쪽 글자는 눈금 숫자(y + 26) 아래로 내려요
         u.txt(m.t, (i === 0 ? '2.4GHz ' : '900MHz ') + Math.round(db));
         u.op(m.tri, mo); u.op(m.t, mo);
       });
@@ -445,7 +451,8 @@
         return { c: u.el(ctx.svg, 'circle', { cx: x, cy: ty(m), r: 6, class: 'vz-dot tl' }), t: u.el(ctx.svg, 'text', { x, y: ty(m) - 10, 'text-anchor': 'middle', class: 'vz-ts' }, '7:' + String(m).padStart(2, '0')) };
       });
       g.avg = u.el(ctx.svg, 'line', { x1: X0, x2: X1, y1: ty(12), y2: ty(12), class: 'vz-e on' });
-      g.avgT = u.el(ctx.svg, 'text', { x: X1 - 4, y: ty(12) - 8, 'text-anchor': 'end', class: 'vz-ta' }, '평균 07:12');
+      // 7일째 점 글자(7:09)가 평균선 바로 위에 있어서 -8 이면 겹쳐요
+      g.avgT = u.el(ctx.svg, 'text', { x: X1 - 4, y: ty(12) - 26, 'text-anchor': 'end', class: 'vz-ta' }, '평균 07:12');
       g.use = [['온도 맞추기 기준값', 58], ['자동화 트리거', 140], ['생활 패턴 찾기', 196]].map(([t, y]) => u.el(ctx.svg, 'text', { x: X1 - 4, y, 'text-anchor': 'end', class: 'vz-tok' }, t));
     },
     draw(ctx, s, k) {
@@ -527,6 +534,17 @@
     },
     draw(ctx, s, k) {
       const g = ctx.g, P = g.P;
+      // 봉투 점이 상자 한가운데 내려앉으면 짧은 이름(폰, 서버, 공유기)을 덮어요.
+      // 마지막 칸을 도착 상자 반쪽만큼 줄여 상자 옆에 세워요. 봉투 카드 자리는 줄이기 전 자리로 잡아요
+      const stop = (pts, gap) => {
+        const q = pts.slice(), n = q.length - 1;
+        const dx = q[n][0] - q[n - 1][0], dy = q[n][1] - q[n - 1][1], d = Math.hypot(dx, dy) || 1;
+        const f = u.clamp((d - gap) / d, 0, 1);
+        q[n] = [q[n - 1][0] + dx * f, q[n - 1][1] + dy * f];
+        return q;
+      };
+      const ids = { 1: ['phone', 'router'], 3: ['router', 'server'], 4: ['server', 'router'], 5: ['router', 'phone'], 6: ['laptop', 'router', 'server'] }[s];
+      const trimmed = ids ? stop(ids.map(id => P[id]), g.B[ids[ids.length - 1]].w / 2 + 10) : null;
       const legs = { 1: [P.phone, P.router], 3: [P.router, P.server], 4: [P.server, P.router], 5: [P.router, P.phone], 6: [P.laptop, P.router, P.server] };
       const card = {
         1: ['보낸 192.168.0.12:5000', '받는 198.51.100.20:443'],
@@ -536,12 +554,13 @@
         5: ['보낸 198.51.100.20:443', '받는 192.168.0.12:5000'],
         6: k < 0.5 ? ['보낸 192.168.0.15:6000', '받는 198.51.100.20:443'] : ['보낸 203.0.113.7:40002', '받는 198.51.100.20:443'],
       }[s];
-      let xy = P.phone, o = 0;
-      if (legs[s]) { xy = u.along(legs[s], seg(k, 0, 0.9)); o = 1; }
-      else if (s === 2) { xy = P.router; o = 1; }
+      let xy = P.phone, o = 0, anchor = P.phone;
+      if (legs[s]) { const t = seg(k, 0, 0.9); anchor = u.along(legs[s], t); xy = u.along(trimmed, t); o = 1; }
+      else if (s === 2) { anchor = P.router; xy = stop([P.phone, P.router], g.B.router.w / 2 + 10)[1]; o = 1; }
       putPacket(g.pk, xy, o, '');
       if (card) {
-        const cx = u.clamp(xy[0] - 98, 8, 276), cy = Math.max(2, xy[1] - 62);
+        // 왼쪽 끝을 120 아래로 내리면 봉투 카드가 '우리 집, 사설 주소' 글자를 덮어요
+        const cx = u.clamp(anchor[0] - 98, 120, 276), cy = Math.max(2, anchor[1] - 62);
         u.set(g.cardR, { x: cx, y: cy }); u.set(g.cardA, { x: cx + 8, y: cy + 18 }); u.set(g.cardB, { x: cx + 8, y: cy + 36 });
         u.txt(g.cardA, card[0]); u.txt(g.cardB, card[1]);
         g.cardR.setAttribute('class', 'vz-box ' + ((s === 2 || s === 6) && k >= 0.5 || s === 3 || s === 4 ? 'tl' : 'am'));
