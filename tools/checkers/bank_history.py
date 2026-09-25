@@ -1,0 +1,90 @@
+"""문제 번호는 그대로인데 내용만 바뀐 것을 찾는다.
+
+왜 따로 필요한가:
+  문제 번호(id)는 학생의 푼 기록과 오답노트가 가리키는 열쇠다.
+  번호를 그대로 둔 채 질문을 다른 내용으로 바꾸면
+  bank_check 도, build_site 도, site_test 도 전부 통과한다.
+  대신 예전에 그 번호를 틀렸던 학생의 오답노트가 엉뚱한 문제를 가리킨다.
+  검사기가 조용하다는 것이 안전하다는 뜻이 아닌 자리라서 이 검사가 있다.
+
+사용:
+  python tools/checkers/bank_history.py work/<과목>/bank/*.json
+  python tools/checkers/bank_history.py --all
+  기준은 git 의 HEAD 다. --ref <커밋> 으로 바꿀 수 있다.
+
+내용이 바뀐 것이 일부러 한 일이면(문항을 새로 쓰기로 했다면) 번호도 새로 주는 편이 맞다.
+그러면 예전 기록은 사라진 문항으로 남고, 새 문항은 처음부터 새 기록을 쌓는다.
+"""
+import json
+import subprocess
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[2]
+WATCH = ("q", "a", "c", "type", "part")   # 이 칸이 달라지면 사실상 다른 문항이다
+
+
+def old_version(path, ref):
+    rel = Path(path).resolve().relative_to(ROOT).as_posix()
+    r = subprocess.run(["git", "show", f"{ref}:{rel}"], cwd=ROOT,
+                       capture_output=True)
+    if r.returncode:
+        return None                      # 아직 커밋된 적 없는 새 파일
+    try:
+        return json.loads(r.stdout.decode("utf-8"))
+    except Exception:
+        return None
+
+
+def check(path, ref):
+    old = old_version(path, ref)
+    if old is None:
+        print(f"{path}: 기준에 없는 새 파일, 건너뜀")
+        return True
+    try:
+        new = json.loads(Path(path).read_text(encoding="utf-8"))
+    except Exception as e:
+        print(f"{path}: JSON 오류 {e}")
+        return False
+    if not isinstance(old, list) or not isinstance(new, list):
+        print(f"{path}: 배열이 아님")
+        return False
+    om = {q.get("id"): q for q in old if isinstance(q, dict)}
+    hits = []
+    for q in new:
+        if not isinstance(q, dict):
+            continue
+        o = om.get(q.get("id"))
+        if not o:
+            continue                     # 새로 생긴 번호는 이 검사의 관심 밖
+        for f in WATCH:
+            a, b = o.get(f), q.get(f)
+            if isinstance(a, str) and isinstance(b, str):
+                a, b = " ".join(a.split()), " ".join(b.split())
+            if a != b:
+                hits.append((q.get("id"), f, o.get(f), q.get(f)))
+                break
+    gone = [i for i in om if i not in {q.get("id") for q in new if isinstance(q, dict)}]
+    print(f"{path}: 문항 {len(new)}개, 번호 그대로인데 내용 바뀐 것 {len(hits)}개"
+          + (f", 사라진 번호 {len(gone)}개" if gone else ""))
+    for qid, f, a, b in hits[:20]:
+        print(f"  오류: {qid} 의 {f} 가 바뀜")
+        print(f"     전: {str(a)[:70]}")
+        print(f"     후: {str(b)[:70]}")
+    for i in gone[:10]:
+        print(f"  경고: {i} 번호가 사라짐. 그 번호를 푼 기록은 갈 곳이 없다")
+    return not hits
+
+
+if __name__ == "__main__":
+    args = sys.argv[1:]
+    ref = "HEAD"
+    if "--ref" in args:
+        i = args.index("--ref")
+        ref = args[i + 1]
+        del args[i:i + 2]
+    if "--all" in args or not args:
+        args = [str(p) for p in sorted(ROOT.glob("work/*/bank/*.json"))]
+    ok = all([check(p, ref) for p in args])
+    print("결과:", "통과" if ok else "오류 있음")
+    sys.exit(0 if ok else 1)
