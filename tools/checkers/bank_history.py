@@ -24,23 +24,35 @@ ROOT = Path(__file__).resolve().parents[2]
 WATCH = ("q", "a", "c", "type", "part")   # 이 칸이 달라지면 사실상 다른 문항이다
 
 
-def old_version(path, ref):
-    rel = Path(path).resolve().relative_to(ROOT).as_posix()
-    r = subprocess.run(["git", "show", f"{ref}:{rel}"], cwd=ROOT,
-                       capture_output=True)
+def need_ref(ref):
+    """기준 커밋이 실제로 있는지 먼저 본다. git 이 안 되면 조용히 통과시키지 않고 여기서 멈춘다."""
+    r = subprocess.run(["git", "rev-parse", "--verify", f"{ref}^{{commit}}"],
+                       cwd=ROOT, capture_output=True)
     if r.returncode:
-        return None                      # 아직 커밋된 적 없는 새 파일
+        print(f"기준 '{ref}' 를 찾을 수 없다. git 저장소가 맞는지, 커밋 이름이 맞는지 확인할 것")
+        sys.exit(2)
+
+
+def old_version(path, ref):
+    """(옛 내용, 왜) 를 준다. 옛 내용이 None 이면 그 파일은 기준에 없다."""
+    rel = Path(path).resolve().relative_to(ROOT).as_posix()
+    r = subprocess.run(["git", "show", f"{ref}:{rel}"], cwd=ROOT, capture_output=True)
+    if r.returncode:
+        msg = r.stderr.decode("utf-8", "replace")
+        if "does not exist" in msg or "exists on disk" in msg or "unknown revision" in msg:
+            return None, "새 파일"          # 아직 커밋된 적 없는 파일
+        return None, "git 오류: " + msg.strip()[:80]
     try:
-        return json.loads(r.stdout.decode("utf-8"))
-    except Exception:
-        return None
+        return json.loads(r.stdout.decode("utf-8")), ""
+    except Exception as e:
+        return None, f"기준본 JSON 오류: {e}"
 
 
 def check(path, ref):
-    old = old_version(path, ref)
+    old, why = old_version(path, ref)
     if old is None:
-        print(f"{path}: 기준에 없는 새 파일, 건너뜀")
-        return True
+        print(f"{path}: {why}" + (", 건너뜀" if why == "새 파일" else ""))
+        return why == "새 파일"          # git 오류나 깨진 기준본은 통과가 아니다
     try:
         new = json.loads(Path(path).read_text(encoding="utf-8"))
     except Exception as e:
@@ -72,8 +84,8 @@ def check(path, ref):
         print(f"     전: {str(a)[:70]}")
         print(f"     후: {str(b)[:70]}")
     for i in gone[:10]:
-        print(f"  경고: {i} 번호가 사라짐. 그 번호를 푼 기록은 갈 곳이 없다")
-    return not hits
+        print(f"  오류: {i} 번호가 사라짐. 그 번호를 푼 기록도 같이 사라진다")
+    return not hits and not gone
 
 
 if __name__ == "__main__":
@@ -83,6 +95,7 @@ if __name__ == "__main__":
         i = args.index("--ref")
         ref = args[i + 1]
         del args[i:i + 2]
+    need_ref(ref)
     if "--all" in args or not args:
         args = [str(p) for p in sorted(ROOT.glob("work/*/bank/*.json"))]
     ok = all([check(p, ref) for p in args])

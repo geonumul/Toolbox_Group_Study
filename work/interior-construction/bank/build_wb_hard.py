@@ -366,8 +366,9 @@ nox = sum(1 for q in bank if q["type"] == "ox")
 ntrue = sum(1 for q in bank if q["type"] == "ox" and q["a"])
 assert ntrue * 2 == nox, "ox 참 %d / 전체 %d" % (ntrue, nox)
 assert len({q["id"] for q in bank}) == len(bank)
-# 유형이 달라도 문장이 같으면 학생에게는 같은 문제다 (tools/checkers/bank_check.py 와 같은 기준)
-assert len({" ".join(q["q"].split()) for q in bank}) == len(bank), "질문 문장 중복"
+# 한 파일은 한 주차다. 같은 주차 안에서 같은 사실을 객관식과 단답으로 두 번 묻는 것은
+# work\_rules\문제은행_작성규칙.md 가 허용하는 형태이므로 유형을 키에 넣는다.
+assert len({(q["type"], " ".join(q["q"].split())) for q in bank}) == len(bank), "같은 유형의 질문 문장 중복"
 for q in bank:
     if q["type"] == "mcq":
         assert len(set(q["c"])) == 4, q["id"]

@@ -11,8 +11,10 @@ r"""3주차(I3) basic 문제은행 재생성기. 실행: python build_w3_prev.py
   3) ESSAY: 서술형에 모범답안을 붙인다(slides, model, qko, answer, answer_ko).
      근거는 lesson\I3_*.json 의 pass3(자세히)와 notes\slides_w3.json, I3 슬라이드 그림이다.
      points 배열이 채점 항목이므로 answer 는 그 항목을 순서대로 담는다.
-  4) REWRITE: 원본이 같은 질문 문장을 두 형식으로 중복 출제한 자리를, 같은 단원의 다른
-     문항으로 바꿔 쓴다. type, part, unit, level, id, 순서는 건드리지 않고 내용만 간다.
+  4) REWRITE: 원본 문항의 내용을 바꿔 쓰는 자리. 지금은 비어 있고, 되도록 비워 둔다.
+     이미 커밋된 id 의 내용을 바꾸면 그 번호를 푼 학생의 오답노트가 다른 문제를 가리킨다.
+     문항을 새로 쓰기로 했다면 id 도 새로 주고 옛 번호는 물린다
+     (tools\checkers\bank_history.py 가 이것을 잡는다).
 """
 import json, os
 from collections import Counter
@@ -186,22 +188,14 @@ IDS = [
 # ---------------------------------------------------------------- KaTeX 깨짐 방지
 TEXT_FIX = {"$99": "99달러"}
 
-# ---------------------------------------------------------------- 질문 중복 해소
+# ---------------------------------------------------------------- 문항 내용 교체 (비어 있음)
 # 원본은 "Zigbee PAN을 최초 생성하고 보안 및 라우팅 테이블을 총괄하는 장치는?" 을
-# mcq(w3p-b8f88795) 와 short(w3p-eb84b0c6) 로 두 번 묻는다. 이 사실은 코디네이터,
-# 라우터, 엔드 디바이스, 보더 라우터를 갈라 보게 하는 mcq 가 임자라서(원고 3-3 확인
-# 문제도 같은 4지선다 형식이다) mcq 를 그대로 두고, short 자리는 같은 3-3 단원의
-# 숫자 암기 항목(Zigbee 의 2.4GHz ISM 채널 수)으로 바꾼다. 근거는
-# ..\_src\prev\unit3\unit3.json 의 lessons[2].r3 마지막 pick 으로,
-# "필기 가이드북에 제시된 Zigbee(802.15.4) 2.4GHz ISM 대역의 채널 수와 전송 속도"
-# 가 16채널, 250kbps 이다.
-REWRITE = {
-    "w3p-eb84b0c6": {
-        "q": "Zigbee가 2.4GHz ISM 대역을 나누어 쓰는 채널의 개수는?",
-        "a": ["16", "16채널", "16개", "16 channels"],
-        "e": "2.4~2.4835GHz 를 16채널로 나누어 쓰고, 전송 속도는 250kbps 예요."
-    }
-}
+# mcq(w3p-b8f88795) 와 short(w3p-eb84b0c6) 로 두 번 묻는다. 같은 주차 안에서 같은 사실을
+# 유형만 바꿔 두세 번 묻는 것은 work\_rules\문제은행_작성규칙.md 가 허용하는 형태라
+# 중복이 아니다. 한때 short 자리를 다른 문항으로 바꿔 썼으나, 이미 커밋된 id 의 내용을
+# 바꾸면 그 번호를 푼 학생의 기록이 엉뚱한 문제를 가리키므로 원본으로 되돌렸다.
+# 이 칸은 비워 두고, 문항을 새로 쓸 일이 있으면 id 를 새로 준다.
+REWRITE = {}
 
 # ---------------------------------------------------------------- 서술형 모범답안
 ESSAY = {
@@ -298,7 +292,9 @@ for q, qid in zip(src, IDS):
 assert len(ESSAY) == sum(1 for q in bank if q["type"] == "essay"), "ESSAY 개수 불일치"
 assert set(REWRITE) <= {q["id"] for q in bank}, "REWRITE id 불일치"
 assert len({q["id"] for q in bank}) == len(bank), "id 중복"
-assert len({" ".join(q["q"].split()) for q in bank}) == len(bank), "질문 문장 중복"
+# 한 파일은 한 주차다. 같은 주차 안에서 같은 사실을 객관식과 단답으로 두 번 묻는 것은
+# work\_rules\문제은행_작성규칙.md 가 허용하는 형태이므로 유형을 키에 넣는다.
+assert len({(q["type"], " ".join(q["q"].split())) for q in bank}) == len(bank), "같은 유형의 질문 문장 중복"
 
 json.dump(bank, open(OUT, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
 
