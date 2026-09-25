@@ -30,10 +30,11 @@ def check(path):
     for k, v in ids.items():
         if v > 1 or not k:
             errs.append(f"id 중복/없음: {k}")
-    qs = Counter((q.get("type"), q.get("q")) for q in bank)
+    # 유형은 키에 넣지 않는다. 한쪽이 객관식이고 한쪽이 단답이어도 학생에게는 같은 문제다
+    qs = Counter(" ".join(str(q.get("q") or "").split()) for q in bank)
     for k, v in qs.items():
-        if v > 1:
-            errs.append(f"질문 중복: {k[1][:40]}")
+        if v > 1 and k:
+            errs.append(f"질문 중복: {k[:40]}")
     for q in bank:
         qid = q.get("id", "?")
         t = q.get("type")
@@ -145,10 +146,11 @@ def cross_check(paths):
                 errs.append(f"id 중복: {qid} ({seen_id[qid]} 와 {path})")
             elif qid:
                 seen_id[qid] = path
-            key = (q.get("type"), q.get("q"))
-            if key[1] and key in seen_q:
-                errs.append(f"질문 중복: {str(key[1])[:40]} ({seen_q[key]} 와 {path})")
-            elif key[1]:
+            # 유형은 키에 넣지 않는다. 같은 문장이 한쪽은 객관식, 한쪽은 단답이어도 학생에게는 같은 문제다
+            key = " ".join(str(q.get("q") or "").split())
+            if key and key in seen_q:
+                errs.append(f"질문 중복: {key[:40]} ({seen_q[key]} 와 {path})")
+            elif key:
                 seen_q[key] = path
     if len(paths) > 1:
         print(f"파일 {len(paths)}개 교차 검사:", "통과" if not errs else f"오류 {len(errs)}건")

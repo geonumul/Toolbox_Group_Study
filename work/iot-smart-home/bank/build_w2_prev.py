@@ -141,6 +141,27 @@ IDS = [
 # ---------------------------------------------------------------- KaTeX 깨짐 방지
 TEXT_FIX = {"$99": "99달러"}
 
+# ---------------------------------------------------------------- 문항 교체 (id 와 자리는 그대로)
+# build_site.py 가 bank\*.json 을 한 배열로 합치므로 wx_expected.json 과 겹치는 문항이 있으면
+# 학생이 같은 문제를 두 번 본다. IF-THEN-ELSE 는 강의 슬라이드 용어가 아니라
+# 지능형홈관리사 용어해설집 78번 용어라서 기출, 예상 주차(wxp-mcq-159)가 가진다.
+# 2주차 자리에는 같은 단원(2-6 자동화 로직)의 강의 본문 결론을 묻는 문항을 대신 둔다.
+# 근거: _src\prev\unit2\parts\l6.json r2, r3 ("단일 센서 규칙의 한계를 극복하려면
+#       상태, 이벤트, 시계열 데이터의 융합이 필요하다", 슬라이드 19-21)
+REWRITE = {
+    "w2p-d978d265": {
+        "q": "강의 2.2.6 이 자동화 로직의 한 줄 결론으로 제시한 것은?",
+        "c": [
+            "센서를 많이 달수록 정확해지므로 기기 수를 최대한 늘려야 한다",
+            "단일 센서 규칙의 한계를 극복하려면 상태, 이벤트, 시계열 데이터의 융합이 필요하다",
+            "자동화는 거주자가 앱에서 직접 조작할 때 가장 정확하다",
+            "자동화 조건은 상태 데이터 하나로 통일하는 것이 좋다",
+        ],
+        "a": 1,
+        "e": "단일 조건의 허점을 3대 데이터 결합으로 메운다는 것이 2.2.6 의 요지입니다. 기기 수를 늘리는 것도, 수동 조작으로 돌아가는 것도 답이 아닙니다.",
+    }
+}
+
 # ---------------------------------------------------------------- 서술형 모범답안
 ESSAY = {
     "w2p-a964499b": {
@@ -217,12 +238,18 @@ for q, qid in zip(src, IDS):
     it = fix(dict(q))
     it["level"] = "basic"
     it["id"] = qid
+    if qid in REWRITE:
+        it.update(REWRITE[qid])
     if it["type"] == "essay":
         assert qid in ESSAY, f"{qid}: 모범답안 없음"
         it.update(ESSAY[qid])
     bank.append(it)
 
 assert len(ESSAY) == sum(1 for q in bank if q["type"] == "essay"), "ESSAY 개수 불일치"
+assert all(qid in IDS for qid in REWRITE), "REWRITE 의 id 가 IDS 에 없어요"
+for qid, r in REWRITE.items():
+    it = next(q for q in bank if q["id"] == qid)
+    assert it["q"] == r["q"] and len(set(it["c"])) == 4, f"{qid}: 교체 실패"
 
 json.dump(bank, open(OUT, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
 
