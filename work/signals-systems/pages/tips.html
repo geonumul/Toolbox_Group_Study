@@ -26,7 +26,7 @@
 <ul class="mnem">
 <li><b>오일러 공식</b> $e^{j\theta}=\cos\theta+j\sin\theta$. 교수님이 "무조건 외워라"(증명은 안 외워도 됨). $\cos\theta=\frac{e^{j\theta}+e^{-j\theta}}{2}$, $\sin\theta=\frac{e^{j\theta}-e^{-j\theta}}{2j}$</li>
 <li><b>시간 이동</b> $x(t-t_0)$, $t_0&gt;0$ 이면 <b>오른쪽</b>(지연). 빼는데 오른쪽. 교수님 강조.</li>
-<li><b>주기</b> 모든 $t$ 에서 $x(t)=x(t+T)$. $\cos(\omega_0 t)$, $e^{j\omega_0 t}$ 의 기본 주기 $T_0=\frac{2\pi}{\omega_0}$</li>
+<li><b>주기</b> 모든 $t$ 에서 $x(t)=x(t+T)$. $\cos(\omega_0 t)$, $e^{j\omega_0 t}$ 의 기본 주기 $T_0=\frac{2\pi}{|\omega_0|}$ ($\omega_0\ne0$). 주기는 양수라서 절댓값을 씌워요. 연속시간은 $\omega_0$ 가 $0$ 만 아니면 늘 주기예요.</li>
 <li><b>이산시간 주기</b> $e^{j\omega_0 n}$ 은 $\frac{\omega_0}{2\pi}=\frac{m}{N}$ (유리수)일 때만 주기. 기약분수의 $N$ 이 기본 주기. $\cos(n)$ 은 주기 신호가 아니에요.</li>
 <li><b>짝홀 분해</b> $\mathcal{Ev}\{x(t)\}=\frac{x(t)+x(-t)}{2}$, $\mathcal{Od}\{x(t)\}=\frac{x(t)-x(-t)}{2}$</li>
 <li><b>에너지</b> $E_\infty=\int_{-\infty}^{\infty}|x(t)|^2dt$, $\sum_{n=-\infty}^{\infty}|x[n]|^2$. 평균 전력은 시간(칸 수)으로 나눔.</li>
@@ -50,7 +50,7 @@
 <tr><td>$y(t)=t\,x(t)$</td><td>$y(t)=x(t)^2$</td><td>앞은 선형인데 시변, 뒤는 시불변인데 비선형. 선형성과 시불변성은 서로 독립</td></tr>
 <tr><td>인과성</td><td>무기억</td><td>무기억이면 늘 인과. 인과인데 기억이 있을 수 있어요(누산기)</td></tr>
 <tr><td>누산기 $h=u[n]$</td><td>1차 차분 $h=\delta[n]-\delta[n-1]$</td><td>서로 역시스템. 누산기는 인과지만 불안정, 1차 차분은 인과이고 안정</td></tr>
-<tr><td>임펄스 응답 $h$</td><td>계단 응답 $s$</td><td>$s$ 는 $h$ 의 누적 합(적분), $h$ 는 $s$ 의 1차 차분(미분)</td></tr>
+<tr><td>임펄스 응답 $h$</td><td>계단 응답 $s$ <b>(첫 퀴즈 범위 밖)</b></td><td>$s$ 는 $h$ 의 누적 합(적분), $h$ 는 $s$ 의 1차 차분(미분). 계단 응답은 S3 p.71~74 라서 첫 퀴즈에는 안 나와요</td></tr>
 </table></div>
 </div>
 
