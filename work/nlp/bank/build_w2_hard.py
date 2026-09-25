@@ -561,13 +561,17 @@ def probs(v):
 
 
 P0 = probs(vc)
-exp_v = tuple(sum(P0[k] * U[k][i] for k in U) for i in range(2))
+# 문제에 적어 준 확률(소수 셋째 자리)을 그대로 쓴다. 학생이 손으로 따라올 수 있는 값이어야 한다.
+P_given = {"banking": 0.665, "crises": 0.245, "pizza": 0.090}
+assert all(abs(P0[k] - P_given[k]) < 0.001 for k in U)
+exp_v = tuple(sum(P_given[k] * U[k][i] for k in U) for i in range(2))
 grad = tuple(U["banking"][i] - exp_v[i] for i in range(2))
 alpha = 0.5
 vnew = tuple(vc[i] + alpha * grad[i] for i in range(2))
 P1 = probs(vnew)
-assert round(exp_v[0], 3) == 0.820 and round(exp_v[1], 3) == 1.511
-assert round(grad[0], 3) == 0.180 and round(grad[1], 3) == 0.489
+assert round(exp_v[0], 3) == 0.820 and round(exp_v[1], 3) == 1.510
+assert round(grad[0], 3) == 0.180 and round(grad[1], 3) == 0.490
+assert round(vnew[0], 3) == 1.090 and round(vnew[1], 3) == 0.745
 assert round(P1["banking"], 3) == 0.747
 calc(U6, "N2 p.33, p.37", "observed-minus-expected",
      "중심 단어 into 의 v_c = (1, 0.5), 문맥 벡터 u_banking = (1, 2), u_crises = (1, 0), u_pizza = (-1, 2) 이고 어휘는 이 세 단어뿐이다. 소프트맥스 확률은 P(banking) ≈ 0.665, P(crises) ≈ 0.245, P(pizza) ≈ 0.090 이다. 실제 이웃이 banking 일 때 (1) expected = Σ P(w|c) u_w, (2) 기울기 observed - expected 를 구하고, (3) 학습률 0.5 로 v_c ← v_c + 0.5 × (observed - expected) 한 뒤의 새 P(banking) 을 구하시오.",
@@ -578,12 +582,12 @@ calc(U6, "N2 p.33, p.37", "observed-minus-expected",
       {"label": "기울기 둘째 칸", "ans": round(grad[1], 3), "tol": 0.005},
       {"label": "새 P(banking)", "ans": round(P1["banking"], 3), "tol": 0.005}],
      ["expected = 0.665×(1, 2) + 0.245×(1, 0) + 0.090×(-1, 2)",
-      "= (0.665 + 0.245 - 0.090, 1.330 + 0 + 0.180) ≈ (0.820, 1.511)",
-      "기울기 = u_banking - expected = (1 - 0.820, 2 - 1.511) ≈ (0.180, 0.489)",
-      "J = -log P 를 줄이려면 v_c 에 기울기를 더해요: (1, 0.5) + 0.5 × (0.180, 0.489) ≈ (1.090, 0.745)",
-      "새 점수: banking 1.090 + 1.490 ≈ 2.579, crises 1.090, pizza -1.090 + 1.490 ≈ 0.399",
-      "새 P(banking) = e^2.579 / (e^2.579 + e^1.090 + e^0.399) ≈ 0.747"],
-     "expected ≈ (0.820, 1.511), 기울기 ≈ (0.180, 0.489), 새 P(banking) ≈ 0.747 (0.665 에서 올라감)",
+      "= (0.665 + 0.245 - 0.090, 1.330 + 0 + 0.180) = (0.820, 1.510)",
+      "기울기 = u_banking - expected = (1 - 0.820, 2 - 1.510) = (0.180, 0.490)",
+      "J = -log P 를 줄이려면 v_c 에 기울기를 더해요: (1, 0.5) + 0.5 × (0.180, 0.490) = (1.090, 0.745)",
+      "새 점수: banking 1.090 + 1.490 = 2.580, crises 1.090, pizza -1.090 + 1.490 = 0.400",
+      "새 P(banking) = e^2.580 / (e^2.580 + e^1.090 + e^0.400) ≈ 0.747"],
+     "expected = (0.820, 1.510), 기울기 = (0.180, 0.490), 새 P(banking) ≈ 0.747 (0.665 에서 올라감)",
      "이 식은 log P 의 기울기라서 손실 J = -log P 를 줄일 때 v_c 에 '더해요'. 빼면 P(banking) 이 오히려 줄어요. expected 는 어휘 전체(여기서는 3개) 합이에요.")
 
 # c3: 네거티브 샘플링 벌점
@@ -617,10 +621,10 @@ calc(U5, "N2 p.31", "average-nll",
      [{"label": "학습 전 J", "ans": round(Ja, 3), "tol": 0.005},
       {"label": "학습 후 J", "ans": round(Jb, 3), "tol": 0.005}],
      ["J = -(1/T) × (모든 ln P 의 합)",
-      "학습 전: ln 0.5 + ln 0.25 + ln 0.8 + ln 0.4 = -0.693 - 1.386 - 0.223 - 0.916 = -3.219",
-      "J = -(1/2) × (-3.219) ≈ 1.609",
-      "학습 후: ln 0.9 + ln 0.5 + ln 0.9 + ln 0.8 = -0.105 - 0.693 - 0.105 - 0.223 = -1.127",
-      "J = -(1/2) × (-1.127) ≈ 0.564",
+      "학습 전: ln 0.5 + ln 0.25 + ln 0.8 + ln 0.4 ≈ -0.6931 - 1.3863 - 0.2231 - 0.9163 = -3.2188",
+      "J = -(1/2) × (-3.2188) ≈ 1.609",
+      "학습 후: ln 0.9 + ln 0.5 + ln 0.9 + ln 0.8 ≈ -0.1054 - 0.6931 - 0.1054 - 0.2231 = -1.1270",
+      "J = -(1/2) × (-1.1270) = 0.5635 ≈ 0.564",
       "이웃을 더 잘 맞히니 J 가 줄었어요(J 최소화 = 잘 맞히기)"],
      "학습 전 J ≈ 1.609, 학습 후 J ≈ 0.564",
      "마이너스를 빼먹으면 음수가 나와요. log 확률은 늘 0 이하라 J 는 0 이상이에요. 또 T(위치 수 2)로 나눠야지 확률 개수(4)로 나누면 안 돼요.",

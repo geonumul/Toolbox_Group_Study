@@ -713,21 +713,23 @@ calc(U2, "N2 p.12", "bpe-pair-count",
 en_tok, ko_en_tok, ko_ko_tok, n_en, n_ko = 7, 17, 8, 6, 4
 f1, f2, f3 = en_tok / n_en, ko_en_tok / n_ko, ko_ko_tok / n_ko
 ratio = ko_en_tok / ko_ko_tok
-assert round(f1, 2) == 1.17 and f2 == 4.25 and f3 == 2.0 and round(ratio, 2) == 2.12
+assert round(f1, 2) == 1.17 and f2 == 4.25 and f3 == 2.0 and ratio == 2.125
+# 2.125 는 딱 중간이라 반올림하면 2.13 이다. 파이썬 round 는 2.12 를 주므로 쓰지 않는다.
+ratio_r = 2.13
 calc(U3, "N2 p.20", "fertility",
      "fertility = 토큰 수 ÷ 단어(어절) 수 이다. 영어 문장 'The weather is really nice today.' 는 7토큰이다. 한국어 문장 '오늘은 날씨가 정말 좋네요.' 는 영어 중심 토크나이저로 17토큰, 한국어 맞춤 토크나이저로 8토큰이다. 세 경우의 fertility 와, 한국어 문장에서 영어 중심 토크나이저가 한국어 토크나이저보다 몇 배 많은 토큰을 쓰는지 구하시오.",
      "띄어쓰기 단어 수를 먼저 세고 나눠요. 소수 둘째 자리까지 반올림해요.",
      [{"label": "영어 fertility", "ans": round(f1, 2), "tol": 0.01},
       {"label": "한국어(영어 중심) fertility", "ans": f2, "tol": 0.01},
       {"label": "한국어(한국어 맞춤) fertility", "ans": f3, "tol": 0.01},
-      {"label": "토큰 수 배율(17 ÷ 8)", "ans": round(ratio, 2), "tol": 0.01}],
+      {"label": "토큰 수 배율(17 ÷ 8)", "ans": ratio_r, "tol": 0.01}],
      ["fertility = 토큰 수 ÷ 단어 수",
       "영어 단어 수: The / weather / is / really / nice / today. → 6",
       "영어: 7 ÷ 6 ≈ 1.17",
       "한국어 어절 수: 오늘은 / 날씨가 / 정말 / 좋네요. → 4",
       "영어 중심: 17 ÷ 4 = 4.25, 한국어 맞춤: 8 ÷ 4 = 2.00",
-      "배율: 17 ÷ 8 ≈ 2.12"],
-     "영어 1.17, 한국어(영어 중심) 4.25, 한국어(한국어 맞춤) 2.00, 약 2.12배",
+      "배율: 17 ÷ 8 = 2.125, 소수 둘째 자리까지 반올림하면 2.13"],
+     "영어 1.17, 한국어(영어 중심) 4.25, 한국어(한국어 맞춤) 2.00, 약 2.13배",
      "한국어 단어 수는 글자 수가 아니라 띄어쓰기 덩어리(어절) 수예요. fertility 는 클수록 나빠요.")
 
 # c3: 코사인 유사도
