@@ -5,6 +5,17 @@ import optshuffle
 
 HERE = pathlib.Path(__file__).resolve().parent
 
+# 판단을 묻는 calc 문항에서 쓰는 칸 이름.
+# 질문이 "값을 구하고 안정한지 판단하시오" 라고 세 가지를 물으면서 값 칸만 채점하면
+# 학생은 판단을 틀린 채로 정답 처리를 받는다. 그래서 판단도 칸으로 만들어 채점한다.
+# calc 칸은 숫자만 받으므로(engine/app.js 의 parseNum) 예/아니오를 1/0 으로 적게 한다.
+# 약속은 칸 이름과 qko 에 같이 적어 둔다. 질문 문장(q)은 학생의 푼 기록이 가리키는
+# 열쇠라서 건드리지 않는다(tools/checkers/bank_history.py 의 WATCH 참고).
+STABLE_LABEL = "안정성 (안정이면 $1$, 불안정이면 $0$)"
+CAUSAL_LABEL = "인과성 (인과면 $1$, 인과가 아니면 $0$)"
+INVERSE_LABEL = "역시스템 여부 (맞으면 $1$, 아니면 $0$)"
+YESNO_KO = "판단 칸은 숫자로 적어요. 맞으면 $1$, 아니면 $0$ 이에요."
+
 
 class Bank:
     def __init__(self, prefix, part, level):

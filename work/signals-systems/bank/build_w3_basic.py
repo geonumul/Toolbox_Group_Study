@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """3주차(2장 LTI 시스템) 기본 문제. 출력: w3_basic.json"""
 import math
-from sigbank_util import Bank, fmt, conv
+from sigbank_util import Bank, fmt, conv, STABLE_LABEL
 
 B = Bank("w3b", "3", "basic")
 U1 = "3-1 복습: 복소 지수와 RC 회로"
@@ -134,14 +134,17 @@ for (lab, r, ans) in (("(1/2)^n", 0.5, 2.0), ("(1/3)^n", 1 / 3, 1.5), ("(-1/2)^n
     tex = {"(1/2)^n": "\\left(\\tfrac12\\right)^n", "(1/3)^n": "\\left(\\tfrac13\\right)^n", "(-1/2)^n": "\\left(-\\tfrac12\\right)^n"}[lab]
     rtex = {"(1/2)^n": "\\tfrac12", "(1/3)^n": "\\tfrac13", "(-1/2)^n": "\\tfrac12"}[lab]
     assert abs(sum(abs(r) ** k for k in range(200)) - ans) < 1e-9
+    ktex = tex.replace("^n", "^k")
     B.calc(U7, "S3 p.69", f"$h[n]={tex}u[n]$ 의 절대 합 $\\sum_{{k=-\\infty}}^{{\\infty}}|h[k]|$ 를 구하고 안정한지 판단하시오.",
-           "절댓값을 모두 더해 유한하면 안정이에요.", [("절대 합", ans)],
+           "절댓값을 모두 더해 유한하면 안정이에요. 질문이 두 가지라 칸도 두 개예요. "
+           "둘째 칸은 판단을 숫자로 적는 칸이라서, 안정이면 $1$ 을, 불안정이면 $0$ 을 넣어요.",
+           [("절대 합", ans), (STABLE_LABEL, 1)],
            ["$u[n]$ 때문에 $k\\ge 0$ 만 더해요.",
-            (f"$|h[k]|=\\left|{tex}\\right|={rtex}^k$ (음수 부호가 절댓값에서 사라져요)" if r < 0
+            (f"$|h[k]|=\\left|{ktex}\\right|={rtex}^k$ (음수 부호가 절댓값에서 사라져요)" if r < 0
              else f"$|h[k]|={rtex}^k$ (이미 $0$ 보다 커서 절댓값을 씌워도 그대로예요)"),
             f"등비급수 $\\sum_{{k=0}}^{{\\infty}}\\left({rtex}\\right)^k=\\frac{{1}}{{1-{rtex}}}={fmt(ans)}$",
-            "유한하므로 **절대 합 가능(Absolutely Summable)**, 즉 안정"],
-           f"${fmt(ans)}$, 안정",
+            "유한하므로 **절대 합 가능(Absolutely Summable)**, 즉 안정. 그래서 판단 칸은 $1$ 이에요."],
+           f"${fmt(ans)}$, 안정(판단 칸 $1$)",
            ("절댓값을 안 씌우고 $\\left(-\\tfrac12\\right)^n$ 을 그대로 더하면 $\\frac{2}{3}$ 이 나와요. 안정 판정은 절댓값의 합이에요." if r < 0
             else "$u[n]$ 을 놓치고 음수 칸까지 더하면 합이 무한대가 돼요. 더하는 칸은 $k\\ge0$ 뿐이에요."), "LTI 안정성")
 B.calc(U7, "S3 p.69", "순수 지연 시스템 $h[n]=\\delta[n-4]$ 의 절대 합 $\\sum_k|h[k]|$ 는?",
