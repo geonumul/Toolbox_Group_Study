@@ -128,6 +128,37 @@ def check(path):
 
 STRICT = "--min" in sys.argv
 
+def cross_check(paths):
+    """파일을 넘나드는 중복. build_site.py 는 bank/*.json 을 한 배열로 합치므로
+       파일마다 따로 통과해도 학생은 같은 문제를 두 번 본다. id 가 겹치면 빌드가 멈춘다."""
+    seen_id, seen_q, errs = {}, {}, []
+    for path in paths:
+        try:
+            bank = json.load(open(path, encoding="utf-8"))
+        except Exception:
+            continue
+        if not isinstance(bank, list):
+            continue
+        for q in bank:
+            qid = q.get("id")
+            if qid in seen_id:
+                errs.append(f"id 중복: {qid} ({seen_id[qid]} 와 {path})")
+            elif qid:
+                seen_id[qid] = path
+            key = (q.get("type"), q.get("q"))
+            if key[1] and key in seen_q:
+                errs.append(f"질문 중복: {str(key[1])[:40]} ({seen_q[key]} 와 {path})")
+            elif key[1]:
+                seen_q[key] = path
+    if len(paths) > 1:
+        print(f"파일 {len(paths)}개 교차 검사:", "통과" if not errs else f"오류 {len(errs)}건")
+        for e in errs[:30]:
+            print("  오류:", e)
+    return not errs
+
+
 if __name__ == "__main__":
-    ok = all([check(p) for p in sys.argv[1:] if not p.startswith("--")])
+    files = [p for p in sys.argv[1:] if not p.startswith("--")]
+    ok = all([check(p) for p in files])
+    ok = cross_check(files) and ok
     sys.exit(0 if ok else 1)
