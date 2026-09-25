@@ -11,6 +11,8 @@ REQ = {
     "formula": ["head", "tex", "parts", "whole"], "steps": ["head", "steps", "answer"],
     "figure": ["head", "svg", "caption", "builds"], "compare": ["head", "cols", "rows"],
     "english": ["head", "en", "ko"], "check": ["q", "choices", "a", "why"], "viz": ["viz", "head"], "warn": ["head", "items"], "recap": ["items"],
+    # 그래프신경망 코딩 기초 슬라이드에만 있는 두 가지 (link 는 있을 때만)
+    "code": ["head", "file", "code", "lines"], "pyterm": ["name", "say", "example", "out"],
 }
 EMOJI = re.compile("[\U0001F300-\U0001FAFF☀-➿]")
 
