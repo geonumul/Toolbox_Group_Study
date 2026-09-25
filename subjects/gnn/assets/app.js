@@ -261,15 +261,15 @@ function josa(word, withJong, noJong) {
   return (c - 0xAC00) % 28 ? withJong : noJong;
 }
 /* 이 주차를 보려면 필요한 기초 단원만 (기초 다지기 + 코딩 기초).
-   build_site.py 의 PREREQ, CODE_PREREQ 를 먼저 쓰고,
-   없으면 기초 단원마다 붙은 for (그 단원의 "어디에 나오나" 슬라이드에서 뽑은 주차) 로 찾는다 */
-function prereqUnits(week) {
-  const hand = ((META.prereq || {})[week] || []).concat((META.codeprereq || {})[week] || []).map(unitMeta).filter(Boolean);
-  if (hand.length) return hand;
+   기초 단원마다 붙은 for (그 단원의 "어디에 나오나" 슬라이드에서 뽑은 주차) 로만 찾는다.
+   손으로 적은 목록을 따로 두지 않으니 슬라이드와 어긋날 수 없다.
+   track 에 "b" 나 "c" 를 주면 그 기초 주차 단원만 준다 */
+function prereqUnits(week, track) {
   const out = [];
   META.weeks.forEach(bw => {
     const id = String(bw.id);
     if (bw.deck || id === String(week)) return;   // 강의가 붙은 주차는 기초 주차가 아니다
+    if (track && id !== track) return;
     (META.units[id] || []).forEach(u => {
       const f = u['for'];
       if (f === 'all' || (Array.isArray(f) && f.indexOf(String(week)) >= 0)) out.push(u);
@@ -311,7 +311,7 @@ function weekSteps(week) {
     (META.practice || []).filter(p => p.track === 'c' && !units.some(u => u.id === p.unit)).forEach(p => steps.push(practiceStep(p)));
     return steps;
   }
-  const pre = (META.prereq[week] || []).map(unitMeta).filter(Boolean);
+  const pre = prereqUnits(week, 'b');
   if (pre.length) steps.push({ t: '필요한 기초만 먼저', d: '이 주차에 나오는 수학, 딥러닝 기초예요. 이미 알면 건너뛰어도 돼요.', done: pre.every(u => unitDone(u.id)), href: '#/unit/' + nextUnit(pre).id, chips: pre, meta: pre.length + '개 단원' });
   const lp = (n, t, desc) => { if (d && d.frames[n - 1]) steps.push({ t, d: desc, done: lessonProg(w.deck, n).done, href: '#/lesson/' + w.deck + '/' + n, meta: '약 ' + mins(d.frames[n - 1]) + '분', prog: lessonProg(w.deck, n) }); };
   lp(1, '1회독: 큰 그림', '강의 슬라이드를 쉬운 말로 한 번 쭉 넘겨 봐요. 이해 안 돼도 그냥 넘어가요.');
@@ -321,7 +321,7 @@ function weekSteps(week) {
   lp(2, '2회독: 자세히', '슬라이드를 짚어 가며 수식, 그림, 손계산, 교수님 설명까지.');
   lp(3, '3회독: 기출', '실제 기출 문제와 퀴즈, 외울 영어 문장.');
   qstep('hard', '심화 문제 20개', '올해 어려워진다고 해서 한 단계 올린 문제예요.');
-  const cpre = ((META.codeprereq || {})[week] || []).map(unitMeta).filter(Boolean);
+  const cpre = prereqUnits(week, 'c');
   if (cpre.length && d && d.frames[3]) steps.push({ t: '코드 보기 전에 코딩 기초', d: '파이썬, 클래스, 파이토치를 0부터 보고 직접 짜 봐요. 이미 알면 건너뛰어도 돼요.', done: cpre.every(u => unitDone(u.id)), href: '#/unit/' + nextUnit(cpre).id, chips: cpre, meta: cpre.length + '개 단원' });
   lp(4, '4회독: 코드', '실습 노트북 코드를 식과 짝지어 한 줄씩.');
   const wps = (META.practice || []).filter(p => p.track === week);
