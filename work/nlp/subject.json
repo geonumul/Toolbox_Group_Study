@@ -66,6 +66,13 @@
    "title": "Lab 3 셀프 어텐션 직접 만들기 코드 읽기",
    "deck": "N4L",
    "topics": "Q, K, V 만들기, 점수와 스케일링, 소프트맥스, 가중합, 마스킹, 멀티헤드, 트랜스포머 블록"
+  },
+  {
+   "id": "P",
+   "short": "참고 논문",
+   "title": "논문 Attention Is All You Need 문단별 읽기",
+   "deck": "NP",
+   "topics": "교수님이 4주차에 꼭 읽으라고 한 논문(Vaswani et al. 2017). 초록부터 결론까지 문단 하나하나를 4주차 슬라이드와 짝지어 읽어요. 인코더 디코더 스택, 스케일드 닷프로덕트, 멀티 헤드, 위치별 FFN, 위치 인코딩, Why Self-Attention 표, 학습 설정, BLEU 결과와 ablation"
   }
  ],
  "decks": {
@@ -100,6 +107,11 @@
   "N4L": {
    "title": "Lab 3 Self-Attention from Scratch (코드)",
    "week": "4L"
+  },
+  "NP": {
+   "title": "참고 논문 Attention Is All You Need (Vaswani et al. 2017)",
+   "week": "P",
+   "pdf": "../../01_수업자료/자연어처리/기출과참고/참고_Attention Is All You Need.pdf"
   }
  },
  "prereq": {},

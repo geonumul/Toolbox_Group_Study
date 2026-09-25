@@ -28,6 +28,12 @@ cfg = {
          "topics": "뉴런과 층, 활성화 함수(ReLU), 행렬로 쓰는 신경망, 경사 하강법, 연쇄 법칙과 역전파, 계산 그래프, 언어 모델과 다음 토큰 예측, n-gram, perplexity, 고정 윈도우 신경망 LM, RNN, 기울기 소실과 LSTM"},
         {"id": "3L", "short": "3주차 실습", "title": "Lab 2 신경망과 RNN 언어 모델 코드 읽기", "deck": "N3L",
          "topics": "shape 찍어 보기, autograd, 문자 단위 RNN 언어 모델, 학습 루프, 텍스트 생성, perplexity, 토크나이저 바꾸기"},
+        {"id": "4", "short": "4주차", "title": "어텐션과 트랜스포머 구조", "deck": "N4",
+         "topics": "고정 벡터 병목, 어텐션, Query/Key/Value, 셀프 어텐션, 스케일드 닷프로덕트, 멀티헤드, 위치 인코딩, 잔차 연결과 층 정규화, 인코더와 디코더, 마스킹"},
+        {"id": "4L", "short": "4주차 실습", "title": "Lab 3 셀프 어텐션 직접 만들기 코드 읽기", "deck": "N4L",
+         "topics": "Q, K, V 만들기, 점수와 스케일링, 소프트맥스, 가중합, 마스킹, 멀티헤드, 트랜스포머 블록"},
+        {"id": "P", "short": "참고 논문", "title": "논문 Attention Is All You Need 문단별 읽기", "deck": "NP",
+         "topics": "교수님이 4주차에 꼭 읽으라고 한 논문(Vaswani et al. 2017). 초록부터 결론까지 문단 하나하나를 4주차 슬라이드와 짝지어 읽어요. 인코더 디코더 스택, 스케일드 닷프로덕트, 멀티 헤드, 위치별 FFN, 위치 인코딩, Why Self-Attention 표, 학습 설정, BLEU 결과와 ablation"},
     ],
     "decks": {
         "N1": {"title": "1강 Course Introduction and History of NLP", "week": "1", "pdf": PDF + "01주차_Course Introduction and History of NLP.pdf"},
@@ -35,6 +41,9 @@ cfg = {
         "N2L": {"title": "Lab 0-1 Tokenization and Word Vectors (코드)", "week": "2L"},
         "N3": {"title": "3강 Neural NLP Foundations", "week": "3", "pdf": PDF + "03주차_Neural NLP Foundations.pdf"},
         "N3L": {"title": "Lab 2 Neural Nets and RNN Language Models (코드)", "week": "3L"},
+        "N4": {"title": "4강 Attention and the Transformer Architecture", "week": "4", "pdf": PDF + "04주차_Attention and the Transformer Architecture.pdf"},
+        "N4L": {"title": "Lab 3 Self-Attention from Scratch (코드)", "week": "4L"},
+        "NP": {"title": "참고 논문 Attention Is All You Need (Vaswani et al. 2017)", "week": "P", "pdf": "../../01_수업자료/자연어처리/기출과참고/참고_Attention Is All You Need.pdf"},
     },
     "prereq": {},
     "passes": [
@@ -44,6 +53,9 @@ cfg = {
         {"n": 4, "t": "시험", "d": "확인 퀴즈, 시험에 나올 포인트, 외워 쓸 답안 문장, 헷갈리는 점"},
     ],
     "mock": {"mcq": 20, "ox": 8, "short": 6, "essay": 3, "calc": 3},
+    "examsNav": "직접 해보기",
+    "examsDesc": "Colab 에서 빈칸을 채우며 손으로 해 보는 연습 노트북",
+    "tipsNav": "답안 팁",
 }
 (W / "subject.json").write_text(json.dumps(cfg, ensure_ascii=False, indent=1), encoding="utf-8")
 print("ok")

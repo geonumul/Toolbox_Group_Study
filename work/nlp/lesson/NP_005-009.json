@@ -1,0 +1,2507 @@
+{
+ "deck": "NP",
+ "from": 5,
+ "to": 9,
+ "glossary": [
+  {
+   "ko": "트랜스포머",
+   "en": "Transformer",
+   "say": "어텐션만으로 만든 신경망 구조. 이 논문이 내놓은 모델이에요",
+   "more": "인코더 6층과 디코더 6층을 쌓았어요. base 모델의 파라미터는 약 65 x 10^6 개예요."
+  },
+  {
+   "ko": "어텐션",
+   "en": "Attention",
+   "say": "필요한 곳을 골라 보는 장치. 점수를 매기고 가중 평균을 내요",
+   "more": "논문은 이것을 세 가지 자리에서 쓴다고 3.2.3 에 적었어요."
+  },
+  {
+   "ko": "셀프 어텐션",
+   "en": "Self-Attention",
+   "say": "한 문장이 자기 자신을 바라보는 어텐션",
+   "more": "쿼리, 키, 밸류가 모두 앞 층 출력 한 곳에서 나와요."
+  },
+  {
+   "ko": "크로스 어텐션",
+   "en": "Cross-Attention",
+   "say": "쿼리는 디코더, 키와 밸류는 인코더에서 오는 어텐션",
+   "more": "논문은 encoder-decoder attention 이라고 불러요. 이름만 다른 같은 것이에요."
+  },
+  {
+   "ko": "멀티 헤드 어텐션",
+   "en": "Multi-Head Attention (MHA)",
+   "say": "전체 차원을 h 조각으로 나눠 여러 관점에서 동시에 어텐션하기",
+   "more": "논문은 h = 8, d_k = d_v = 64 를 썼어요. 계산량은 한 개짜리와 비슷해요."
+  },
+  {
+   "ko": "헤드",
+   "en": "Head",
+   "say": "멀티 헤드 어텐션에서 한 관점을 맡은 작은 어텐션 하나",
+   "more": "헤드 하나가 64칸을 봐요. 8개를 이어 붙여 다시 512칸이 돼요."
+  },
+  {
+   "ko": "표현 부분공간",
+   "en": "Representation Subspace",
+   "say": "전체 차원을 조각내어 만든 작은 관점 하나",
+   "more": "논문은 different representation subspaces at different positions 라고 적었어요."
+  },
+  {
+   "ko": "스케일드 닷프로덕트 어텐션",
+   "en": "Scaled Dot-Product Attention",
+   "say": "내적 점수를 루트 d_k 로 나눈 어텐션",
+   "more": "헤드 하나가 이 계산을 해요. 멀티 헤드는 이것을 h 개 나란히 돌려요."
+  },
+  {
+   "ko": "쿼리",
+   "en": "Query",
+   "say": "지금 내가 무엇을 찾고 있는지를 담은 벡터",
+   "more": "크로스 어텐션에서는 디코더에서 나와요."
+  },
+  {
+   "ko": "키",
+   "en": "Key",
+   "say": "나는 이런 정보를 갖고 있다고 광고하는 이름표 벡터",
+   "more": "크로스 어텐션에서는 인코더 출력에서 나와요. 논문은 memory keys 라고 불러요."
+  },
+  {
+   "ko": "밸류",
+   "en": "Value",
+   "say": "내가 선택되면 실제로 건네줄 내용 벡터",
+   "more": "가중합에 실제로 들어가는 것은 밸류예요. 논문의 d_v 는 64 예요."
+  },
+  {
+   "ko": "어텐션 가중치",
+   "en": "Attention Weight",
+   "say": "점수를 소프트맥스에 넣어 얻은, 합이 1 인 값들",
+   "more": "논문 부록의 어텐션 그림이 이 값을 선 굵기로 그린 것이에요."
+  },
+  {
+   "ko": "가중합",
+   "en": "Weighted Sum",
+   "say": "값마다 가중치를 곱해서 모두 더한 것",
+   "more": "어텐션의 마지막 단계예요. 결과가 그 자리의 새 표현이 돼요."
+  },
+  {
+   "ko": "소프트맥스",
+   "en": "Softmax",
+   "say": "점수를 모두 더해 1 이 되는 확률 파이로 나누기",
+   "more": "논문 3.4 는 디코더 출력을 소프트맥스로 다음 토큰 확률로 바꾼다고 적었어요."
+  },
+  {
+   "ko": "내적",
+   "en": "Dot Product",
+   "say": "두 화살표가 얼마나 같은 쪽을 보는지 재는 곱셈",
+   "more": "논문 6.2 는 내적보다 더 정교한 호환성 함수가 나을 수도 있다고 적었어요."
+  },
+  {
+   "ko": "인코더",
+   "en": "Encoder",
+   "say": "입력 문장을 끝까지 읽어 자리마다 표현을 만드는 쪽",
+   "more": "인코더의 셀프 어텐션은 마스킹을 하지 않아 앞뒤를 다 봐요."
+  },
+  {
+   "ko": "디코더",
+   "en": "Decoder",
+   "say": "답 문장을 한 토큰씩 만들어 내는 쪽",
+   "more": "디코더의 셀프 어텐션은 자기 자리까지만 봐요. 미래는 막아요."
+  },
+  {
+   "ko": "하위층",
+   "en": "Sub-layer",
+   "say": "한 층 안에 들어 있는 더 작은 층 한 덩어리",
+   "more": "논문 5.4 는 하위층 출력마다 드롭아웃을 쓴다고 적었어요."
+  },
+  {
+   "ko": "잔차 연결",
+   "en": "Residual Connection",
+   "say": "층의 입력을 층의 출력에 그대로 더해 주는 지름길",
+   "more": "드롭아웃은 이 더하기 직전에 걸려요."
+  },
+  {
+   "ko": "층 정규화",
+   "en": "Layer Normalization (LayerNorm)",
+   "say": "한 토큰의 숫자들을 평균 0, 분산 1 로 맞춰 주기",
+   "more": "논문은 더한 다음에 정규화하는 순서만 썼어요."
+  },
+  {
+   "ko": "위치별 피드포워드 신경망",
+   "en": "Position-wise Feed-Forward Network (FFN)",
+   "say": "자리마다 똑같이 적용하는 2층짜리 작은 신경망",
+   "more": "식 (2) 가 정의예요. d_model 512, 가운데 d_ff 2048 이에요."
+  },
+  {
+   "ko": "렐루",
+   "en": "ReLU",
+   "say": "음수는 0 으로 만들고 양수는 그대로 두는 함수",
+   "more": "식 (2) 의 max(0, ...) 가 바로 이것이에요. 3주차에 배웠어요."
+  },
+  {
+   "ko": "위치 인코딩",
+   "en": "Positional Encoding",
+   "say": "몇 번째 자리인지를 알려 주는 벡터를 임베딩에 더해 주기",
+   "more": "논문 3.5 의 부품이에요. 인코더와 디코더 스택 맨 아래에서 한 번 더해요."
+  },
+  {
+   "ko": "사인 코사인 위치 인코딩",
+   "en": "Sinusoidal Positional Encoding",
+   "say": "sin 과 cos 파도로 만든, 학습하지 않는 위치 벡터",
+   "more": "짝수 칸은 sin, 홀수 칸은 cos 이에요. 학습 파라미터가 0 개예요."
+  },
+  {
+   "ko": "순열 등변성",
+   "en": "Permutation Equivariance",
+   "say": "입력 순서를 바꾸면 출력도 똑같이 순서만 바뀌는 성질",
+   "more": "4주차 슬라이드의 말이에요. 논문은 이 이름을 쓰지 않아요."
+  },
+  {
+   "ko": "로프",
+   "en": "RoPE",
+   "say": "쿼리와 키를 위치에 비례한 각도만큼 회전시키는 위치 방식",
+   "more": "4주차 슬라이드 p.41 에 나와요. 2017년 논문에는 없어요."
+  },
+  {
+   "ko": "임베딩",
+   "en": "Embedding",
+   "say": "토큰을 숫자 벡터로 바꾼 것. 단어의 지도 좌표",
+   "more": "논문 3.4 는 두 임베딩 층과 소프트맥스 앞 선형 변환이 같은 행렬을 쓴다고 적었어요."
+  },
+  {
+   "ko": "토큰",
+   "en": "Token",
+   "say": "글을 자른 레고 조각 하나",
+   "more": "논문의 배치는 원문 약 25,000 토큰, 번역문 약 25,000 토큰이에요."
+  },
+  {
+   "ko": "파라미터",
+   "en": "Parameter",
+   "say": "학습하면서 바뀌는 숫자. 모델이 기억을 저장하는 자리",
+   "more": "Table 3 의 params 칸이 이 개수예요. base 는 65, big 은 213 (백만 단위)이에요."
+  },
+  {
+   "ko": "인과 마스킹",
+   "en": "Causal Masking",
+   "say": "미래 자리의 점수를 소프트맥스 전에 마이너스 무한으로 바꾸기",
+   "more": "논문 3.2.3 은 이것을 leftward information flow 를 막는 장치라고 적었어요."
+  },
+  {
+   "ko": "자기회귀",
+   "en": "Autoregressive",
+   "say": "앞에서 만든 토큰을 보고 다음 토큰을 하나씩 만드는 방식",
+   "more": "마스킹은 이 성질을 지키려고 넣은 것이에요."
+  },
+  {
+   "ko": "병렬화",
+   "en": "Parallelization",
+   "say": "여러 계산을 한꺼번에 동시에 하기",
+   "more": "Table 1 의 순차 연산 수가 이것을 재는 잣대예요."
+  },
+  {
+   "ko": "이차 비용",
+   "en": "Quadratic Cost",
+   "say": "길이 n 이 두 배가 되면 비용이 네 배가 되는 것",
+   "more": "셀프 어텐션의 복잡도 O(n^2 x d) 가 이것이에요. 긴 글에서 아파요."
+  },
+  {
+   "ko": "순환 신경망",
+   "en": "Recurrent Neural Network (RNN)",
+   "say": "한 단어씩 읽으며 메모장에 요약을 고쳐 쓰는 신경망",
+   "more": "Table 1 에서 순차 연산 수가 O(n) 인 유일한 줄이에요."
+  },
+  {
+   "ko": "합성곱 신경망",
+   "en": "Convolutional Neural Network (CNN)",
+   "say": "가까운 이웃 몇 칸을 묶어서 보는 신경망",
+   "more": "커널 k 가 n 보다 작으면 한 층으로는 모든 쌍을 잇지 못해요."
+  },
+  {
+   "ko": "최대 경로 길이",
+   "en": "Maximum Path Length",
+   "say": "두 자리 사이에 신호가 지나가야 하는 가장 먼 걸음 수",
+   "more": "Table 1 의 마지막 칸이에요. 셀프 어텐션만 O(1) 이에요."
+  },
+  {
+   "ko": "순차 연산 수",
+   "en": "Sequential Operations",
+   "say": "줄을 서서 차례로 해야만 하는 계산의 개수",
+   "more": "Table 1 의 가운데 칸이에요. 적을수록 병렬화가 잘 돼요."
+  },
+  {
+   "ko": "제한된 셀프 어텐션",
+   "en": "Restricted Self-Attention",
+   "say": "가까운 이웃 r 칸만 보게 제한한 셀프 어텐션",
+   "more": "Table 1 의 마지막 줄이에요. 논문은 앞으로 해 보겠다고만 적었어요."
+  },
+  {
+   "ko": "해석 가능성",
+   "en": "Interpretability",
+   "say": "모델이 왜 그렇게 답했는지 사람이 들여다볼 수 있는 정도",
+   "more": "논문은 어텐션 가중치를 보면 헤드가 무엇을 배웠는지 보인다고 적었어요."
+  },
+  {
+   "ko": "기계 번역",
+   "en": "Machine Translation (MT)",
+   "say": "한 언어 문장을 다른 언어 문장으로 바꾸는 과제",
+   "more": "WMT 2014 영어-독일어와 영어-프랑스어가 논문의 주 실험이에요."
+  },
+  {
+   "ko": "블루 점수",
+   "en": "BLEU",
+   "say": "기계 번역 결과가 사람 번역과 얼마나 겹치는지 재는 점수",
+   "more": "높을수록 좋아요. Table 2 와 Table 3 의 주 지표예요."
+  },
+  {
+   "ko": "퍼플렉서티",
+   "en": "Perplexity (PPL)",
+   "say": "다음 토큰을 고를 때 헷갈리는 후보가 평균 몇 개인지",
+   "more": "낮을수록 좋아요. Table 3 의 PPL 은 워드피스 단위라 단어 단위와 비교하면 안 돼요."
+  },
+  {
+   "ko": "빔 서치",
+   "en": "Beam Search",
+   "say": "후보 문장 여러 개를 동시에 끌고 가며 가장 좋은 것을 고르는 방법",
+   "more": "논문은 빔 크기 4 를 썼어요. 구문 분석에서는 21 을 썼어요."
+  },
+  {
+   "ko": "길이 정규화",
+   "en": "Length Normalization",
+   "say": "긴 문장이 손해 보지 않게 점수를 길이로 눌러 주기",
+   "more": "논문은 length penalty alpha = 0.6 이라고 적었어요."
+  },
+  {
+   "ko": "바이트 쌍 인코딩",
+   "en": "Byte Pair Encoding (BPE)",
+   "say": "자주 붙어 다니는 두 조각을 한 조각으로 접착하는 토큰화",
+   "more": "영어-독일어에서 원문과 번역문이 어휘 약 37,000 개를 함께 썼어요."
+  },
+  {
+   "ko": "워드피스",
+   "en": "WordPiece",
+   "say": "BPE 와 비슷하게 단어를 조각으로 자르는 토큰화 방법",
+   "more": "영어-프랑스어는 어휘 32,000 개짜리 워드피스를 썼어요."
+  },
+  {
+   "ko": "어휘",
+   "en": "Vocabulary",
+   "say": "모델이 아는 토큰 종류 목록",
+   "more": "공유 어휘를 쓰면 원문과 번역문이 같은 임베딩 표를 나눠 써요."
+  },
+  {
+   "ko": "드롭아웃",
+   "en": "Dropout",
+   "say": "학습할 때 일부 값을 무작위로 꺼서 과적합을 막는 방법",
+   "more": "논문의 base 는 P_drop = 0.1 이에요. big 은 0.3 이지만 영어-프랑스어만 0.1 이에요."
+  },
+  {
+   "ko": "라벨 스무딩",
+   "en": "Label Smoothing",
+   "say": "정답을 100%로 두지 않고 살짝 흐리게 만들어 학습하는 방법",
+   "more": "eps_ls = 0.1 이에요. 퍼플렉서티는 나빠지지만 BLEU 는 좋아져요."
+  },
+  {
+   "ko": "과적합",
+   "en": "Over-fitting",
+   "say": "학습 데이터만 외워 버려서 새 데이터에 약해지는 것",
+   "more": "논문 6.2 는 드롭아웃이 이것을 막는 데 아주 도움이 된다고 적었어요."
+  },
+  {
+   "ko": "아담",
+   "en": "Adam",
+   "say": "요즘 가장 많이 쓰는 학습 방법 중 하나",
+   "more": "논문은 beta1 = 0.9, beta2 = 0.98, epsilon = 10^-9 을 썼어요."
+  },
+  {
+   "ko": "워밍업",
+   "en": "Warmup",
+   "say": "학습 초반에 학습률을 0에서부터 천천히 올리는 구간",
+   "more": "논문은 warmup_steps = 4000 을 썼어요. 4000 스텝에서 학습률이 가장 높아요."
+  },
+  {
+   "ko": "학습률",
+   "en": "Learning Rate",
+   "say": "한 걸음에 얼마나 크게 움직일지 정하는 값",
+   "more": "식 (3) 이 스텝마다 이 값을 정해요. 올렸다가 역제곱근으로 내려요."
+  },
+  {
+   "ko": "기울기",
+   "en": "Gradient",
+   "say": "손실이 가장 빨리 커지는 방향과 그 가파름",
+   "more": "학습률과 곱해져서 파라미터를 고치는 크기를 정해요."
+  },
+  {
+   "ko": "체크포인트 평균",
+   "en": "Checkpoint Averaging",
+   "say": "마지막 저장본 여러 개의 가중치를 평균 내서 한 모델로 쓰기",
+   "more": "base 는 마지막 5개, big 은 마지막 20개를 평균했어요."
+  },
+  {
+   "ko": "앙상블",
+   "en": "Ensemble",
+   "say": "여러 모델의 답을 합쳐서 성능을 올리는 방법",
+   "more": "Table 2 의 Ensemble 줄들이 이것이에요. 트랜스포머는 단일 모델로 이것들을 이겼어요."
+  },
+  {
+   "ko": "부동소수점 연산량",
+   "en": "FLOPs",
+   "say": "학습에 들어간 계산의 총량을 재는 단위",
+   "more": "논문은 학습 시간 x GPU 수 x GPU 성능으로 어림했다고 적었어요."
+  },
+  {
+   "ko": "모델 변형 실험",
+   "en": "Model Variations",
+   "say": "한 부품씩 바꿔 보며 성능이 어떻게 변하는지 재는 실험",
+   "more": "Table 3 의 (A)부터 (E)까지가 이것이에요. 논문의 6.2 제목이기도 해요."
+  },
+  {
+   "ko": "구성소 구문 분석",
+   "en": "Constituency Parsing",
+   "say": "문장을 구 단위 나무 구조로 쪼개는 과제",
+   "more": "논문이 번역 말고 하나 더 해 본 과제예요. 6.3 에 나와요."
+  },
+  {
+   "ko": "시퀀스-투-시퀀스",
+   "en": "seq2seq",
+   "say": "입력 줄을 받아 출력 줄을 만드는 인코더 디코더 모델",
+   "more": "논문 3.2.3 은 크로스 어텐션이 이 모델들의 어텐션을 흉내 낸 것이라고 적었어요."
+  }
+ ],
+ "slides": [
+  {
+   "p": 5,
+   "title": "멀티 헤드, 어텐션의 세 가지 쓰임, FFN (식 2), 임베딩",
+   "terms": [
+    "Multi-Head Attention (MHA)",
+    "Head",
+    "Representation Subspace",
+    "Scaled Dot-Product Attention",
+    "Self-Attention",
+    "Cross-Attention",
+    "Attention",
+    "Query",
+    "Key",
+    "Value",
+    "Encoder",
+    "Decoder",
+    "Causal Masking",
+    "Autoregressive",
+    "Position-wise Feed-Forward Network (FFN)",
+    "ReLU",
+    "Embedding",
+    "Softmax",
+    "Parameter",
+    "Token",
+    "Sub-layer",
+    "seq2seq",
+    "Weighted Sum",
+    "Attention Weight",
+    "Layer Normalization (LayerNorm)",
+    "Dot Product",
+    "Parallelization"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "이 쪽에 부품 세 개가 몰려 있어요. 첫째가 **멀티 헤드 어텐션(Multi-Head Attention (MHA))** 예요.",
+      "둘째는 어텐션을 쓰는 세 자리, 셋째는 FFN 이에요.",
+      "**멀티 헤드 어텐션(Multi-Head Attention (MHA))** 의 한 줄 요약은 이거예요. 차원을 키우는 게 아니라 512 칸을 8 조각으로 나눠요.",
+      "**위치별 피드포워드 신경망(Position-wise Feed-Forward Network (FFN))** 은 자리마다 똑같이 도는 아주 작은 2층 신경망이에요."
+     ]
+    },
+    {
+     "kind": "analogy",
+     "head": "한 장면을 여러 사람이 다른 눈으로 보기",
+     "scene": "같은 경기를 보면서 한 명은 공만, 한 명은 수비수만, 한 명은 심판만 봐요. 각자 본 것을 합치면 경기 전체가 보여요.",
+     "map": [
+      [
+       "각자 맡은 눈",
+       "**헤드(Head)**"
+      ],
+      [
+       "각자가 보는 좁은 시야",
+       "**표현 부분공간(Representation Subspace)**"
+      ],
+      [
+       "여덟 명이 동시에 본다",
+       "**멀티 헤드 어텐션(Multi-Head Attention (MHA))**"
+      ],
+      [
+       "본 것을 합치는 회의",
+       "Concat 한 뒤 W^O 곱하기"
+      ]
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "이 쪽의 부품 셋",
+     "items": [
+      "**멀티 헤드 어텐션(Multi-Head Attention (MHA))**: h = 8, 헤드마다 d_k = d_v = 64",
+      "어텐션의 세 자리 가운데 하나가 **크로스 어텐션(Cross-Attention)** 이에요",
+      "나머지 둘은 **인코더(Encoder)** 와 **디코더(Decoder)** 안의 **셀프 어텐션(Self-Attention)** 이에요",
+      "**위치별 피드포워드 신경망(Position-wise Feed-Forward Network (FFN))**: 식 (2), d_model 512 에서 2048 로 늘렸다가 다시 512 로"
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "points",
+     "head": "3.2.2 의 영어와 우리말 뜻",
+     "items": [
+      "\"**linearly project ... h times with different, learned linear projections**\" = 서로 다른 학습된 선형 변환으로 h 번 투영한다",
+      "\"**perform the attention function in parallel**\" = 어텐션을 나란히 동시에 돌린다",
+      "\"**concatenated and once again projected**\" = 이어 붙인 뒤 한 번 더 투영한다",
+      "\"**different representation subspaces**\" = 서로 다른 **표현 부분공간(Representation Subspace)**",
+      "\"**With a single attention head, averaging inhibits this**\" = 헤드가 하나면 평균이 이것을 방해한다",
+      "\"**the total computational cost is similar**\" = 전체 계산 비용은 비슷하다"
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "3.2.3 과 3.3, 3.4 의 영어와 우리말 뜻",
+     "items": [
+      "\"**encoder-decoder attention**\" = 인코더와 디코더를 잇는 어텐션, 곧 크로스 어텐션",
+      "\"**the memory keys and values come from the output of the encoder**\" = 키와 밸류는 인코더 출력에서 온다",
+      "\"**prevent leftward information flow**\" = 왼쪽으로 정보가 새는 것을 막는다",
+      "\"**to preserve the auto-regressive property**\" = **자기회귀(Autoregressive)** 성질을 지키려고",
+      "\"**applied to each position separately and identically**\" = 자리마다 따로, 그러나 똑같이 적용한다",
+      "\"**two convolutions with kernel size 1**\" = 커널 크기 1 짜리 합성곱 둘이라고 볼 수도 있다",
+      "\"**we share the same weight matrix**\" = 같은 가중치 행렬을 함께 쓴다"
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "어텐션을 쓰는 세 자리 (논문 3.2.3)",
+     "cols": [
+      "자리",
+      "**쿼리(Query)**",
+      "**키(Key)** 와 **밸류(Value)**",
+      "미래를 보나"
+     ],
+     "rows": [
+      [
+       "**크로스 어텐션(Cross-Attention)**",
+       "**디코더(Decoder)**",
+       "**인코더(Encoder)**",
+       "막지 않아요"
+      ],
+      [
+       "**인코더(Encoder)** 의 **셀프 어텐션(Self-Attention)**",
+       "앞 층 출력",
+       "앞 층 출력",
+       "앞뒤 다 봐요"
+      ],
+      [
+       "**디코더(Decoder)** 의 **셀프 어텐션(Self-Attention)**",
+       "앞 층 출력",
+       "앞 층 출력",
+       "**인과 마스킹(Causal Masking)** 으로 막아요"
+      ]
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "멀티 헤드의 순서 다섯 걸음",
+     "steps": [
+      "1. **쿼리(Query)**, **키(Key)**, **밸류(Value)** 를 헤드마다 다른 행렬로 곱해 64칸으로 줄여요",
+      "2. 헤드 8개가 각자 **스케일드 닷프로덕트 어텐션(Scaled Dot-Product Attention)** 을 나란히 계산해요. **병렬화(Parallelization)** 가 되는 대목이에요",
+      "3. 헤드 안에서는 **어텐션 가중치(Attention Weight)** 를 만들고 그 가중치로 **가중합(Weighted Sum)** 을 해요",
+      "4. 결과 8개(각 64칸)를 옆으로 이어 붙이면 512칸이 돼요",
+      "5. 마지막에 W^O 를 한 번 곱해 512칸으로 내보내요"
+     ],
+     "answer": "나누고, 각자 보고, 이어 붙이고, 한 번 섞어요."
+    },
+    {
+     "kind": "check",
+     "q": "멀티 헤드 어텐션에서 헤드 8개를 쓰면 전체 차원은?",
+     "choices": [
+      "512 그대로예요",
+      "512 x 8 = 4096 이에요",
+      "64 로 줄어요",
+      "정해지지 않아요"
+     ],
+     "a": 0,
+     "why": "**헤드(Head)** 하나가 64칸이고 8개를 이어 붙이면 다시 512칸이에요. 키우는 게 아니라 나누는 거예요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "3.2.2 의 나머지를 짚어 읽어요",
+     "boxes": [
+      {
+       "x": 0.17,
+       "y": 0.095,
+       "w": 0.66,
+       "h": 0.03,
+       "say": "첫 두 줄. 헤드들의 결과를 이어 붙이고 한 번 더 투영한다는 설명이에요."
+      },
+      {
+       "x": 0.17,
+       "y": 0.127,
+       "w": 0.66,
+       "h": 0.032,
+       "say": "멀티 헤드를 쓰는 이유 문단. 서로 다른 표현 부분공간을 동시에 본다."
+      },
+      {
+       "x": 0.29,
+       "y": 0.182,
+       "w": 0.44,
+       "h": 0.042,
+       "say": "MultiHead 식과 head_i 식이에요. 번호는 없지만 시험에 나올 수 있어요."
+      },
+      {
+       "x": 0.17,
+       "y": 0.258,
+       "w": 0.66,
+       "h": 0.032,
+       "say": "투영 행렬들의 크기를 적은 줄. W^O 만 (h x d_v) x d_model 이에요."
+      },
+      {
+       "x": 0.17,
+       "y": 0.296,
+       "w": 0.66,
+       "h": 0.04,
+       "say": "h = 8, d_k = d_v = 512 / 8 = 64 라고 못박은 문단이에요."
+      },
+      {
+       "x": 0.17,
+       "y": 0.354,
+       "w": 0.36,
+       "h": 0.025,
+       "say": "3.2.3 Applications of Attention in our Model 제목이에요."
+      }
+     ]
+    },
+    {
+     "kind": "look",
+     "head": "3.2.3, 3.3, 3.4 를 짚어 읽어요",
+     "boxes": [
+      {
+       "x": 0.21,
+       "y": 0.402,
+       "w": 0.62,
+       "h": 0.072,
+       "say": "첫 점. 쿼리는 디코더, 키와 밸류는 인코더에서 온다는 크로스 어텐션이에요."
+      },
+      {
+       "x": 0.21,
+       "y": 0.488,
+       "w": 0.62,
+       "h": 0.05,
+       "say": "둘째 점. 인코더의 셀프 어텐션. 셋 다 앞 층 출력 한 곳에서 나와요."
+      },
+      {
+       "x": 0.21,
+       "y": 0.54,
+       "w": 0.62,
+       "h": 0.071,
+       "say": "셋째 점. 디코더 셀프 어텐션. 마스킹으로 왼쪽 정보 흐름을 막아요."
+      },
+      {
+       "x": 0.17,
+       "y": 0.632,
+       "w": 0.36,
+       "h": 0.025,
+       "say": "3.3 Position-wise Feed-Forward Networks 제목이에요."
+      },
+      {
+       "x": 0.35,
+       "y": 0.715,
+       "w": 0.3,
+       "h": 0.03,
+       "say": "식 (2) FFN(x) = max(0, x W1 + b1) W2 + b2 예요."
+      },
+      {
+       "x": 0.17,
+       "y": 0.813,
+       "w": 0.3,
+       "h": 0.026,
+       "say": "3.4 Embeddings and Softmax 제목이에요."
+      }
+     ]
+    },
+    {
+     "kind": "formula",
+     "head": "멀티 헤드 어텐션의 두 줄",
+     "tex": "\\mathrm{MultiHead}(Q,K,V) = \\mathrm{Concat}(\\mathrm{head}_1,\\dots,\\mathrm{head}_h)W^{O},\\quad \\mathrm{head}_i = \\mathrm{Attention}(QW^{Q}_i,\\, KW^{K}_i,\\, VW^{V}_i)",
+     "parts": [
+      {
+       "sym": "h",
+       "say": "**헤드(Head)** 의 개수. 논문은 8 을 썼어요"
+      },
+      {
+       "sym": "W^{Q}_i, W^{K}_i",
+       "say": "i 번째 헤드용 투영 행렬. 크기는 512 x 64"
+      },
+      {
+       "sym": "W^{V}_i",
+       "say": "밸류용 투영 행렬. 크기는 512 x 64"
+      },
+      {
+       "sym": "\\mathrm{Concat}",
+       "say": "헤드 8개의 결과를 옆으로 이어 붙이기"
+      },
+      {
+       "sym": "W^{O}",
+       "say": "이어 붙인 512칸을 다시 512칸으로 섞는 행렬"
+      }
+     ],
+     "whole": "헤드마다 따로 **스케일드 닷프로덕트 어텐션(Scaled Dot-Product Attention)** 으로 **가중합(Weighted Sum)** 을 구한 뒤, 합쳐서 한 번 더 섞어요."
+    },
+    {
+     "kind": "formula",
+     "head": "식 (2) 위치별 피드포워드 신경망",
+     "tex": "\\mathrm{FFN}(x) = \\max(0,\\, xW_1 + b_1)W_2 + b_2",
+     "parts": [
+      {
+       "sym": "x",
+       "say": "한 자리의 512칸짜리 벡터 하나"
+      },
+      {
+       "sym": "W_1, b_1",
+       "say": "512 를 2048 로 늘리는 행렬과 편향 항"
+      },
+      {
+       "sym": "\\max(0,\\cdot)",
+       "say": "**렐루(ReLU)**. 음수는 0, 양수는 그대로"
+      },
+      {
+       "sym": "W_2, b_2",
+       "say": "2048 을 다시 512 로 줄이는 행렬과 편향 항"
+      }
+     ],
+     "whole": "자리마다 따로 돌지만 가중치는 같아요. 다만 층이 바뀌면 가중치도 바뀌어요."
+    },
+    {
+     "kind": "steps",
+     "head": "파라미터 수를 직접 세어 봐요 (논문이 적지 않은 값)",
+     "given": "d_model = 512, h = 8, d_ff = 2048",
+     "steps": [
+      "1. 헤드 하나의 W^Q 는 512 x 64 = 32,768 개예요",
+      "2. 헤드 하나에 Q, K, V 셋이니 3 x 32,768 = 98,304 개예요",
+      "3. 헤드가 8개니 8 x 98,304 = 786,432 개, 곧 3 x 512 x 512 예요",
+      "4. W^O 는 512 x 512 = 262,144 개예요",
+      "5. **멀티 헤드 어텐션(Multi-Head Attention (MHA))** **하위층(Sub-layer)** 합계는 786,432 + 262,144 = 1,048,576 개, 곧 4 x 512 x 512 예요",
+      "6. FFN 은 512 x 2048 = 1,048,576 에 2048 x 512 = 1,048,576 을 더해 2,097,152 개예요"
+     ],
+     "answer": "**멀티 헤드 어텐션(Multi-Head Attention (MHA))** 는 약 1.05M, FFN 은 약 2.10M 이에요. FFN 이 정확히 두 배나 무거워요."
+    },
+    {
+     "kind": "steps",
+     "head": "스택 전체 파라미터를 어림해 봐요",
+     "given": "인코더 6층, 디코더 6층, 공유 어휘 37,000",
+     "steps": [
+      "1. **인코더(Encoder)** 한 층 = 1,048,576 + 2,097,152 = 3,145,728 개예요",
+      "2. 6층이면 18,874,368 개예요",
+      "3. **디코더(Decoder)** 한 층은 **멀티 헤드 어텐션(Multi-Head Attention (MHA))** 가 둘이라 2 x 1,048,576 + 2,097,152 = 4,194,304 개예요",
+      "4. 6층이면 25,165,824 개예요",
+      "5. 공유 임베딩은 37,000 x 512 = 18,944,000 개예요",
+      "6. 다 더하면 62,984,192 개, 약 62.98M 이에요",
+      "7. **층 정규화(Layer Normalization (LayerNorm))** 의 감마와 베타, 그리고 편향 항은 빼고 센 값이에요"
+     ],
+     "answer": "논문 Table 3 의 65 x 10^6 과 비슷하지만 딱 맞지는 않아요. 어림이라서 그래요."
+    },
+    {
+     "kind": "compare",
+     "head": "논문과 4주차 강의 슬라이드가 다른 점",
+     "cols": [
+      "무엇",
+      "논문 (NP p.5)",
+      "4주차 슬라이드 (N4)"
+     ],
+     "rows": [
+      [
+       "d_ff",
+       "d_ff = 2048 이라고 값을 못박아요",
+       "p.42 는 d_ff is usually 4d 라고 비율로 말해요"
+      ],
+      [
+       "**멀티 헤드 어텐션(Multi-Head Attention (MHA))** 이유",
+       "**표현 부분공간(Representation Subspace)** 을 동시에 본다고만 적어요",
+       "p.46-48 은 헤드가 실제로 무엇을 배우는지까지 말해요"
+      ],
+      [
+       "헤드가 배우는 것",
+       "부록의 그림 몇 장이 전부예요",
+       "p.48 의 BERT 연구 이야기는 논문 밖이에요"
+      ],
+      [
+       "**크로스 어텐션(Cross-Attention)** 이름",
+       "encoder-decoder attention",
+       "p.53 은 크로스 어텐션이라고 불러요"
+      ]
+     ]
+    },
+    {
+     "kind": "bg",
+     "src": "기초 다지기 3단원 행렬과 행렬 곱, shape",
+     "lines": [
+      "512칸 벡터에 512 x 64 행렬을 곱하면 64칸 벡터가 나와요. 이게 헤드로 줄이는 계산이에요.",
+      "64칸짜리 8개를 옆으로 이어 붙이면 64 x 8 = 512칸이에요. 원래 크기로 돌아와요.",
+      "**잔차 연결(Residual Connection)** 로 더하려면 들어온 것과 나가는 것이 둘 다 512칸이어야 해요."
+     ]
+    },
+    {
+     "kind": "prof",
+     "when": "4주차 월요일 수업",
+     "lines": [
+      "교수님: 헤드를 여러 개 쓴다고 전체 차원을 키우는 게 아니에요.",
+      "교수님: 전체 차원을 h 로 나눠서 서로 다른 관점에서 보는 거예요.",
+      "교수님: 계산 수는 똑같아요."
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "512 칸을 8 조각으로",
+     "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 480 270\"><text x=\"240\" y=\"22\" font-size=\"16\" text-anchor=\"middle\" class=\"tb\">512 칸을 8 조각으로 나눠요</text><rect x=\"60\" y=\"42\" width=\"360\" height=\"28\" rx=\"2\" class=\"box b1\"/><text x=\"240.0\" y=\"60.9\" font-size=\"14\" text-anchor=\"middle\" class=\"tb b1\">d_model = 512</text><line x1=\"90\" y1=\"74\" x2=\"90.0\" y2=\"89.6\" class=\"e2 b2\"/><polygon points=\"90,96 94.0,88.0 86.0,88.0\" class=\"arrow b2\"/><line x1=\"133\" y1=\"74\" x2=\"133.0\" y2=\"89.6\" class=\"e2 b2\"/><polygon points=\"133,96 137.0,88.0 129.0,88.0\" class=\"arrow b2\"/><line x1=\"176\" y1=\"74\" x2=\"176.0\" y2=\"89.6\" class=\"e2 b2\"/><polygon points=\"176,96 180.0,88.0 172.0,88.0\" class=\"arrow b2\"/><line x1=\"219\" y1=\"74\" x2=\"219.0\" y2=\"89.6\" class=\"e2 b2\"/><polygon points=\"219,96 223.0,88.0 215.0,88.0\" class=\"arrow b2\"/><line x1=\"262\" y1=\"74\" x2=\"262.0\" y2=\"89.6\" class=\"e2 b2\"/><polygon points=\"262,96 266.0,88.0 258.0,88.0\" class=\"arrow b2\"/><line x1=\"305\" y1=\"74\" x2=\"305.0\" y2=\"89.6\" class=\"e2 b2\"/><polygon points=\"305,96 309.0,88.0 301.0,88.0\" class=\"arrow b2\"/><line x1=\"348\" y1=\"74\" x2=\"348.0\" y2=\"89.6\" class=\"e2 b2\"/><polygon points=\"348,96 352.0,88.0 344.0,88.0\" class=\"arrow b2\"/><line x1=\"391\" y1=\"74\" x2=\"391.0\" y2=\"89.6\" class=\"e2 b2\"/><polygon points=\"391,96 395.0,88.0 387.0,88.0\" class=\"arrow b2\"/><rect x=\"68\" y=\"98\" width=\"38\" height=\"26\" rx=\"2\" class=\"box2 b2\"/><rect x=\"111\" y=\"98\" width=\"38\" height=\"26\" rx=\"2\" class=\"box2 b2\"/><rect x=\"154\" y=\"98\" width=\"38\" height=\"26\" rx=\"2\" class=\"box2 b2\"/><rect x=\"197\" y=\"98\" width=\"38\" height=\"26\" rx=\"2\" class=\"box2 b2\"/><rect x=\"240\" y=\"98\" width=\"38\" height=\"26\" rx=\"2\" class=\"box2 b2\"/><rect x=\"283\" y=\"98\" width=\"38\" height=\"26\" rx=\"2\" class=\"box2 b2\"/><rect x=\"326\" y=\"98\" width=\"38\" height=\"26\" rx=\"2\" class=\"box2 b2\"/><rect x=\"369\" y=\"98\" width=\"38\" height=\"26\" rx=\"2\" class=\"box2 b2\"/><text x=\"87\" y=\"116\" font-size=\"11\" text-anchor=\"middle\" class=\"tb b2\">h1</text><text x=\"130\" y=\"116\" font-size=\"11\" text-anchor=\"middle\" class=\"tb b2\">h2</text><text x=\"173\" y=\"116\" font-size=\"11\" text-anchor=\"middle\" class=\"tb b2\">h3</text><text x=\"216\" y=\"116\" font-size=\"11\" text-anchor=\"middle\" class=\"tb b2\">h4</text><text x=\"259\" y=\"116\" font-size=\"11\" text-anchor=\"middle\" class=\"tb b2\">h5</text><text x=\"302\" y=\"116\" font-size=\"11\" text-anchor=\"middle\" class=\"tb b2\">h6</text><text x=\"345\" y=\"116\" font-size=\"11\" text-anchor=\"middle\" class=\"tb b2\">h7</text><text x=\"388\" y=\"116\" font-size=\"11\" text-anchor=\"middle\" class=\"tb b2\">h8</text><text x=\"240\" y=\"144\" font-size=\"13\" text-anchor=\"middle\" class=\"tb b3\">헤드 하나가 512 / 8 = 64 칸이에요</text><line x1=\"87\" y1=\"154\" x2=\"233.7\" y2=\"175.1\" class=\"e b4\"/><polygon points=\"240,176 232.7,170.9 231.5,178.8\" class=\"arrow b4\"/><line x1=\"130\" y1=\"154\" x2=\"233.7\" y2=\"174.7\" class=\"e b4\"/><polygon points=\"240,176 232.9,170.5 231.4,178.4\" class=\"arrow b4\"/><line x1=\"173\" y1=\"154\" x2=\"233.9\" y2=\"174.0\" class=\"e b4\"/><polygon points=\"240,176 233.6,169.7 231.2,177.3\" class=\"arrow b4\"/><line x1=\"216\" y1=\"154\" x2=\"235.3\" y2=\"171.7\" class=\"e b4\"/><polygon points=\"240,176 236.8,167.6 231.4,173.5\" class=\"arrow b4\"/><line x1=\"259\" y1=\"154\" x2=\"244.2\" y2=\"171.2\" class=\"e b4\"/><polygon points=\"240,176 248.3,172.6 242.2,167.3\" class=\"arrow b4\"/><line x1=\"302\" y1=\"154\" x2=\"246.0\" y2=\"173.9\" class=\"e b4\"/><polygon points=\"240,176 248.9,177.1 246.2,169.6\" class=\"arrow b4\"/><line x1=\"345\" y1=\"154\" x2=\"246.3\" y2=\"174.7\" class=\"e b4\"/><polygon points=\"240,176 248.7,178.3 247.0,170.4\" class=\"arrow b4\"/><line x1=\"388\" y1=\"154\" x2=\"246.3\" y2=\"175.1\" class=\"e b4\"/><polygon points=\"240,176 248.5,178.8 247.3,170.9\" class=\"arrow b4\"/><rect x=\"120\" y=\"178\" width=\"240\" height=\"28\" rx=\"2\" class=\"box b4\"/><text x=\"240.0\" y=\"196.55\" font-size=\"13\" text-anchor=\"middle\" class=\"tb b4\">이어 붙이면 다시 512 칸</text><text x=\"240\" y=\"232\" font-size=\"13\" text-anchor=\"middle\" class=\"t b4\">그다음 W^O 를 한 번 곱해요</text><text x=\"240\" y=\"256\" font-size=\"12\" text-anchor=\"middle\" class=\"tm b4\">전체 차원을 키우는 게 아니라 나누는 거예요</text></svg>",
+     "caption": "나누고, 각자 보고, 다시 붙여요.",
+     "builds": 4
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "논문이 FFN 을 달리 표현한 말은?",
+     "choices": [
+      "커널 크기 1 인 합성곱 둘",
+      "어텐션 하나",
+      "잔차 연결 둘",
+      "층 정규화 둘"
+     ],
+     "a": 0,
+     "why": "two convolutions with kernel size 1 이라고 적었어요. 자리끼리 섞지 않는다는 뜻이에요."
+    },
+    {
+     "kind": "check",
+     "q": "논문 3.4 가 같은 가중치 행렬을 함께 쓴다고 적은 셋은?",
+     "choices": [
+      "입력 임베딩, 출력 임베딩, 소프트맥스 앞 선형 변환",
+      "W^Q, W^K, W^V",
+      "인코더, 디코더, FFN",
+      "세 가지 어텐션"
+     ],
+     "a": 0,
+     "why": "**임베딩(Embedding)** 표 하나를 세 군데가 나눠 써요. 임베딩 층에서는 여기에 루트 d_model 을 곱해요."
+    },
+    {
+     "kind": "english",
+     "head": "시험 답안 문장",
+     "en": "멀티 헤드 어텐션은 d_model 을 h 개로 나눠 헤드마다 d_model/h 차원에서 어텐션을 따로 계산한 뒤 이어 붙이고 W^O 로 한 번 더 투영한다.",
+     "ko": "나눈다, 따로 계산한다, 이어 붙인다, 다시 섞는다. 네 마디예요.",
+     "tip": "512 / 8 = 64 라는 숫자를 꼭 같이 써 주세요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "**헤드(Head)** 를 늘려도 전체 계산량은 거의 그대로예요. 차원을 나누기 때문이에요.",
+      "**위치별 피드포워드 신경망(Position-wise Feed-Forward Network (FFN))** 은 자리끼리 섞지 않아요. 섞는 일은 **어텐션(Attention)** 만 해요.",
+      "식 (2) 의 max(0, ...) 는 **렐루(ReLU)** 예요. 다른 활성화 함수가 아니에요.",
+      "**인과 마스킹(Causal Masking)** 은 **자기회귀(Autoregressive)** 성질을 지키려고 쓰는 것이지 속도 때문이 아니에요.",
+      "우리가 센 62.98M 은 논문의 65 x 10^6 과 달라요. 어림이라고 꼭 밝히세요."
+     ]
+    },
+    {
+     "kind": "exam",
+     "src": "예상 문제",
+     "q": "h = 8, d_model = 512 일 때 멀티 헤드 어텐션 한 하위층의 파라미터 수를 구하고, 같은 층의 FFN 과 비교하시오.",
+     "qko": "행렬 크기를 곱해서 개수를 세는 계산 문제예요.",
+     "solve": [
+      "1. 헤드 하나의 d_k = d_v = 512 / 8 = 64 예요",
+      "2. W^Q, W^K, W^V 를 다 합치면 3 x 512 x 512 = 786,432 개예요",
+      "3. W^O 는 512 x 512 = 262,144 개예요",
+      "4. 합이 4 x 512 x 512 = 1,048,576 개예요",
+      "5. FFN 은 2 x 512 x 2048 = 2,097,152 개예요",
+      "6. FFN 이 멀티 헤드의 정확히 두 배예요"
+     ],
+     "answer": "멀티 헤드 약 1.05M, FFN 약 2.10M 으로 FFN 이 두 배예요. 편향 항은 뺀 값이에요."
+    }
+   ]
+  },
+  {
+   "p": 6,
+   "title": "Table 1 층 종류별 비용과 3.5 위치 인코딩",
+   "terms": [
+    "Self-Attention",
+    "Recurrent Neural Network (RNN)",
+    "Convolutional Neural Network (CNN)",
+    "Restricted Self-Attention",
+    "Maximum Path Length",
+    "Sequential Operations",
+    "Quadratic Cost",
+    "Parallelization",
+    "Positional Encoding",
+    "Sinusoidal Positional Encoding",
+    "Embedding",
+    "Permutation Equivariance",
+    "RoPE",
+    "Token",
+    "Parameter",
+    "Encoder",
+    "Decoder",
+    "Attention",
+    "Transformer"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "이 쪽 위쪽에 Table 1 이 있어요. **셀프 어텐션(Self-Attention)** 이 **순환 신경망(Recurrent Neural Network (RNN))** 보다 왜 나은지 한 표로 보여 줘요.",
+      "**합성곱 신경망(Convolutional Neural Network (CNN))** 과도 비교해요. 잣대는 세 가지예요.",
+      "층당 비용, **순차 연산 수(Sequential Operations)**, 그리고 **최대 경로 길이(Maximum Path Length)** 이에요.",
+      "아래쪽 3.5 는 **위치 인코딩(Positional Encoding)** 이에요. 순서를 모르는 모델에 순서를 넣어 주는 부품이에요.",
+      "논문은 sin 과 cos 파도로 위치를 만들었어요. 이름이 **사인 코사인 위치 인코딩(Sinusoidal Positional Encoding)** 이에요."
+     ]
+    },
+    {
+     "kind": "analogy",
+     "head": "아파트 층 사이를 오가는 방법",
+     "scene": "계단은 한 층씩 올라가야 하고, 엘리베이터는 몇 층이든 한 번에 가요. 대신 엘리베이터는 건물이 커질수록 설치비가 훅 뛰어요.",
+     "map": [
+      [
+       "한 층씩 계단",
+       "**순환 신경망(Recurrent Neural Network (RNN))**"
+      ],
+      [
+       "한 번에 가는 엘리베이터",
+       "**셀프 어텐션(Self-Attention)**"
+      ],
+      [
+       "몇 걸음 걸리나",
+       "**최대 경로 길이(Maximum Path Length)**"
+      ],
+      [
+       "커질수록 뛰는 설치비",
+       "**이차 비용(Quadratic Cost)**"
+      ]
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "이 쪽에서 챙길 것",
+     "items": [
+      "Table 1 의 세 칸: 층당 비용, **순차 연산 수(Sequential Operations)**, **최대 경로 길이(Maximum Path Length)**",
+      "**셀프 어텐션(Self-Attention)** 만 **순차 연산 수(Sequential Operations)** 와 **최대 경로 길이(Maximum Path Length)** 이 둘 다 O(1) 이에요",
+      "**사인 코사인 위치 인코딩(Sinusoidal Positional Encoding)** 의 두 식과 그 값",
+      "논문은 **순열 등변성(Permutation Equivariance)** 이라는 이름을 쓰지 않아요"
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "points",
+     "head": "Table 1 의 영어와 우리말 뜻",
+     "items": [
+      "\"**Complexity per Layer**\" = 층 하나를 지나는 데 드는 계산량",
+      "\"**Sequential Operations**\" = **순차 연산 수(Sequential Operations)**, 줄 서서 해야 하는 계산의 수",
+      "\"**Maximum Path Length**\" = **최대 경로 길이(Maximum Path Length)**, 두 자리를 잇는 가장 먼 걸음 수",
+      "\"**n is the sequence length**\" = n 은 시퀀스 길이(토큰 개수)",
+      "\"**d is the representation dimension**\" = d 는 표현 차원, 곧 512",
+      "\"**r the size of the neighborhood**\" = r 은 이웃 크기, 몇 칸까지 볼지"
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "3.5 의 영어와 우리말 뜻",
+     "items": [
+      "\"**in order for the model to make use of the order of the sequence**\" = 모델이 순서를 쓸 수 있게 하려고",
+      "\"**inject some information about the relative or absolute position**\" = 상대 또는 절대 위치 정보를 넣어 준다",
+      "\"**at the bottoms of the encoder and decoder stacks**\" = 인코더와 디코더 더미의 맨 아래에서",
+      "\"**sine and cosine functions of different frequencies**\" = 주파수가 다른 sin 과 cos 함수들",
+      "\"**wavelengths form a geometric progression**\" = 파장이 등비수열을 이룬다",
+      "\"**extrapolate to sequence lengths longer**\" = 학습 때보다 긴 문장으로 뻗어 나간다"
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "Table 1 을 우리말로 옮기면",
+     "cols": [
+      "층 종류",
+      "층당 비용",
+      "**순차 연산 수(Sequential Operations)**",
+      "**최대 경로 길이(Maximum Path Length)**"
+     ],
+     "rows": [
+      [
+       "**셀프 어텐션(Self-Attention)**",
+       "O(n^2 x d)",
+       "O(1)",
+       "O(1)"
+      ],
+      [
+       "Recurrent",
+       "O(n x d^2)",
+       "O(n)",
+       "O(n)"
+      ],
+      [
+       "Convolutional",
+       "O(k x n x d^2)",
+       "O(1)",
+       "O(log_k(n))"
+      ],
+      [
+       "**셀프 어텐션(Self-Attention)** (restricted)",
+       "O(r x n x d)",
+       "O(1)",
+       "O(n/r)"
+      ]
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "3.5 를 순서대로 읽어요",
+     "steps": [
+      "1. 우리 모델에는 순환도 합성곱도 없어요. 그래서 순서를 몰라요",
+      "2. 그러니 위치 정보를 **임베딩(Embedding)** 에 더해 넣어야 해요",
+      "3. 위치 벡터는 **임베딩(Embedding)** 과 칸 수가 같아야 더할 수 있어요. 둘 다 512칸이에요",
+      "4. 방법은 여러 가지인데 우리는 sin 과 cos 을 골랐어요",
+      "5. 학습해서 만드는 위치 임베딩도 해 봤는데 결과가 거의 같았어요 (Table 3 의 (E))"
+     ],
+     "answer": "순서가 없으니 넣어 준다, 더할 수 있게 칸 수를 맞춘다. 이 두 줄이 3.5 의 뼈대예요."
+    },
+    {
+     "kind": "check",
+     "q": "Table 1 에서 셀프 어텐션만 가진 장점은?",
+     "choices": [
+      "**순차 연산 수(Sequential Operations)** 와 **최대 경로 길이(Maximum Path Length)** 이 둘 다 O(1)",
+      "층당 비용이 가장 싸다",
+      "파라미터가 가장 적다",
+      "메모리를 가장 적게 쓴다"
+     ],
+     "a": 0,
+     "why": "두 칸이 모두 O(1) 인 줄은 **셀프 어텐션(Self-Attention)** 뿐이에요. 대신 층당 비용은 n 제곱이에요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "Table 1 을 짚어 봐요",
+     "boxes": [
+      {
+       "x": 0.17,
+       "y": 0.088,
+       "w": 0.66,
+       "h": 0.055,
+       "say": "Table 1 캡션. n 은 길이, d 는 차원, k 는 커널 크기, r 은 이웃 크기예요."
+      },
+      {
+       "x": 0.19,
+       "y": 0.143,
+       "w": 0.61,
+       "h": 0.032,
+       "say": "표 머리글. 층 종류, 층당 복잡도, 순차 연산 수, 최대 경로 길이예요."
+      },
+      {
+       "x": 0.19,
+       "y": 0.176,
+       "w": 0.61,
+       "h": 0.014,
+       "say": "Self-Attention 줄. O(n^2 x d), O(1), O(1) 이에요."
+      },
+      {
+       "x": 0.19,
+       "y": 0.191,
+       "w": 0.61,
+       "h": 0.014,
+       "say": "Recurrent 줄. O(n x d^2), O(n), O(n) 이에요."
+      },
+      {
+       "x": 0.19,
+       "y": 0.206,
+       "w": 0.61,
+       "h": 0.014,
+       "say": "Convolutional 줄. O(k x n x d^2), O(1), O(log_k(n)) 이에요."
+      },
+      {
+       "x": 0.19,
+       "y": 0.221,
+       "w": 0.61,
+       "h": 0.015,
+       "say": "Self-Attention (restricted) 줄. O(r x n x d), O(1), O(n/r) 이에요."
+      }
+     ]
+    },
+    {
+     "kind": "look",
+     "head": "3.5 위치 인코딩을 짚어 읽어요",
+     "boxes": [
+      {
+       "x": 0.17,
+       "y": 0.27,
+       "w": 0.3,
+       "h": 0.025,
+       "say": "3.5 Positional Encoding 제목이에요."
+      },
+      {
+       "x": 0.17,
+       "y": 0.296,
+       "w": 0.66,
+       "h": 0.078,
+       "say": "순환도 합성곱도 없으니 순서 정보를 넣어 줘야 한다는 문단이에요."
+      },
+      {
+       "x": 0.36,
+       "y": 0.425,
+       "w": 0.28,
+       "h": 0.045,
+       "say": "사인 코사인 위치 인코딩 식 두 줄이에요. 짝수 칸은 sin, 홀수 칸은 cos."
+      },
+      {
+       "x": 0.17,
+       "y": 0.478,
+       "w": 0.66,
+       "h": 0.066,
+       "say": "파장이 2 pi 에서 10000 x 2 pi 까지 등비로 늘어난다고 적은 문단이에요."
+      },
+      {
+       "x": 0.17,
+       "y": 0.552,
+       "w": 0.66,
+       "h": 0.058,
+       "say": "학습 위치 임베딩과 거의 같았고, 외삽을 기대해 사인 코사인을 골랐다는 문단."
+      },
+      {
+       "x": 0.17,
+       "y": 0.63,
+       "w": 0.3,
+       "h": 0.025,
+       "say": "4 Why Self-Attention 제목이에요."
+      }
+     ]
+    },
+    {
+     "kind": "formula",
+     "head": "사인 코사인 위치 인코딩의 두 식",
+     "tex": "PE_{(pos,\\,2i)} = \\sin\\!\\left(\\frac{pos}{10000^{2i/d_{model}}}\\right),\\quad PE_{(pos,\\,2i+1)} = \\cos\\!\\left(\\frac{pos}{10000^{2i/d_{model}}}\\right)",
+     "parts": [
+      {
+       "sym": "pos",
+       "say": "몇 번째 자리인지. 첫 **토큰(Token)** 이 0 이에요"
+      },
+      {
+       "sym": "i",
+       "say": "칸 번호의 절반. 0, 1, 2, ... 로 올라가요"
+      },
+      {
+       "sym": "2i",
+       "say": "짝수 번째 칸에는 sin 을 넣어요"
+      },
+      {
+       "sym": "2i+1",
+       "say": "홀수 번째 칸에는 cos 을 넣어요"
+      },
+      {
+       "sym": "10000^{2i/d_{model}}",
+       "say": "뒤 칸으로 갈수록 커지는 나눗수. 그래서 파도가 느려져요"
+      },
+      {
+       "sym": "d_{model}",
+       "say": "512. 위치 벡터도 512칸이라 임베딩에 그냥 더할 수 있어요"
+      }
+     ],
+     "whole": "학습하는 값이 하나도 없어요. 계산만 하면 나오는 고정 표예요."
+    },
+    {
+     "kind": "steps",
+     "head": "장난감 예로 손계산 (d_model = 4 로 줄여서)",
+     "given": "d_model = 4, pos = 0, 1, 2, 3",
+     "steps": [
+      "1. d_model = 4 면 i 는 0 과 1 두 개예요",
+      "2. i = 0 이면 나눗수가 10000^0 = 1 이라 그냥 sin(pos), cos(pos) 예요",
+      "3. i = 1 이면 나눗수가 10000^(2/4) = 100 이라 sin(pos/100), cos(pos/100) 이에요",
+      "4. pos = 0: sin 0 = 0, cos 0 = 1 이니 (0.0, 1.0, 0.0, 1.0) 이에요",
+      "5. pos = 1: (0.8415, 0.5403, 0.0100, 1.0) 이에요",
+      "6. pos = 2: (0.9093, -0.4161, 0.0200, 0.9998) 이에요",
+      "7. pos = 3: (0.1411, -0.9900, 0.0300, 0.9996) 이에요"
+     ],
+     "answer": "앞 두 칸은 빠르게 흔들리고 뒤 두 칸은 아주 천천히 변해요. 그래서 가까운 자리끼리 비슷해요."
+    },
+    {
+     "kind": "steps",
+     "head": "Table 1 의 갈림길을 숫자로 확인 (d = 512)",
+     "given": "d = 512, n = 100 / 512 / 1000",
+     "steps": [
+      "1. **셀프 어텐션(Self-Attention)** 은 n^2 x d, **순환 신경망(Recurrent Neural Network (RNN))** 은 n x d^2 예요",
+      "2. n = 100 이면 100 x 100 x 512 = 5,120,000 대 100 x 512 x 512 = 26,214,400 이에요",
+      "3. 셀프 어텐션이 약 5.12배 싸요",
+      "4. n = 512 면 둘 다 134,217,728 로 똑같아요. 여기가 갈림길이에요",
+      "5. n = 1000 이면 512,000,000 대 262,144,000 이라 셀프 어텐션이 약 1.95배 비싸요",
+      "6. 논문 문장 그대로 n 이 d 보다 작을 때만 셀프 어텐션이 빨라요"
+     ],
+     "answer": "갈림길은 n = d 예요. 논문은 문장이 보통 512 토큰보다 짧으니 괜찮다고 봤어요."
+    },
+    {
+     "kind": "compare",
+     "head": "논문과 4주차 강의 슬라이드가 다른 점",
+     "cols": [
+      "무엇",
+      "논문 (NP p.6)",
+      "4주차 슬라이드 (N4)"
+     ],
+     "rows": [
+      [
+       "순서 문제의 이름",
+       "이름을 붙이지 않아요",
+       "p.39 는 **순열 등변성(Permutation Equivariance)** 이라고 불러요"
+      ],
+      [
+       "위치 방식 종류",
+       "**사인 코사인 위치 인코딩(Sinusoidal Positional Encoding)** 과 학습 임베딩 둘만 비교",
+       "p.41 은 **로프(RoPE)** 까지 소개해요"
+      ],
+      [
+       "**로프(RoPE)**",
+       "논문에 아예 없어요",
+       "p.41 은 요즘 LLM 이 거의 다 쓴다고 해요"
+      ],
+      [
+       "**이차 비용(Quadratic Cost)**",
+       "4장에서 장점 설명의 일부로만 다뤄요",
+       "p.55 는 The Price 라고 크게 다뤄요"
+      ]
+     ]
+    },
+    {
+     "kind": "bg",
+     "src": "기초 다지기 4단원 로그와 지수",
+     "lines": [
+      "10000^(2i/512) 는 i 가 커질수록 빠르게 커지는 지수예요. i = 0 이면 1, i = 255 면 약 9646.6 이에요.",
+      "나눗수가 커지면 sin 안의 값이 작아져서 파도가 아주 천천히 흔들려요.",
+      "Table 1 의 log_k(n) 도 로그예요. k 칸씩 묶어 올라가면 n 을 덮는 데 log_k(n) 층이 필요해요."
+     ]
+    },
+    {
+     "kind": "prof",
+     "when": "4주차 월요일 수업",
+     "lines": [
+      "교수님: 인베딩의 위치를 모르기 때문에 포지셔널 인코딩을 더해 주는 거예요.",
+      "교수님: 이 배리어 3개를 기억해 봅시다.",
+      "교수님: 병렬로 빨라지는 대신 메모리가 n 제곱이에요. 이 세상에 데스 노 프리 런치예요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "논문이 사인 코사인을 고른 이유로 적은 것은?",
+     "choices": [
+      "학습 때보다 긴 문장으로 뻗어 나갈 수 있을지도 몰라서",
+      "성능이 확실히 더 좋아서",
+      "파라미터가 필요해서",
+      "계산이 더 느려서"
+     ],
+     "a": 0,
+     "why": "it may allow the model to extrapolate 라고 적었어요. may 라서 논문도 단정하지 않았어요."
+    },
+    {
+     "kind": "check",
+     "q": "Table 1 에서 셀프 어텐션의 층당 비용은?",
+     "choices": [
+      "O(n^2 x d)",
+      "O(n x d^2)",
+      "O(k x n x d^2)",
+      "O(r x n x d)"
+     ],
+     "a": 0,
+     "why": "길이 n 이 두 배면 비용이 네 배예요. 이것을 **이차 비용(Quadratic Cost)** 이라고 불러요."
+    },
+    {
+     "kind": "english",
+     "head": "시험 답안 문장",
+     "en": "셀프 어텐션은 순차 연산 수와 최대 경로 길이가 모두 O(1) 이라 병렬화와 장거리 의존 학습에 유리하지만, 층당 비용이 O(n 제곱 x d) 로 길이에 민감하다.",
+     "ko": "장점 두 개와 대가 하나를 한 문장에 담아요.",
+     "tip": "O(1), O(1), 그리고 n 제곱. 세 숫자로 외워요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "논문은 we hypothesized, may allow 라고 적었어요. 사인 코사인의 장점은 증명이 아니라 추측이에요.",
+      "파장이 2 pi 에서 10000 x 2 pi 라는 말은 어림이에요. 마지막 짝은 10000^(510/512) = 9646.6 배예요.",
+      "**순열 등변성(Permutation Equivariance)** 과 **로프(RoPE)** 는 강의 슬라이드의 말이에요. 논문에는 없어요.",
+      "**제한된 셀프 어텐션(Restricted Self-Attention)** 은 Table 1 에 줄만 있고 실제 실험은 안 했어요. 논문은 future work 라고 적었어요."
+     ]
+    },
+    {
+     "kind": "exam",
+     "src": "예상 문제",
+     "q": "트랜스포머에 위치 인코딩이 필요한 이유와, 논문이 쓴 사인 코사인 방식을 설명하시오.",
+     "qko": "왜 필요한지와 어떻게 만드는지를 쓰는 문제예요.",
+     "solve": [
+      "1. 순환도 합성곱도 없어서 **어텐션(Attention)** 자체는 자리 순서를 전혀 몰라요",
+      "2. 그래서 자리마다 다른 벡터를 만들어 **임베딩(Embedding)** 에 더해요",
+      "3. 짝수 칸은 sin(pos / 10000^(2i/d_model)), 홀수 칸은 같은 값의 cos 이에요",
+      "4. 위치 벡터도 512칸이라 임베딩에 그대로 더할 수 있어요",
+      "5. 학습 파라미터가 0 개이고, 학습 때보다 긴 문장에도 값을 계산할 수 있어요"
+     ],
+     "answer": "순서 정보가 없어서 넣어 주는 것이고, 주파수가 다른 sin 과 cos 으로 만들어 임베딩에 더해요."
+    }
+   ]
+  },
+  {
+   "p": 7,
+   "title": "4장 마무리와 5 Training 설정 (식 3)",
+   "terms": [
+    "Self-Attention",
+    "Restricted Self-Attention",
+    "Convolutional Neural Network (CNN)",
+    "Recurrent Neural Network (RNN)",
+    "Maximum Path Length",
+    "Interpretability",
+    "Head",
+    "Attention Weight",
+    "Byte Pair Encoding (BPE)",
+    "WordPiece",
+    "Vocabulary",
+    "Token",
+    "Machine Translation (MT)",
+    "Adam",
+    "Warmup",
+    "Learning Rate",
+    "Gradient",
+    "Parameter",
+    "Position-wise Feed-Forward Network (FFN)",
+    "Quadratic Cost",
+    "Dropout"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "이 쪽은 두 토막이에요. 위쪽은 4장 마무리, 아래쪽은 5장 학습 설정이에요.",
+      "4장 마무리는 **합성곱 신경망(Convolutional Neural Network (CNN))** 과 비교하고, **해석 가능성(Interpretability)** 이라는 덤을 말해요.",
+      "5장은 실제로 어떤 데이터로 어떤 기계에서 얼마나 오래 돌렸는지를 적어요.",
+      "그리고 식 (3), 곧 **학습률(Learning Rate)** 을 스텝마다 바꾸는 공식이 나와요."
+     ]
+    },
+    {
+     "kind": "analogy",
+     "head": "요리 레시피의 뒷장",
+     "scene": "앞장은 무슨 요리인지 설명하고, 뒷장은 오븐 온도와 굽는 시간을 정확히 적어요. 5장이 그 뒷장이에요.",
+     "map": [
+      [
+       "재료",
+       "WMT 2014 데이터"
+      ],
+      [
+       "오븐",
+       "P100 GPU 8장"
+      ],
+      [
+       "굽는 시간",
+       "base 12시간, big 3.5일"
+      ],
+      [
+       "불 조절",
+       "식 (3) 의 **학습률(Learning Rate)**"
+      ]
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "이 쪽에서 챙길 것",
+     "items": [
+      "n 이 d 보다 작을 때만 **셀프 어텐션(Self-Attention)** 이 더 빠르다는 조건",
+      "**제한된 셀프 어텐션(Restricted Self-Attention)** 은 아이디어만 적고 실험은 안 했어요",
+      "데이터 숫자: 450만 문장 쌍, 어휘 약 37,000, 배치 약 25,000 토큰",
+      "식 (3) 과 warmup_steps = 4000"
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "points",
+     "head": "4장 마무리의 영어와 우리말 뜻",
+     "items": [
+      "\"**when the sequence length n is smaller than the representation dimensionality d**\" = 길이 n 이 차원 d 보다 작을 때",
+      "\"**restricted to considering only a neighborhood of size r**\" = 이웃 r 칸만 보게 제한한다",
+      "\"**We plan to investigate this approach further in future work**\" = 이건 앞으로 해 보겠다는 말이에요",
+      "\"**Separable convolutions ... decrease the complexity considerably**\" = 분리 합성곱은 비용을 꽤 낮춘다",
+      "\"**self-attention could yield more interpretable models**\" = 더 들여다보기 쉬운 모델이 될 수도 있다"
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "5장의 영어와 우리말 뜻",
+     "items": [
+      "\"**about 4.5 million sentence pairs**\" = 문장 쌍 약 450만 개",
+      "\"**shared source-target vocabulary of about 37000 tokens**\" = 원문과 번역문이 함께 쓰는 어휘 약 37,000개",
+      "\"**batched together by approximate sequence length**\" = 길이가 비슷한 문장끼리 묶어서 배치를 만든다",
+      "\"**one machine with 8 NVIDIA P100 GPUs**\" = P100 8장이 달린 기계 한 대",
+      "\"**increasing the learning rate linearly for the first warmup_steps**\" = 처음 warmup 구간은 직선으로 올린다",
+      "\"**inverse square root of the step number**\" = 스텝 수의 역제곱근에 비례해 내린다"
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "두 번역 과제의 데이터 설정 (논문 5.1)",
+     "cols": [
+      "",
+      "영어-독일어",
+      "영어-프랑스어"
+     ],
+     "rows": [
+      [
+       "문장 수",
+       "약 450만 쌍",
+       "3600만 문장"
+      ],
+      [
+       "토큰화",
+       "**바이트 쌍 인코딩(Byte Pair Encoding (BPE))**",
+       "**워드피스(WordPiece)**"
+      ],
+      [
+       "**어휘(Vocabulary)**",
+       "약 37,000 (공유)",
+       "32,000"
+      ],
+      [
+       "배치",
+       "원문 약 25,000 토큰",
+       "번역문 약 25,000 토큰"
+      ]
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "학습 설정을 순서대로",
+     "steps": [
+      "1. 데이터를 **바이트 쌍 인코딩(Byte Pair Encoding (BPE))** 나 **워드피스(WordPiece)** 로 잘라 **토큰(Token)** 으로 바꿔요",
+      "2. 길이가 비슷한 문장끼리 묶어 배치를 만들어요",
+      "3. P100 8장이 달린 기계 한 대에 올려요",
+      "4. **아담(Adam)** 으로 학습해요. beta1 0.9, beta2 0.98, epsilon 10^-9 이에요",
+      "5. **학습률(Learning Rate)** 은 고정이 아니라 식 (3) 으로 스텝마다 바꿔요",
+      "6. base 는 10만 스텝 12시간, big 은 30만 스텝 3.5일이에요"
+     ],
+     "answer": "데이터, 배치, 기계, 옵티마이저, **학습률(Learning Rate)**, 스텝 수. 이 여섯 가지가 5장의 전부예요."
+    },
+    {
+     "kind": "check",
+     "q": "논문이 warmup_steps 로 쓴 값은?",
+     "choices": [
+      "4000",
+      "400",
+      "40000",
+      "100000"
+     ],
+     "a": 0,
+     "why": "**워밍업(Warmup)** 4000 스텝까지는 **학습률(Learning Rate)** 을 직선으로 올리고, 그 뒤로는 역제곱근으로 내려요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "4장 마무리와 5.1 을 짚어 읽어요",
+     "boxes": [
+      {
+       "x": 0.17,
+       "y": 0.092,
+       "w": 0.66,
+       "h": 0.08,
+       "say": "n 이 d 보다 작으면 셀프 어텐션이 빠르다, 그리고 제한된 셀프 어텐션 이야기예요."
+      },
+      {
+       "x": 0.17,
+       "y": 0.184,
+       "w": 0.66,
+       "h": 0.105,
+       "say": "합성곱 이야기. 커널 k 가 n 보다 작으면 한 층으로 모든 쌍을 못 이어요."
+      },
+      {
+       "x": 0.17,
+       "y": 0.302,
+       "w": 0.66,
+       "h": 0.052,
+       "say": "해석 가능성 이야기. 헤드마다 다른 일을 배우는 것 같다고 적었어요."
+      },
+      {
+       "x": 0.17,
+       "y": 0.381,
+       "w": 0.17,
+       "h": 0.025,
+       "say": "5 Training 제목이에요."
+      },
+      {
+       "x": 0.17,
+       "y": 0.447,
+       "w": 0.33,
+       "h": 0.025,
+       "say": "5.1 Training Data and Batching 제목이에요."
+      },
+      {
+       "x": 0.17,
+       "y": 0.474,
+       "w": 0.66,
+       "h": 0.095,
+       "say": "데이터 문단. 450만 문장 쌍, 어휘 약 37,000, 배치 약 25,000 토큰이에요."
+      }
+     ]
+    },
+    {
+     "kind": "look",
+     "head": "5.2 와 5.3 을 짚어 읽어요",
+     "boxes": [
+      {
+       "x": 0.17,
+       "y": 0.594,
+       "w": 0.3,
+       "h": 0.025,
+       "say": "5.2 Hardware and Schedule 제목이에요."
+      },
+      {
+       "x": 0.17,
+       "y": 0.624,
+       "w": 0.66,
+       "h": 0.07,
+       "say": "P100 8장, base 는 0.4초 x 10만 스텝 12시간, big 은 1.0초 x 30만 스텝 3.5일."
+      },
+      {
+       "x": 0.17,
+       "y": 0.703,
+       "w": 0.17,
+       "h": 0.025,
+       "say": "5.3 Optimizer 제목이에요."
+      },
+      {
+       "x": 0.17,
+       "y": 0.729,
+       "w": 0.66,
+       "h": 0.04,
+       "say": "Adam 의 beta1 0.9, beta2 0.98, epsilon 10^-9 을 적은 줄이에요."
+      },
+      {
+       "x": 0.26,
+       "y": 0.785,
+       "w": 0.48,
+       "h": 0.03,
+       "say": "식 (3) 학습률 공식이에요. 두 항 중 작은 쪽을 골라요."
+      },
+      {
+       "x": 0.17,
+       "y": 0.815,
+       "w": 0.66,
+       "h": 0.06,
+       "say": "warmup_steps = 4000. 처음엔 올리고 뒤엔 역제곱근으로 내려요."
+      }
+     ]
+    },
+    {
+     "kind": "formula",
+     "head": "식 (3) 학습률 스케줄",
+     "tex": "lrate = d_{model}^{-0.5} \\cdot \\min\\!\\left(step\\_num^{-0.5},\\ step\\_num \\cdot warmup\\_steps^{-1.5}\\right)",
+     "parts": [
+      {
+       "sym": "d_{model}^{-0.5}",
+       "say": "512 의 역제곱근. 0.044194 라는 고정 배율이에요"
+      },
+      {
+       "sym": "step\\_num",
+       "say": "지금이 몇 번째 학습 스텝인지"
+      },
+      {
+       "sym": "step\\_num^{-0.5}",
+       "say": "스텝이 커질수록 작아지는 항. 내려가는 쪽이에요"
+      },
+      {
+       "sym": "step\\_num \\cdot warmup\\_steps^{-1.5}",
+       "say": "스텝에 비례해 커지는 항. 올라가는 쪽이에요"
+      },
+      {
+       "sym": "\\min",
+       "say": "둘 중 작은 쪽을 골라요. 그래서 산 모양이 돼요"
+      },
+      {
+       "sym": "warmup\\_steps",
+       "say": "**워밍업(Warmup)** 구간 길이. 논문은 4000 을 썼어요"
+      }
+     ],
+     "whole": "4000 스텝에서 두 항이 같아져요. 거기가 **학습률(Learning Rate)** 의 꼭대기예요."
+    },
+    {
+     "kind": "steps",
+     "head": "식 (3) 을 스텝마다 계산해 봐요",
+     "given": "d_model = 512, warmup_steps = 4000",
+     "steps": [
+      "1. 512^(-0.5) = 0.044194 예요. 이 값은 끝까지 안 바뀌어요",
+      "2. step 1000: 올라가는 항이 1000 x 4000^(-1.5) = 0.003953 으로 더 작아요. lrate = 0.000175",
+      "3. step 2000: lrate = 0.000349 예요. 1000 일 때의 딱 두 배예요",
+      "4. step 4000: 두 항이 4000^(-0.5) = 0.015811 로 같아져요. lrate = 0.000699 로 최고점이에요",
+      "5. step 8000: 내려가는 항만 남아요. lrate = 0.000494 예요",
+      "6. step 16000: lrate = 0.000349 예요. 4000 일 때의 절반이에요",
+      "7. step 100000: lrate = 0.000140 까지 내려와요"
+     ],
+     "answer": "스텝이 4배가 되면 학습률은 절반이 돼요. 역제곱근이라서 그래요."
+    },
+    {
+     "kind": "steps",
+     "head": "5.2 의 학습 시간을 검산해 봐요",
+     "given": "base 0.4초 x 100K, big 1.0초 x 300K",
+     "steps": [
+      "1. base 는 한 스텝 0.4초, 10만 스텝이에요",
+      "2. 100,000 x 0.4 = 40,000초예요",
+      "3. 40,000 / 3600 = 11.1시간인데 논문은 12시간이라고 적었어요",
+      "4. big 은 한 스텝 1.0초, 30만 스텝이에요",
+      "5. 300,000초 / 86,400 = 3.47일인데 논문은 3.5일이라고 적었어요",
+      "6. 둘 다 논문이 반올림해서 적은 것으로 보여요"
+     ],
+     "answer": "검산 값 11.1시간과 3.47일이에요. 논문의 12시간, 3.5일과 조금 달라요."
+    },
+    {
+     "kind": "compare",
+     "head": "논문과 4주차 강의 슬라이드가 다른 점",
+     "cols": [
+      "무엇",
+      "논문 (NP p.7)",
+      "4주차 슬라이드 (N4)"
+     ],
+     "rows": [
+      [
+       "**이차 비용(Quadratic Cost)**",
+       "n 이 d 보다 작으면 괜찮다고만 해요",
+       "p.55 는 오늘날 가장 큰 공학 문제라고 해요"
+      ],
+      [
+       "**학습률(Learning Rate)** 워밍업",
+       "5.3 에 식으로만 적어요",
+       "p.51 은 Post-LN 이라 워밍업이 꼭 필요하다고 설명해요"
+      ],
+      [
+       "**해석 가능성(Interpretability)**",
+       "could yield 라고 조심스럽게 적어요",
+       "p.48 은 헤드 연구 결과를 구체적으로 말해요"
+      ]
+     ]
+    },
+    {
+     "kind": "bg",
+     "src": "기초 다지기 8단원 경사 하강법과 손실",
+     "lines": [
+      "**기울기(Gradient)** 은 어느 쪽으로 가야 손실이 줄어드는지 알려 주는 방향이에요.",
+      "**학습률(Learning Rate)** 은 한 걸음의 보폭이에요. **기울기(Gradient)** 에 이 보폭을 곱해서 파라미터를 고쳐요.",
+      "**아담(Adam)** 은 방향과 보폭을 자동으로 조절해 주는 경사 하강법의 한 종류예요.",
+      "식 (3) 은 그 위에 다시 보폭을 스텝마다 바꾸는 규칙을 얹은 거예요."
+     ]
+    },
+    {
+     "kind": "prof",
+     "when": "4주차 월요일 수업",
+     "lines": [
+      "교수님: 이 세상에 데스 노 프리 런치, 진짜 그냥 좋은 방향으로만 가는 건 없어요.",
+      "교수님: 병렬로 빨라지는 대신 메모리가 n 제곱이에요.",
+      "교수님: 패러럴이 핵심이에요. 항상 병렬로 처리하는 파이프라인을 머릿속에 그려 주세요."
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "식 (3) 학습률의 산 모양",
+     "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 480 280\"><text x=\"240\" y=\"22\" font-size=\"16\" text-anchor=\"middle\" class=\"tb\">식 (3) 학습률: 올렸다가 내려요</text><line x1=\"50\" y1=\"200\" x2=\"440\" y2=\"200\" class=\"e b1\"/><line x1=\"50\" y1=\"200\" x2=\"50\" y2=\"50\" class=\"e b1\"/><text x=\"40\" y=\"60\" font-size=\"11\" text-anchor=\"end\" class=\"tm b1\">높음</text><text x=\"40\" y=\"198\" font-size=\"11\" text-anchor=\"end\" class=\"tm b1\">0</text><rect x=\"80\" y=\"175\" width=\"20\" height=\"25\" rx=\"2\" class=\"n2 b2\"/><rect x=\"110\" y=\"150\" width=\"20\" height=\"50\" rx=\"2\" class=\"n2 b2\"/><rect x=\"140\" y=\"125\" width=\"20\" height=\"75\" rx=\"2\" class=\"n2 b2\"/><rect x=\"170\" y=\"100\" width=\"20\" height=\"100\" rx=\"2\" class=\"n2 b2\"/><rect x=\"200\" y=\"71\" width=\"20\" height=\"129\" rx=\"2\" class=\"n4 b3\"/><rect x=\"240\" y=\"108\" width=\"20\" height=\"92\" rx=\"2\" class=\"n b4\"/><rect x=\"270\" y=\"125\" width=\"20\" height=\"75\" rx=\"2\" class=\"n b4\"/><rect x=\"300\" y=\"137\" width=\"20\" height=\"63\" rx=\"2\" class=\"n b4\"/><rect x=\"330\" y=\"146\" width=\"20\" height=\"54\" rx=\"2\" class=\"n b4\"/><rect x=\"360\" y=\"153\" width=\"20\" height=\"47\" rx=\"2\" class=\"n b4\"/><rect x=\"390\" y=\"159\" width=\"20\" height=\"41\" rx=\"2\" class=\"n b4\"/><text x=\"210\" y=\"216\" font-size=\"11\" text-anchor=\"middle\" class=\"tm b3\">4000 스텝</text><text x=\"240\" y=\"240\" font-size=\"13\" text-anchor=\"middle\" class=\"tb b4\">4000 까지는 직선으로 오르고 뒤로는 역제곱근으로 내려요</text><text x=\"240\" y=\"262\" font-size=\"12\" text-anchor=\"middle\" class=\"tm b4\">최고점은 0.000699 예요</text></svg>",
+     "caption": "4000 스텝에서 꼭대기를 찍고 내려와요.",
+     "builds": 4
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "식 (3) 에서 학습률이 가장 높아지는 지점은?",
+     "choices": [
+      "step_num = warmup_steps = 4000",
+      "step_num = 1",
+      "step_num = 100000",
+      "학습이 끝날 때"
+     ],
+     "a": 0,
+     "why": "두 항이 같아지는 자리가 꼭대기예요. 그 값은 0.000699 예요."
+    },
+    {
+     "kind": "check",
+     "q": "논문이 배치를 만드는 방식으로 적은 것은?",
+     "choices": [
+      "길이가 비슷한 문장끼리 묶었다",
+      "무작위로 묶었다",
+      "한 문장씩 넣었다",
+      "언어별로 나눴다"
+     ],
+     "a": 0,
+     "why": "batched together by approximate sequence length 예요. 빈칸 채우기를 줄이려고 그래요."
+    },
+    {
+     "kind": "english",
+     "head": "시험 답안 문장",
+     "en": "학습률은 warmup_steps 까지 선형으로 올린 뒤 스텝 수의 역제곱근에 비례해 낮추며, 논문은 warmup_steps 를 4000 으로 두었다.",
+     "ko": "올린다, 내린다, 4000. 세 마디면 충분해요.",
+     "tip": "산 모양 그래프를 손으로 그려 보면 바로 외워져요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "**제한된 셀프 어텐션(Restricted Self-Attention)** 은 Table 1 에만 있고 실제로 돌린 실험이 아니에요. 논문이 future work 라고 적었어요.",
+      "**해석 가능성(Interpretability)** 은 could yield, appear to 라고 적었어요. 논문도 단정하지 않은 관찰이에요.",
+      "37,000 은 영어-독일어 공유 어휘예요. 영어-프랑스어는 32,000 워드피스예요.",
+      "**학습률(Learning Rate)** 식의 min 은 최솟값을 고르는 것이지 최댓값이 아니에요."
+     ]
+    },
+    {
+     "kind": "exam",
+     "src": "예상 문제",
+     "q": "논문 식 (3) 의 학습률 스케줄을 쓰고, 왜 이런 모양으로 만들었는지 설명하시오.",
+     "qko": "식을 쓰고 모양을 설명하는 문제예요.",
+     "solve": [
+      "1. lrate = d_model^(-0.5) x min(step^(-0.5), step x warmup^(-1.5)) 이에요",
+      "2. 처음에는 두 번째 항이 작아서 스텝에 비례해 직선으로 올라가요",
+      "3. warmup_steps 를 넘으면 첫 항이 작아져서 역제곱근으로 내려가요",
+      "4. 논문은 warmup_steps = 4000 을 썼고 그 지점이 최고점 0.000699 예요",
+      "5. 초반에 **학습률(Learning Rate)** 이 크면 학습이 흔들려서 천천히 올리는 것이에요"
+     ],
+     "answer": "올렸다가 내리는 산 모양이고, 꼭대기가 warmup_steps = 4000 이에요."
+    }
+   ]
+  },
+  {
+   "p": 8,
+   "title": "Table 2 BLEU 와 학습 비용, 정칙화, 6.1 번역 결과",
+   "terms": [
+    "BLEU",
+    "Machine Translation (MT)",
+    "FLOPs",
+    "Ensemble",
+    "Dropout",
+    "Label Smoothing",
+    "Perplexity (PPL)",
+    "Beam Search",
+    "Length Normalization",
+    "Checkpoint Averaging",
+    "Sub-layer",
+    "Residual Connection",
+    "Embedding",
+    "Positional Encoding",
+    "Transformer",
+    "Parameter",
+    "Over-fitting",
+    "Model Variations"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "이 쪽 위에 Table 2 가 있어요. **기계 번역(Machine Translation (MT))** 성적표이자 영수증이에요.",
+      "왼쪽 두 칸은 **블루 점수(BLEU)**, 오른쪽 두 칸은 학습에 든 **부동소수점 연산량(FLOPs)** 예요.",
+      "아래쪽은 정칙화 두 가지와 6.1 번역 결과 이야기예요.",
+      "여기서 논문 안이 서로 어긋나는 대목이 딱 하나 나와요. 꼭 짚고 갈게요."
+     ]
+    },
+    {
+     "kind": "analogy",
+     "head": "성적표와 영수증을 나란히",
+     "scene": "같은 점수를 받아도 학원비를 10분의 1만 쓴 쪽이 더 잘한 거예요. Table 2 는 점수와 비용을 나란히 놓은 표예요.",
+     "map": [
+      [
+       "점수",
+       "**블루 점수(BLEU)**"
+      ],
+      [
+       "학원비",
+       "**부동소수점 연산량(FLOPs)**"
+      ],
+      [
+       "여러 명이 같이 푼 답",
+       "**앙상블(Ensemble)**"
+      ],
+      [
+       "혼자 푼 답",
+       "트랜스포머 단일 모델"
+      ]
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "이 쪽에서 챙길 것",
+     "items": [
+      "Transformer (big) 은 영어-독일어 28.4, 영어-프랑스어 41.8",
+      "학습 비용은 2.3 x 10^19 **부동소수점 연산량(FLOPs)** 로 경쟁자들보다 훨씬 싸요",
+      "정칙화 둘: **드롭아웃(Dropout)** P_drop = 0.1, **라벨 스무딩(Label Smoothing)** eps_ls = 0.1",
+      "본문 6.1 과 Table 2 의 영어-프랑스어 값이 서로 달라요"
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "points",
+     "head": "Table 2 와 6.1 의 영어와 우리말 뜻",
+     "items": [
+      "\"**at a fraction of the training cost**\" = 학습 비용의 몇 분의 1 로",
+      "\"**outperforms the best previously reported models (including ensembles)**\" = 앙상블까지 포함해 기존 최고를 이긴다",
+      "\"**by more than 2.0 BLEU**\" = 2.0 BLEU 넘게 앞선다",
+      "\"**averaging the last 5 checkpoints**\" = 마지막 체크포인트 5개를 평균한다",
+      "\"**beam size of 4 and length penalty alpha = 0.6**\" = 빔 크기 4, 길이 페널티 0.6",
+      "\"**terminate early when possible**\" = 가능하면 일찍 끝낸다"
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "5.4 정칙화의 영어와 우리말 뜻",
+     "items": [
+      "\"**We employ three types of regularization**\" = 정칙화를 세 가지 쓴다",
+      "\"**dropout to the output of each sub-layer, before it is added**\" = 하위층 출력에, 더하기 전에 드롭아웃",
+      "\"**to the sums of the embeddings and the positional encodings**\" = 임베딩과 위치 인코딩을 더한 값에도",
+      "\"**label smoothing of value eps_ls = 0.1**\" = 라벨 스무딩 값 0.1",
+      "\"**This hurts perplexity ... but improves accuracy and BLEU score**\" = 퍼플렉서티는 나빠지지만 정확도와 BLEU 는 좋아진다"
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "Table 2 의 주요 줄만 뽑으면",
+     "cols": [
+      "모델",
+      "영어-독일어",
+      "영어-프랑스어",
+      "영어-독일어 비용"
+     ],
+     "rows": [
+      [
+       "GNMT + RL",
+       "24.6",
+       "39.92",
+       "2.3 x 10^19"
+      ],
+      [
+       "ConvS2S",
+       "25.16",
+       "40.46",
+       "9.6 x 10^18"
+      ],
+      [
+       "ConvS2S **앙상블(Ensemble)**",
+       "26.36",
+       "41.29",
+       "7.7 x 10^19"
+      ],
+      [
+       "Transformer (base)",
+       "27.3",
+       "38.1",
+       "3.3 x 10^18"
+      ],
+      [
+       "Transformer (big)",
+       "28.4",
+       "41.8",
+       "2.3 x 10^19"
+      ]
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "추론(번역을 실제로 만들 때) 설정",
+     "steps": [
+      "1. base 는 마지막 **체크포인트 평균(Checkpoint Averaging)** 5개, big 은 20개를 평균해서 한 모델로 써요",
+      "2. 체크포인트는 10분 간격으로 저장했어요",
+      "3. **빔 서치(Beam Search)** 의 빔 크기는 4 예요",
+      "4. **길이 정규화(Length Normalization)** 에 해당하는 length penalty alpha = 0.6 을 썼어요",
+      "5. 최대 출력 길이는 입력 길이 + 50 이고, 가능하면 일찍 멈춰요"
+     ],
+     "answer": "평균 내고, **빔 서치(Beam Search)** 로 찾고, 길이로 눌러 주기. 이게 추론 설정이에요."
+    },
+    {
+     "kind": "check",
+     "q": "논문이 말한 라벨 스무딩의 효과는?",
+     "choices": [
+      "**퍼플렉서티(Perplexity (PPL))** 는 나빠지지만 정확도와 **블루 점수(BLEU)** 는 좋아진다",
+      "둘 다 좋아진다",
+      "둘 다 나빠진다",
+      "**퍼플렉서티(Perplexity (PPL))** 만 좋아진다"
+     ],
+     "a": 0,
+     "why": "hurts perplexity ... but improves accuracy and BLEU score 가 논문의 문장이에요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "Table 2 를 짚어 봐요",
+     "boxes": [
+      {
+       "x": 0.17,
+       "y": 0.086,
+       "w": 0.66,
+       "h": 0.032,
+       "say": "Table 2 캡션. newstest2014 에서 BLEU 와 학습 비용을 비교한 표예요."
+      },
+      {
+       "x": 0.21,
+       "y": 0.122,
+       "w": 0.58,
+       "h": 0.038,
+       "say": "머리글. 왼쪽이 BLEU, 오른쪽이 학습 비용 FLOPs 예요."
+      },
+      {
+       "x": 0.21,
+       "y": 0.16,
+       "w": 0.58,
+       "h": 0.072,
+       "say": "단일 모델들. ByteNet 23.75, GNMT+RL 24.6, ConvS2S 25.16, MoE 26.03."
+      },
+      {
+       "x": 0.21,
+       "y": 0.233,
+       "w": 0.58,
+       "h": 0.042,
+       "say": "앙상블들. 가장 높은 것이 ConvS2S Ensemble 26.36 이에요."
+      },
+      {
+       "x": 0.21,
+       "y": 0.277,
+       "w": 0.58,
+       "h": 0.014,
+       "say": "Transformer (base model) 줄. 27.3 과 38.1, 비용 3.3 x 10^18."
+      },
+      {
+       "x": 0.21,
+       "y": 0.292,
+       "w": 0.58,
+       "h": 0.016,
+       "say": "Transformer (big) 줄. 28.4 와 41.8, 비용 2.3 x 10^19."
+      }
+     ]
+    },
+    {
+     "kind": "look",
+     "head": "5.4 와 6.1 을 짚어 읽어요",
+     "boxes": [
+      {
+       "x": 0.17,
+       "y": 0.344,
+       "w": 0.66,
+       "h": 0.055,
+       "say": "Residual Dropout 문단. 하위층 출력과 임베딩 + 위치 인코딩 합에 써요."
+      },
+      {
+       "x": 0.17,
+       "y": 0.418,
+       "w": 0.66,
+       "h": 0.03,
+       "say": "Label Smoothing 문단. 퍼플렉서티는 나빠지고 BLEU 는 좋아진다고 적었어요."
+      },
+      {
+       "x": 0.17,
+       "y": 0.468,
+       "w": 0.16,
+       "h": 0.025,
+       "say": "6 Results 제목이에요."
+      },
+      {
+       "x": 0.17,
+       "y": 0.53,
+       "w": 0.66,
+       "h": 0.078,
+       "say": "영어-독일어 문단. 앙상블까지 이겨서 2.0 BLEU 넘게 앞섰다고 적었어요."
+      },
+      {
+       "x": 0.17,
+       "y": 0.624,
+       "w": 0.66,
+       "h": 0.05,
+       "say": "영어-프랑스어 문단. 여기서는 41.0 이라고 적었어요. Table 2 와 달라요."
+      },
+      {
+       "x": 0.17,
+       "y": 0.748,
+       "w": 0.66,
+       "h": 0.058,
+       "say": "FLOPs 를 학습 시간 x GPU 수 x GPU 성능으로 어림했다고 적은 문단이에요."
+      }
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "2.0 BLEU 넘게 앞섰다는 말을 검산",
+     "given": "ConvS2S Ensemble 26.36, Transformer (big) 28.4",
+     "steps": [
+      "1. 기존 최고는 ConvS2S **앙상블(Ensemble)** 의 26.36 이에요",
+      "2. Transformer (big) 은 28.4 예요",
+      "3. 28.4 - 26.36 = 2.04 예요",
+      "4. 그래서 논문이 by more than 2.0 BLEU 라고 적었어요",
+      "5. base 모델 27.3 도 **앙상블(Ensemble)** 26.36 보다 높아요"
+     ],
+     "answer": "차이는 2.04 예요. 단일 모델 하나가 앙상블을 이긴 것이라 더 의미가 커요."
+    },
+    {
+     "kind": "steps",
+     "head": "학습 비용 2.3 x 10^19 을 검산해 봐요",
+     "given": "P100 9.5 TFLOPS, GPU 8장, 3.5일",
+     "steps": [
+      "1. 각주 5 는 P100 한 장을 9.5 TFLOPS 로 어림했다고 적었어요",
+      "2. big 은 3.5일 동안 GPU 8장을 썼어요",
+      "3. 3.5 x 86,400 = 302,400초예요",
+      "4. 302,400 x 8 x 9.5 x 10^12 = 2.298 x 10^19 이에요",
+      "5. Table 2 의 2.3 x 10^19 과 맞아요",
+      "6. base 는 12 x 3600 x 8 x 9.5 x 10^12 = 3.28 x 10^18 이라 3.3 x 10^18 과 맞아요"
+     ],
+     "answer": "**부동소수점 연산량(FLOPs)** 는 학습 시간 x GPU 수 x GPU 성능으로 만든 어림값이에요. 계산이 실제로 맞아요."
+    },
+    {
+     "kind": "compare",
+     "head": "정칙화 두 가지 (논문 5.4)",
+     "cols": [
+      "이름",
+      "값",
+      "어디에 거나",
+      "효과"
+     ],
+     "rows": [
+      [
+       "**드롭아웃(Dropout)**",
+       "P_drop = 0.1",
+       "**하위층(Sub-layer)** 출력, 그리고 임베딩 + 위치 인코딩 합",
+       "**과적합(Over-fitting)** 을 막아요"
+      ],
+      [
+       "**라벨 스무딩(Label Smoothing)**",
+       "eps_ls = 0.1",
+       "정답 라벨",
+       "**퍼플렉서티(Perplexity (PPL))** 는 나빠지고 **블루 점수(BLEU)** 는 좋아져요"
+      ]
+     ]
+    },
+    {
+     "kind": "bg",
+     "src": "기초 다지기 6단원 소프트맥스와 교차 엔트로피",
+     "lines": [
+      "**라벨 스무딩(Label Smoothing)** 은 정답 확률을 1.0 이 아니라 0.9 쯤으로 두고 나머지를 다른 토큰에 조금씩 나눠 줘요.",
+      "모델이 덜 확신하게 되니 **퍼플렉서티(Perplexity (PPL))** 는 나빠져요. 정답 확률을 낮췄으니 당연해요.",
+      "대신 지나친 확신이 줄어서 실제 번역 품질, 곧 **블루 점수(BLEU)** 는 좋아졌어요."
+     ]
+    },
+    {
+     "kind": "prof",
+     "when": "4주차 월요일 수업",
+     "lines": [
+      "교수님: 항상 빔 서치가 좋은 건 아니에요.",
+      "교수님: 트레이드 오프가 있다는 것 정도는 기억해 달라.",
+      "교수님: 이 논문은 읽어서 이해하면 시험도 나중에 잘 볼 수 있어요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "Transformer (base) 의 영어-독일어 학습 비용은?",
+     "choices": [
+      "3.3 x 10^18",
+      "2.3 x 10^19",
+      "9.6 x 10^18",
+      "1.8 x 10^20"
+     ],
+     "a": 0,
+     "why": "Table 2 에서 가장 작은 값이에요. 성적은 27.3 으로 **앙상블(Ensemble)** 들보다 높아요."
+    },
+    {
+     "kind": "english",
+     "head": "시험 답안 문장",
+     "en": "Transformer (big) 은 영어-독일어 newstest2014 에서 BLEU 28.4 로 기존 앙상블보다 2.0 넘게 앞섰고, 학습 비용은 2.3 x 10의 19제곱 FLOPs 에 그쳤다.",
+     "ko": "점수와 비용을 한 문장에 같이 써야 논문의 주장이 살아요.",
+     "tip": "28.4, 2.04 차이, 2.3 x 10^19. 숫자 셋을 외워요."
+    },
+    {
+     "kind": "warn",
+     "head": "논문 안이 서로 어긋나는 대목",
+     "items": [
+      "초록과 Table 2 는 영어-프랑스어 big 을 41.8 이라고 적었어요.",
+      "그런데 6.1 본문은 achieves a BLEU score of 41.0 이라고 적었어요.",
+      "논문 자체가 어긋나 있어요. 시험에는 초록과 Table 2 의 41.8 을 쓰세요.",
+      "그리고 영어-프랑스어 big 만 P_drop 을 0.3 대신 0.1 로 썼어요."
+     ]
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "**부동소수점 연산량(FLOPs)** 값은 실제로 잰 게 아니라 시간 x GPU 수 x 성능으로 어림한 값이에요.",
+      "Table 2 의 비용 칸에서 base 는 영어-독일어 칸만 있고 영어-프랑스어 칸은 비어 있어요.",
+      "**드롭아웃(Dropout)** 은 **잔차 연결(Residual Connection)** 로 더하기 전에 걸려요. **층 정규화(Layer Normalization (LayerNorm))** 를 지난 뒤가 아니에요.",
+      "**길이 정규화(Length Normalization)** 의 alpha = 0.6 은 값이 클수록 긴 문장을 덜 손해 보게 해요.",
+      "**체크포인트 평균(Checkpoint Averaging)** 은 모델 여러 개를 돌리는 **앙상블(Ensemble)** 과 달라요. 가중치를 평균해 한 모델로 써요."
+     ]
+    },
+    {
+     "kind": "exam",
+     "src": "예상 문제",
+     "q": "논문이 Table 2 에서 BLEU 와 함께 학습 비용을 나란히 보여 준 이유를 설명하시오.",
+     "qko": "왜 점수만 안 보여 주고 비용도 같이 보여 줬는지 묻는 문제예요.",
+     "solve": [
+      "1. 논문의 주장이 더 잘한다 가 아니라 더 잘하면서 더 싸다 이기 때문이에요",
+      "2. Transformer (base) 는 3.3 x 10^18 **부동소수점 연산량(FLOPs)** 로 **앙상블(Ensemble)** 들보다 높은 27.3 을 냈어요",
+      "3. big 도 2.3 x 10^19 로 GNMT + RL 단일 모델과 같은 비용이에요",
+      "4. 순환을 없애 병렬 계산이 되기 때문에 같은 시간에 더 많이 학습할 수 있어요"
+     ],
+     "answer": "품질과 비용을 같이 보여야 어텐션만 쓴 구조의 이점이 드러나기 때문이에요."
+    }
+   ]
+  },
+  {
+   "p": 9,
+   "title": "Table 3 모델 변형 실험과 6.3 구문 분석 시작",
+   "terms": [
+    "Model Variations",
+    "Head",
+    "Multi-Head Attention (MHA)",
+    "Perplexity (PPL)",
+    "BLEU",
+    "Parameter",
+    "Dropout",
+    "Label Smoothing",
+    "Over-fitting",
+    "Positional Encoding",
+    "Sinusoidal Positional Encoding",
+    "Embedding",
+    "Byte Pair Encoding (BPE)",
+    "WordPiece",
+    "Vocabulary",
+    "Constituency Parsing",
+    "Beam Search",
+    "Dot Product",
+    "Transformer",
+    "Recurrent Neural Network (RNN)",
+    "seq2seq"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "이 쪽 위에 Table 3 이 있어요. 부품을 하나씩 바꿔 보며 성능을 잰 표예요.",
+      "논문은 이 실험의 이름을 **모델 변형 실험(Model Variations)** 이라고 붙였어요.",
+      "줄마다 (A), (B), (C), (D), (E) 라는 꼬리표가 붙어 있어요.",
+      "아래 6.3 은 번역 말고 **구성소 구문 분석(Constituency Parsing)** 도 해 봤다는 이야기예요."
+     ]
+    },
+    {
+     "kind": "analogy",
+     "head": "라면에서 재료 하나씩 빼 보기",
+     "scene": "계란만 빼고, 파만 빼고, 물만 늘려 보면서 맛이 어떻게 변하는지 봐요. 무엇이 중요한 재료인지 알 수 있어요.",
+     "map": [
+      [
+       "기본 라면",
+       "base 모델"
+      ],
+      [
+       "재료 하나만 바꾸기",
+       "**모델 변형 실험(Model Variations)**"
+      ],
+      [
+       "맛 점수",
+       "**블루 점수(BLEU)**"
+      ],
+      [
+       "헷갈린 정도",
+       "**퍼플렉서티(Perplexity (PPL))**"
+      ]
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "Table 3 의 다섯 블록",
+     "items": [
+      "(A) **헤드(Head)** 개수만 1, 4, 8, 16, 32 로 바꿔요",
+      "(B) 키 차원 d_k 만 16, 32 로 줄여요",
+      "(C) 층 수와 차원을 키우거나 줄여요",
+      "(D) **드롭아웃(Dropout)** 과 **라벨 스무딩(Label Smoothing)** 값을 바꿔요",
+      "(E) **사인 코사인 위치 인코딩(Sinusoidal Positional Encoding)** 대신 학습 위치 **임베딩(Embedding)** 을 써요"
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "points",
+     "head": "6.2 와 Table 3 의 영어와 우리말 뜻",
+     "items": [
+      "\"**Variations on the Transformer architecture**\" = 트랜스포머 구조를 이리저리 바꿔 본 것",
+      "\"**Unlisted values are identical to those of the base model**\" = 빈칸은 base 와 같다는 뜻",
+      "\"**keeping the amount of computation constant**\" = 계산량은 그대로 두고",
+      "\"**single-head attention is 0.9 BLEU worse**\" = 헤드가 하나면 0.9 BLEU 나쁘다",
+      "\"**quality also drops off with too many heads**\" = 헤드가 너무 많아도 떨어진다",
+      "\"**dropout is very helpful in avoiding over-fitting**\" = 드롭아웃이 과적합을 막는 데 큰 도움이 된다",
+      "\"**per-wordpiece ... should not be compared to per-word perplexities**\" = 워드피스 단위라 단어 단위와 비교하면 안 된다"
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "6.3 첫 부분의 영어와 우리말 뜻",
+     "items": [
+      "\"**generalize to other tasks**\" = 다른 과제에도 통하는지 본다",
+      "\"**the output is subject to strong structural constraints**\" = 출력이 꼭 지켜야 할 구조가 있다",
+      "\"**significantly longer than the input**\" = 출력이 입력보다 훨씬 길다",
+      "\"**RNN sequence-to-sequence models have not been able to attain state-of-the-art**\" = RNN seq2seq 는 최고 성적을 못 냈다",
+      "\"**about 40K training sentences**\" = 학습 문장 약 4만 개",
+      "\"**semi-supervised setting ... approximately 17M sentences**\" = 준지도 설정에서는 약 1700만 문장"
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "Table 3 의 base 줄 읽기",
+     "cols": [
+      "칸",
+      "값",
+      "뜻"
+     ],
+     "rows": [
+      [
+       "N",
+       "6",
+       "층을 6개 쌓았어요"
+      ],
+      [
+       "d_model / d_ff",
+       "512 / 2048",
+       "표현 차원과 FFN 가운데 차원"
+      ],
+      [
+       "h / d_k / d_v",
+       "8 / 64 / 64",
+       "**헤드(Head)** 8개, 헤드마다 64칸"
+      ],
+      [
+       "P_drop / eps_ls",
+       "0.1 / 0.1",
+       "**드롭아웃(Dropout)** 과 **라벨 스무딩(Label Smoothing)** 값"
+      ],
+      [
+       "train steps",
+       "100K",
+       "10만 스텝 학습"
+      ],
+      [
+       "PPL / BLEU / params",
+       "4.92 / 25.8 / 65",
+       "**퍼플렉서티(Perplexity (PPL))**, **블루 점수(BLEU)**, 백만 단위 **파라미터(Parameter)**"
+      ]
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "Table 3 을 읽는 요령",
+     "steps": [
+      "1. 먼저 맨 위 base 줄의 값을 외워요",
+      "2. 아래 줄들은 빈칸이 많은데, 빈칸은 base 와 같다는 뜻이에요",
+      "3. 그래서 값이 적힌 칸만 바뀐 부품이에요",
+      "4. 오른쪽 세 칸 **퍼플렉서티(Perplexity (PPL))**, **블루 점수(BLEU)**, params 를 base 와 비교해요",
+      "5. PPL 은 낮을수록, BLEU 는 높을수록 좋아요"
+     ],
+     "answer": "빈칸은 base 와 같다. 이 한 줄만 알면 Table 3 이 읽혀요."
+    },
+    {
+     "kind": "check",
+     "q": "Table 3 에서 빈칸이 뜻하는 것은?",
+     "choices": [
+      "base 모델과 같은 값",
+      "0 이라는 뜻",
+      "실험을 안 했다는 뜻",
+      "측정 실패"
+     ],
+     "a": 0,
+     "why": "Unlisted values are identical to those of the base model 이라고 캡션에 적혀 있어요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "Table 3 의 base 와 (A), (B), (C) 를 짚어 봐요",
+     "boxes": [
+      {
+       "x": 0.17,
+       "y": 0.086,
+       "w": 0.66,
+       "h": 0.058,
+       "say": "Table 3 캡션. newstest2013 개발셋이고 PPL 은 워드피스 기준이에요."
+      },
+      {
+       "x": 0.18,
+       "y": 0.164,
+       "w": 0.65,
+       "h": 0.03,
+       "say": "머리글. N, d_model, d_ff, h, d_k, d_v, P_drop, eps_ls, 스텝, PPL, BLEU, params."
+      },
+      {
+       "x": 0.18,
+       "y": 0.196,
+       "w": 0.65,
+       "h": 0.014,
+       "say": "base 줄. 6, 512, 2048, 8, 64, 64, 0.1, 0.1, 100K, 4.92, 25.8, 65."
+      },
+      {
+       "x": 0.18,
+       "y": 0.212,
+       "w": 0.65,
+       "h": 0.055,
+       "say": "(A) 블록. 계산량을 고정한 채 헤드 수만 1, 4, 16, 32 로 바꿨어요."
+      },
+      {
+       "x": 0.18,
+       "y": 0.266,
+       "w": 0.65,
+       "h": 0.026,
+       "say": "(B) 블록. d_k 만 16, 32 로 줄였더니 둘 다 나빠졌어요."
+      },
+      {
+       "x": 0.18,
+       "y": 0.296,
+       "w": 0.65,
+       "h": 0.1,
+       "say": "(C) 블록. 층 수 N 과 차원 d_model, d_ff 를 키우거나 줄인 실험이에요."
+      }
+     ]
+    },
+    {
+     "kind": "look",
+     "head": "Table 3 의 (D), (E), big 과 6.2 본문",
+     "boxes": [
+      {
+       "x": 0.18,
+       "y": 0.397,
+       "w": 0.65,
+       "h": 0.057,
+       "say": "(D) 블록. 드롭아웃과 라벨 스무딩을 0.0 이나 0.2 로 바꾼 실험이에요."
+      },
+      {
+       "x": 0.18,
+       "y": 0.456,
+       "w": 0.65,
+       "h": 0.014,
+       "say": "(E) 줄. 사인 코사인 대신 학습 위치 임베딩을 써도 4.92 와 25.7 로 거의 같아요."
+      },
+      {
+       "x": 0.18,
+       "y": 0.472,
+       "w": 0.65,
+       "h": 0.016,
+       "say": "big 줄. 4.33, 26.4, 파라미터 213 백만이에요."
+      },
+      {
+       "x": 0.17,
+       "y": 0.557,
+       "w": 0.66,
+       "h": 0.045,
+       "say": "(A) 설명. 헤드 하나면 0.9 BLEU 나쁘고, 너무 많아도 떨어진다고 적었어요."
+      },
+      {
+       "x": 0.17,
+       "y": 0.607,
+       "w": 0.66,
+       "h": 0.08,
+       "say": "(B)부터 (E) 설명. d_k 를 줄이면 나빠지고, 크면 좋고, 드롭아웃이 과적합을 막아요."
+      },
+      {
+       "x": 0.17,
+       "y": 0.706,
+       "w": 0.32,
+       "h": 0.026,
+       "say": "6.3 English Constituency Parsing 제목이에요."
+      }
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "Table 3 (A) 헤드 수만 바꾼 결과",
+     "cols": [
+      "h",
+      "d_k = d_v",
+      "**퍼플렉서티(Perplexity (PPL))**",
+      "**블루 점수(BLEU)**"
+     ],
+     "rows": [
+      [
+       "1",
+       "512",
+       "5.29",
+       "24.9"
+      ],
+      [
+       "4",
+       "128",
+       "5.00",
+       "25.5"
+      ],
+      [
+       "8 (base)",
+       "64",
+       "4.92",
+       "25.8"
+      ],
+      [
+       "16",
+       "32",
+       "4.91",
+       "25.8"
+      ],
+      [
+       "32",
+       "16",
+       "5.01",
+       "25.4"
+      ]
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "Table 3 (B), (C), (D), (E) 에서 꼭 볼 줄",
+     "cols": [
+      "줄",
+      "바꾼 것",
+      "**퍼플렉서티(Perplexity (PPL))**",
+      "**블루 점수(BLEU)**"
+     ],
+     "rows": [
+      [
+       "(B)",
+       "d_k = 16",
+       "5.16",
+       "25.1"
+      ],
+      [
+       "(C)",
+       "N = 2",
+       "6.11",
+       "23.7"
+      ],
+      [
+       "(C)",
+       "d_ff = 4096",
+       "4.75",
+       "26.2"
+      ],
+      [
+       "(D)",
+       "P_drop = 0.0",
+       "5.77",
+       "24.6"
+      ],
+      [
+       "(D)",
+       "eps_ls = 0.2",
+       "5.47",
+       "25.7"
+      ],
+      [
+       "(E)",
+       "학습 위치 임베딩",
+       "4.92",
+       "25.7"
+      ],
+      [
+       "big",
+       "d_model 1024, h 16",
+       "4.33",
+       "26.4"
+      ]
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "헤드 하나가 0.9 나쁘다는 말을 검산",
+     "given": "h = 1 은 24.9, h = 8 은 25.8",
+     "steps": [
+      "1. 가장 좋은 설정은 h = 8 과 h = 16 의 25.8 이에요",
+      "2. h = 1 일 때는 24.9 예요",
+      "3. 25.8 - 24.9 = 0.9 예요",
+      "4. 그래서 single-head attention is 0.9 BLEU worse 라고 적었어요",
+      "5. 그런데 h = 32 도 25.4 로 떨어져요. 많다고 좋은 게 아니에요"
+     ],
+     "answer": "**헤드(Head)** 는 8이나 16 쯤이 좋아요. 계산량은 다섯 경우 모두 같게 맞췄어요."
+    },
+    {
+     "kind": "points",
+     "head": "(B) 가 남긴 논문의 추측",
+     "items": [
+      "논문: \"determining compatibility is not easy\"",
+      "논문: \"a more sophisticated compatibility function than **내적(Dot Product)** may be beneficial\"",
+      "곧 내적보다 더 정교한 점수 함수가 나을 수도 있다는 말이에요",
+      "may be 라고 적었으니 논문도 단정하지 않은 추측이에요"
+     ]
+    },
+    {
+     "kind": "bg",
+     "src": "기초 다지기 6단원 소프트맥스와 교차 엔트로피",
+     "lines": [
+      "**퍼플렉서티(Perplexity (PPL))** 는 교차 엔트로피에 exp 를 씌운 값이에요. 다음 토큰 후보가 평균 몇 개나 헷갈리는지예요.",
+      "Table 3 의 **퍼플렉서티(Perplexity (PPL))** 는 **워드피스(WordPiece)** 조각 단위로 잰 값이에요.",
+      "단어 단위로 잰 다른 논문의 수치와 나란히 놓고 비교하면 안 된다고 캡션이 못박았어요."
+     ]
+    },
+    {
+     "kind": "prof",
+     "when": "4주차 월요일 수업",
+     "lines": [
+      "교수님: 헤드를 여러 개 쓴다고 전체 차원을 키우는 게 아니에요.",
+      "교수님: 전체 차원을 h 로 나눠서 서로 다른 관점에서 보는 거예요.",
+      "교수님: 계산 수는 똑같아요."
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "헤드 수와 BLEU",
+     "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 480 280\"><text x=\"240\" y=\"22\" font-size=\"16\" text-anchor=\"middle\" class=\"tb\">헤드 수를 바꿨을 때 (Table 3 A)</text><text x=\"70\" y=\"52\" font-size=\"13\" text-anchor=\"middle\" class=\"tb b1\">h = 1</text><text x=\"160\" y=\"52\" font-size=\"13\" text-anchor=\"middle\" class=\"tb b1\">h = 4</text><text x=\"250\" y=\"52\" font-size=\"13\" text-anchor=\"middle\" class=\"tb b1\">h = 8</text><text x=\"340\" y=\"52\" font-size=\"13\" text-anchor=\"middle\" class=\"tb b1\">h = 16</text><text x=\"430\" y=\"52\" font-size=\"13\" text-anchor=\"middle\" class=\"tb b1\">h = 32</text><rect x=\"44\" y=\"150\" width=\"52\" height=\"40\" rx=\"2\" class=\"n4 b2\"/><rect x=\"134\" y=\"126\" width=\"52\" height=\"64\" rx=\"2\" class=\"n2 b2\"/><rect x=\"224\" y=\"116\" width=\"52\" height=\"74\" rx=\"2\" class=\"box b3\"/><rect x=\"314\" y=\"116\" width=\"52\" height=\"74\" rx=\"2\" class=\"box b3\"/><rect x=\"404\" y=\"128\" width=\"52\" height=\"62\" rx=\"2\" class=\"n2 b3\"/><text x=\"70\" y=\"208\" font-size=\"12\" text-anchor=\"middle\" class=\"t b3\">24.9</text><text x=\"160\" y=\"208\" font-size=\"12\" text-anchor=\"middle\" class=\"t b3\">25.5</text><text x=\"250\" y=\"208\" font-size=\"12\" text-anchor=\"middle\" class=\"t b3\">25.8</text><text x=\"340\" y=\"208\" font-size=\"12\" text-anchor=\"middle\" class=\"t b3\">25.8</text><text x=\"430\" y=\"208\" font-size=\"12\" text-anchor=\"middle\" class=\"t b3\">25.4</text><text x=\"240\" y=\"236\" font-size=\"13\" text-anchor=\"middle\" class=\"tb b4\">하나면 0.9 낮고, 너무 많아도 떨어져요</text><text x=\"240\" y=\"258\" font-size=\"12\" text-anchor=\"middle\" class=\"tm b4\">계산량은 다섯 경우 모두 같게 맞췄어요</text></svg>",
+     "caption": "하나도 나쁘고 너무 많아도 나빠요.",
+     "builds": 4
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "Table 3 (E) 가 보여 준 것은?",
+     "choices": [
+      "학습 위치 임베딩을 써도 결과가 거의 같다",
+      "사인 코사인이 훨씬 좋다",
+      "위치 인코딩이 필요 없다",
+      "두 방식을 같이 써야 한다"
+     ],
+     "a": 0,
+     "why": "4.92 와 25.7 로 base 와 거의 같아요. 논문은 nearly identical results 라고 적었어요."
+    },
+    {
+     "kind": "check",
+     "q": "Table 3 에서 드롭아웃을 0.0 으로 두면?",
+     "choices": [
+      "PPL 5.77, BLEU 24.6 으로 나빠진다",
+      "성능이 좋아진다",
+      "변화가 없다",
+      "파라미터가 줄어든다"
+     ],
+     "a": 0,
+     "why": "논문은 **드롭아웃(Dropout)** 이 **과적합(Over-fitting)** 을 막는 데 아주 도움이 된다고 적었어요."
+    },
+    {
+     "kind": "english",
+     "head": "시험 답안 문장",
+     "en": "Table 3 은 부품을 하나씩 바꾼 실험으로, 헤드가 하나면 0.9 BLEU 나빠지고 드롭아웃을 빼면 과적합으로 성능이 떨어지며, 위치 인코딩은 사인 코사인이든 학습이든 거의 같았다.",
+     "ko": "헤드, 드롭아웃, 위치 인코딩 세 가지 결론만 기억하면 돼요.",
+     "tip": "0.9 / 과적합 / 거의 같음. 세 낱말로 외워요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "흔히 ablation 이라고 부르는 실험이지만 논문은 Model Variations 라고만 적었어요.",
+      "(A) 는 계산량을 고정한 채 **헤드(Head)** 수만 바꾼 거예요. 모델을 키운 실험이 아니에요.",
+      "Table 3 의 **퍼플렉서티(Perplexity (PPL))** 는 **워드피스(WordPiece)** 단위라 다른 논문의 단어 단위 값과 비교하면 안 돼요.",
+      "Table 3 은 newstest2013 개발셋이고 Table 2 는 newstest2014 예요. 표가 서로 달라요.",
+      "(E) 결과를 보면 **사인 코사인 위치 인코딩(Sinusoidal Positional Encoding)** 이 성능 때문에 뽑힌 게 아니에요. 긴 문장 기대 때문이었어요."
+     ]
+    },
+    {
+     "kind": "exam",
+     "src": "예상 문제",
+     "q": "Table 3 의 (A) 행이 보여 주는 결론과, 그 실험이 공정한 비교인 이유를 쓰시오.",
+     "qko": "헤드 수 실험의 결론과 설계를 묻는 문제예요.",
+     "solve": [
+      "1. h = 1 은 BLEU 24.9, h = 8 은 25.8 이라 차이가 0.9 예요",
+      "2. h = 16 도 25.8 이지만 h = 32 는 25.4 로 다시 떨어져요",
+      "3. 결론은 헤드가 하나면 나쁘고 너무 많아도 나쁘다는 것이에요",
+      "4. d_k = d_v = d_model / h 로 맞춰서 계산량을 고정했기 때문에 공정해요",
+      "5. h = 1 일 때 d_k = 512, h = 32 일 때 d_k = 16 인 것이 그 증거예요"
+     ],
+     "answer": "헤드는 적당히 여러 개가 좋고, 차원을 나눠 계산량을 고정했기에 공정한 비교예요."
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,1204 @@
+# -*- coding: utf-8 -*-
+"""참고 논문 정리 슬라이드 (NP Attention Is All You Need) -> slides_wP.json
+숫자는 모두 아래에서 실제로 계산하고 assert 로 확인한다.
+근거: work/nlp/_src/NP.txt, work/nlp/_src/png/NP/pNNN.png, work/nlp/_src/N4.txt"""
+import json, math, pathlib
+
+W = pathlib.Path(__file__).resolve().parent
+
+
+# ---------------------------------------------------------------- 계산 검증
+def softmax(xs):
+    m = max(xs)
+    e = [math.exp(x - m) for x in xs]
+    s = sum(e)
+    return [v / s for v in e]
+
+
+# (1) 모델 크기 (NP p.3, p.5, p.9 Table 3)
+D_MODEL, H, D_FF, N_LAYER = 512, 8, 2048, 6
+D_K = D_MODEL // H
+assert D_K == 64 and D_FF == 4 * D_MODEL and math.sqrt(D_K) == 8.0
+assert round(math.sqrt(D_MODEL), 2) == 22.63
+
+# (2) 스케일드 닷프로덕트 손계산 (NP p.4 식 1)
+RAW = [16.0, 8.0, 0.0]
+SCALED = [r / math.sqrt(D_K) for r in RAW]
+P_SCALED = softmax(SCALED)
+P_RAW = softmax(RAW)
+assert SCALED == [2.0, 1.0, 0.0]
+assert [round(v, 4) for v in P_SCALED] == [0.6652, 0.2447, 0.0900]
+assert [round(v, 6) for v in P_RAW] == [0.999665, 0.000335, 0.0]
+WT = [0.6652, 0.2447, 0.0900]
+VMAT = [[1.0, 0.0], [0.0, 2.0], [2.0, 2.0]]
+CTX = [round(sum(WT[i] * VMAT[i][j] for i in range(3)), 4) for j in range(2)]
+assert CTX == [0.8452, 0.6694]
+
+# (3) 멀티 헤드와 FFN 파라미터 수 (논문이 직접 적지 않은 손계산)
+PER_HEAD_ONE = D_MODEL * D_K
+PER_HEAD_QKV = 3 * PER_HEAD_ONE
+ALL_HEADS = H * PER_HEAD_QKV
+W_O = (H * D_K) * D_MODEL
+MHA_P = ALL_HEADS + W_O
+FFN_P = D_MODEL * D_FF + D_FF * D_MODEL
+assert PER_HEAD_ONE == 32768 and PER_HEAD_QKV == 98304
+assert ALL_HEADS == 786432 == 3 * D_MODEL * D_MODEL
+assert W_O == 262144 and MHA_P == 1048576 == 4 * D_MODEL * D_MODEL
+assert FFN_P == 2097152 == 2 * D_MODEL * D_FF and FFN_P == 2 * MHA_P
+
+# (4) 하위층 세기 (NP p.3 3.1)
+ENC_SUB = N_LAYER * 2
+DEC_SUB = N_LAYER * 3
+assert ENC_SUB == 12 and DEC_SUB == 18 and ENC_SUB + DEC_SUB == 30
+
+# (5) Table 1 비용 비교, d = 512 (NP p.6)
+def cost_sa(n, d): return n * n * d
+def cost_rnn(n, d): return n * d * d
+assert cost_sa(100, 512) == 5120000 and cost_rnn(100, 512) == 26214400
+assert round(cost_rnn(100, 512) / cost_sa(100, 512), 2) == 5.12
+assert cost_sa(512, 512) == cost_rnn(512, 512) == 134217728
+assert cost_sa(1000, 512) == 512000000 and cost_rnn(1000, 512) == 262144000
+assert round(cost_sa(1000, 512) / cost_rnn(1000, 512), 2) == 1.95
+
+# (6) 위치 인코딩 장난감 값, d_model = 4 (NP p.6 3.5)
+def pe_row(pos, d=4):
+    out = []
+    for i in (0, 1):
+        out.append(math.sin(pos / 10000 ** (2 * i / d)))
+        out.append(math.cos(pos / 10000 ** (2 * i / d)))
+    return out
+assert [round(v, 4) for v in pe_row(0)] == [0.0, 1.0, 0.0, 1.0]
+assert [round(v, 4) for v in pe_row(1)] == [0.8415, 0.5403, 0.0100, 1.0]
+assert [round(v, 4) for v in pe_row(2)] == [0.9093, -0.4161, 0.0200, 0.9998]
+assert [round(v, 4) for v in pe_row(3)] == [0.1411, -0.9900, 0.0300, 0.9996]
+assert round(2 * math.pi, 4) == 6.2832 and round(10000 ** (510 / 512), 1) == 9646.6
+
+# (7) 학습률 식 (3) 와 워밍업 4000 (NP p.7)
+def lrate(step, d=512, warm=4000):
+    return d ** -0.5 * min(step ** -0.5, step * warm ** -1.5)
+assert round(D_MODEL ** -0.5, 6) == 0.044194
+assert round(4000 ** -0.5, 6) == 0.015811
+LR = {s: round(lrate(s), 6) for s in (1000, 2000, 4000, 8000, 16000, 100000)}
+assert LR == {1000: 0.000175, 2000: 0.000349, 4000: 0.000699,
+              8000: 0.000494, 16000: 0.000349, 100000: 0.00014}
+assert round(LR[16000] / LR[4000], 2) == 0.50
+
+# (8) 학습 시간과 FLOPs (NP p.7, p.8 각주 5)
+TFLOPS_P100 = 9.5e12
+BIG_FLOPS = 3.5 * 86400 * 8 * TFLOPS_P100
+BASE_FLOPS = 12 * 3600 * 8 * TFLOPS_P100
+assert round(BIG_FLOPS / 1e19, 2) == 2.30 and round(BASE_FLOPS / 1e18, 2) == 3.28
+assert round(100000 * 0.4 / 3600, 1) == 11.1 and round(300000 / 86400, 2) == 3.47
+GPU_HOURS_BIG = 3.5 * 24 * 8
+assert GPU_HOURS_BIG == 672.0
+
+# (9) 결과 차이 (NP p.8 Table 2, p.9 Table 3)
+assert round(28.4 - 26.36, 2) == 2.04
+assert round(25.8 - 24.9, 2) == 0.9
+assert round(27.3 - 26.36, 2) == 0.94
+
+# (10) 임베딩 파라미터 어림 (논문이 적지 않은 손계산)
+EMB_P = 37000 * D_MODEL
+ENC_LAYER_P = MHA_P + FFN_P
+DEC_LAYER_P = 2 * MHA_P + FFN_P
+TOTAL_P = EMB_P + N_LAYER * ENC_LAYER_P + N_LAYER * DEC_LAYER_P
+assert EMB_P == 18944000 and ENC_LAYER_P == 3145728 and DEC_LAYER_P == 4194304
+assert round(TOTAL_P / 1e6, 2) == 62.98
+
+
+# ---------------------------------------------------------------- 만들기 도우미
+def T(ko, en, say, more=""):
+    d = {"ko": ko, "en": en, "say": say}
+    if more:
+        d["more"] = more
+    return d
+
+
+def title(big, sub): return {"kind": "title", "big": big, "sub": sub}
+def goal(*items): return {"kind": "goal", "items": list(items)}
+def pts(head, *items): return {"kind": "points", "head": head, "items": list(items)}
+def ana(head, scene, pairs): return {"kind": "analogy", "head": head, "scene": scene, "map": [list(p) for p in pairs]}
+def fig(head, svg, caption, builds): return {"kind": "figure", "head": head, "svg": svg, "caption": caption, "builds": builds}
+def cmp_(head, cols, rows): return {"kind": "compare", "head": head, "cols": cols, "rows": rows}
+def check(q, choices, a, why): return {"kind": "check", "q": q, "choices": choices, "a": a, "why": why}
+def warn(head, *items): return {"kind": "warn", "head": head, "items": list(items)}
+def recap(*items): return {"kind": "recap", "items": list(items)}
+
+
+def eng(head, en, ko, tip=None):
+    d = {"kind": "english", "head": head, "en": en, "ko": ko}
+    if tip:
+        d["tip"] = tip
+    return d
+
+
+def steps(head, st, answer, given=None):
+    d = {"kind": "steps", "head": head, "steps": st, "answer": answer}
+    if given:
+        d["given"] = given
+    return d
+
+
+def form(head, tex, parts, whole):
+    return {"kind": "formula", "head": head, "tex": tex,
+            "parts": [{"sym": s, "say": t} for s, t in parts], "whole": whole}
+
+
+S0 = '<svg viewBox="0 0 480 270" xmlns="http://www.w3.org/2000/svg">'
+S3 = '<svg viewBox="0 0 480 300" xmlns="http://www.w3.org/2000/svg">'
+
+
+def box(cls, x, y, w, h):
+    return '<rect class="%s" x="%d" y="%d" width="%d" height="%d"/>' % (cls, x, y, w, h)
+
+
+def txt(cls, x, y, size, s, anchor="middle"):
+    return '<text class="%s" x="%d" y="%d" font-size="%d" text-anchor="%s">%s</text>' % (cls, x, y, size, anchor, s)
+
+
+def lab(cls, x, y, w, h, tcls, size, s):
+    return box(cls, x, y, w, h) + txt(tcls, x + w // 2, y + h // 2 + size // 3, size, s)
+
+
+def upar(cls, x, y1, y2):
+    """아래에서 위로 가는 화살표"""
+    return ('<line class="%s" x1="%d" y1="%d" x2="%d" y2="%d"/>' % (cls, x, y1, x, y2 + 6)
+            + '<polygon class="arrow %s" points="%d,%d %d,%d %d,%d"/>'
+            % (cls.split()[-1], x, y2, x - 5, y2 + 8, x + 5, y2 + 8))
+
+
+def rarr(cls, x1, x2, y):
+    """왼쪽에서 오른쪽으로 가는 화살표"""
+    return ('<line class="%s" x1="%d" y1="%d" x2="%d" y2="%d"/>' % (cls, x1, y, x2 - 6, y)
+            + '<polygon class="arrow %s" points="%d,%d %d,%d %d,%d"/>'
+            % (cls.split()[-1], x2, y, x2 - 8, y - 5, x2 - 8, y + 5))
+
+
+# ---------------------------------------------------------------- 그림
+SVG_CLAIM = (
+    S0
+    + txt("tb b1", 108, 40, 15, "2017년 이전의 최고 모델")
+    + lab("n b1", 28, 56, 160, 32, "tl", 13, "순환 신경망 RNN")
+    + lab("n b1", 28, 96, 160, 32, "tl", 13, "합성곱 신경망 CNN")
+    + lab("n3 b1", 28, 136, 160, 32, "tl", 13, "어텐션은 거들 뿐")
+    + txt("tm b1", 108, 192, 13, "세 부품이 얽혀 있어요")
+    + rarr("e2 b2", 196, 246, 112)
+    + txt("tb b3", 366, 40, 15, "이 논문의 Transformer")
+    + lab("n2 b3", 286, 96, 160, 32, "tl", 13, "어텐션 Attention")
+    + txt("tm b3", 366, 152, 13, "순환도 합성곱도 없어요")
+    + txt("tm b3", 366, 192, 13, "남은 부품은 하나예요")
+    + txt("t b4", 240, 240, 15, "부품을 줄였는데 점수는 올라갔어요")
+    + '</svg>')
+
+SVG_PARALLEL = (
+    S0
+    + txt("tm b1", 62, 44, 14, "순환 신경망")
+    + "".join(lab("n b1", 138 + 76 * i, 26, 58, 30, "tl", 13, str(i + 1)) for i in range(4))
+    + "".join(rarr("e b1", 196 + 76 * i, 214 + 76 * i, 41) for i in range(3))
+    + txt("tm b1", 240, 76, 13, "앞이 끝나야 뒤가 시작돼요. 순차 걸음 4번")
+    + txt("tm b2", 62, 136, 14, "셀프 어텐션")
+    + "".join(lab("n2 b2", 138 + 76 * i, 118, 58, 30, "tl", 13, str(i + 1)) for i in range(4))
+    + "".join('<line class="e2 b2" x1="%d" y1="152" x2="240" y2="166"/>' % (167 + 76 * i) for i in range(4))
+    + lab("n3 b2", 196, 166, 88, 22, "tl", 13, "한 번에")
+    + txt("tm b2", 240, 208, 13, "네 자리를 한 번에 계산해요. 순차 걸음 1번")
+    + txt("tb b3", 240, 238, 15, "1번과 4번 사이 거리: 순환은 3걸음, 어텐션은 1걸음")
+    + txt("tm b3", 240, 262, 13, "이것이 논문이 말한 병렬화와 짧은 경로예요")
+    + '</svg>')
+
+SVG_FIG1 = (
+    S3
+    + txt("tm b1", 114, 100, 14, "인코더 x 6")
+    + lab("n b1", 28, 246, 172, 28, "tl", 12, "입력 임베딩 + 위치 인코딩")
+    + lab("n2 b1", 28, 204, 172, 28, "tl", 12, "멀티 헤드 셀프 어텐션")
+    + lab("n3 b1", 28, 172, 172, 24, "tl", 12, "더하기 + 층 정규화")
+    + lab("n b1", 28, 136, 172, 28, "tl", 12, "위치별 FFN")
+    + lab("n3 b1", 28, 108, 172, 24, "tl", 12, "더하기 + 층 정규화")
+    + upar("e b1", 114, 246, 232) + upar("e b1", 114, 204, 196)
+    + upar("e b1", 114, 172, 164) + upar("e b1", 114, 136, 132)
+    + txt("tm b2", 366, 32, 14, "디코더 x 6")
+    + lab("n b2", 280, 246, 172, 28, "tl", 12, "출력 임베딩 (한 칸 밀기)")
+    + lab("n2 b2", 280, 204, 172, 28, "tl", 12, "마스크 셀프 어텐션")
+    + lab("n3 b2", 280, 172, 172, 24, "tl", 12, "더하기 + 층 정규화")
+    + lab("n4 b3", 280, 136, 172, 28, "tl", 12, "인코더 디코더 어텐션")
+    + lab("n3 b2", 280, 104, 172, 24, "tl", 12, "더하기 + 층 정규화")
+    + lab("n b2", 280, 68, 172, 28, "tl", 12, "위치별 FFN")
+    + lab("n3 b2", 280, 40, 172, 24, "tl", 12, "선형 + 소프트맥스")
+    + upar("e b2", 366, 246, 232) + upar("e b2", 366, 204, 196)
+    + upar("e b2", 366, 172, 164) + upar("e b3", 366, 136, 128)
+    + upar("e b2", 366, 104, 96) + upar("e b2", 366, 68, 64)
+    + '<line class="e2 b3" x1="200" y1="120" x2="240" y2="120"/>'
+    + '<line class="e2 b3" x1="240" y1="120" x2="240" y2="150"/>'
+    + rarr("e2 b3", 240, 280, 150)
+    + txt("tm b3", 240, 288, 13, "인코더 꼭대기가 디코더 가운데 하위층으로 들어가요")
+    + '</svg>')
+
+SVG_SDPA = (
+    S0
+    + txt("tm b1", 108, 258, 14, "Q")
+    + txt("tm b1", 168, 258, 14, "K")
+    + txt("tm b1", 330, 258, 14, "V")
+    + lab("n b1", 84, 208, 156, 30, "tl", 13, "MatMul (내적)")
+    + upar("e b1", 108, 244, 238) + upar("e b1", 168, 244, 238)
+    + lab("n2 b2", 84, 166, 156, 30, "tl", 13, "Scale (루트 dk 로 나누기)")
+    + upar("e b2", 162, 208, 196)
+    + lab("n4 b3", 84, 124, 156, 30, "tl", 13, "Mask (옵션)")
+    + upar("e b3", 162, 166, 154)
+    + lab("n3 b4", 84, 82, 156, 30, "tl", 13, "SoftMax")
+    + upar("e b4", 162, 124, 112)
+    + lab("n b4", 260, 82, 160, 30, "tl", 13, "MatMul (가중합)")
+    + upar("e b4", 330, 244, 112)
+    + '<line class="e2 b4" x1="240" y1="97" x2="260" y2="97"/>'
+    + upar("e2 b4", 340, 82, 46)
+    + txt("tb b4", 340, 38, 14, "출력")
+    + txt("tm b4", 130, 40, 13, "아래에서 위로 다섯 걸음")
+    + '</svg>')
+
+SVG_MHA = (
+    S0
+    + txt("tm b1", 90, 254, 14, "V")
+    + txt("tm b1", 200, 254, 14, "K")
+    + txt("tm b1", 310, 254, 14, "Q")
+    + lab("n b1", 46, 202, 88, 30, "tl", 12, "Linear")
+    + lab("n b1", 156, 202, 88, 30, "tl", 12, "Linear")
+    + lab("n b1", 266, 202, 88, 30, "tl", 12, "Linear")
+    + upar("e b1", 90, 240, 232) + upar("e b1", 200, 240, 232) + upar("e b1", 310, 240, 232)
+    + lab("n2 b2", 46, 146, 308, 32, "tl", 13, "스케일드 닷프로덕트 어텐션")
+    + upar("e b2", 90, 202, 178) + upar("e b2", 200, 202, 178) + upar("e b2", 310, 202, 178)
+    + txt("tb b2", 400, 166, 15, "x h = 8")
+    + lab("n3 b3", 120, 98, 160, 30, "tl", 13, "Concat")
+    + upar("e b3", 200, 146, 128)
+    + lab("n b4", 120, 54, 160, 30, "tl", 13, "Linear (W^O)")
+    + upar("e b4", 200, 98, 84)
+    + txt("tm b4", 200, 34, 13, "헤드 8개가 나란히 돌고 다시 하나로 합쳐요")
+    + '</svg>')
+
+SVG_THREE = (
+    S0
+    + '<rect class="box b1" x="12" y="40" width="148" height="128" rx="2"/>'
+    + txt("tb b1", 86, 66, 14, "1 인코더 셀프")
+    + txt("tm b1", 86, 92, 13, "Q, K, V 모두")
+    + txt("tm b1", 86, 114, 13, "인코더 앞 층에서")
+    + txt("tm b1", 86, 144, 13, "모든 자리를 다 봐요")
+    + '<rect class="box b2" x="166" y="40" width="148" height="128" rx="2"/>'
+    + txt("tb b2", 240, 66, 14, "2 디코더 셀프")
+    + txt("tm b2", 240, 92, 13, "Q, K, V 모두")
+    + txt("tm b2", 240, 114, 13, "디코더 앞 층에서")
+    + txt("tm b2", 240, 144, 13, "자기 자리까지만 봐요")
+    + '<rect class="box2 b3" x="320" y="40" width="148" height="128" rx="2"/>'
+    + txt("tb b3", 394, 66, 14, "3 인코더 디코더")
+    + txt("tm b3", 394, 92, 13, "Q 는 디코더에서")
+    + txt("tm b3", 394, 114, 13, "K, V 는 인코더에서")
+    + txt("tm b3", 394, 144, 13, "소스 전체를 봐요")
+    + txt("t b4", 240, 206, 15, "2번만 마스킹을 써요. 왼쪽으로 새는 정보를 막아요")
+    + txt("tm b4", 240, 236, 13, "논문 3.2.3 의 세 가지 쓰임이에요")
+    + '</svg>')
+
+SVG_FFN = (
+    S0
+    + txt("tm b1", 240, 36, 14, "자리 하나가 혼자 통과하는 두 겹 신경망")
+    + lab("n b1", 30, 110, 84, 50, "tl", 14, "512")
+    + rarr("e2 b1", 118, 172, 135)
+    + lab("n2 b2", 176, 70, 128, 130, "tl", 16, "2048")
+    + txt("tm b2", 240, 222, 13, "여기서 ReLU 로 음수를 0 으로 잘라요")
+    + rarr("e2 b3", 308, 362, 135)
+    + lab("n b3", 366, 110, 84, 50, "tl", 14, "512")
+    + txt("tb b3", 240, 250, 15, "512 -> 2048 -> 512, 파라미터 2,097,152 개")
+    + '</svg>')
+
+PE_VALS = [["0", "0.0000", "1.0000", "0.0000", "1.0000"],
+           ["1", "0.8415", "0.5403", "0.0100", "1.0000"],
+           ["2", "0.9093", "-0.4161", "0.0200", "0.9998"],
+           ["3", "0.1411", "-0.9900", "0.0300", "0.9996"]]
+SVG_PE = (
+    S0
+    + txt("tm b1", 240, 32, 14, "d_model = 4 로 줄인 장난감 예, pos 0 부터 3 까지")
+    + txt("tb b1", 50, 62, 13, "pos")
+    + txt("tb b1", 140, 62, 13, "sin 0")
+    + txt("tb b1", 230, 62, 13, "cos 0")
+    + txt("tb b1", 320, 62, 13, "sin 1")
+    + txt("tb b1", 410, 62, 13, "cos 1")
+    + "".join(
+        box("n2" if r == 0 else "n", 20, 76 + 42 * r, 60, 34)
+        + txt("tl", 50, 98 + 42 * r, 14, row[0])
+        for r, row in enumerate(PE_VALS))
+    + "".join(
+        txt("t" if c == 0 else "tm", 140 + 90 * c, 98 + 42 * r, 14, row[c + 1])
+        for r, row in enumerate(PE_VALS) for c in range(4))
+    + '<line class="e2 b2" x1="100" y1="88" x2="100" y2="240"/>'
+    + txt("tm b2", 240, 262, 13, "왼쪽 두 칸은 빨리 출렁이고 오른쪽 두 칸은 아주 천천히 움직여요")
+    + '</svg>')
+
+def bar_group(b, gy, label, w1, w2, s1, s2, cls1="n2"):
+    return (txt("tb b%d" % b, 50, gy + 26, 14, label)
+            + box("%s b%d" % (cls1, b), 104, gy, w1, 16)
+            + txt("t b%d" % b, 114 + w1, gy + 13, 13, s1, "start")
+            + box("n b%d" % b, 104, gy + 22, w2, 16)
+            + txt("tm b%d" % b, 114 + w2, gy + 35, 13, s2, "start"))
+
+
+SVG_TABLE1 = (
+    S0
+    + txt("tm b1", 240, 30, 14, "d = 512 일 때 한 층의 계산량. 한 묶음 안에서만 길이를 견주세요")
+    + bar_group(1, 56, "n = 100", 24, 123, "셀프 어텐션 512만", "순환 2621만, 어텐션이 5.12배 싸요")
+    + bar_group(2, 130, "n = 512", 80, 80, "둘 다 1억 3421만으로 같아요", "여기가 갈림길, n = d 예요")
+    + bar_group(3, 204, "n = 1000", 240, 123, "셀프 5억 1200만", "순환 2억 6214만, 1.95배 비싸요", "n4")
+    + '</svg>')
+
+LR_PTS = [(4000, 0.000699), (8000, 0.000494), (16000, 0.000349),
+          (32000, 0.000247), (60000, 0.000180), (100000, 0.000140)]
+SVG_LR = (
+    S0
+    + txt("tm b1", 240, 28, 14, "학습률이 4000 스텝까지 올라갔다가 천천히 내려와요")
+    + '<line class="e b1" x1="50" y1="220" x2="450" y2="220"/>'
+    + '<line class="e b1" x1="50" y1="220" x2="50" y2="52"/>'
+    + '<line class="e2 b2" x1="50" y1="220" x2="130" y2="70"/>'
+    + '<polyline class="e2 b3" points="%s"/>'
+    % " ".join("%d,%d" % (130 + (s - 4000) / 96000 * 300, 70 + (0.000699 - v) / 0.000699 * 150)
+               for s, v in LR_PTS)
+    + box("n2 b2", 124, 64, 12, 12)
+    + txt("tb b2", 150, 54, 14, "최고 0.000699")
+    + txt("tm b2", 62, 244, 13, "0 스텝")
+    + txt("tm b2", 178, 244, 13, "4000 (워밍업 끝)")
+    + txt("tm b3", 424, 244, 13, "10만 스텝")
+    + txt("tm b3", 400, 212, 13, "0.000140")
+    + txt("tm b3", 240, 122, 13, "스텝이 4배가 되면 학습률은 절반이 돼요")
+    + '</svg>')
+
+BLEU_BARS = [("GNMT", "RNN", 24.6, "n"), ("ConvS2S", "CNN", 25.16, "n"),
+             ("ConvS2S", "앙상블", 26.36, "n3"), ("base", "논문", 27.3, "n2"), ("big", "논문", 28.4, "n2")]
+SVG_BLEU = (
+    S0
+    + txt("tm b1", 240, 28, 14, "WMT 2014 영어에서 독일어, newstest2014 의 BLEU")
+    + '<line class="e b1" x1="30" y1="212" x2="460" y2="212"/>'
+    + "".join(
+        box("%s b%d" % (cls, 1 if i < 3 else 2), 44 + 84 * i, 212 - int((v - 22) * 22), 56, int((v - 22) * 22))
+        + txt("tb" if cls == "n2" else "t", 72 + 84 * i, 204 - int((v - 22) * 22), 14, str(v))
+        + txt("tm", 72 + 84 * i, 232, 13, a)
+        + txt("tm", 72 + 84 * i, 250, 12, b)
+        for i, (a, b, v, cls) in enumerate(BLEU_BARS))
+    + '<line class="e2 b3" x1="296" y1="72" x2="380" y2="72"/>'
+    + txt("tb b3", 338, 62, 14, "2.04 점 차")
+    + '</svg>')
+
+SVG_ATTN = (
+    S0
+    + txt("tm b1", 240, 32, 14, "Figure 3: 인코더 셀프 어텐션 6층 중 5층")
+    + txt("t b1", 60, 120, 15, "making")
+    + txt("tm b1", 150, 120, 14, "the")
+    + txt("tm b1", 210, 120, 14, "process")
+    + txt("tm b1", 300, 120, 14, "more")
+    + txt("tm b1", 380, 120, 14, "difficult")
+    + '<path class="e2 b2" d="M 62 104 Q 180 40 300 104"/>'
+    + '<path class="e2 b2" d="M 66 104 Q 230 28 382 104"/>'
+    + '<path class="e b3" d="M 58 134 Q 104 158 150 140"/>'
+    + '<path class="e b3" d="M 62 134 Q 136 164 210 140"/>'
+    + txt("tm b2", 240, 186, 13, "진한 호 두 개가 making 에서 more difficult 로 건너가요")
+    + txt("t b4", 240, 220, 15, "헤드마다 색이 다르고, 헤드마다 다른 짝을 봐요")
+    + txt("tm b4", 240, 248, 13, "논문은 색으로 헤드를 구분했어요 (Best viewed in color)")
+    + '</svg>')
+
+U = []
+
+# ---------------------------------------------------------------- wP-1
+t = [T("트랜스포머", "Transformer", "어텐션만으로 만든 이 논문의 새 모델 구조예요.",
+       "인코더와 디코더를 순환 없이 어텐션과 피드포워드만으로 쌓았어요."),
+     T("어텐션", "Attention", "쿼리가 키들과 얼마나 맞는지 점수를 내서 밸류를 가중합하는 방법이에요.",
+       "논문 제목 그대로 이 한 가지만 남기고 나머지를 걷어냈어요."),
+     T("시퀀스 변환", "Sequence Transduction", "줄줄이 늘어선 입력을 줄줄이 늘어선 출력으로 바꾸는 일이에요.",
+       "번역, 요약, 구문 분석이 모두 여기에 들어가요."),
+     T("순환 신경망", "Recurrent Neural Network (RNN)", "한 토큰씩 차례로 읽으며 기억을 고쳐 쓰는 신경망이에요."),
+     T("합성곱 신경망", "Convolutional Neural Network (CNN)", "가까운 몇 칸을 한 창으로 묶어 보는 신경망이에요."),
+     T("블루 점수", "BLEU", "사람 번역과 겹치는 조각을 세어 번역을 채점하는 자동 지표예요."),
+     T("기계 번역", "Machine Translation (MT)", "컴퓨터로 한 언어의 문장을 다른 언어로 옮기는 일이에요.")]
+U.append({"id": "wP-1", "title": "P-1 초록과 논문의 주장",
+          "goal": "이 논문이 무엇을 없애고 무엇을 남겼는지, 초록의 숫자가 무엇인지 말할 수 있어요.", "terms": t, "slides": [
+    title("논문 한 장 요약", "어텐션만 남기고 다 걷어냈어요"),
+    goal("**트랜스포머(Transformer)** 가 무엇을 없앴는지",
+         "초록이 내건 **블루 점수(BLEU)** 숫자 네 개",
+         "이 논문을 강의와 어떻게 이어 읽을지"),
+    pts("이 논문이 무엇인가요 (NP p.1)",
+        "제목은 Attention Is All You Need, 2017년 NIPS 학회 논문이에요",
+        "저자는 8명이고 각주에 'Equal contribution' 이라고 적혀 있어요",
+        "교수님이 4주차에 꼭 읽어 보라고 나눠 준 바로 그 논문이에요",
+        "시험 범위는 강의 슬라이드지만, 이 논문을 읽으면 강의가 훨씬 쉬워져요"),
+    ana("컨베이어를 걷어낸 공장", "물건을 한 줄로 차례차례 옮기던 컨베이어를 치우고, 작업자들이 서로 바로 손을 뻗어 주고받게 했어요.",
+        [("차례로 도는 컨베이어", "**순환 신경망(Recurrent Neural Network (RNN))**"),
+         ("옆칸 몇 개만 묶는 틀", "**합성곱 신경망(Convolutional Neural Network (CNN))**"),
+         ("서로 바로 손 뻗기", "**어텐션(Attention)**")]),
+    fig("초록의 주장 한 장", SVG_CLAIM,
+        "**순환 신경망(RNN)** 과 **합성곱 신경망(CNN)** 을 빼고 **어텐션(Attention)** 만 남겼어요", 4),
+    pts("초록이 말한 것 (NP p.1)",
+        "기존 **시퀀스 변환(Sequence Transduction)** 모델은 복잡한 순환 또는 합성곱 신경망이었어요",
+        "그중 잘 되는 것들은 **어텐션(Attention)** 으로 인코더와 디코더를 이어 줬어요",
+        "논문은 'a new simple network architecture' 라고, 단순하다는 점을 앞세웠어요",
+        "품질도 좋고 더 병렬적이며 학습 시간도 훨씬 적다고 주장했어요"),
+    eng("외워 쓸 한 줄",
+        "**트랜스포머(Transformer)** 는 순환과 합성곱을 완전히 걷어내고 오직 **어텐션(Attention)** 만으로 만든 모델이다.",
+        "원문은 'dispensing with recurrence and convolutions entirely' 예요.",
+        "'오직 어텐션, 순환과 합성곱은 완전히 제거' 로 외워요"),
+    pts("초록이 내건 숫자 (NP p.1)",
+        "WMT 2014 영어에서 독일어: **블루 점수(BLEU)** 28.4",
+        "앙상블까지 포함한 기존 최고보다 2 **블루 점수(BLEU)** 넘게 올렸다고 적었어요",
+        "WMT 2014 영어에서 프랑스어: 단일 모델 최고 41.8",
+        "GPU 8장으로 3.5일 학습했고, 이것이 기존 최고 모델 비용의 아주 일부라고 했어요"),
+    steps("손계산: 3.5일 동안 GPU 를 몇 시간 쓴 셈인가요",
+          ["하루는 24시간이니까 3.5일 = 3.5 x 24 = 84시간이에요",
+           "GPU 는 8장을 동시에 썼어요",
+           "그러니 GPU 시간은 84 x 8 = 672시간이에요",
+           "672시간은 한 장으로 돌리면 28일이 걸리는 양이에요"],
+          "GPU 672시간. 논문은 이 값을 적지 않았고 우리가 직접 센 것이에요.",
+          "3.5일, GPU 8장 (NP p.1, p.7)"),
+    cmp_("논문과 4주차 강의는 설명 순서가 달라요",
+         ["무엇", "논문 (NP)", "4주차 강의 (N4)"],
+         [["어텐션 설명 시작", "처음부터 쿼리, 키, 밸류로 설명해요", "p.19-23 은 디코더 상태 s 와 인코더 상태 h 로 먼저 설명해요"],
+          ["쿼리, 키, 밸류 등장", "3.2 에서 바로 나와요", "p.34 에 가서야 나와요"],
+          ["읽는 요령", "낯선 기호가 먼저 나와요", "강의 네 단계를 먼저 익히고 논문을 읽으면 쉬워요"]]),
+    warn("헷갈리기 쉬운 점",
+         "초록의 28.4 는 big 모델 점수예요. base 모델은 27.3 이에요.",
+         "'by over 2 BLEU' 는 앙상블까지 포함한 기존 최고와 비교한 값이에요.",
+         "**블루 점수(BLEU)** 차이 2.04 는 퍼센트가 아니라 점수 차예요."),
+    check("이 논문이 **트랜스포머(Transformer)** 에서 완전히 걷어냈다고 말한 두 가지는?",
+          ["순환과 합성곱", "어텐션과 소프트맥스", "인코더와 디코더", "임베딩과 소프트맥스"], 0,
+          "초록의 'dispensing with recurrence and convolutions entirely' 입니다. **어텐션(Attention)** 은 오히려 남긴 쪽이에요."),
+    check("**시퀀스 변환(Sequence Transduction)** 이라는 말의 뜻으로 맞는 것은?",
+          ["줄줄이 들어온 입력을 줄줄이 나가는 출력으로 바꾸는 일", "문장을 한 단어로 줄이는 일",
+           "**기계 번역(Machine Translation (MT))** 만 가리키는 말", "그림을 글로 바꾸는 일"], 0,
+          "**기계 번역(Machine Translation (MT))** 은 그중 한 가지예요. 논문은 구문 분석도 같은 틀로 풀었어요."),
+    recap("**트랜스포머(Transformer)** = **순환 신경망(RNN)** 과 **합성곱 신경망(CNN)** 을 빼고 **어텐션(Attention)** 만 남긴 구조",
+          "초록의 숫자: **블루 점수(BLEU)** 28.4 (영어에서 독일어), 41.8 (영어에서 프랑스어), GPU 8장 3.5일",
+          "GPU 시간 672는 우리가 직접 센 값이고 논문에는 없어요",
+          "논문은 쿼리, 키, 밸류로 바로 시작하고 강의는 s 와 h 로 먼저 시작해요",
+          "오늘의 용어: 트랜스포머(Transformer), 어텐션(Attention), 시퀀스 변환, 순환 신경망(RNN), 합성곱 신경망(CNN), BLEU, 기계 번역(MT)"),
+]})
+
+# ---------------------------------------------------------------- wP-2
+t = [T("병렬화", "Parallelization", "여러 계산을 한꺼번에 돌려 시간을 줄이는 것이에요."),
+     T("은닉 상태", "Hidden State", "순환 신경망이 지금까지 읽은 내용을 적어 두는 메모장 벡터예요."),
+     T("셀프 어텐션", "Self-Attention", "한 문장 안에서 토큰들이 서로를 보게 하는 어텐션이에요.",
+       "논문은 intra-attention 이라고도 부른다고 적었어요."),
+     T("자기회귀", "Autoregressive", "앞에서 만든 토큰을 다시 입력으로 넣어 다음 토큰을 만드는 방식이에요."),
+     T("순환 신경망", "Recurrent Neural Network (RNN)", "한 토큰씩 차례로 읽으며 기억을 고쳐 쓰는 신경망이에요."),
+     T("합성곱 신경망", "Convolutional Neural Network (CNN)", "가까운 몇 칸을 한 창으로 묶어 보는 신경망이에요."),
+     T("시퀀스 변환", "Sequence Transduction", "줄줄이 늘어선 입력을 줄줄이 늘어선 출력으로 바꾸는 일이에요.")]
+U.append({"id": "wP-2", "title": "P-2 1 Introduction 과 2 Background",
+          "goal": "논문이 순환과 합성곱의 무엇을 문제로 봤는지, 무엇을 새것이라 주장했는지 말할 수 있어요.", "terms": t, "slides": [
+    title("무엇이 불만이었나", "차례로만 계산하는 것, 그리고 먼 거리"),
+    goal("**순환 신경망(Recurrent Neural Network (RNN))** 의 무엇이 **병렬화(Parallelization)** 를 막는지",
+         "합성곱 계열이 먼 거리에서 왜 불리한지",
+         "논문이 스스로 '최초' 라고 주장한 대목이 무엇인지"),
+    pts("1 Introduction 의 출발점 (NP p.2)",
+        "**순환 신경망(Recurrent Neural Network (RNN))**, LSTM, GRU 가 그때까지 최고였다고 인정해요",
+        "순환 모델은 위치 t 의 **은닉 상태(Hidden State)** 를 앞 상태와 입력으로 만들어요",
+        "이 성질 때문에 한 예시 안에서 **병렬화(Parallelization)** 가 막힌다고 적었어요",
+        "문장이 길어질수록 더 아프고, 메모리 때문에 배치로 피하기도 어려워요"),
+    ana("줄 서서 귓속말 vs 한 방에서 마주보기", "스무 명이 줄을 서서 귓속말을 전하면 마지막 사람까지 열아홉 번을 기다려요. 같은 방에서 서로 마주보면 한 번에 끝나요.",
+        [("줄 서서 한 명씩", "**순환 신경망(Recurrent Neural Network (RNN))** 의 순차 계산"),
+         ("전달할수록 흐려짐", "먼 거리 의존을 배우기 어려움"),
+         ("한 방에서 마주보기", "**셀프 어텐션(Self-Attention)** 의 **병렬화(Parallelization)**")]),
+    fig("순차 4걸음 대 한 걸음", SVG_PARALLEL,
+        "**순환 신경망(RNN)** 은 앞이 끝나야 뒤가 시작되고, **셀프 어텐션(Self-Attention)** 은 한 번에 끝나요", 3),
+    steps("손계산: 1번 토큰과 n번 토큰 사이 걸음 수",
+          ["**순환 신경망(Recurrent Neural Network (RNN))** 은 한 칸씩만 건너요",
+           "길이 10 문장이면 1번에서 10번까지 9걸음이에요",
+           "길이 100 이면 99걸음, 길이 1000 이면 999걸음이에요",
+           "**셀프 어텐션(Self-Attention)** 은 어느 두 자리든 한 층에서 바로 만나요",
+           "그래서 길이가 얼마든 1걸음이에요"],
+          "순환은 길이에 비례해서 늘고, 셀프 어텐션은 길이와 상관없이 1이에요.",
+          "논문 4장 Table 1 의 Maximum Path Length 를 미리 손으로 세어 본 것이에요"),
+    pts("2 Background 가 비교한 이웃들 (NP p.2)",
+        "Extended Neural GPU, ByteNet, ConvS2S 는 **합성곱 신경망(Convolutional Neural Network (CNN))** 을 쌓아 병렬을 얻었어요",
+        "두 자리를 잇는 연산 수가 ConvS2S 는 거리에 비례해서, ByteNet 은 로그로 늘어요",
+        "그래서 먼 자리 사이 관계를 배우기가 더 어렵다고 적었어요",
+        "**트랜스포머(Transformer)** 는 이것을 '상수 번' 으로 줄였다고 주장해요"),
+    warn("논문이 스스로 인정한 손해",
+         "상수 번으로 줄이는 대신 'reduced effective resolution' 이 생긴다고 적었어요.",
+         "가중 평균을 내다 보니 해상도가 떨어진다는 뜻이에요.",
+         "이 손해를 멀티 헤드로 상쇄한다고 곧바로 예고했어요 (3.2 로 연결)."),
+    pts("**셀프 어텐션(Self-Attention)** 이라는 말 (NP p.2)",
+        "논문은 'sometimes called intra-attention' 이라고 다른 이름도 알려 줘요",
+        "한 문장 안의 서로 다른 자리를 이어 그 문장의 표현을 만드는 어텐션이에요",
+        "독해, 요약, 함의 판단 같은 과제에서 이미 성공적이었다고 소개해요",
+        "즉 **셀프 어텐션(Self-Attention)** 자체가 이 논문의 발명은 아니에요"),
+    eng("외워 쓸 한 줄",
+        "새로움은 **셀프 어텐션(Self-Attention)** 의 발명이 아니라, 그것만으로 **시퀀스 변환(Sequence Transduction)** 을 해낸 첫 모델이라는 점이다.",
+        "원문은 'the first transduction model relying entirely on self-attention' 이에요.",
+        "'최초는 셀프 어텐션이 아니라 셀프 어텐션만 쓴 것' 으로 외워요"),
+    pts("3 Model Architecture 첫 문단 (NP p.2)",
+        "경쟁력 있는 **시퀀스 변환(Sequence Transduction)** 모델은 대개 인코더 디코더 구조라고 적어요",
+        "인코더는 입력 기호 (x1, ..., xn) 를 연속 표현 z = (z1, ..., zn) 으로 옮겨요",
+        "디코더는 z 를 받아 출력 (y1, ..., ym) 을 한 번에 하나씩 만들어요",
+        "매 걸음 앞에서 만든 기호를 다시 입력으로 먹어요. 이것이 **자기회귀(Autoregressive)** 예요",
+        "입력 길이 n 과 출력 길이 m 이 달라도 된다는 점을 기호가 보여 줘요"),
+    check("논문이 **순환 신경망(Recurrent Neural Network (RNN))** 의 가장 근본적인 제약이라고 말한 것은?",
+          ["차례로만 계산해야 해서 **병렬화(Parallelization)** 가 막히는 것", "파라미터가 너무 많은 것",
+           "**은닉 상태(Hidden State)** 가 없는 것", "학습 데이터가 모자란 것"], 0,
+          "논문은 'The fundamental constraint of sequential computation, however, remains' 라고 적었어요."),
+    check("**자기회귀(Autoregressive)** 의 뜻으로 맞는 것은?",
+          ["앞에서 만든 출력을 다시 입력으로 넣어 다음을 만드는 것", "입력을 거꾸로 읽는 것",
+           "학습을 두 번 하는 것", "**은닉 상태(Hidden State)** 를 0으로 두는 것"], 0,
+          "논문은 'consuming the previously generated symbols as additional input' 이라고 풀어 적었어요."),
+    recap("**순환 신경망(Recurrent Neural Network (RNN))** 의 문제: 순차 계산이라 **병렬화(Parallelization)** 가 막혀요",
+          "**합성곱 신경망(Convolutional Neural Network (CNN))** 의 문제: 두 자리를 잇는 연산 수가 거리와 함께 늘어요",
+          "**셀프 어텐션(Self-Attention)** 은 이미 있던 기법, 새로운 것은 그것만으로 만든 것",
+          "**시퀀스 변환(Sequence Transduction)** 의 디코더는 **자기회귀(Autoregressive)**, 앞의 출력을 다시 먹어요",
+          "오늘의 용어: 병렬화, 은닉 상태(Hidden State), 셀프 어텐션, 자기회귀, 순환 신경망(RNN), 합성곱 신경망(CNN), 시퀀스 변환"),
+]})
+
+# ---------------------------------------------------------------- wP-3
+t = [T("인코더", "Encoder", "입력 문장을 읽어 자리마다 벡터를 만드는 쪽이에요."),
+     T("디코더", "Decoder", "인코더가 만든 것을 보고 출력 문장을 한 토큰씩 쓰는 쪽이에요."),
+     T("하위층", "Sub-layer", "한 층 안에 들어 있는 더 작은 층 한 덩어리예요."),
+     T("잔차 연결", "Residual Connection", "하위층의 입력을 출력에 그대로 더해 주는 지름길이에요."),
+     T("층 정규화", "Layer Normalization (LayerNorm)", "한 토큰의 벡터를 평균 0, 분산 1로 맞추는 것이에요."),
+     T("멀티 헤드 어텐션", "Multi-Head Attention (MHA)", "어텐션을 h 갈래로 나눠 동시에 돌리는 것이에요."),
+     T("위치별 피드포워드 신경망", "Position-wise Feed-Forward Network (FFN)", "자리마다 따로 통과시키는 두 겹 신경망이에요."),
+     T("인과 마스킹", "Causal Masking", "뒤쪽 자리를 못 보게 소프트맥스 앞에서 막는 것이에요.")]
+U.append({"id": "wP-3", "title": "P-3 3.1 인코더와 디코더 스택",
+          "goal": "Figure 1 의 상자들을 논문 용어로 하나씩 이름 붙이고, 하위층 개수를 셀 수 있어요.", "terms": t, "slides": [
+    title("그림 한 장의 해부", "Figure 1 상자마다 이름 붙이기"),
+    goal("**인코더(Encoder)** 층과 **디코더(Decoder)** 층의 **하위층(Sub-layer)** 구성",
+         "**잔차 연결(Residual Connection)** 과 **층 정규화(Layer Normalization (LayerNorm))** 의 순서",
+         "논문이 못박은 N = 6 과 d_model = 512"),
+    pts("3.1 이 못박은 숫자 (NP p.3)",
+        "**인코더(Encoder)** 는 똑같은 층 N = 6 개를 쌓아요",
+        "**디코더(Decoder)** 도 똑같은 층 N = 6 개를 쌓아요",
+        "모든 **하위층(Sub-layer)** 과 임베딩 층의 출력 차원은 d_model = 512 예요",
+        "차원을 통일한 까닭은 **잔차 연결(Residual Connection)** 에서 그냥 더하기 위해서예요"),
+    ana("원고를 고치는 편집자", "편집자는 원고를 새로 쓰지 않아요. 원본 위에 고칠 부분만 덧써서 돌려줘요. 그래서 원본이 사라지지 않아요.",
+        [("원본을 그대로 둠", "**잔차 연결(Residual Connection)**"),
+         ("고칠 부분만 덧쓰기", "**하위층(Sub-layer)** 이 배우는 변화량"),
+         ("글씨 크기를 맞춰 정리", "**층 정규화(Layer Normalization (LayerNorm))**")]),
+    fig("Figure 1 을 우리 말로 (NP p.3)", SVG_FIG1,
+        "왼쪽이 **인코더(Encoder)**, 오른쪽이 **디코더(Decoder)**, 가운데 화살표가 인코더 디코더 어텐션이에요", 3),
+    pts("**인코더(Encoder)** 한 층의 **하위층(Sub-layer)** 둘 (NP p.3)",
+        "첫째는 **멀티 헤드 어텐션(Multi-Head Attention (MHA))** 을 쓰는 셀프 어텐션이에요",
+        "둘째는 **위치별 피드포워드 신경망(Position-wise Feed-Forward Network (FFN))** 이에요",
+        "둘 다 둘레에 **잔차 연결(Residual Connection)** 을 두르고 뒤에 **층 정규화(Layer Normalization (LayerNorm))** 를 붙여요"),
+    form("하위층 하나를 감싸는 식 (NP p.3)",
+         r"\mathrm{LayerNorm}\left(x + \mathrm{Sublayer}(x)\right)",
+         [(r"x", "이 **하위층(Sub-layer)** 에 들어온 입력이에요"),
+          (r"\mathrm{Sublayer}(x)", "어텐션이나 FFN 이 계산한 결과예요"),
+          (r"x + \mathrm{Sublayer}(x)", "입력을 그대로 더하는 **잔차 연결(Residual Connection)** 이에요"),
+          (r"\mathrm{LayerNorm}", "더한 다음에 **층 정규화(Layer Normalization (LayerNorm))** 를 해요")],
+         "더하기가 먼저, 정규화가 나중이에요. 순서를 바꾸면 논문과 다른 모델이 돼요."),
+    pts("**디코더(Decoder)** 한 층의 **하위층(Sub-layer)** 셋 (NP p.3)",
+        "인코더의 둘에 더해 세 번째 **하위층(Sub-layer)** 이 끼어들어요",
+        "그것은 인코더 스택 출력에 대고 하는 **멀티 헤드 어텐션(Multi-Head Attention (MHA))** 이에요",
+        "그리고 디코더의 셀프 어텐션은 뒤쪽 자리를 보지 못하게 고쳤어요",
+        "이것이 **인과 마스킹(Causal Masking)** 이에요"),
+    steps("손계산: **하위층(Sub-layer)** 은 모두 몇 개인가요",
+          ["**인코더(Encoder)** 는 한 층에 2개, 층이 6개예요",
+           "6 x 2 = 12개예요",
+           "**디코더(Decoder)** 는 한 층에 3개, 층이 6개예요",
+           "6 x 3 = 18개예요",
+           "12 + 18 = 30개예요",
+           "**하위층(Sub-layer)** 마다 **층 정규화(Layer Normalization (LayerNorm))** 가 하나씩이니 그것도 30개예요"],
+          "**하위층(Sub-layer)** 30개, **층 정규화(LayerNorm)** 30개예요.",
+          "논문은 이 합계를 적지 않았어요. N = 6 에서 우리가 직접 센 값이에요."),
+    eng("외워 쓸 한 줄",
+        "**인코더(Encoder)** 층은 **하위층(Sub-layer)** 두 개, **디코더(Decoder)** 층은 인코더 출력을 보는 어텐션이 더해져 세 개다.",
+        "원문은 'the decoder inserts a third sub-layer, which performs multi-head attention' 이에요.",
+        "'인코더 2개, 디코더 3개' 라고 숫자로 외워요"),
+    cmp_("논문과 4주차 강의가 다른 두 곳",
+         ["무엇", "논문 (NP p.3)", "4주차 강의 (N4)"],
+         [["층 수 N", "N = 6 으로 못박아요", "p.44 는 'Stack it N times' 라고만 하고 값을 안 정해요"],
+          ["정규화 자리", "더한 뒤에 정규화해요 (Post-LN)", "p.51 은 Pre-LN 과 비교하고 요즘 LLM 은 Pre-LN 이라고 해요"],
+          ["시험에 쓸 답", "이 논문 문제면 N = 6, Post-LN", "강의 문제면 Pre-LN 이 요즘 방식이라는 점까지"]]),
+    warn("헷갈리기 쉬운 점",
+         "Pre-LN 은 이 논문에 없어요. 논문은 오직 LayerNorm(x + Sublayer(x)) 만 적었어요.",
+         "**인과 마스킹(Causal Masking)** 은 디코더의 첫 **하위층(Sub-layer)** 에만 걸려요.",
+         "'출력 임베딩을 한 칸 민다(offset by one position)' 와 마스킹은 짝으로 함께 작동해요."),
+    check("**디코더(Decoder)** 한 층에 **하위층(Sub-layer)** 이 몇 개인가요?",
+          ["3개", "2개", "4개", "6개"], 0,
+          "마스크 셀프 어텐션, 인코더 출력을 보는 **멀티 헤드 어텐션(MHA)**, **위치별 피드포워드 신경망(FFN)** 이에요."),
+    check("논문이 쓴 순서로 맞는 것은?",
+          ["더하기 먼저, **층 정규화(Layer Normalization (LayerNorm))** 나중", "정규화 먼저, 더하기 나중",
+           "정규화만 하고 더하지 않음", "더하기만 하고 정규화하지 않음"], 0,
+          "LayerNorm(x + Sublayer(x)) 이니 더하기가 괄호 안, 정규화가 바깥이에요."),
+    recap("N = 6, d_model = 512, 모든 **하위층(Sub-layer)** 출력 차원이 같아요",
+          "**인코더(Encoder)** 층 = 셀프 어텐션 + **위치별 피드포워드 신경망(FFN)**",
+          "**디코더(Decoder)** 층 = 마스크 셀프 어텐션 + 인코더 디코더 어텐션 + FFN",
+          "감싸는 식은 LayerNorm(x + Sublayer(x)), **잔차 연결(Residual Connection)** 이 안쪽이에요",
+          "**하위층(Sub-layer)** 은 다 세면 30개 (우리가 센 값)",
+          "오늘의 용어: 인코더, 디코더, 하위층(Sub-layer), 잔차 연결, 층 정규화(LayerNorm), 멀티 헤드 어텐션(MHA), FFN, 인과 마스킹"),
+]})
+
+# ---------------------------------------------------------------- wP-4
+t = [T("스케일드 닷프로덕트 어텐션", "Scaled Dot-Product Attention", "내적으로 점수를 내고 루트 dk 로 나눈 뒤 소프트맥스하는 어텐션이에요."),
+     T("쿼리", "Query", "지금 자리가 무엇을 찾는지 적은 벡터예요."),
+     T("키", "Key", "각 자리가 무엇을 내걸고 있는지 적은 벡터예요."),
+     T("밸류", "Value", "고르면 실제로 건네줄 내용이 담긴 벡터예요."),
+     T("호환성 함수", "Compatibility Function", "쿼리와 키가 얼마나 어울리는지 점수로 매기는 함수예요."),
+     T("가산 어텐션", "Additive Attention", "작은 신경망으로 점수를 매기는 옛날 어텐션 방식이에요."),
+     T("닷프로덕트 어텐션", "Dot-Product Attention", "쿼리와 키를 그냥 내적해서 점수를 매기는 방식이에요."),
+     T("가중합", "Weighted Sum", "각 값에 가중치를 곱해 모두 더하는 것이에요.")]
+U.append({"id": "wP-4", "title": "P-4 3.2.1 스케일드 닷프로덕트 어텐션",
+          "goal": "식 1 을 기호마다 읽고, 루트 dk 로 나누는 까닭을 숫자로 보일 수 있어요.", "terms": t, "slides": [
+    title("식 1 을 뜯어보기", "내적, 나누기, 소프트맥스, 가중합"),
+    goal("논문이 정의한 어텐션 함수의 입력과 출력",
+         "**가산 어텐션(Additive Attention)** 과 **닷프로덕트 어텐션(Dot-Product Attention)** 의 차이",
+         "루트 dk 로 나누면 무엇이 달라지는지 숫자로"),
+    pts("3.2 어텐션의 정의 (NP p.3-4)",
+        "어텐션은 **쿼리(Query)** 하나와 **키(Key)** **밸류(Value)** 쌍 묶음을 출력 하나로 옮기는 함수예요",
+        "쿼리, 키, 밸류, 출력이 모두 벡터라고 못박아요",
+        "출력은 **밸류(Value)** 들의 **가중합(Weighted Sum)** 이에요",
+        "각 **밸류(Value)** 의 가중치는 **쿼리(Query)** 와 그 **키(Key)** 의 **호환성 함수(Compatibility Function)** 로 정해요"),
+    ana("도서관의 물렁한 검색", "책장마다 겉에 주제 이름표가 붙어 있어요. 내 질문과 이름표가 얼마나 맞는지 점수를 매기고, 점수만큼씩 여러 책의 내용을 섞어서 받아요.",
+        [("내 질문", "**쿼리(Query)**"),
+         ("책장 겉 이름표", "**키(Key)**"),
+         ("책 속 내용", "**밸류(Value)**"),
+         ("점수만큼 섞어 받기", "**가중합(Weighted Sum)**")]),
+    fig("Figure 2 왼쪽을 우리 말로 (NP p.4)", SVG_SDPA,
+        "**스케일드 닷프로덕트 어텐션(Scaled Dot-Product Attention)** 은 아래에서 위로 다섯 상자예요", 4),
+    form("식 1 (NP p.4)",
+         r"\mathrm{Attention}(Q, K, V) = \mathrm{softmax}\!\left(\frac{QK^{T}}{\sqrt{d_k}}\right)V",
+         [(r"Q", "**쿼리(Query)** 를 행으로 쌓은 행렬, 모양은 n x dk 예요"),
+          (r"K^{T}", "**키(Key)** 행렬을 눕힌 것, 모양은 dk x n 이에요"),
+          (r"QK^{T}", "모든 쿼리와 모든 키의 **내적(Dot Product)** 점수, 모양은 n x n 이에요"),
+          (r"\sqrt{d_k}", "키 차원의 제곱근으로 나눠요. dk = 64 면 8 이에요"),
+          (r"\mathrm{softmax}", "행마다 합이 1인 가중치로 바꿔요"),
+          (r"V", "가중치로 **밸류(Value)** 를 섞어요. 결과 모양은 n x dv 예요")],
+         "점수 내고, 나누고, 확률로 바꾸고, 섞어요. 이것이 **스케일드 닷프로덕트 어텐션(Scaled Dot-Product Attention)** 이에요."),
+    steps("손계산 1: 루트 dk 로 나눠 보기",
+          ["헤드 하나의 dk = 64 예요. 루트 64 = 8 이에요",
+           "**쿼리(Query)** 와 **키(Key)** 세 개의 **내적(Dot Product)** 원점수가 [16, 8, 0] 이라고 해요",
+           "8로 나누면 [2, 1, 0] 이 돼요",
+           "여기에 소프트맥스를 하면 [0.6652, 0.2447, 0.0900] 이에요",
+           "합은 1이고, 2등과 3등도 살아 있어요"],
+          "나눈 뒤 가중치 [0.6652, 0.2447, 0.0900].",
+          "dk = 64, 원점수 [16, 8, 0]"),
+    steps("손계산 2: 나누지 않으면 어떻게 되나요",
+          ["같은 원점수 [16, 8, 0] 을 그대로 소프트맥스해요",
+           "결과는 [0.999665, 0.000335, 0.000000] 이에요",
+           "거의 원-핫이 돼서 1등만 남고 나머지는 사라져요",
+           "논문은 이때 소프트맥스의 **기울기(Gradient)** 가 극도로 작아진다고 했어요",
+           "각주 4: q 와 k 의 성분이 평균 0, 분산 1이면 내적의 분산은 dk 가 돼요"],
+          "나누지 않으면 [0.999665, 0.000335, 0.000000], 학습이 멈춰요.",
+          "같은 원점수 [16, 8, 0], 이번에는 나누지 않음"),
+    steps("손계산 3: **가중합(Weighted Sum)** 까지 가 보기",
+          ["가중치는 [0.6652, 0.2447, 0.0900] 이에요",
+           "**밸류(Value)** 가 세 줄 [1, 0], [0, 2], [2, 2] 라고 해요",
+           "첫 칸: 0.6652 x 1 + 0.2447 x 0 + 0.0900 x 2 = 0.8452",
+           "둘째 칸: 0.6652 x 0 + 0.2447 x 2 + 0.0900 x 2 = 0.6694"],
+          "출력 벡터는 [0.8452, 0.6694] 예요.",
+          "반올림한 가중치로 계산한 값이에요"),
+    eng("외워 쓸 한 줄",
+        "어텐션 출력은 **밸류(Value)** 들의 **가중합(Weighted Sum)** 이고, 그 가중치는 **호환성 함수(Compatibility Function)** 로 정한다.",
+        "원문은 'The output is computed as a weighted sum of the values' 예요.",
+        "'출력은 밸류의 가중합, 가중치는 호환성 함수' 로 외워요"),
+    cmp_("**가산 어텐션(Additive Attention)** 과 **닷프로덕트 어텐션(Dot-Product Attention)** (NP p.4)",
+         ["무엇", "가산 어텐션", "닷프로덕트 어텐션"],
+         [["점수 내는 법", "은닉층 하나짜리 신경망으로", "그냥 **내적(Dot Product)**"],
+          ["이론 복잡도", "비슷해요", "비슷해요"],
+          ["실제 속도", "느려요", "훨씬 빠르고 메모리도 적어요"],
+          ["dk 가 클 때", "나누지 않은 닷프로덕트보다 좋아요", "나누어 주면 다시 이겨요"]]),
+    cmp_("어텐션은 몇 단계인가요",
+         ["무엇", "논문 (NP p.3-4)", "4주차 강의 (N4 p.21-24)"],
+         [["단계 수", "세 단계로 적어요", "네 단계로 가르쳐요"],
+          ["단계 이름", "호환성 함수, 가중치, 가중합", "점수, 소프트맥스, 가중합, 예측"],
+          ["차이의 이유", "어텐션 함수 자체만 정의해요", "예측까지 포함해 번역 흐름으로 설명해요"]]),
+    warn("헷갈리기 쉬운 점",
+         "논문의 dk = 64 는 헤드 하나의 차원이에요. 강의 p.38 의 예는 dk = 512 를 썼어요.",
+         "논문 기준이면 512 는 d_model 이고 헤드 하나의 dk 는 64 예요. 숫자만 보고 헷갈리지 마세요.",
+         "'We suspect' 라고 적었으니, 큰 내적이 소프트맥스를 포화시킨다는 것은 논문의 추측이에요."),
+    check("루트 dk 로 나누지 않으면 무슨 일이 생기나요?",
+          ["소프트맥스가 거의 원-핫이 되어 **기울기(Gradient)** 가 작아져요", "출력 차원이 바뀌어요",
+           "**밸류(Value)** 가 사라져요", "합이 1이 되지 않아요"], 0,
+          "[16, 8, 0] 을 그대로 넣으면 [0.999665, 0.000335, 0.000000] 이 돼요. 논문은 이것을 추측이라고 적었어요."),
+    check("**호환성 함수(Compatibility Function)** 가 하는 일은?",
+          ["**쿼리(Query)** 와 **키(Key)** 가 얼마나 맞는지 점수를 내는 것", "**밸류(Value)** 를 만드는 것",
+           "출력 차원을 바꾸는 것", "소프트맥스를 대신하는 것"], 0,
+          "논문은 가중치가 '**컴퍼터빌리티** 함수' 로 계산된다고 정의했어요. 여기서는 그것이 **내적(Dot Product)** 이에요."),
+    recap("어텐션 = **쿼리(Query)** 와 **키(Key)** 로 점수, 소프트맥스, **밸류(Value)** 의 **가중합(Weighted Sum)**",
+          "식 1: softmax(QK^T / 루트 dk) V, 모양은 n x dk, dk x n, n x n, n x dv",
+          "dk = 64 면 루트는 8. [16, 8, 0] -> [2, 1, 0] -> [0.6652, 0.2447, 0.0900]",
+          "나누지 않으면 [0.999665, 0.000335, 0.000000] 으로 거의 원-핫이에요",
+          "**가산 어텐션(Additive Attention)** 은 신경망으로, **닷프로덕트 어텐션(Dot-Product Attention)** 은 내적으로 점수를 내요",
+          "오늘의 용어: 스케일드 닷프로덕트 어텐션, 쿼리, 키, 밸류, 호환성 함수, 가산 어텐션, 닷프로덕트 어텐션, 가중합"),
+]})
+
+# ---------------------------------------------------------------- wP-5
+t = [T("멀티 헤드 어텐션", "Multi-Head Attention (MHA)", "어텐션을 h 갈래로 나눠 동시에 돌리고 다시 합치는 것이에요."),
+     T("헤드", "Head", "따로 도는 어텐션 한 갈래예요. 논문은 h = 8 을 썼어요."),
+     T("표현 부분공간", "Representation Subspace", "전체 차원을 조각내어 만든 작은 관점 하나예요."),
+     T("크로스 어텐션", "Cross-Attention", "쿼리는 디코더에서, 키와 밸류는 인코더에서 오는 어텐션이에요.",
+       "논문은 이것을 encoder-decoder attention 이라고 불러요."),
+     T("셀프 어텐션", "Self-Attention", "쿼리, 키, 밸류가 모두 같은 곳에서 오는 어텐션이에요."),
+     T("인과 마스킹", "Causal Masking", "뒤쪽 자리를 못 보게 소프트맥스 앞에서 막는 것이에요."),
+     T("파라미터", "Parameter", "학습으로 값이 정해지는 숫자예요."),
+     T("쿼리", "Query", "지금 자리가 무엇을 찾는지 적은 벡터예요.")]
+U.append({"id": "wP-5", "title": "P-5 3.2.2 멀티 헤드와 3.2.3 세 가지 쓰임",
+          "goal": "h = 8 로 나누는 방법과 까닭, 그리고 어텐션이 모델 안에서 쓰이는 세 자리를 말할 수 있어요.", "terms": t, "slides": [
+    title("여덟 갈래로 나눠 보기", "그리고 어텐션이 놓인 세 자리"),
+    goal("**멀티 헤드 어텐션(Multi-Head Attention (MHA))** 이 차원을 어떻게 쪼개는지",
+         "왜 **헤드(Head)** 를 늘려도 계산이 안 늘어나는지",
+         "**셀프 어텐션(Self-Attention)** 과 **크로스 어텐션(Cross-Attention)** 이 놓인 자리"),
+    pts("3.2.2 가 말한 방법 (NP p.4-5)",
+        "d_model 차원 그대로 한 번 하지 않고, 학습되는 선형 사영으로 h 번 내려 보내요",
+        "**쿼리(Query)** 와 키는 dk 차원, 밸류는 dv 차원으로 낮춰요",
+        "낮춘 것들에 대해 어텐션을 나란히 돌리고, 결과를 이어 붙인 뒤 다시 한 번 사영해요",
+        "논문 설정은 h = 8, dk = dv = d_model / h = 64 예요"),
+    ana("심사위원 여덟 명", "한 작품을 한 사람이 보면 평균 하나뿐이에요. 여덟 명이 각자 다른 기준으로 보고 의견을 모으면 여러 면이 한꺼번에 잡혀요.",
+        [("심사위원 한 명", "**헤드(Head)** 하나"),
+         ("각자 다른 기준", "**표현 부분공간(Representation Subspace)**"),
+         ("의견을 모아 정리", "이어 붙인 뒤의 마지막 선형 사영")]),
+    fig("Figure 2 오른쪽을 우리 말로 (NP p.4)", SVG_MHA,
+        "**멀티 헤드 어텐션(Multi-Head Attention (MHA))** 은 Linear 셋, 어텐션 h 개, Concat, Linear 하나예요", 4),
+    steps("손계산: 차원을 어떻게 나누나요",
+          ["d_model = 512, **헤드(Head)** 수 h = 8 이에요",
+           "512 / 8 = 64 이므로 dk = dv = 64 예요",
+           "**헤드(Head)** 하나가 64차원에서 일해요",
+           "루트 dk = 루트 64 = 8 이므로 나누는 값도 8 이에요",
+           "이어 붙이면 8 x 64 = 512 로 다시 d_model 이 돼요"],
+          "**헤드(Head)** 하나는 64차원, 여덟을 이으면 다시 512차원이에요.",
+          "d_model = 512, h = 8 (NP p.5)"),
+    steps("손계산: **파라미터(Parameter)** 는 몇 개인가요",
+          ["**헤드(Head)** 하나의 W^Q 는 512 x 64 = 32,768개예요",
+           "한 헤드에 Q, K, V 셋이니 3 x 32,768 = 98,304개예요",
+           "헤드 8개면 8 x 98,304 = 786,432개 = 3 x 512 x 512 예요",
+           "마지막 W^O 는 (8 x 64) x 512 = 512 x 512 = 262,144개예요",
+           "다 더하면 786,432 + 262,144 = 1,048,576개 = 4 x 512 x 512 예요"],
+          "**멀티 헤드 어텐션(MHA)** 하위층 하나는 약 1.05M **파라미터(Parameter)** 예요.",
+          "논문은 이 합계를 적지 않았어요. 우리가 직접 센 값이에요."),
+    pts("왜 **헤드(Head)** 를 늘려도 비싸지지 않나요 (NP p.5)",
+        "헤드 수를 늘린 만큼 헤드 하나의 차원을 줄이기 때문이에요",
+        "논문 문장: 'Due to the reduced dimension of each head, the total computational cost is similar'",
+        "같은 계산으로 여덟 관점을 얻으니 공짜에 가까워요",
+        "교수님도 '전체 차원을 키우는 게 아니라 h 로 나눈다' 고 강조했어요"),
+    eng("외워 쓸 한 줄",
+        "**멀티 헤드 어텐션(MHA)** 은 서로 다른 **표현 부분공간(Representation Subspace)** 의 정보를 서로 다른 자리에서 동시에 보게 해 준다.",
+        "원문은 'jointly attend to information from different representation subspaces at different positions' 이에요.",
+        "'다른 부분공간, 다른 자리, 동시에' 세 조각으로 외워요"),
+    pts("**헤드(Head)** 가 하나면 왜 아쉬운가요 (NP p.5)",
+        "논문 문장은 딱 한 줄이에요: 'With a single attention head, averaging inhibits this'",
+        "가중 평균을 한 번만 내면 여러 관점이 서로 뭉개진다는 뜻이에요",
+        "2 Background 에서 예고한 'reduced effective resolution' 을 여기서 되받는 대목이에요"),
+    fig("3.2.3 어텐션이 놓인 세 자리 (NP p.5)", SVG_THREE,
+        "**셀프 어텐션(Self-Attention)** 둘과 **크로스 어텐션(Cross-Attention)** 하나예요", 4),
+    cmp_("세 가지 쓰임을 표로 (NP p.5)",
+         ["쓰임", "**쿼리(Query)** 출처", "키와 밸류 출처"],
+         [["인코더 셀프 어텐션", "인코더 앞 층", "인코더 앞 층"],
+          ["디코더 셀프 어텐션", "디코더 앞 층", "디코더 앞 층 (자기 자리까지만)"],
+          ["인코더 디코더 어텐션", "디코더 앞 층", "인코더 스택의 출력"]]),
+    pts("**인과 마스킹(Causal Masking)** 을 어떻게 넣나요 (NP p.5)",
+        "논문은 왼쪽으로 정보가 새는 것을 막아 **자기회귀(Autoregressive)** 성질을 지킨다고 적었어요",
+        "방법은 소프트맥스 입력에서 잘못된 연결을 마이너스 무한으로 두는 것이에요",
+        "그래서 Figure 2 왼쪽에 Mask (opt.) 상자가 있는 것이에요",
+        "**인과 마스킹(Causal Masking)** 은 디코더 셀프 어텐션에만 걸려요"),
+    warn("논문 밖 이야기와 강의의 차이",
+         "강의 p.46-48 은 **헤드(Head)** 가 실제로 무엇을 배우는지 BERT 연구까지 소개해요. 그 연구는 논문 밖이에요.",
+         "논문이 댄 이유는 '다른 부분공간을 동시에 본다' 한 가지뿐이에요.",
+         "논문 안에서 헤드의 실제 행동은 13쪽부터의 그림으로만 보여 줘요."),
+    check("d_model = 512, h = 8 일 때 **헤드(Head)** 하나의 dk 는?",
+          ["64", "512", "8", "128"], 0,
+          "512 / 8 = 64 예요. 루트 64 = 8 이라서 나누는 값도 8 이에요."),
+    check("**크로스 어텐션(Cross-Attention)** 에서 키와 밸류는 어디서 오나요?",
+          ["인코더 스택의 출력", "디코더 앞 층", "임베딩 층", "소프트맥스 뒤"], 0,
+          "**쿼리(Query)** 만 디코더에서 오고 키와 밸류는 인코더에서 와요. 논문은 encoder-decoder attention 이라고 불러요."),
+    recap("**멀티 헤드 어텐션(Multi-Head Attention (MHA))**: 512를 8로 나눠 64차원 **헤드(Head)** 8개",
+          "이유는 서로 다른 **표현 부분공간(Representation Subspace)** 을 동시에 보기 위해서예요",
+          "**파라미터(Parameter)** 는 4 x 512 x 512 = 1,048,576개 (우리가 센 값)",
+          "쓰임 셋: 인코더 **셀프 어텐션(Self-Attention)**, 디코더 셀프 어텐션, **크로스 어텐션(Cross-Attention)**",
+          "디코더 셀프 어텐션만 **인과 마스킹(Causal Masking)** 으로 마이너스 무한을 넣어요",
+          "오늘의 용어: 멀티 헤드 어텐션(MHA), 헤드(Head), 표현 부분공간, 크로스 어텐션, 셀프 어텐션, 인과 마스킹, 파라미터, 쿼리"),
+]})
+
+# ---------------------------------------------------------------- wP-6
+t = [T("위치별 피드포워드 신경망", "Position-wise Feed-Forward Network (FFN)", "자리마다 따로 통과시키는 두 겹 신경망이에요."),
+     T("렐루", "ReLU", "음수를 0으로 자르고 양수는 그대로 두는 활성화 함수예요."),
+     T("임베딩", "Embedding", "토큰을 숫자 벡터로 바꾼 것이에요."),
+     T("위치 인코딩", "Positional Encoding", "몇 번째 자리인지를 알려 주려고 더해 주는 벡터예요."),
+     T("사인 코사인 위치 인코딩", "Sinusoidal Positional Encoding", "사인과 코사인 물결로 만든 위치 인코딩이에요."),
+     T("토큰", "Token", "글을 자른 조각 하나예요."),
+     T("파라미터", "Parameter", "학습으로 값이 정해지는 숫자예요.")]
+U.append({"id": "wP-6", "title": "P-6 3.3 FFN, 3.4 임베딩, 3.5 위치 인코딩",
+          "goal": "FFN 식과 크기, 임베딩 공유, 사인 코사인 위치 인코딩 값을 직접 계산할 수 있어요.", "terms": t, "slides": [
+    title("나머지 세 부품", "FFN, 임베딩, 위치 인코딩"),
+    goal("**위치별 피드포워드 신경망(FFN)** 의 식과 2048이라는 크기",
+         "**임베딩(Embedding)** 행렬을 세 군데에서 공유한다는 것",
+         "**사인 코사인 위치 인코딩(Sinusoidal Positional Encoding)** 값을 손으로 내기"),
+    pts("3.3 **위치별 피드포워드 신경망(FFN)** (NP p.5)",
+        "인코더와 디코더의 모든 층에 어텐션 말고 이 부품이 하나씩 더 있어요",
+        "자리마다 따로, 그러나 똑같은 식으로 통과시켜요. 그래서 position-wise 예요",
+        "선형 변환 두 번 사이에 **렐루(ReLU)** 가 하나 끼어 있어요",
+        "논문은 이것을 'two convolutions with kernel size 1' 로 볼 수도 있다고 적었어요"),
+    form("식 2 (NP p.5)",
+         r"\mathrm{FFN}(x) = \max(0,\; xW_1 + b_1)\,W_2 + b_2",
+         [(r"x", "한 자리의 벡터 하나예요. 길이는 512 예요"),
+          (r"xW_1 + b_1", "512에서 2048로 넓히는 첫 선형 변환이에요"),
+          (r"\max(0, \cdot)", "음수를 0으로 자르는 **렐루(ReLU)** 예요"),
+          (r"W_2", "2048에서 다시 512로 좁히는 둘째 선형 변환이에요"),
+          (r"b_1, b_2", "편향 항이에요. 각각 2048개와 512개예요")],
+         "넓혔다 좁히는 두 겹이에요. 자리끼리 섞는 일은 여기서 전혀 하지 않아요."),
+    ana("모래시계 모양 작업대", "좁은 입구로 들어온 반죽을 넓은 판에 펼쳐 손질한 다음, 다시 좁은 틀에 담아 내보내요. 옆 작업대와는 이야기하지 않아요.",
+        [("넓은 판", "가운데 2048차원"),
+         ("좁은 입구와 출구", "d_model = 512"),
+         ("옆과 이야기 안 함", "자리마다 따로 도는 **위치별 피드포워드 신경망(FFN)**")]),
+    fig("512 에서 2048 로, 다시 512 로", SVG_FFN,
+        "**위치별 피드포워드 신경망(FFN)** 의 가운데가 네 배로 넓어요", 3),
+    steps("손계산: **위치별 피드포워드 신경망(FFN)** **파라미터(Parameter)** 수",
+          ["d_model = 512, d_ff = 2048 이에요. 2048 = 4 x 512 예요",
+           "W1 은 512 x 2048 = 1,048,576개예요",
+           "W2 는 2048 x 512 = 1,048,576개예요",
+           "합은 2,097,152개예요",
+           "앞 단원에서 센 멀티 헤드의 1,048,576개와 견주면 딱 2배예요"],
+          "FFN 하위층 하나가 약 2.10M, 어텐션 하위층의 2배예요.",
+          "논문은 이 합계를 적지 않았어요. 우리가 직접 센 값이에요."),
+    pts("3.4 **임베딩(Embedding)** 과 소프트맥스 (NP p.5)",
+        "입력 **토큰(Token)** 과 출력 **토큰(Token)** 을 d_model 차원 벡터로 바꿔요",
+        "디코더 출력은 선형 변환과 소프트맥스를 거쳐 다음 **토큰(Token)** 확률이 돼요",
+        "논문은 두 **임베딩(Embedding)** 층과 소프트맥스 앞 선형 변환이 같은 행렬을 쓴다고 적었어요",
+        "그리고 **임베딩(Embedding)** 층에서는 그 가중치에 루트 d_model 을 곱해요",
+        "루트 512 = 22.63 이에요. 이 숫자는 논문에 없고 우리가 계산한 값이에요",
+        "왜 곱하는지 논문은 설명하지 않고 그냥 곱한다고만 적었어요"),
+    pts("3.5 왜 **위치 인코딩(Positional Encoding)** 이 필요한가요 (NP p.6)",
+        "모델에 순환도 합성곱도 없어서 순서를 알 방법이 없어요",
+        "그래서 자리에 대한 정보를 입력에 직접 넣어 주어야 해요",
+        "**위치 인코딩(Positional Encoding)** 을 인코더와 디코더 스택 맨 아래에서 **임베딩(Embedding)** 에 더해요",
+        "차원이 d_model 로 같아서 그냥 더할 수 있어요"),
+    form("사인 코사인 식 (NP p.6)",
+         r"PE_{(pos,\,2i)} = \sin\!\left(\frac{pos}{10000^{2i/d_{model}}}\right),\quad PE_{(pos,\,2i+1)} = \cos\!\left(\frac{pos}{10000^{2i/d_{model}}}\right)",
+         [(r"pos", "몇 번째 자리인지예요. 0, 1, 2, ... 로 세요"),
+          (r"i", "벡터 안의 몇 번째 짝인지예요"),
+          (r"2i", "짝수 칸에는 사인을 넣어요"),
+          (r"2i+1", "홀수 칸에는 코사인을 넣어요"),
+          (r"10000^{2i/d_{model}}", "칸이 뒤로 갈수록 커져서 물결이 느려져요")],
+         "칸마다 빠르기가 다른 물결이에요. 이것이 **사인 코사인 위치 인코딩(Sinusoidal Positional Encoding)** 이에요."),
+    steps("손계산: d_model = 4 짜리 장난감 **위치 인코딩(Positional Encoding)**",
+          ["i = 0 이면 10000^0 = 1 이라 그냥 sin(pos), cos(pos) 예요",
+           "i = 1 이면 10000^(2/4) = 100 이라 sin(pos/100), cos(pos/100) 이에요",
+           "pos = 0: [0.0000, 1.0000, 0.0000, 1.0000]",
+           "pos = 1: [0.8415, 0.5403, 0.0100, 1.0000]",
+           "pos = 2: [0.9093, -0.4161, 0.0200, 0.9998]",
+           "pos = 3: [0.1411, -0.9900, 0.0300, 0.9996]"],
+          "앞 두 칸은 빨리 출렁이고 뒤 두 칸은 거의 안 움직여요.",
+          "d_model = 4, i 는 0 과 1"),
+    fig("장난감 위치 인코딩 표", SVG_PE,
+        "같은 **토큰(Token)** 이라도 자리가 다르면 더해지는 숫자가 달라져요", 2),
+    pts("논문이 추측이라고 적은 대목 (NP p.6)",
+        "'we hypothesized it would allow the model to easily learn to attend by relative positions'",
+        "임의의 간격 k 에 대해 PE(pos+k) 가 PE(pos) 의 선형 함수로 표현된다는 것이 근거예요",
+        "학습하는 위치 임베딩과 비교했더니 결과가 거의 같았다고 Table 3 (E) 를 가리켜요",
+        "그래도 사인 코사인을 고른 까닭은 'it may allow ... to extrapolate' 라는 기대 때문이에요"),
+    cmp_("논문과 4주차 강의가 다른 세 곳",
+         ["무엇", "논문 (NP p.5-6)", "4주차 강의 (N4)"],
+         [["d_ff", "d_ff = 2048 이라고 값을 못박아요", "p.42 는 'd_ff is usually 4d' 라고 비율로 말해요"],
+          ["**위치 인코딩(Positional Encoding)** 종류", "사인 코사인과 학습 임베딩 둘만 비교해요", "p.41 은 RoPE 까지 소개해요. RoPE 는 논문에 없어요"],
+          ["순서 문제의 이름", "이름을 붙이지 않아요", "p.39 는 순열 등변성, 배리어 3개라고 불러요"]]),
+    warn("헷갈리기 쉬운 점",
+         "512 x 4 = 2048 이니 논문과 강의가 값은 같아요. 표현 방식만 달라요.",
+         "논문은 파장이 '2 pi 부터 10000 x 2 pi 까지' 라고 어림해 적었어요. 실제 마지막 짝은 약 9646.6 x 2 pi 예요.",
+         "**위치 인코딩(Positional Encoding)** 은 맨 아래에서 한 번만 더해요. 층마다 더하지 않아요."),
+    check("**위치별 피드포워드 신경망(FFN)** 이 하지 않는 일은?",
+          ["자리들끼리 정보를 섞는 일", "**렐루(ReLU)** 로 음수를 자르는 일",
+           "512를 2048로 넓히는 일", "다시 512로 좁히는 일"], 0,
+          "섞는 일은 어텐션이 해요. FFN 은 자리마다 혼자 통과해요."),
+    check("**사인 코사인 위치 인코딩(Sinusoidal Positional Encoding)** 에서 pos = 1, i = 0 인 짝의 값은?",
+          ["0.8415 와 0.5403", "0.0100 과 1.0000", "0.0000 과 1.0000", "0.9093 과 -0.4161"], 0,
+          "i = 0 이면 나누는 값이 1이라 sin(1) = 0.8415, cos(1) = 0.5403 이에요."),
+    recap("**위치별 피드포워드 신경망(FFN)**: 512 -> 2048 -> 512, 가운데에 **렐루(ReLU)**, **파라미터(Parameter)** 2,097,152개",
+          "**임베딩(Embedding)** 행렬은 입력, 출력, 소프트맥스 앞 선형까지 세 군데가 공유하고 루트 512 를 곱해요",
+          "**위치 인코딩(Positional Encoding)** 은 맨 아래에서 **토큰(Token)** 벡터에 한 번 더해요",
+          "장난감 값: pos 1 은 [0.8415, 0.5403, 0.0100, 1.0000]",
+          "논문은 사인 코사인을 고른 까닭을 'hypothesized', 'may allow' 라고 추측으로 적었어요",
+          "오늘의 용어: FFN, 렐루(ReLU), 임베딩, 위치 인코딩, 사인 코사인 위치 인코딩, 토큰, 파라미터"),
+]})
+
+# ---------------------------------------------------------------- wP-7
+t = [T("최대 경로 길이", "Maximum Path Length", "두 자리 사이에 신호가 지나가야 하는 가장 먼 걸음 수예요."),
+     T("순차 연산 수", "Sequential Operations", "줄을 서서 차례로 해야만 하는 계산의 개수예요."),
+     T("제한된 셀프 어텐션", "Restricted Self-Attention", "가까운 이웃 r 칸만 보게 제한한 셀프 어텐션이에요."),
+     T("이차 비용", "Quadratic Cost", "길이 n 의 제곱에 비례해서 커지는 비용이에요."),
+     T("해석 가능성", "Interpretability", "모델이 왜 그렇게 했는지 사람이 들여다볼 수 있는 정도예요."),
+     T("셀프 어텐션", "Self-Attention", "한 문장 안에서 토큰들이 서로를 보게 하는 어텐션이에요."),
+     T("합성곱 신경망", "Convolutional Neural Network (CNN)", "가까운 몇 칸을 한 창으로 묶어 보는 신경망이에요."),
+     T("병렬화", "Parallelization", "여러 계산을 한꺼번에 돌려 시간을 줄이는 것이에요.")]
+U.append({"id": "wP-7", "title": "P-7 4 Why Self-Attention 과 Table 1",
+          "goal": "Table 1 네 줄을 읽고, n 과 d 중 무엇이 크냐에 따라 누가 싼지 계산할 수 있어요.", "terms": t, "slides": [
+    title("표 한 장의 근거", "층 종류별 값 세 가지"),
+    goal("논문이 든 세 가지 잣대가 무엇인지",
+         "Table 1 네 줄을 읽고 뜻을 말하기",
+         "n 과 d 를 넣어 **셀프 어텐션(Self-Attention)** 과 순환 중 누가 싼지 계산하기"),
+    pts("4장이 내건 세 가지 잣대 (NP p.6)",
+        "하나, 한 층의 전체 계산 복잡도예요",
+        "둘, 얼마나 **병렬화(Parallelization)** 할 수 있는지를 **순차 연산 수(Sequential Operations)** 로 재요",
+        "셋, 먼 자리 사이를 잇는 **최대 경로 길이(Maximum Path Length)** 예요",
+        "논문은 경로가 짧을수록 먼 관계를 배우기 쉽다고 적었어요"),
+    ana("회의실과 전화 돌리기", "스무 명이 전화를 한 사람씩 돌리면 끝까지 스무 번이에요. 한 회의실에 모이면 아무나 바로 말을 걸 수 있어 한 번이에요.",
+        [("전화 돌리기 횟수", "**최대 경로 길이(Maximum Path Length)**"),
+         ("한 명씩 기다림", "**순차 연산 수(Sequential Operations)**"),
+         ("회의실에서 한 번에", "**셀프 어텐션(Self-Attention)** 의 **병렬화(Parallelization)**"),
+         ("회의실이 커질수록 시끄러움", "**이차 비용(Quadratic Cost)**")]),
+    cmp_("Table 1 그대로 (NP p.6)",
+         ["층 종류", "한 층 복잡도", "**순차 연산 수(Sequential Operations)**", "**최대 경로 길이(Maximum Path Length)**"],
+         [["Self-Attention", "O(n^2 . d)", "O(1)", "O(1)"],
+          ["Recurrent", "O(n . d^2)", "O(n)", "O(n)"],
+          ["Convolutional", "O(k . n . d^2)", "O(1)", "O(log_k(n))"],
+          ["Self-Attention (restricted)", "O(r . n . d)", "O(1)", "O(n/r)"]]),
+    pts("표를 읽는 법",
+        "n 은 문장 길이, d 는 표현 차원이에요. k 는 **합성곱 신경망(Convolutional Neural Network (CNN))** 의 창 크기예요",
+        "r 은 **제한된 셀프 어텐션(Restricted Self-Attention)** 에서 볼 이웃의 크기예요",
+        "O( ) 는 상수를 버리고 커지는 꼴만 본다는 뜻이에요",
+        "**셀프 어텐션(Self-Attention)** 만 세 칸 중 두 칸이 O(1) 이에요"),
+    steps("손계산: d = 512 일 때 누가 싼가요",
+          ["**셀프 어텐션(Self-Attention)** 은 n x n x d, 순환은 n x d x d 예요",
+           "n = 100: 100 x 100 x 512 = 5,120,000 대 100 x 512 x 512 = 26,214,400",
+           "26,214,400 / 5,120,000 = 5.12 이므로 셀프 어텐션이 5.12배 싸요",
+           "n = 512: 둘 다 134,217,728 로 똑같아요. 여기가 갈림길이에요",
+           "n = 1000: 512,000,000 대 262,144,000 이에요",
+           "512,000,000 / 262,144,000 = 1.95 이므로 이번엔 셀프 어텐션이 1.95배 비싸요"],
+          "n 이 d 보다 작으면 셀프 어텐션이 싸고, 크면 비싸요. 갈림길은 n = d 예요.",
+          "d = 512 로 고정, n 을 100, 512, 1000 으로 바꿔 봐요"),
+    fig("길이에 따라 뒤집히는 비용", SVG_TABLE1,
+        "n = 512 에서 **셀프 어텐션(Self-Attention)** 과 순환의 비용이 같아져요", 3),
+    eng("외워 쓸 한 줄",
+        "**셀프 어텐션(Self-Attention)** 층은 문장 길이 n 이 표현 차원 d 보다 작을 때 순환 층보다 빠르다.",
+        "원문은 'self-attention layers are faster than recurrent layers when n is smaller than d' 예요.",
+        "'n < d 면 어텐션이 빠르다' 로 외워요"),
+    pts("논문이 든 현실 근거 (NP p.7)",
+        "word-piece 나 byte-pair 로 자르면 문장 표현의 n 이 보통 d 보다 작다고 했어요",
+        "그래서 실제 번역 상황에서는 **셀프 어텐션(Self-Attention)** 이 유리하다는 주장이에요",
+        "아주 긴 입력을 위해서는 이웃 r 칸만 보는 **제한된 셀프 어텐션(Restricted Self-Attention)** 을 제안했어요",
+        "다만 'We plan to investigate this approach further in future work' 라고, 해 보지는 않았다고 적었어요"),
+    pts("합성곱과의 비교 (NP p.7)",
+        "창 크기 k 가 n 보다 작으면 **합성곱 신경망(Convolutional Neural Network (CNN))** 한 층으로는 모든 짝을 못 이어요",
+        "이으려면 층을 O(n/k) 개, 늘린 합성곱이면 O(log_k(n)) 개 쌓아야 해요",
+        "**합성곱 신경망(CNN)** 층은 보통 순환 층보다 k 배 비싸다고 적었어요",
+        "분리 합성곱은 O(k . n . d + n . d^2) 으로 훨씬 싸진다고 덧붙였어요"),
+    pts("덤으로 얻은 **해석 가능성(Interpretability)** (NP p.7)",
+        "논문은 'As side benefit, self-attention could yield more interpretable models' 라고 적었어요",
+        "'could' 라고 썼으니 단정이 아니라 조심스러운 말이에요",
+        "어텐션 분포를 들여다보니 헤드마다 다른 일을 하더라고 했어요",
+        "많은 헤드가 문장의 문법 구조, 뜻 구조와 이어진 행동을 보였다고 했어요"),
+    cmp_("**이차 비용(Quadratic Cost)** 을 다루는 무게가 달라요",
+         ["무엇", "논문 (NP p.6-7)", "4주차 강의 (N4 p.55)"],
+         [["다루는 자리", "장점을 설명하는 표의 한 칸이에요", "'The Price' 라는 제목으로 크게 다뤄요"],
+          ["강조점", "n 이 d 보다 작으면 오히려 싸다고 해요", "n = 128,000 이면 가장 큰 공학 문제라고 해요"],
+          ["해결책", "**제한된 셀프 어텐션(Restricted Self-Attention)** 만 제안해요", "FlashAttention 등을 들어요. 이들은 논문 밖이에요"]]),
+    warn("헷갈리기 쉬운 점",
+         "O( ) 는 상수를 무시한 어림이에요. 5.12배 같은 숫자는 우리가 O 안의 식만으로 계산한 값이에요.",
+         "**셀프 어텐션(Self-Attention)** 이 언제나 싼 것이 아니에요. n 이 커지면 뒤집혀요.",
+         "**제한된 셀프 어텐션(Restricted Self-Attention)** 은 논문이 실제로 실험하지 않은 제안이에요."),
+    check("Table 1 에서 **순차 연산 수(Sequential Operations)** 가 O(n) 인 층은?",
+          ["Recurrent", "Self-Attention", "Convolutional", "Self-Attention (restricted)"], 0,
+          "나머지 셋은 모두 O(1) 이에요. 그래서 **병렬화(Parallelization)** 가 됩니다."),
+    check("d = 512 이고 n = 1000 이면?",
+          ["순환이 더 싸요", "**셀프 어텐션(Self-Attention)** 이 더 싸요", "둘이 같아요", "둘 다 계산할 수 없어요"], 0,
+          "n 이 d 보다 커서 뒤집혀요. 512,000,000 대 262,144,000 으로 약 1.95배 차이예요."),
+    recap("잣대 셋: 층 복잡도, **순차 연산 수(Sequential Operations)**, **최대 경로 길이(Maximum Path Length)**",
+          "**셀프 어텐션(Self-Attention)** 은 O(n^2 . d), O(1), O(1) 이에요",
+          "n < d 면 셀프 어텐션이 싸고, n = d 가 갈림길, n > d 면 비싸요",
+          "**제한된 셀프 어텐션(Restricted Self-Attention)** 은 경로가 O(n/r) 로 늘어나는 대신 싸져요",
+          "**해석 가능성(Interpretability)** 은 논문이 'could' 라고 조심스럽게 적은 덤이에요",
+          "오늘의 용어: 최대 경로 길이, 순차 연산 수, 제한된 셀프 어텐션, 이차 비용, 해석 가능성, 셀프 어텐션, 합성곱 신경망(CNN), 병렬화"),
+]})
+
+# ---------------------------------------------------------------- wP-8
+t = [T("아담", "Adam", "요즘 가장 많이 쓰는 학습 방법 중 하나예요."),
+     T("워밍업", "Warmup", "학습 초반에 학습률을 0에서부터 천천히 올리는 구간이에요."),
+     T("학습률", "Learning Rate", "한 번에 얼마나 크게 고칠지 정하는 보폭이에요."),
+     T("드롭아웃", "Dropout", "학습할 때 일부 값을 무작위로 꺼서 과적합을 막는 방법이에요."),
+     T("라벨 스무딩", "Label Smoothing", "정답을 100%로 두지 않고 살짝 흐리게 만들어 학습하는 방법이에요."),
+     T("바이트 쌍 인코딩", "Byte Pair Encoding (BPE)", "자주 붙어 다니는 두 조각을 한 조각으로 합쳐 어휘를 만드는 방법이에요."),
+     T("워드피스", "WordPiece", "서브워드로 자르는 또 다른 방법이에요."),
+     T("부동소수점 연산량", "FLOPs", "학습에 들어간 계산의 총량을 재는 단위예요."),
+     T("퍼플렉서티", "Perplexity (PPL)", "다음 토큰을 고를 때 헷갈리는 후보가 평균 몇 개인지예요.")]
+U.append({"id": "wP-8", "title": "P-8 5 Training 설정",
+          "goal": "데이터, 하드웨어, 옵티마이저, 정칙화 숫자를 말하고 학습률 곡선을 손으로 그릴 수 있어요.", "terms": t, "slides": [
+    title("어떻게 학습했나", "데이터, GPU, 학습률, 정칙화"),
+    goal("WMT 2014 두 데이터의 크기와 **바이트 쌍 인코딩(Byte Pair Encoding (BPE))** 어휘 크기",
+         "**워밍업(Warmup)** 4000 이 **학습률(Learning Rate)** 곡선을 어떻게 만드는지",
+         "**드롭아웃(Dropout)** 과 **라벨 스무딩(Label Smoothing)** 의 값과 효과"),
+    pts("5.1 데이터와 배치 (NP p.7)",
+        "영어에서 독일어: WMT 2014, 문장 쌍 약 450만이에요",
+        "**바이트 쌍 인코딩(Byte Pair Encoding (BPE))** 으로 자르고 원문과 번역문이 어휘 약 37,000개를 함께 써요",
+        "영어에서 프랑스어: 문장 3600만, **워드피스(WordPiece)** 어휘 32,000개예요",
+        "배치 하나에 원문 약 25,000 토큰, 번역문 약 25,000 토큰이 들어가요"),
+    pts("5.2 하드웨어와 일정 (NP p.7)",
+        "기계 한 대에 NVIDIA P100 GPU 8장이에요",
+        "base 는 한 스텝 약 0.4초, 10만 스텝, 모두 12시간이라고 적었어요",
+        "big 은 한 스텝 1.0초, 30만 스텝, 3.5일이라고 적었어요",
+        "이 숫자가 뒤에 나올 학습 비용 계산의 재료예요"),
+    steps("손계산: 시간이 맞나 확인해 봐요",
+          ["base: 100,000 스텝 x 0.4초 = 40,000초예요",
+           "40,000초 / 3600 = 11.1시간이에요",
+           "논문은 12시간이라고 적었어요. 조금 넉넉하게 적은 셈이에요",
+           "big: 300,000 스텝 x 1.0초 = 300,000초예요",
+           "300,000초 / 86,400 = 3.47일이에요. 논문의 3.5일과 맞아요"],
+          "base 는 11.1시간 계산인데 논문은 12시간, big 은 3.47일로 3.5일과 맞아요.",
+          "계산 결과와 논문 표기가 조금 다르다는 점을 그대로 알려 드려요"),
+    ana("달리기 전 준비운동", "출발하자마자 전속력으로 뛰면 다쳐요. 처음 얼마간 천천히 속도를 올리고, 그다음 서서히 힘을 아껴 가며 달려요.",
+        [("천천히 속도 올리기", "**워밍업(Warmup)** 4000 스텝"),
+         ("가장 빠른 순간", "최고 **학습률(Learning Rate)** 0.000699"),
+         ("서서히 힘 아끼기", "역제곱근으로 줄어드는 구간")]),
+    form("식 3 학습률 (NP p.7)",
+         r"lrate = d_{model}^{-0.5} \cdot \min\!\left(step^{-0.5},\; step \cdot warmup^{-1.5}\right)",
+         [(r"d_{model}^{-0.5}", "512의 제곱근의 역수, 0.044194 예요"),
+          (r"step^{-0.5}", "스텝이 늘수록 줄어드는 쪽이에요"),
+          (r"step \cdot warmup^{-1.5}", "스텝에 비례해 커지는 쪽이에요. 초반을 맡아요"),
+          (r"\min", "둘 중 작은 쪽을 골라요. 그래서 산 모양이 돼요"),
+          (r"warmup", "논문은 4000 으로 두었어요")],
+         "4000 스텝까지는 곧게 올라가고, 그 뒤로는 역제곱근으로 내려와요."),
+    steps("손계산: **학습률(Learning Rate)** 곡선 값",
+          ["512^(-0.5) = 0.044194 예요",
+           "4000^(-0.5) = 0.015811 이고, 4000 x 4000^(-1.5) 도 같은 0.015811 이에요",
+           "그래서 step 4000 에서 두 항이 만나요. 최고값은 0.044194 x 0.015811 = 0.000699 예요",
+           "step 1000 은 0.000175, step 2000 은 0.000349 예요",
+           "step 8000 은 0.000494, step 16000 은 0.000349, step 100000 은 0.000140 이에요",
+           "4000 에서 16000 으로 4배가 되면 0.000699 에서 0.000349 로 절반이 돼요"],
+          "최고 **학습률(Learning Rate)** 은 step 4000 에서 0.000699 예요.",
+          "d_model = 512, warmup = 4000"),
+    fig("올라갔다 내려오는 **학습률(Learning Rate)**", SVG_LR,
+        "**워밍업(Warmup)** 구간은 직선, 그 뒤는 역제곱근 곡선이에요", 3),
+    pts("5.3 옵티마이저 (NP p.7)",
+        "**아담(Adam)** 을 썼고 beta1 = 0.9, beta2 = 0.98 이에요",
+        "epsilon 은 10^-9 예요",
+        "보통 쓰는 beta2 = 0.999 보다 조금 작은 값을 골랐어요",
+        "왜 그렇게 골랐는지는 논문이 설명하지 않아요"),
+    pts("5.4 정칙화 세 가지 (NP p.7-8)",
+        "하나, 모든 **하위층(Sub-layer)** 출력에 **드롭아웃(Dropout)** 을 걸어요. 더하고 정규화하기 전에요",
+        "둘, 임베딩과 위치 인코딩을 더한 값에도 **드롭아웃(Dropout)** 을 걸어요",
+        "base 는 P_drop = 0.1 이에요",
+        "셋, **라벨 스무딩(Label Smoothing)** 을 0.1 로 썼어요"),
+    eng("외워 쓸 한 줄",
+        "**라벨 스무딩(Label Smoothing)** 은 모델을 덜 확신하게 만들어 **퍼플렉서티(Perplexity (PPL))** 는 나빠지지만, 정확도와 BLEU 는 좋아진다.",
+        "원문은 'This hurts perplexity, as the model learns to be more unsure, but improves accuracy and BLEU score' 예요.",
+        "'PPL 은 손해, BLEU 는 이득' 으로 외워요"),
+    steps("손계산: big 모델의 **부동소수점 연산량(FLOPs)**",
+          ["각주 5: P100 한 장을 9.5 TFLOPS 로 어림했어요. 1 TFLOPS = 10^12 예요",
+           "3.5일 = 3.5 x 86,400 = 302,400초예요",
+           "302,400 x GPU 8장 = 2,419,200 GPU 초예요",
+           "2,419,200 x 9.5 x 10^12 = 2.298 x 10^19 이에요",
+           "Table 2 의 2.3 x 10^19 과 맞아요",
+           "base 도 같은 식으로 12시간 x 8 x 9.5 TFLOPS = 3.28 x 10^18, 표의 3.3 x 10^18 과 맞아요"],
+          "2.3 x 10^19 **부동소수점 연산량(FLOPs)**. 표의 값이 이렇게 나온 것이에요.",
+          "3.5일, GPU 8장, 9.5 TFLOPS"),
+    cmp_("base 와 big 의 학습 설정 (NP p.7, p.9)",
+         ["무엇", "base", "big"],
+         [["스텝", "100,000", "300,000"],
+          ["한 스텝 시간", "약 0.4초", "1.0초"],
+          ["전체 시간", "12시간", "3.5일"],
+          ["**드롭아웃(Dropout)** P_drop", "0.1", "0.3 (영어에서 프랑스어만 0.1)"],
+          ["**부동소수점 연산량(FLOPs)**", "3.3 x 10^18", "2.3 x 10^19"]]),
+    warn("헷갈리기 쉬운 점",
+         "**워밍업(Warmup)**, **아담(Adam)**, **라벨 스무딩(Label Smoothing)** 은 4주차 강의가 다루지 않은 내용이에요.",
+         "강의 p.51 은 Post-LN 이 조심스러운 **워밍업(Warmup)** 을 필요로 한다고만 짚고 지나가요.",
+         "**부동소수점 연산량(FLOPs)** 은 학습 비용이에요. 추론 속도가 아니에요."),
+    check("**워밍업(Warmup)** 이 끝나는 step 4000 에서 **학습률(Learning Rate)** 은?",
+          ["0.000699 로 가장 높아요", "0 이에요", "0.000140 이에요", "가장 낮아요"], 0,
+          "두 항이 0.015811 로 같아지는 지점이고, 0.044194 x 0.015811 = 0.000699 예요."),
+    check("**라벨 스무딩(Label Smoothing)** 이 나쁘게 만든 지표는?",
+          ["**퍼플렉서티(Perplexity (PPL))**", "BLEU", "정확도", "학습 속도"], 0,
+          "논문이 직접 'hurts perplexity ... but improves accuracy and BLEU score' 라고 적었어요."),
+    recap("데이터: 영어에서 독일어 450만 쌍 **바이트 쌍 인코딩(BPE)** 37,000, 영어에서 프랑스어 3600만 **워드피스(WordPiece)** 32,000",
+          "하드웨어: P100 GPU 8장, base 12시간, big 3.5일",
+          "**아담(Adam)** beta1 0.9, beta2 0.98, epsilon 10^-9, **워밍업(Warmup)** 4000, 최고 **학습률(Learning Rate)** 0.000699",
+          "정칙화: **드롭아웃(Dropout)** 0.1, **라벨 스무딩(Label Smoothing)** 0.1",
+          "**부동소수점 연산량(FLOPs)**: 3.5일 x 8장 x 9.5 TFLOPS = 2.3 x 10^19",
+          "오늘의 용어: 아담(Adam), 워밍업, 학습률, 드롭아웃, 라벨 스무딩, BPE, 워드피스, FLOPs, 퍼플렉서티(PPL)"),
+]})
+
+# ---------------------------------------------------------------- wP-9
+t = [T("블루 점수", "BLEU", "사람 번역과 겹치는 조각을 세어 번역을 채점하는 자동 지표예요."),
+     T("앙상블", "Ensemble", "여러 모델의 답을 합쳐서 성능을 올리는 방법이에요."),
+     T("모델 변형 실험", "Model Variations", "한 부품씩 바꿔 보며 성능이 어떻게 변하는지 재는 실험이에요."),
+     T("체크포인트 평균", "Checkpoint Averaging", "마지막 저장본 여러 개의 가중치를 평균 내서 한 모델로 쓰는 것이에요."),
+     T("빔 서치", "Beam Search", "걸음마다 가장 좋은 후보 몇 개를 함께 들고 가는 방법이에요."),
+     T("과적합", "Over-fitting", "학습 데이터만 외워 버려서 새 데이터에 약해지는 것이에요."),
+     T("구성소 구문 분석", "Constituency Parsing", "문장을 구 단위 나무 구조로 쪼개는 과제예요."),
+     T("헤드", "Head", "따로 도는 어텐션 한 갈래예요."),
+     T("퍼플렉서티", "Perplexity (PPL)", "다음 토큰을 고를 때 헷갈리는 후보가 평균 몇 개인지예요.")]
+U.append({"id": "wP-9", "title": "P-9 6 Results, 7 Conclusion, 어텐션 그림",
+          "goal": "Table 2 와 Table 3 을 읽고, 논문 안의 숫자 불일치까지 짚을 수 있어요.", "terms": t, "slides": [
+    title("결과와 마무리", "표 셋, 그림 셋, 그리고 어긋난 숫자 하나"),
+    goal("Table 2 의 **블루 점수(BLEU)** 와 학습 비용 읽기",
+         "Table 3 **모델 변형 실험(Model Variations)** 다섯 묶음의 결론",
+         "논문 안에서 숫자가 어긋난 곳 찾기"),
+    pts("6.1 기계 번역 결과 (NP p.8)",
+        "영어에서 독일어 big 이 **블루 점수(BLEU)** 28.4 로 새 최고 기록이에요",
+        "**앙상블(Ensemble)** 까지 포함한 기존 최고보다 2.0 넘게 올렸다고 적었어요",
+        "base 모델도 그때까지 나온 모든 모델과 **앙상블(Ensemble)** 을 넘었어요",
+        "학습 비용은 경쟁 모델의 아주 일부라고 강조해요"),
+    steps("손계산: '2.0 넘게' 가 어디서 나왔나요",
+          ["Table 2 에서 기존 최고는 ConvS2S **앙상블(Ensemble)** 의 26.36 이에요",
+           "big 은 28.4 예요",
+           "28.4 - 26.36 = 2.04 예요",
+           "그래서 논문이 'by more than 2.0 BLEU' 라고 적은 것이에요",
+           "base 27.3 도 27.3 - 26.36 = 0.94 만큼 앞서요"],
+          "2.04 점 차이라서 '2.0 넘게' 가 맞아요.",
+          "Table 2 의 EN-DE 열 (NP p.8)"),
+    fig("Table 2 를 막대로", SVG_BLEU,
+        "**앙상블(Ensemble)** 인 26.36 보다 big 이 2.04 앞서요", 3),
+    warn("논문 안에서 숫자가 어긋나요 (꼭 기억)",
+         "초록과 Table 2 는 영어에서 프랑스어 big 을 41.8 이라고 적었어요.",
+         "그런데 6.1 본문은 'achieves a BLEU score of 41.0' 이라고 적었어요.",
+         "논문 자체가 어긋나 있어요. 시험에는 Table 2 와 초록의 41.8 을 쓰세요."),
+    pts("추론 설정 (NP p.8)",
+        "base 는 마지막 **체크포인트 평균(Checkpoint Averaging)** 5개, 10분 간격으로 저장한 것이에요",
+        "big 은 마지막 20개를 평균했어요",
+        "**빔 서치(Beam Search)** 는 빔 크기 4, 길이 페널티 alpha = 0.6 이에요",
+        "최대 출력 길이는 입력 길이 + 50 이고, 끝나면 일찍 멈춰요"),
+    ana("시험지 여러 장을 겹쳐 보기", "같은 과목 답안을 여러 번 써 놓고 겹쳐 보면 매번 흔들린 부분이 평평해지고 확신 있는 부분만 남아요.",
+        [("여러 장 겹치기", "**체크포인트 평균(Checkpoint Averaging)**"),
+         ("여러 명의 답을 모으기", "**앙상블(Ensemble)**"),
+         ("후보 몇 개를 들고 가기", "**빔 서치(Beam Search)**")]),
+    cmp_("(A) **헤드(Head)** 수만 바꾸면 (NP p.9 Table 3)",
+         ["h", "dk = dv", "**퍼플렉서티(PPL)**", "**블루 점수(BLEU)**"],
+         [["1", "512", "5.29", "24.9"],
+          ["4", "128", "5.00", "25.5"],
+          ["8 (base)", "64", "4.92", "25.8"],
+          ["16", "32", "4.91", "25.8"],
+          ["32", "16", "5.01", "25.4"]]),
+    steps("손계산: '0.9 BLEU worse' 확인",
+          ["가장 좋은 설정의 **블루 점수(BLEU)** 는 25.8 이에요",
+           "**헤드(Head)** 하나뿐인 h = 1 은 24.9 예요",
+           "25.8 - 24.9 = 0.9 예요",
+           "그래서 논문이 'single-head attention is 0.9 BLEU worse' 라고 적었어요",
+           "h = 32 로 너무 늘려도 25.4 로 떨어져요. 많을수록 좋은 것은 아니에요"],
+          "**헤드(Head)** 하나면 0.9 손해, 너무 많아도 손해예요.",
+          "Table 3 의 (A) 묶음"),
+    pts("6.2 (B) 부터 (E) 까지 (NP p.9)",
+        "절 제목은 **모델 변형 실험(Model Variations)** 이고 ablation 이라는 말은 논문에 없어요",
+        "newstest2013 개발 세트, **체크포인트 평균(Checkpoint Averaging)** 없이, **퍼플렉서티(PPL)** 는 워드피스 단위예요",
+        "(B) dk 를 16, 32 로 줄이면 나빠져요. 논문은 'may be beneficial' 이라며 추측으로 마무리해요",
+        "(C) 크게 만들수록 좋아요. N = 2 는 23.7, d_ff = 4096 은 26.2 예요",
+        "(D) **드롭아웃(Dropout)** 은 **과적합(Over-fitting)** 을 막는 데 아주 도움이 된다고 적었어요",
+        "(E) 사인 코사인을 학습 위치 임베딩으로 바꿔도 25.7 로 거의 같았어요"),
+    pts("6.3 **구성소 구문 분석(Constituency Parsing)** (NP p.9-10)",
+        "다른 과제에도 통하는지 보려고 영어 **구성소 구문 분석(Constituency Parsing)** 을 해 봤어요",
+        "4층, d_model = 1024, WSJ 약 4만 문장 또는 준지도 약 1700만 문장이에요",
+        "WSJ 만 쓴 설정에서 F1 91.3, 준지도에서 92.7 이에요",
+        "**빔 서치(Beam Search)** 빔 크기 21, alpha = 0.3, 최대 길이는 입력 + 300 이에요"),
+    fig("13쪽부터의 어텐션 그림", SVG_ATTN,
+        "논문은 **헤드(Head)** 마다 다른 색으로 그려 서로 다른 일을 한다고 보여 줘요", 4),
+    pts("Figure 3, 4, 5 가 보여 준 것 (NP p.13-15)",
+        "Figure 3: 인코더 셀프 어텐션 6층 중 5층이 making 에서 more difficult 로 멀리 건너가요",
+        "Figure 4: **헤드(Head)** 5와 6이 its 가 무엇을 가리키는지 짚는 것처럼 보인다고 했어요",
+        "논문은 'apparently involved in anaphora resolution' 이라며 단정하지 않았어요",
+        "Figure 5: 두 **헤드(Head)** 가 분명히 서로 다른 일을 배웠다고 적었어요"),
+    eng("외워 쓸 한 줄",
+        "**트랜스포머(Transformer)** 는 순환 층을 멀티 헤드 셀프 어텐션으로 바꾼, 전적으로 어텐션에 기댄 최초의 시퀀스 변환 모델이다.",
+        "원문은 'the first sequence transduction model based entirely on attention' 이에요.",
+        "'순환 층 자리에 멀티 헤드 셀프 어텐션' 으로 외워요"),
+    check("Table 2 에서 **블루 점수(BLEU)** 28.4 는 어느 모델인가요?",
+          ["Transformer (big)", "Transformer (base model)", "ConvS2S **앙상블(Ensemble)**", "GNMT + RL"], 0,
+          "base 는 27.3, ConvS2S **앙상블(Ensemble)** 은 26.36 이에요."),
+    check("**모델 변형 실험(Model Variations)** (E) 의 결론은?",
+          ["학습 위치 임베딩으로 바꿔도 결과가 거의 같아요", "위치 정보를 빼도 괜찮아요",
+           "**헤드(Head)** 를 늘리면 좋아져요", "**드롭아웃(Dropout)** 을 빼는 편이 좋아요"], 0,
+          "**블루 점수(BLEU)** 25.7 로 base 의 25.8 과 거의 같았어요. 그래도 논문은 사인 코사인을 골랐어요."),
+    recap("Table 2: big 28.4, base 27.3, 기존 최고 **앙상블(Ensemble)** 26.36, 차이 2.04",
+          "영어에서 프랑스어는 초록과 Table 2 가 41.8, 6.1 본문이 41.0 으로 어긋나요. 시험에는 41.8",
+          "**모델 변형 실험(Model Variations)**: **헤드(Head)** 1개면 BLEU 0.9 손해, **퍼플렉서티(PPL)** 도 나빠져요",
+          "**드롭아웃(Dropout)** 은 **과적합(Over-fitting)** 을 막고, 위치 방식은 바꿔도 거의 같아요",
+          "**구성소 구문 분석(Constituency Parsing)** F1 91.3 과 92.7 로 다른 과제에도 통했어요",
+          "오늘의 용어: BLEU, 앙상블, 모델 변형 실험, 체크포인트 평균, 빔 서치, 과적합, 구성소 구문 분석, 헤드(Head), 퍼플렉서티(PPL)"),
+]})
+
+# ---------------------------------------------------------------- 쓰기
+d = {"week": "P", "title": "참고 논문. Attention Is All You Need 문단별 정리", "units": U}
+raw = json.dumps(d, ensure_ascii=False, indent=1)
+for ch in ("—", "–", "·", "・"):
+    assert ch not in raw, ch
+(W / "slides_wP.json").write_text(raw, encoding="utf-8")
+print("ok", len(U), sum(len(u["slides"]) for u in U))

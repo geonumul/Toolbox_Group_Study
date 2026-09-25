@@ -1,0 +1,1763 @@
+{
+ "deck": "NP",
+ "from": 10,
+ "to": 15,
+ "glossary": [
+  {
+   "ko": "트랜스포머",
+   "en": "Transformer",
+   "say": "어텐션만으로 만든 요즘 언어 모델의 기본 뼈대",
+   "more": "이 논문이 처음 내놓은 구조예요. 인코더 6층과 디코더 6층으로 되어 있어요."
+  },
+  {
+   "ko": "어텐션",
+   "en": "Attention",
+   "say": "필요한 곳을 골라 보는 장치. 점수를 매기고 가중 평균을 내요",
+   "more": "논문 제목 그대로 어텐션만 있으면 된다는 주장이에요."
+  },
+  {
+   "ko": "셀프 어텐션",
+   "en": "Self-Attention",
+   "say": "한 문장이 자기 자신을 바라보는 어텐션",
+   "more": "쿼리, 키, 밸류가 모두 같은 시퀀스에서 나와요. 13~15쪽 그림이 모두 인코더 셀프 어텐션이에요."
+  },
+  {
+   "ko": "멀티 헤드 어텐션",
+   "en": "Multi-Head Attention (MHA)",
+   "say": "전체 차원을 h 조각으로 나눠 여러 관점에서 동시에 어텐션하기",
+   "more": "base 는 h = 8 이라 헤드가 여덟 개예요. 13~15쪽 그림의 색이 헤드 하나씩이에요."
+  },
+  {
+   "ko": "헤드",
+   "en": "Head",
+   "say": "멀티 헤드 어텐션에서 관점 하나를 맡는 조각",
+   "more": "base 에서 헤드 하나의 차원은 512 나누기 8 로 64 예요."
+  },
+  {
+   "ko": "인코더",
+   "en": "Encoder",
+   "say": "입력 문장을 끝까지 읽어 자리마다 표현을 만드는 쪽",
+   "more": "마스킹을 하지 않아서 앞뒤를 다 봐요. 13~15쪽 그림은 인코더의 5번째 층이에요."
+  },
+  {
+   "ko": "디코더",
+   "en": "Decoder",
+   "say": "답 문장을 한 토큰씩 만들어 내는 쪽",
+   "more": "인과 마스킹을 써서 미래를 못 보게 막아요."
+  },
+  {
+   "ko": "어텐션 가중치",
+   "en": "Attention Weight",
+   "say": "점수를 소프트맥스에 넣어 얻은, 합이 1 인 값들",
+   "more": "13~15쪽 그림에서 선이 진할수록 가중치가 큰 자리예요."
+  },
+  {
+   "ko": "어텐션 분포",
+   "en": "Attention Distribution",
+   "say": "한 자리가 모든 자리를 얼마씩 볼지 적은 확률 분포",
+   "more": "논문은 이것을 들여다보면 모델을 조금은 읽을 수 있다고 말해요."
+  },
+  {
+   "ko": "순환 신경망",
+   "en": "Recurrent Neural Network (RNN)",
+   "say": "한 단어씩 읽으며 메모장에 요약을 고쳐 쓰는 신경망",
+   "more": "결론에서 이 논문은 순환 층을 멀티 헤드 셀프 어텐션으로 바꿨다고 적어요."
+  },
+  {
+   "ko": "합성곱 신경망",
+   "en": "Convolutional Neural Network (CNN)",
+   "say": "작은 창을 밀며 특징을 뽑는 신경망",
+   "more": "ConvS2S 와 ByteNet 이 이 방식이에요. 결론에서 함께 비교돼요."
+  },
+  {
+   "ko": "잔차 연결",
+   "en": "Residual Connection",
+   "say": "층의 입력을 층의 출력에 그대로 더해 주는 지름길",
+   "more": "참고문헌 [11] 의 ResNet 에서 가져왔어요."
+  },
+  {
+   "ko": "층 정규화",
+   "en": "Layer Normalization (LayerNorm)",
+   "say": "한 토큰의 숫자들을 평균 0, 분산 1 로 맞춰 주기",
+   "more": "참고문헌 [1] 이 출처예요."
+  },
+  {
+   "ko": "기계 번역",
+   "en": "Machine Translation (MT)",
+   "say": "한 언어의 문장을 다른 언어로 바꾸는 일",
+   "more": "이 논문의 주 실험이에요. 영어에서 독일어, 영어에서 프랑스어 두 가지예요."
+  },
+  {
+   "ko": "시퀀스 변환",
+   "en": "Sequence Transduction",
+   "say": "줄줄이 늘어선 입력을 줄줄이 늘어선 출력으로 바꾸는 일",
+   "more": "결론 첫 문장이 이 논문을 the first sequence transduction model based entirely on attention 이라고 불러요."
+  },
+  {
+   "ko": "구성소 구문 분석",
+   "en": "Constituency Parsing",
+   "say": "문장을 구 단위 나무 구조로 쪼개는 과제",
+   "more": "번역이 아닌 다른 과제에도 되는지 보려고 6.3 절에서 해 본 실험이에요."
+  },
+  {
+   "ko": "빔 서치",
+   "en": "Beam Search",
+   "say": "후보를 여러 개 들고 가면서 문장을 만드는 방법",
+   "more": "번역은 빔 4, 구문 분석은 빔 21 을 썼어요."
+  },
+  {
+   "ko": "길이 정규화",
+   "en": "Length Normalization",
+   "say": "긴 문장이 손해 보지 않게 점수를 길이로 나눠 주는 것",
+   "more": "논문은 length penalty alpha 라고 부르고 번역은 0.6, 구문 분석은 0.3 을 썼어요."
+  },
+  {
+   "ko": "블루 점수",
+   "en": "BLEU",
+   "say": "번역이 정답과 얼마나 겹치는지 재는 점수. 높을수록 좋아요",
+   "more": "결론에서 두 번역 과제 모두 최고 기록을 세웠다고 말해요."
+  },
+  {
+   "ko": "해석 가능성",
+   "en": "Interpretability",
+   "say": "모델이 왜 그렇게 했는지 사람이 들여다볼 수 있는 정도",
+   "more": "논문은 어텐션을 보면 조금 들여다볼 수 있다고 곁가지 장점으로 적었어요."
+  },
+  {
+   "ko": "바이트 쌍 인코딩",
+   "en": "Byte Pair Encoding (BPE)",
+   "say": "자주 붙어 다니는 두 조각을 한 조각으로 접착하는 토큰화",
+   "more": "참고문헌 [31] 이고 2주차에 배웠어요."
+  },
+  {
+   "ko": "워드피스",
+   "en": "WordPiece",
+   "say": "BPE 와 비슷하게 단어를 조각으로 자르는 또 다른 방법",
+   "more": "참고문헌 [38] 이고 영어에서 프랑스어 실험에 썼어요."
+  },
+  {
+   "ko": "드롭아웃",
+   "en": "Dropout",
+   "say": "학습할 때 일부 값을 무작위로 꺼서 과적합을 막는 방법",
+   "more": "참고문헌 [33] 이고 5.4 절에서 P_drop = 0.1 로 썼어요."
+  },
+  {
+   "ko": "라벨 스무딩",
+   "en": "Label Smoothing",
+   "say": "정답을 100 퍼센트로 두지 않고 살짝 흐리게 만들어 학습하는 방법",
+   "more": "참고문헌 [36] 이고 5.4 절에서 0.1 을 썼어요."
+  },
+  {
+   "ko": "아담",
+   "en": "Adam",
+   "say": "요즘 가장 많이 쓰는 학습 방법 중 하나",
+   "more": "참고문헌 [20] 이고 5.3 절에서 베타2 를 0.98 로 썼어요."
+  },
+  {
+   "ko": "장단기 메모리",
+   "en": "LSTM",
+   "say": "게이트로 기억을 조절해 긴 문장을 버티게 만든 RNN",
+   "more": "참고문헌 [13] 이고 3주차 마지막에 배웠어요."
+  },
+  {
+   "ko": "기울기 소실",
+   "en": "Vanishing Gradient",
+   "say": "귓속말 전달 게임처럼 기울기가 점점 희미해져 0 에 가까워지는 문제",
+   "more": "참고문헌 [12] 가 이 문제를 다룬 옛 논문이에요."
+  },
+  {
+   "ko": "시퀀스-투-시퀀스",
+   "en": "seq2seq",
+   "say": "인코더로 읽고 디코더로 쓰는 구조",
+   "more": "참고문헌 [35] 와 [5] 가 출발점이에요."
+  },
+  {
+   "ko": "임베딩",
+   "en": "Embedding",
+   "say": "토큰을 숫자 벡터로 바꾼 것. 단어의 지도 좌표",
+   "more": "참고문헌 [30] 이 임베딩 가중치를 나눠 쓰는 방법의 출처예요."
+  },
+  {
+   "ko": "토큰",
+   "en": "Token",
+   "say": "글을 자른 레고 조각 하나",
+   "more": "13~15쪽 그림에서 가로로 늘어선 단어 하나하나가 토큰이에요."
+  },
+  {
+   "ko": "제한된 셀프 어텐션",
+   "en": "Restricted Self-Attention",
+   "say": "가까운 이웃 r 칸만 보게 제한한 셀프 어텐션",
+   "more": "결론에서 앞으로 해 보겠다고 적은 계획이에요."
+  },
+  {
+   "ko": "최대 경로 길이",
+   "en": "Maximum Path Length",
+   "say": "두 자리 사이에 신호가 지나가야 하는 가장 먼 걸음 수",
+   "more": "셀프 어텐션은 이것이 O(1) 이라 먼 단어끼리 한 걸음이에요."
+  },
+  {
+   "ko": "병렬화",
+   "en": "Parallelization",
+   "say": "여러 계산을 한꺼번에 동시에 하기",
+   "more": "결론에서 생성도 덜 순차적으로 만들고 싶다고 적었어요."
+  }
+ ],
+ "slides": [
+  {
+   "p": 10,
+   "title": "Table 4 구문 분석 결과와 7 Conclusion",
+   "terms": [
+    "Constituency Parsing",
+    "Transformer",
+    "Self-Attention",
+    "Multi-Head Attention (MHA)",
+    "Recurrent Neural Network (RNN)",
+    "Convolutional Neural Network (CNN)",
+    "Machine Translation (MT)",
+    "Sequence Transduction",
+    "Beam Search",
+    "Length Normalization",
+    "BLEU",
+    "Restricted Self-Attention",
+    "Parallelization"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "논문의 마지막 결과 표와 결론이 한 쪽에 같이 있어요.",
+      "위쪽 Table 4 는 번역이 아닌 다른 과제에서도 되는지 본 실험이에요.",
+      "아래쪽 7 Conclusion 은 논문 전체를 네 문단으로 줄인 곳이에요.",
+      "결론 한 줄: 순환 층을 **멀티 헤드 어텐션(Multi-Head Attention (MHA))** 으로 갈아 끼웠다."
+     ]
+    },
+    {
+     "kind": "analogy",
+     "head": "운전면허만 있는 사람과 여러 차를 모는 사람",
+     "scene": "번역만 잘하는 모델은 승용차만 몰 줄 아는 사람이에요. 트럭도 몰 수 있는지 시험해 본 것이 Table 4 예요.",
+     "map": [
+      [
+       "승용차 운전",
+       "**기계 번역(Machine Translation (MT))**"
+      ],
+      [
+       "트럭 운전 시험",
+       "**구성소 구문 분석(Constituency Parsing)**"
+      ],
+      [
+       "둘 다 되더라",
+       "구조가 과제에 얽매이지 않는다"
+      ]
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "Table 4 를 두 칸으로 나눠서 봐요",
+     "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 480 270\"><text x=\"240\" y=\"22\" font-size=\"16\" text-anchor=\"middle\" class=\"tb\">Table 4: WSJ Section 23 F1</text><text x=\"120\" y=\"50\" font-size=\"13\" text-anchor=\"middle\" class=\"tb b1\">WSJ 만 쓴 경우</text><text x=\"360\" y=\"50\" font-size=\"13\" text-anchor=\"middle\" class=\"tb b1\">준지도 학습</text><rect x=\"30\" y=\"62\" width=\"180\" height=\"22\" rx=\"2\" class=\"n b1\"/><text x=\"120.0\" y=\"76.85\" font-size=\"11\" text-anchor=\"middle\" class=\"tl b1\">Vinyals (RNN) 88.3</text><rect x=\"30\" y=\"88\" width=\"180\" height=\"22\" rx=\"2\" class=\"n b1\"/><text x=\"120.0\" y=\"102.85\" font-size=\"11\" text-anchor=\"middle\" class=\"tl b1\">Petrov 90.4</text><rect x=\"30\" y=\"114\" width=\"180\" height=\"22\" rx=\"2\" class=\"n b1\"/><text x=\"120.0\" y=\"128.85\" font-size=\"11\" text-anchor=\"middle\" class=\"tl b1\">Dyer 91.7</text><rect x=\"30\" y=\"140\" width=\"180\" height=\"22\" rx=\"2\" class=\"box2 b2\"/><text x=\"120.0\" y=\"154.85\" font-size=\"11\" text-anchor=\"middle\" class=\"tb b2\">Transformer 91.3</text><rect x=\"270\" y=\"62\" width=\"180\" height=\"22\" rx=\"2\" class=\"n b1\"/><text x=\"360.0\" y=\"76.85\" font-size=\"11\" text-anchor=\"middle\" class=\"tl b1\">Zhu 91.3</text><rect x=\"270\" y=\"88\" width=\"180\" height=\"22\" rx=\"2\" class=\"n b1\"/><text x=\"360.0\" y=\"102.85\" font-size=\"11\" text-anchor=\"middle\" class=\"tl b1\">McClosky 92.1</text><rect x=\"270\" y=\"114\" width=\"180\" height=\"22\" rx=\"2\" class=\"n b1\"/><text x=\"360.0\" y=\"128.85\" font-size=\"11\" text-anchor=\"middle\" class=\"tl b1\">Vinyals 92.1</text><rect x=\"270\" y=\"140\" width=\"180\" height=\"22\" rx=\"2\" class=\"box2 b2\"/><text x=\"360.0\" y=\"154.85\" font-size=\"11\" text-anchor=\"middle\" class=\"tb b2\">Transformer 92.7</text><text x=\"240\" y=\"190\" font-size=\"13\" text-anchor=\"middle\" class=\"t b3\">WSJ 만 쓰면 Dyer 91.7 에 0.4 차이로 2등</text><text x=\"240\" y=\"212\" font-size=\"13\" text-anchor=\"middle\" class=\"tb b3\">준지도에서는 92.7 로 이 칸의 1등</text><text x=\"240\" y=\"240\" font-size=\"12\" text-anchor=\"middle\" class=\"tm b4\">번역만 되는 모델이 아니라는 뜻이에요</text></svg>",
+     "caption": "**트랜스포머(Transformer)** 는 WSJ 만 쓰면 91.3 으로 2등, 준지도에서는 92.7 로 1등이에요.",
+     "builds": 4
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "points",
+     "head": "결론의 영어 문장과 우리말 뜻",
+     "items": [
+      "the first sequence transduction model based entirely on attention = **어텐션(Attention)**만으로 만든 첫 **시퀀스 변환(Sequence Transduction)** 모델",
+      "replacing the recurrent layers ... with multi-headed self-attention = 순환 층을 **멀티 헤드 어텐션(Multi-Head Attention (MHA))** 으로 바꿔서",
+      "can be trained significantly faster = 훨씬 빠르게 학습할 수 있다",
+      "we achieve a new state of the art = **블루 점수(BLEU)** 에서 새로운 최고 기록을 세웠다",
+      "outperforms even all previously reported ensembles = 앞서 보고된 앙상블까지 다 이겼다"
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "마지막 문단은 앞으로 할 일이에요",
+     "items": [
+      "other modalities than text = 글 말고 다른 자료에도 써 보겠다 (이미지, 소리, 영상)",
+      "local, restricted attention mechanisms = **제한된 셀프 어텐션(Restricted Self-Attention)** 을 알아보겠다",
+      "Making generation less sequential = 만들어 내는 쪽도 덜 차례차례로, 곧 **병렬화(Parallelization)** 를 더",
+      "코드는 tensor2tensor 에 공개했다고 적었어요"
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "결론에서 다시 나오는 세 낱말",
+     "items": [
+      "**블루 점수(BLEU)**: 두 번역 과제에서 최고 기록을 세웠다는 근거 숫자예요",
+      "**병렬화(Parallelization)**: 순환이 없어서 빨리 학습된다는 말의 속뜻이에요",
+      "**최대 경로 길이(Maximum Path Length)**: 먼 자리도 한 걸음이라 긴 문장을 버틴다는 말의 속뜻이에요"
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "Table 4 의 세 칸이 뜻하는 것",
+     "cols": [
+      "Training 칸",
+      "뜻",
+      "학습 자료"
+     ],
+     "rows": [
+      [
+       "WSJ only, discriminative",
+       "WSJ 문장만 써서 학습",
+       "약 40K 문장"
+      ],
+      [
+       "semi-supervised",
+       "라벨 없는 자료까지 더해 학습",
+       "약 17M 문장"
+      ],
+      [
+       "multi-task, generative",
+       "다른 방식으로 학습한 비교 대상",
+       "표에 안 적힘"
+      ]
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "7 Conclusion 이 말하는 이 논문의 한 줄 요약은?",
+     "choices": [
+      "순환 층을 **멀티 헤드 어텐션(Multi-Head Attention (MHA))** 으로 바꾼 첫 **시퀀스 변환(Sequence Transduction)** 모델",
+      "RNN 에 어텐션을 더해 성능을 올린 모델",
+      "합성곱으로 번역을 푸는 모델",
+      "어휘를 줄여 속도를 올린 모델"
+     ],
+     "a": 0,
+     "why": "결론 첫 문장 the first sequence transduction model based entirely on attention 그대로예요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "10쪽을 짚어 읽어요",
+     "boxes": [
+      {
+       "x": 0.176,
+       "y": 0.088,
+       "w": 0.65,
+       "h": 0.03,
+       "say": "Table 4 제목: 구문 분석에도 잘 일반화된다. 결과는 WSJ Section 23 이에요."
+      },
+      {
+       "x": 0.247,
+       "y": 0.117,
+       "w": 0.51,
+       "h": 0.182,
+       "say": "표 본문: 위 칸이 WSJ 만, 가운데가 준지도, 아래 두 줄이 다른 방식이에요."
+      },
+      {
+       "x": 0.176,
+       "y": 0.329,
+       "w": 0.65,
+       "h": 0.03,
+       "say": "추론 설정: 최대 출력 길이를 입력 + 300 으로, 빔 21, alpha 0.3 을 썼어요."
+      },
+      {
+       "x": 0.176,
+       "y": 0.363,
+       "w": 0.65,
+       "h": 0.043,
+       "say": "Our results ... performs surprisingly well: 과제에 맞춘 조정 없이도 잘 됐다는 문장이에요."
+      },
+      {
+       "x": 0.176,
+       "y": 0.459,
+       "w": 0.13,
+       "h": 0.018,
+       "say": "여기부터 7 Conclusion 이에요."
+      },
+      {
+       "x": 0.176,
+       "y": 0.489,
+       "w": 0.65,
+       "h": 0.043,
+       "say": "결론 1문단: 어텐션만으로 만든 첫 시퀀스 변환 모델이라고 선언해요."
+      },
+      {
+       "x": 0.176,
+       "y": 0.537,
+       "w": 0.65,
+       "h": 0.058,
+       "say": "결론 2문단: 훨씬 빨리 학습되고 두 번역 과제에서 최고 기록을 세웠다."
+      },
+      {
+       "x": 0.176,
+       "y": 0.6,
+       "w": 0.65,
+       "h": 0.058,
+       "say": "결론 3문단: 앞으로 이미지, 소리, 영상과 제한된 어텐션을 해 보겠다."
+      },
+      {
+       "x": 0.176,
+       "y": 0.751,
+       "w": 0.1,
+       "h": 0.018,
+       "say": "여기부터 References 예요. [1] 은 **층 정규화(Layer Normalization (LayerNorm))** 논문이에요."
+      }
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "Table 4 숫자 전부 (WSJ Section 23 F1)",
+     "cols": [
+      "Parser",
+      "Training",
+      "F1"
+     ],
+     "rows": [
+      [
+       "Vinyals & Kaiser el al. (2014)",
+       "WSJ only",
+       "88.3"
+      ],
+      [
+       "Petrov et al. (2006)",
+       "WSJ only",
+       "90.4"
+      ],
+      [
+       "Zhu et al. (2013)",
+       "WSJ only",
+       "90.4"
+      ],
+      [
+       "Dyer et al. (2016)",
+       "WSJ only",
+       "91.7"
+      ],
+      [
+       "Transformer (4 layers)",
+       "WSJ only",
+       "91.3"
+      ]
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "Table 4 의 나머지 줄",
+     "cols": [
+      "Parser",
+      "Training",
+      "F1"
+     ],
+     "rows": [
+      [
+       "Zhu et al. (2013)",
+       "semi-supervised",
+       "91.3"
+      ],
+      [
+       "Huang & Harper (2009)",
+       "semi-supervised",
+       "91.3"
+      ],
+      [
+       "McClosky et al. (2006)",
+       "semi-supervised",
+       "92.1"
+      ],
+      [
+       "Vinyals & Kaiser el al. (2014)",
+       "semi-supervised",
+       "92.1"
+      ],
+      [
+       "Transformer (4 layers)",
+       "semi-supervised",
+       "92.7"
+      ],
+      [
+       "Luong (2015) multi-task / Dyer (2016) generative",
+       "다른 방식",
+       "93.0 / 93.3"
+      ]
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "표의 숫자를 빼 보면 논문의 문장이 그대로 나와요",
+     "given": "Table 4 의 F1 값",
+     "steps": [
+      "WSJ 만 쓴 칸에서 1등은 Dyer 의 91.7 이에요",
+      "트랜스포머는 91.3 이니 91.7 빼기 91.3 은 0.4 차이예요",
+      "그래서 논문은 Recurrent Neural Network Grammar 하나만 빼고 다 이겼다고 적었어요",
+      "RNN seq2seq 인 Vinyals 의 88.3 과 비교하면 91.3 빼기 88.3 은 3.0 이에요",
+      "준지도 칸에서는 92.7 로 1등이고, 2등 92.1 과 0.6 차이예요"
+     ],
+     "answer": "숫자만 빼 보면 논문이 왜 그 문장을 썼는지 보여요."
+    },
+    {
+     "kind": "steps",
+     "head": "구문 분석 실험의 설정은 번역과 달라요",
+     "given": "6.3 절의 설정",
+     "steps": [
+      "층은 6층이 아니라 4층이고 d_model 은 512 가 아니라 1024 예요",
+      "WSJ 만 쓸 때는 어휘 16K, 준지도일 때는 32K 를 썼어요",
+      "학습 문장은 약 40K 대 약 17M 으로, 17000000 나누기 40000 은 425 배예요",
+      "추론에서 최대 출력 길이는 입력 + 300 이고 **빔 서치(Beam Search)** 는 21, alpha 는 0.3 이에요",
+      "번역은 입력 + 50, 빔 4, alpha 0.6 이었으니 훨씬 넉넉하게 잡은 거예요"
+     ],
+     "answer": "구문 분석은 출력이 입력보다 훨씬 길어서 **길이 정규화(Length Normalization)** 과 빔을 다르게 잡았어요."
+    },
+    {
+     "kind": "bg",
+     "src": "4주차 Part 1",
+     "lines": [
+      "**빔 서치(Beam Search)** 와 **길이 정규화(Length Normalization)** 은 4주차 슬라이드 p.12-13 에서 배웠어요.",
+      "빔을 크게 잡으면 후보를 더 많이 들고 가지만 항상 좋아지지는 않아요."
+     ]
+    },
+    {
+     "kind": "prof",
+     "when": "4주차 월요일 2교시",
+     "lines": [
+      "교수님: 항상 빔 서치가 좋은 건 아니다, 트레이드 오프가 있다는 것 정도는 기억해 달라."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "결론이 조심스럽게 쓴 곳",
+     "items": [
+      "We are excited about ... and plan to = 하겠다는 계획이지 한 일이 아니에요",
+      "plan to investigate local, restricted attention = 아직 안 해 본 일이라고 밝혔어요",
+      "Making generation less sequential is another research goals = 생성은 아직 차례차례라는 자백이에요"
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "결론이 예고한 두 가지를 다시 짚어요",
+     "items": [
+      "**제한된 셀프 어텐션(Restricted Self-Attention)**: 4장에서 이웃 r 칸만 본다고 소개했고, 결론에서 더 해 보겠다고 했어요",
+      "**병렬화(Parallelization)**: 학습은 이미 병렬이지만 생성은 아직 한 토큰씩이라고 스스로 적었어요",
+      "**블루 점수(BLEU)** 말고 다른 잣대로 재 보겠다는 말은 결론에 없어요",
+      "논문 밖 이야기: 이 계획들이 뒤에 어떻게 됐는지는 이 논문에 없어요. 이 덱은 논문 안만 다뤄요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "Table 4 에서 트랜스포머가 1등을 한 칸은?",
+     "choices": [
+      "준지도 학습(semi-supervised) 칸",
+      "WSJ only 칸",
+      "multi-task 칸",
+      "generative 칸"
+     ],
+     "a": 0,
+     "why": "WSJ only 는 91.3 으로 Dyer 의 91.7 에 밀리고, 준지도에서 92.7 로 1등이에요."
+    },
+    {
+     "kind": "check",
+     "q": "구문 분석 실험에서 쓴 빔 크기와 alpha 는?",
+     "choices": [
+      "빔 21, alpha 0.3",
+      "빔 4, alpha 0.6",
+      "빔 8, alpha 0.5",
+      "빔 21, alpha 0.6"
+     ],
+     "a": 0,
+     "why": "번역이 빔 4 와 alpha 0.6, 구문 분석이 빔 21 과 alpha 0.3 이에요. 짝을 바꿔 외우면 틀려요."
+    },
+    {
+     "kind": "english",
+     "head": "시험 답안에 쓸 문장 (결론)",
+     "en": "**트랜스포머(Transformer)** 는 **어텐션(Attention)**만으로 만든 첫 시퀀스 변환 모델이고, 순환 층을 **멀티 헤드 어텐션(Multi-Head Attention (MHA))** 으로 바꿨어요.",
+     "ko": "결론 첫 문장이에요. sequence transduction, entirely on attention, multi-headed self-attention 을 넣어요.",
+     "tip": "순환을 빼고(멀티 헤드) 셀프 어텐션을 넣었다, 이 한 줄로 외워요."
+    },
+    {
+     "kind": "english",
+     "head": "시험 답안에 쓸 문장 (구문 분석)",
+     "en": "번역이 아닌 **구성소 구문 분석(Constituency Parsing)** 에서도 과제에 맞춘 조정 없이 WSJ only 91.3, 준지도 92.7 F1 을 냈어요.",
+     "ko": "논문은 despite the lack of task-specific tuning 이라고 적었어요. 구조가 과제에 얽매이지 않는다는 증거로 씁니다.",
+     "tip": "91.3 과 92.7 두 숫자만 외우면 돼요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "WSJ only 1등은 트랜스포머가 아니라 Dyer 의 91.7 이에요. 논문도 예외가 하나 있다고 적었어요.",
+      "구문 분석 모델은 4층 d_model 1024 예요. 번역 base 의 6층 512 와 헷갈리기 쉬워요.",
+      "결론의 마지막 문단은 한 일이 아니라 앞으로 할 일이에요."
+     ]
+    },
+    {
+     "kind": "exam",
+     "src": "예상 문제",
+     "q": "Table 4 에서 Transformer (4 layers) 의 두 F1 값과, 그 값이 각각 몇 등인지 쓰시오.",
+     "qko": "표에서 트랜스포머 줄 두 개를 찾아 숫자와 순위를 말해 보세요.",
+     "solve": [
+      "WSJ only 줄에서 트랜스포머는 91.3 이에요",
+      "같은 칸의 Dyer 91.7 보다 0.4 낮아서 2등이에요",
+      "semi-supervised 줄에서 트랜스포머는 92.7 이에요",
+      "같은 칸의 2등 92.1 보다 0.6 높아서 1등이에요"
+     ],
+     "answer": "WSJ only 91.3 (2등), semi-supervised 92.7 (1등)"
+    }
+   ]
+  },
+  {
+   "p": 11,
+   "title": "References [5] 부터 [24] 까지: 이 논문이 서 있는 어깨",
+   "terms": [
+    "Transformer",
+    "Self-Attention",
+    "Attention",
+    "Recurrent Neural Network (RNN)",
+    "Convolutional Neural Network (CNN)",
+    "LSTM",
+    "Vanishing Gradient",
+    "seq2seq",
+    "Residual Connection",
+    "Adam",
+    "Machine Translation (MT)",
+    "Encoder",
+    "Decoder"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "참고문헌 쪽이에요. 읽고 외울 쪽은 아니지만 그냥 넘기기엔 아까워요.",
+      "번호 하나하나가 이 과목에서 이미 배운 것과 거의 다 이어져요.",
+      "[13] 은 **장단기 메모리(LSTM)**, [35] 는 **시퀀스-투-시퀀스(seq2seq)**, [11] 은 **잔차 연결(Residual Connection)** 예요.",
+      "모르는 번호가 나오면 이 쪽에서 그 한 줄만 찾아 읽으면 돼요."
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "번호와 배운 내용을 짝지어 봐요",
+     "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 480 270\"><text x=\"240\" y=\"22\" font-size=\"16\" text-anchor=\"middle\" class=\"tb\">참고문헌은 이 과목의 지도예요</text><rect x=\"20\" y=\"42\" width=\"200\" height=\"24\" rx=\"2\" class=\"n b1\"/><text x=\"120.0\" y=\"57.85\" font-size=\"11\" text-anchor=\"middle\" class=\"tl b1\">[13] LSTM</text><rect x=\"20\" y=\"72\" width=\"200\" height=\"24\" rx=\"2\" class=\"n b1\"/><text x=\"120.0\" y=\"87.85\" font-size=\"11\" text-anchor=\"middle\" class=\"tl b1\">[35] seq2seq</text><rect x=\"20\" y=\"102\" width=\"200\" height=\"24\" rx=\"2\" class=\"n b1\"/><text x=\"120.0\" y=\"117.85\" font-size=\"11\" text-anchor=\"middle\" class=\"tl b1\">[2] Bahdanau 어텐션</text><rect x=\"20\" y=\"132\" width=\"200\" height=\"24\" rx=\"2\" class=\"n b1\"/><text x=\"120.0\" y=\"147.85\" font-size=\"11\" text-anchor=\"middle\" class=\"tl b1\">[31] BPE</text><rect x=\"260\" y=\"42\" width=\"200\" height=\"24\" rx=\"2\" class=\"n3 b2\"/><text x=\"360.0\" y=\"57.85\" font-size=\"11\" text-anchor=\"middle\" class=\"tl b2\">3주차 마지막</text><rect x=\"260\" y=\"72\" width=\"200\" height=\"24\" rx=\"2\" class=\"n3 b2\"/><text x=\"360.0\" y=\"87.85\" font-size=\"11\" text-anchor=\"middle\" class=\"tl b2\">4주차 Part 1</text><rect x=\"260\" y=\"102\" width=\"200\" height=\"24\" rx=\"2\" class=\"n3 b2\"/><text x=\"360.0\" y=\"117.85\" font-size=\"11\" text-anchor=\"middle\" class=\"tl b2\">4주차 Part 2</text><rect x=\"260\" y=\"132\" width=\"200\" height=\"24\" rx=\"2\" class=\"n3 b2\"/><text x=\"360.0\" y=\"147.85\" font-size=\"11\" text-anchor=\"middle\" class=\"tl b2\">2주차</text><line x1=\"224\" y1=\"54\" x2=\"249.6\" y2=\"54.0\" class=\"e2 b3\"/><polygon points=\"256,54 248.0,50.0 248.0,58.0\" class=\"arrow b3\"/><line x1=\"224\" y1=\"84\" x2=\"249.6\" y2=\"84.0\" class=\"e2 b3\"/><polygon points=\"256,84 248.0,80.0 248.0,88.0\" class=\"arrow b3\"/><line x1=\"224\" y1=\"114\" x2=\"249.6\" y2=\"114.0\" class=\"e2 b3\"/><polygon points=\"256,114 248.0,110.0 248.0,118.0\" class=\"arrow b3\"/><line x1=\"224\" y1=\"144\" x2=\"249.6\" y2=\"144.0\" class=\"e2 b3\"/><polygon points=\"256,144 248.0,140.0 248.0,148.0\" class=\"arrow b3\"/><text x=\"240\" y=\"192\" font-size=\"13\" text-anchor=\"middle\" class=\"tb b4\">번호 40개가 거의 다 배운 것 아니면 배울 것이에요</text><text x=\"240\" y=\"216\" font-size=\"12\" text-anchor=\"middle\" class=\"tm b4\">모르는 번호가 있으면 그 줄만 찾아 읽으면 돼요</text></svg>",
+     "caption": "참고문헌 번호는 본문에서 대괄호로 불려요. 그 번호를 이 쪽에서 찾아요.",
+     "builds": 4
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "points",
+     "head": "이 쪽에서 이 과목과 바로 이어지는 번호",
+     "items": [
+      "[5] Cho 외, RNN encoder-decoder = **시퀀스-투-시퀀스(seq2seq)** 의 출발점 (4주차 Part 1)",
+      "[7] Chung 외, gated recurrent = GRU, **장단기 메모리(LSTM)** 의 사촌 (3주차)",
+      "[9] Gehring 외, ConvS2S = **합성곱 신경망(Convolutional Neural Network (CNN))** 으로 번역하기 (2 Background 와 Table 1)",
+      "[11] He 외, Deep residual learning = **잔차 연결(Residual Connection)** 의 출처 (3.1 절)",
+      "[13] Hochreiter 와 Schmidhuber, Long short-term memory = **장단기 메모리(LSTM)** (3주차)"
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "이어서 나머지 중요한 번호",
+     "items": [
+      "[12] Hochreiter 외, Gradient flow in recurrent nets = **기울기 소실(Vanishing Gradient)** 을 다룬 옛 논문",
+      "[18] Kalchbrenner 외, ByteNet = **합성곱 신경망(Convolutional Neural Network (CNN))** 번역, Table 1 의 비교 대상",
+      "[20] Kingma 와 Ba, Adam = **아담(Adam)** 옵티마이저 (5.3 절)",
+      "[24] Luong 외, attention-based neural machine translation = **어텐션(Attention)** 점수 함수들",
+      "[22] Lin 외, structured self-attentive sentence embedding = 이미 있던 **셀프 어텐션(Self-Attention)** 연구"
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "본문에서 이 번호들이 어디에 쓰였나",
+     "cols": [
+      "번호",
+      "본문에서 쓰인 곳",
+      "무슨 말을 할 때"
+     ],
+     "rows": [
+      [
+       "[11], [1]",
+       "3.1 절",
+       "**잔차 연결(Residual Connection)** 와 **층 정규화(Layer Normalization (LayerNorm))** 을 쓴다고 할 때"
+      ],
+      [
+       "[13], [7]",
+       "1 Introduction",
+       "**순환 신경망(Recurrent Neural Network (RNN))** 이 최고 수준이었다고 할 때"
+      ],
+      [
+       "[9], [18]",
+       "2 Background",
+       "**합성곱 신경망(Convolutional Neural Network (CNN))** 은 거리가 멀수록 걸음이 는다고 할 때"
+      ],
+      [
+       "[20]",
+       "5.3 절",
+       "**아담(Adam)** 을 썼다고 할 때"
+      ]
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "참고문헌 [11] 이 이 논문에서 하는 일은?",
+     "choices": [
+      "**잔차 연결(Residual Connection)** 의 출처",
+      "**아담(Adam)** 의 출처",
+      "**장단기 메모리(LSTM)** 의 출처",
+      "**바이트 쌍 인코딩(Byte Pair Encoding (BPE))** 의 출처"
+     ],
+     "a": 0,
+     "why": "[11] 은 He 외의 Deep residual learning 이고 3.1 절에서 residual connection 의 근거로 불려요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "11쪽을 짚어 읽어요",
+     "boxes": [
+      {
+       "x": 0.176,
+       "y": 0.092,
+       "w": 0.652,
+       "h": 0.044,
+       "say": "[5] Cho 외. RNN encoder-decoder 로 구를 표현하기. seq2seq 의 출발점이에요."
+      },
+      {
+       "x": 0.176,
+       "y": 0.261,
+       "w": 0.652,
+       "h": 0.03,
+       "say": "[9] Gehring 외 ConvS2S. 합성곱으로 번역을 푼 모델이에요."
+      },
+      {
+       "x": 0.176,
+       "y": 0.338,
+       "w": 0.652,
+       "h": 0.044,
+       "say": "[11] He 외 Deep residual learning. 3.1 절의 잔차 연결이 여기서 왔어요."
+      },
+      {
+       "x": 0.176,
+       "y": 0.391,
+       "w": 0.652,
+       "h": 0.03,
+       "say": "[12] Hochreiter 외. 먼 의존을 배우기 어려운 이유, 곧 기울기 소실이에요."
+      },
+      {
+       "x": 0.176,
+       "y": 0.429,
+       "w": 0.652,
+       "h": 0.03,
+       "say": "[13] Long short-term memory. 3주차 마지막에 배운 LSTM 이에요."
+      },
+      {
+       "x": 0.176,
+       "y": 0.637,
+       "w": 0.652,
+       "h": 0.044,
+       "say": "[18] ByteNet. 선형 시간 번역이라고 이름 붙인 합성곱 모델이에요."
+      },
+      {
+       "x": 0.176,
+       "y": 0.729,
+       "w": 0.652,
+       "h": 0.018,
+       "say": "[20] Adam. 5.3 절에서 쓴 옵티마이저예요."
+      },
+      {
+       "x": 0.176,
+       "y": 0.884,
+       "w": 0.652,
+       "h": 0.03,
+       "say": "[24] Luong 외. 어텐션 점수 함수를 정리한 2015년 논문이에요."
+      }
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "참고문헌 번호를 읽는 법",
+     "given": "본문의 [11] 같은 표시",
+     "steps": [
+      "본문에서 대괄호 숫자를 만나면 먼저 번호를 적어 둬요",
+      "References 에서 그 번호를 찾아 제목만 읽어요",
+      "제목에서 아는 낱말을 찾아요. residual, memory, attention 처럼요",
+      "이 과목에서 배운 것과 이어지면 거기까지만 하고 넘어가요",
+      "이어지지 않으면 그 논문은 이 수업 범위 밖이라고 표시해 두면 돼요"
+     ],
+     "answer": "참고문헌은 다 읽는 곳이 아니라 필요할 때 찾는 곳이에요."
+    },
+    {
+     "kind": "compare",
+     "head": "이 쪽 번호 중 이 수업에서 안 배운 것",
+     "cols": [
+      "번호",
+      "제목 요지",
+      "어떻게 볼까"
+     ],
+     "rows": [
+      [
+       "[6] Chollet",
+       "Xception, 분리 합성곱",
+       "4장에서 한 번 비교로만 나와요"
+      ],
+      [
+       "[16], [17] Kaiser",
+       "Neural GPU, active memory",
+       "2 Background 에서 이름만 나와요"
+      ],
+      [
+       "[21] Kuchaiev",
+       "LSTM factorization tricks",
+       "1 Introduction 에서 이름만 나와요"
+      ],
+      [
+       "[19] Kim 외",
+       "Structured attention networks",
+       "1 Introduction 의 어텐션 연구"
+      ]
+     ]
+    },
+    {
+     "kind": "bg",
+     "src": "3주차",
+     "lines": [
+      "**장단기 메모리(LSTM)** 은 게이트로 기억을 조절해 **기울기 소실(Vanishing Gradient)** 을 늦춰요.",
+      "그래도 한 걸음씩 가는 **순환 신경망(Recurrent Neural Network (RNN))** 이라 길이가 길어지면 걸음 수가 늘어요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "[13] 과 [35] 를 바르게 짝지은 것은?",
+     "choices": [
+      "[13] **장단기 메모리(LSTM)**, [35] **시퀀스-투-시퀀스(seq2seq)**",
+      "[13] **시퀀스-투-시퀀스(seq2seq)**, [35] **장단기 메모리(LSTM)**",
+      "[13] **아담(Adam)**, [35] **잔차 연결(Residual Connection)**",
+      "[13] **잔차 연결(Residual Connection)**, [35] **아담(Adam)**"
+     ],
+     "a": 0,
+     "why": "[13] 은 Hochreiter 와 Schmidhuber 의 LSTM, [35] 는 Sutskever 외의 seq2seq 예요."
+    },
+    {
+     "kind": "english",
+     "head": "시험 답안에 쓸 문장 (참고문헌 읽는 법)",
+     "en": "참고문헌 마흔 편은 대부분 이 과목에서 배운 **장단기 메모리(LSTM)**, **시퀀스-투-시퀀스(seq2seq)**, **잔차 연결(Residual Connection)** 의 원 논문이에요.",
+     "ko": "다 읽을 필요는 없고 본문에서 불린 자리와 짝지어 보면 논문의 뼈대가 보여요.",
+     "tip": "번호 하나가 개념 하나라고 생각하면 돼요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "참고문헌 번호는 나온 순서가 아니라 저자 이름의 알파벳 순서예요. [1] 이 가장 먼저 인용된 논문이 아니에요.",
+      "[12] 와 [13] 은 둘 다 Hochreiter 지만 다른 논문이에요. [12] 는 기울기 흐름, [13] 은 LSTM 이에요.",
+      "참고문헌 자체가 시험 범위는 아니에요. 개념과 이어지는 번호 몇 개만 알면 충분해요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 12,
+   "title": "References [25] 부터 [40] 까지: 학습 설정의 출처들",
+   "terms": [
+    "Byte Pair Encoding (BPE)",
+    "WordPiece",
+    "Dropout",
+    "Label Smoothing",
+    "Embedding",
+    "seq2seq",
+    "Beam Search",
+    "Transformer",
+    "Attention",
+    "Self-Attention",
+    "Encoder",
+    "Decoder",
+    "Machine Translation (MT)"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "참고문헌의 뒷부분이에요. 여기에 5장 학습 설정의 출처가 몰려 있어요.",
+      "[31] 은 **바이트 쌍 인코딩(Byte Pair Encoding (BPE))**, [33] 은 **드롭아웃(Dropout)**, [36] 은 **라벨 스무딩(Label Smoothing)** 예요.",
+      "[38] 은 **워드피스(WordPiece)** 와 **빔 서치(Beam Search)** 설정을 가져온 구글 번역 논문이에요.",
+      "5장을 읽다가 막히면 이 쪽에서 해당 번호를 찾으면 돼요."
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "5장 설정과 그 출처",
+     "cols": [
+      "논문에서 쓴 것",
+      "참고문헌",
+      "이 과목에서"
+     ],
+     "rows": [
+      [
+       "**바이트 쌍 인코딩(Byte Pair Encoding (BPE))** 공유 어휘 37000",
+       "[31] Sennrich",
+       "2주차"
+      ],
+      [
+       "**워드피스(WordPiece)** 어휘 32000",
+       "[38] Wu 외",
+       "2주차"
+      ],
+      [
+       "**드롭아웃(Dropout)** 0.1",
+       "[33] Srivastava",
+       "5.4 절에서 처음"
+      ],
+      [
+       "**라벨 스무딩(Label Smoothing)** 0.1",
+       "[36] Szegedy",
+       "5.4 절에서 처음"
+      ]
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "points",
+     "head": "이 쪽에서 꼭 알아 둘 번호",
+     "items": [
+      "[30] Press 와 Wolf, Using the output embedding = 3.4 절의 **임베딩(Embedding)** 가중치 공유 출처",
+      "[31] Sennrich 외, rare words with subword units = **바이트 쌍 인코딩(Byte Pair Encoding (BPE))** (2주차)",
+      "[33] Srivastava 외, Dropout = **드롭아웃(Dropout)** (5.4 절)",
+      "[35] Sutskever 외, Sequence to sequence learning = **시퀀스-투-시퀀스(seq2seq)** (4주차 Part 1)",
+      "[36] Szegedy 외, Rethinking the inception architecture = **라벨 스무딩(Label Smoothing)** 의 출처 (5.4 절)"
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "이어서 결과와 관련된 번호",
+     "items": [
+      "[38] Wu 외, Google's neural machine translation = **워드피스(WordPiece)**, **빔 서치(Beam Search)** 빔 4 와 alpha 0.6 의 출처",
+      "[37] Vinyals 외, Grammar as a foreign language = 6.3 절의 비교 대상이자 준지도 자료 출처",
+      "[25] Marcus 외, Penn Treebank = 6.3 절의 WSJ 자료",
+      "[29] Petrov 외 = 6.3 절에서 말한 BerkeleyParser",
+      "[32] Shazeer 외, mixture-of-experts = Table 2 의 MoE 줄"
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "논문이 3.4 절에서 임베딩 가중치를 나눠 쓰는 근거로 든 참고문헌은?",
+     "choices": [
+      "[30] Press 와 Wolf",
+      "[31] Sennrich",
+      "[33] Srivastava",
+      "[36] Szegedy"
+     ],
+     "a": 0,
+     "why": "3.4 절의 similar to [30] 이 그것이에요. [31] 은 BPE, [33] 은 드롭아웃, [36] 은 라벨 스무딩이에요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "12쪽을 짚어 읽어요",
+     "boxes": [
+      {
+       "x": 0.176,
+       "y": 0.092,
+       "w": 0.652,
+       "h": 0.03,
+       "say": "[25] Penn Treebank. 6.3 절의 WSJ 자료가 여기서 나와요."
+      },
+      {
+       "x": 0.176,
+       "y": 0.279,
+       "w": 0.652,
+       "h": 0.058,
+       "say": "[29] Petrov 외. 본문에서 BerkeleyParser 라고 부른 그 파서예요."
+      },
+      {
+       "x": 0.176,
+       "y": 0.35,
+       "w": 0.652,
+       "h": 0.03,
+       "say": "[30] Press 와 Wolf. 3.4 절의 가중치 공유 출처예요."
+      },
+      {
+       "x": 0.176,
+       "y": 0.394,
+       "w": 0.652,
+       "h": 0.03,
+       "say": "[31] Sennrich 외. 2주차에 배운 BPE 논문이에요."
+      },
+      {
+       "x": 0.176,
+       "y": 0.494,
+       "w": 0.652,
+       "h": 0.044,
+       "say": "[33] Srivastava 외. 드롭아웃 논문이에요."
+      },
+      {
+       "x": 0.176,
+       "y": 0.623,
+       "w": 0.652,
+       "h": 0.03,
+       "say": "[35] Sutskever 외. seq2seq 의 그 논문이에요."
+      },
+      {
+       "x": 0.176,
+       "y": 0.666,
+       "w": 0.652,
+       "h": 0.03,
+       "say": "[36] Szegedy 외. 라벨 스무딩이 여기서 왔어요."
+      },
+      {
+       "x": 0.176,
+       "y": 0.753,
+       "w": 0.652,
+       "h": 0.058,
+       "say": "[38] Wu 외. word-piece 와 빔 서치 설정을 가져온 구글 번역 논문이에요."
+      }
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "참고문헌 마흔 편이 어떻게 나뉘어 있나",
+     "given": "15쪽짜리 PDF",
+     "steps": [
+      "10쪽 아래쪽에 [1] 부터 [4] 까지 네 편이 있어요",
+      "11쪽에 [5] 부터 [24] 까지 스무 편이 있어요",
+      "12쪽에 [25] 부터 [40] 까지 열여섯 편이 있어요",
+      "4 더하기 20 더하기 16 은 40 이에요",
+      "본문 10쪽까지가 논문이고 11쪽부터는 목록과 그림이에요"
+     ],
+     "answer": "논문 본문은 10쪽까지, 그 뒤는 참고문헌 두 쪽과 그림 세 쪽이에요."
+    },
+    {
+     "kind": "bg",
+     "src": "2주차",
+     "lines": [
+      "**바이트 쌍 인코딩(Byte Pair Encoding (BPE))** 는 자주 붙어 다니는 두 조각을 한 조각으로 접착하는 방법이에요.",
+      "**워드피스(WordPiece)** 도 비슷하게 단어를 조각으로 자르지만 고르는 기준이 달라요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "논문이 그대로 가져다 쓴 것",
+     "items": [
+      "토큰화: **바이트 쌍 인코딩(Byte Pair Encoding (BPE))** 와 **워드피스(WordPiece)**",
+      "정칙화: **드롭아웃(Dropout)** 와 **라벨 스무딩(Label Smoothing)**",
+      "학습과 안정화: **아담(Adam)**, **잔차 연결(Residual Connection)**",
+      "정규화: **층 정규화(Layer Normalization (LayerNorm))** (참고문헌 [1])"
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "논문이 새로 만든 것",
+     "items": [
+      "**셀프 어텐션(Self-Attention)** 만으로 쌓은 **인코더(Encoder)** 와 **디코더(Decoder)**",
+      "스케일드 닷프로덕트 어텐션과 루트 d_k 나누기",
+      "**멀티 헤드 어텐션(Multi-Head Attention (MHA))** 와 사인 코사인 위치 인코딩",
+      "새 부품보다 이미 있던 부품을 잘 조합한 논문에 가까워요"
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "[31] 과 [36] 을 바르게 짝지은 것은?",
+     "choices": [
+      "[31] **바이트 쌍 인코딩(Byte Pair Encoding (BPE))**, [36] **라벨 스무딩(Label Smoothing)**",
+      "[31] **라벨 스무딩(Label Smoothing)**, [36] **바이트 쌍 인코딩(Byte Pair Encoding (BPE))**",
+      "[31] **드롭아웃(Dropout)**, [36] **워드피스(WordPiece)**",
+      "[31] **워드피스(WordPiece)**, [36] **드롭아웃(Dropout)**"
+     ],
+     "a": 0,
+     "why": "[31] 은 Sennrich 의 subword units, [36] 은 Szegedy 의 inception 논문에서 온 라벨 스무딩이에요."
+    },
+    {
+     "kind": "english",
+     "head": "시험 답안에 쓸 문장 (새로 만든 것)",
+     "en": "새로 만든 것은 **셀프 어텐션(Self-Attention)** 만으로 쌓은 스택, 스케일드 닷프로덕트, **멀티 헤드 어텐션(Multi-Head Attention (MHA))** 세 가지예요.",
+     "ko": "**잔차 연결(Residual Connection)**, **드롭아웃(Dropout)**, **라벨 스무딩(Label Smoothing)** 는 앞선 연구에서 그대로 가져온 부품이에요.",
+     "tip": "새 부품 넷, 가져온 부품 여럿 으로 나눠 외워요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "**라벨 스무딩(Label Smoothing)** 이 인셉션 논문 [36] 에서 왔다는 것이 뜻밖이라 자주 틀려요. 이미지 쪽 논문이에요.",
+      "[38] 하나가 **워드피스(WordPiece)**, **빔 서치(Beam Search)** 빔 4, alpha 0.6, 조기 종료까지 여러 곳의 출처예요.",
+      "참고문헌 쪽 자체를 외울 필요는 없어요. 개념과 번호의 짝만 몇 개 알아 두면 돼요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 13,
+   "title": "Attention Visualizations 와 Figure 3: 먼 단어를 붙잡는 헤드",
+   "terms": [
+    "Attention",
+    "Self-Attention",
+    "Encoder",
+    "Head",
+    "Multi-Head Attention (MHA)",
+    "Attention Weight",
+    "Attention Distribution",
+    "Token",
+    "Interpretability",
+    "Maximum Path Length",
+    "Transformer"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "여기부터 부록이에요. 제목은 Attention Visualizations, 곧 어텐션을 그림으로 보여 주는 곳이에요.",
+      "Figure 3 은 **인코더(Encoder)** **셀프 어텐션(Self-Attention)** 의 6층 중 5층을 그린 거예요.",
+      "위아래로 같은 문장이 두 번 놓여 있고, 위에서 아래로 선이 이어져요.",
+      "선 하나가 어느 자리를 얼마나 봤는지, 색이 어느 헤드인지 나타내요."
+     ]
+    },
+    {
+     "kind": "analogy",
+     "head": "형광펜 여러 자루로 같은 문장에 밑줄 긋기",
+     "scene": "한 문장에 친구 여덟 명이 각자 다른 색 형광펜으로 중요한 곳에 밑줄을 그어요. 색마다 고르는 곳이 달라요.",
+     "map": [
+      [
+       "형광펜 색 하나",
+       "**헤드(Head)** 하나"
+      ],
+      [
+       "밑줄의 진하기",
+       "**어텐션 가중치(Attention Weight)** 의 크기"
+      ],
+      [
+       "여덟 명이 동시에",
+       "**멀티 헤드 어텐션(Multi-Head Attention (MHA))**"
+      ]
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "Figure 3 이 보여 주는 것",
+     "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 480 270\"><text x=\"240\" y=\"20\" font-size=\"15\" text-anchor=\"middle\" class=\"tb\">Figure 3: making 이 difficult 를 봐요</text><text x=\"36\" y=\"48\" font-size=\"11\" text-anchor=\"middle\" class=\"t b1\">laws</text><text x=\"88\" y=\"48\" font-size=\"11\" text-anchor=\"middle\" class=\"t b1\">since</text><text x=\"140\" y=\"48\" font-size=\"11\" text-anchor=\"middle\" class=\"t b1\">2009</text><text x=\"192\" y=\"48\" font-size=\"11\" text-anchor=\"middle\" class=\"t b1\">making</text><text x=\"244\" y=\"48\" font-size=\"11\" text-anchor=\"middle\" class=\"t b1\">the</text><text x=\"296\" y=\"48\" font-size=\"11\" text-anchor=\"middle\" class=\"t b1\">voting</text><text x=\"348\" y=\"48\" font-size=\"11\" text-anchor=\"middle\" class=\"t b1\">difficult</text><rect x=\"174\" y=\"34\" width=\"46\" height=\"20\" rx=\"2\" class=\"n2 b1\"/><text x=\"36\" y=\"150\" font-size=\"11\" text-anchor=\"middle\" class=\"t b1\">laws</text><text x=\"88\" y=\"150\" font-size=\"11\" text-anchor=\"middle\" class=\"t b1\">since</text><text x=\"140\" y=\"150\" font-size=\"11\" text-anchor=\"middle\" class=\"t b1\">2009</text><text x=\"192\" y=\"150\" font-size=\"11\" text-anchor=\"middle\" class=\"t b1\">making</text><text x=\"244\" y=\"150\" font-size=\"11\" text-anchor=\"middle\" class=\"t b1\">the</text><text x=\"296\" y=\"150\" font-size=\"11\" text-anchor=\"middle\" class=\"t b1\">voting</text><text x=\"348\" y=\"150\" font-size=\"11\" text-anchor=\"middle\" class=\"t b1\">difficult</text><rect x=\"378\" y=\"136\" width=\"60\" height=\"20\" rx=\"2\" class=\"n2 b2\"/><line x1=\"197\" y1=\"58\" x2=\"402.0\" y2=\"129.9\" class=\"e2 b2\"/><polygon points=\"408,132 401.8,125.6 399.1,133.1\" class=\"arrow b2\"/><line x1=\"197\" y1=\"58\" x2=\"197.0\" y2=\"125.6\" class=\"e b3\"/><polygon points=\"197,132 201.0,124.0 193.0,124.0\" class=\"arrow b3\"/><line x1=\"197\" y1=\"58\" x2=\"350.2\" y2=\"129.3\" class=\"e b3\"/><polygon points=\"356,132 350.4,125.0 347.1,132.3\" class=\"arrow b3\"/><text x=\"240\" y=\"186\" font-size=\"13\" text-anchor=\"middle\" class=\"tb b3\">진한 선 하나가 헤드 하나가 준 큰 가중치예요</text><text x=\"240\" y=\"210\" font-size=\"13\" text-anchor=\"middle\" class=\"t b4\">7칸 떨어져 있어도 셀프 어텐션은 한 걸음이에요</text><text x=\"240\" y=\"234\" font-size=\"12\" text-anchor=\"middle\" class=\"tm b4\">making ... more difficult 가 한 덩어리라서요</text></svg>",
+     "caption": "making 이 일곱 칸 떨어진 difficult 를 강하게 봐요. making ... more difficult 가 한 덩어리라서요.",
+     "builds": 4
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "points",
+     "head": "그림 설명(caption)의 영어와 우리말 뜻",
+     "items": [
+      "following long-distance dependencies = 멀리 떨어진 의존 관계를 따라간다",
+      "in the encoder self-attention in layer 5 of 6 = **인코더(Encoder)** **셀프 어텐션(Self-Attention)** 의 6층 중 5층에서",
+      "attend to a distant dependency of the verb 'making' = 동사 making 의 먼 짝을 본다",
+      "completing the phrase 'making...more difficult' = making ... more difficult 라는 덩어리를 완성한다",
+      "Different colors represent different heads = 색이 다르면 다른 **헤드(Head)** 예요"
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "그림을 읽는 순서",
+     "given": "Figure 3",
+     "steps": [
+      "위쪽 줄에서 회색으로 칠해진 단어를 찾아요. 여기서는 making 이에요",
+      "그 단어에서 뻗어 나가는 선을 따라가요",
+      "선이 닿는 아래쪽 단어가 making 이 본 자리예요",
+      "선이 진할수록 그 자리의 가중치가 커요",
+      "색이 다르면 다른 헤드가 본 것이에요"
+     ],
+     "answer": "한 **토큰(Token)** 이 어디를 봤는지가 한눈에 보여요."
+    },
+    {
+     "kind": "check",
+     "q": "Figure 3 에서 색이 다르다는 것은 무엇이 다르다는 뜻인가요?",
+     "choices": [
+      "**헤드(Head)** 가 다르다",
+      "층이 다르다",
+      "문장이 다르다",
+      "가중치가 0 이다"
+     ],
+     "a": 0,
+     "why": "caption 의 Different colors represent different heads 그대로예요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "13쪽을 짚어 읽어요",
+     "boxes": [
+      {
+       "x": 0.176,
+       "y": 0.09,
+       "w": 0.21,
+       "h": 0.02,
+       "say": "제목 Attention Visualizations. 여기부터 부록 그림이에요."
+      },
+      {
+       "x": 0.19,
+       "y": 0.144,
+       "w": 0.63,
+       "h": 0.062,
+       "say": "위쪽 줄: 문장의 토큰이 세로로 적혀 있어요. 쿼리 쪽이에요."
+      },
+      {
+       "x": 0.514,
+       "y": 0.165,
+       "w": 0.03,
+       "h": 0.04,
+       "say": "회색으로 칠해진 making. 이 단어의 어텐션만 그렸어요."
+      },
+      {
+       "x": 0.19,
+       "y": 0.3,
+       "w": 0.63,
+       "h": 0.065,
+       "say": "아래쪽 줄: 같은 문장이 한 번 더 있어요. 키와 밸류 쪽이에요."
+      },
+      {
+       "x": 0.628,
+       "y": 0.3,
+       "w": 0.05,
+       "h": 0.035,
+       "say": "more 와 difficult 자리. 여기로 진한 선이 몰려요."
+      },
+      {
+       "x": 0.176,
+       "y": 0.392,
+       "w": 0.65,
+       "h": 0.058,
+       "say": "caption: layer 5 of 6, 색이 헤드, 색깔로 봐야 잘 보인다고 적혀 있어요."
+      }
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "making 과 difficult 사이가 몇 칸인지 세 보면",
+     "given": "It is in this spirit ... making the registration or voting process more difficult .",
+     "steps": [
+      "문장의 토큰을 왼쪽부터 세면 making 은 18번째예요",
+      "difficult 는 25번째예요",
+      "25 빼기 18 은 7 이니 일곱 칸 떨어져 있어요",
+      "**순환 신경망(Recurrent Neural Network (RNN))** 이라면 일곱 걸음을 차례로 지나야 해요",
+      "**셀프 어텐션(Self-Attention)** 은 **최대 경로 길이(Maximum Path Length)** 이 O(1) 이라 한 걸음이에요"
+     ],
+     "answer": "Table 1 의 O(1) 이 그림에서는 이렇게 보여요."
+    },
+    {
+     "kind": "points",
+     "head": "이 그림이 4장의 어느 문장을 뒷받침하나",
+     "items": [
+      "4장 끝: As side benefit, self-attention could yield more interpretable models = 곁가지로 **해석 가능성(Interpretability)** 이 좋아질 수 있다",
+      "We inspect attention distributions from our models = 우리 모델의 어텐션 분포를 들여다봤다",
+      "individual attention heads clearly learn to perform different tasks = **헤드(Head)** 마다 다른 일을 배운다",
+      "many appear to exhibit behavior related to the syntactic and semantic structure = 문법과 뜻의 구조와 관련돼 보인다"
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "논문이 쓴 말의 세기에 주의",
+     "items": [
+      "could yield, appear to exhibit 처럼 약한 표현이에요. 단정하지 않았어요",
+      "**어텐션 분포(Attention Distribution)** 를 보면 뭔가 보인다는 것이지, 그것이 모델의 이유라고 증명한 것은 아니에요",
+      "그림 세 장은 예시 세 개일 뿐이고 통계를 낸 것이 아니에요"
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "Figure 3 이 그린 것은 어느 어텐션인가요?",
+     "choices": [
+      "**인코더(Encoder)** 의 **셀프 어텐션(Self-Attention)**",
+      "디코더의 셀프 어텐션",
+      "인코더 디코더 어텐션",
+      "FFN 의 출력"
+     ],
+     "a": 0,
+     "why": "caption 에 encoder self-attention in layer 5 of 6 이라고 적혀 있어요."
+    },
+    {
+     "kind": "english",
+     "head": "시험 답안에 쓸 문장 (해석 가능성)",
+     "en": "논문은 곁가지 장점으로 **해석 가능성(Interpretability)** 을 들면서, **어텐션 분포(Attention Distribution)** 를 들여다보면 **헤드(Head)** 마다 다른 일을 배운 것처럼 보인다고 적었어요.",
+     "ko": "단정이 아니라 could yield, appear to exhibit 같은 조심스러운 표현을 썼다는 점까지 같이 써 주면 좋아요.",
+     "tip": "곁가지 장점, 조심스러운 표현 두 가지를 넣어요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "그림의 위아래 줄은 다른 문장이 아니라 같은 문장이에요. 셀프 어텐션이라서 그래요.",
+      "층은 5층이지 5개가 아니에요. 인코더가 6층이고 그 중 다섯 번째예요.",
+      "어텐션이 크다고 그 단어가 원인이라는 뜻은 아니에요. 논문도 그렇게까지 말하지 않았어요."
+     ]
+    },
+    {
+     "kind": "exam",
+     "src": "예상 문제",
+     "q": "Figure 3 의 caption 에 나온 두 가지 사실을 쓰시오.",
+     "qko": "그림 설명에서 확실히 적힌 사실 두 개를 찾아 쓰세요.",
+     "solve": [
+      "첫째, 이것은 인코더 셀프 어텐션의 6층 중 5층이에요",
+      "둘째, 서로 다른 색은 서로 다른 헤드예요",
+      "덧붙이면 making 이라는 단어의 어텐션만 그렸다는 것도 적혀 있어요"
+     ],
+     "answer": "인코더 셀프 어텐션 layer 5 of 6, 색이 곧 헤드"
+    }
+   ]
+  },
+  {
+   "p": 14,
+   "title": "Figure 4: its 가 무엇을 가리키는지 찾는 헤드",
+   "terms": [
+    "Attention",
+    "Self-Attention",
+    "Encoder",
+    "Head",
+    "Multi-Head Attention (MHA)",
+    "Attention Weight",
+    "Attention Distribution",
+    "Token",
+    "Interpretability",
+    "Transformer"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "Figure 4 예요. 문장은 The Law will never be perfect ... in my opinion 이에요.",
+      "위 그림은 헤드 5 의 어텐션을 전부 그린 것이고, 아래 그림은 its 라는 단어 하나만 뽑은 거예요.",
+      "아래 그림에서 선이 딱 두 개라 **어텐션 가중치(Attention Weight)** 가 아주 뾰족하다는 것이 보여요.",
+      "논문은 이 두 헤드가 its 가 무엇을 가리키는지 찾는 일을 하는 것 같다고 적었어요."
+     ]
+    },
+    {
+     "kind": "analogy",
+     "head": "대명사에 화살표 그리기",
+     "scene": "국어 시간에 그 사람 이라는 말에 밑줄을 긋고 앞으로 화살표를 그려 누구인지 찾잖아요. 헤드가 그 일을 해요.",
+     "map": [
+      [
+       "그 사람 이라는 말",
+       "its 라는 대명사"
+      ],
+      [
+       "화살표가 닿는 이름",
+       "Law 와 application"
+      ],
+      [
+       "화살표를 긋는 사람",
+       "**헤드(Head)** 5 와 **헤드(Head)** 6"
+      ]
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "Figure 4 아래 그림이 보여 주는 것",
+     "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 480 270\"><text x=\"240\" y=\"20\" font-size=\"15\" text-anchor=\"middle\" class=\"tb\">Figure 4: its 가 Law 를 가리켜요</text><text x=\"40\" y=\"52\" font-size=\"11\" text-anchor=\"middle\" class=\"t b1\">The</text><text x=\"106\" y=\"52\" font-size=\"11\" text-anchor=\"middle\" class=\"t b1\">Law</text><text x=\"172\" y=\"52\" font-size=\"11\" text-anchor=\"middle\" class=\"t b1\">but</text><text x=\"238\" y=\"52\" font-size=\"11\" text-anchor=\"middle\" class=\"t b1\">its</text><text x=\"304\" y=\"52\" font-size=\"11\" text-anchor=\"middle\" class=\"t b1\">application</text><text x=\"370\" y=\"52\" font-size=\"11\" text-anchor=\"middle\" class=\"t b1\">should</text><text x=\"436\" y=\"52\" font-size=\"11\" text-anchor=\"middle\" class=\"t b1\">be</text><rect x=\"84\" y=\"38\" width=\"46\" height=\"20\" rx=\"2\" class=\"n3 b2\"/><rect x=\"238\" y=\"38\" width=\"76\" height=\"20\" rx=\"2\" class=\"n4 b3\"/><rect x=\"172\" y=\"38\" width=\"46\" height=\"20\" rx=\"2\" class=\"n2 b1\"/><line x1=\"195\" y1=\"62\" x2=\"123.9\" y2=\"93.4\" class=\"e2 b2\"/><polygon points=\"118,96 126.9,96.4 123.7,89.1\" class=\"arrow b2\"/><line x1=\"195\" y1=\"62\" x2=\"256.3\" y2=\"93.1\" class=\"e b3\"/><polygon points=\"262,96 256.7,88.8 253.1,95.9\" class=\"arrow b3\"/><text x=\"140\" y=\"118\" font-size=\"12\" text-anchor=\"middle\" class=\"tb b2\">헤드 5: its 가 Law 로</text><text x=\"320\" y=\"118\" font-size=\"12\" text-anchor=\"middle\" class=\"t b3\">헤드 6: its 가 application 으로</text><text x=\"240\" y=\"156\" font-size=\"13\" text-anchor=\"middle\" class=\"tb b4\">같은 단어를 두 헤드가 서로 다르게 봐요</text><text x=\"240\" y=\"180\" font-size=\"12\" text-anchor=\"middle\" class=\"tm b4\">논문은 apparently, seems 라고 조심스럽게 적었어요</text><text x=\"240\" y=\"210\" font-size=\"12\" text-anchor=\"middle\" class=\"t b4\">이 그림은 인코더 6층 중 5층이에요</text></svg>",
+     "caption": "its 에서 나가는 선이 딱 두 개예요. 하나는 Law, 하나는 application 으로 가요.",
+     "builds": 4
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "points",
+     "head": "caption 의 영어와 우리말 뜻",
+     "items": [
+      "Two attention heads, also in layer 5 of 6 = 역시 6층 중 5층의 **헤드(Head)** 두 개",
+      "apparently involved in anaphora resolution = 대명사가 무엇을 가리키는지 찾는 일에 관여하는 것으로 보인다",
+      "Top: Full attentions for head 5 = 위쪽은 **헤드(Head)** 5 의 모든 어텐션",
+      "Bottom: Isolated attentions from just the word 'its' = 아래쪽은 its 한 단어만 떼어 낸 것",
+      "the attentions are very sharp for this word = 이 단어에 대해서는 어텐션이 아주 뾰족하다"
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "위 그림과 아래 그림의 차이",
+     "cols": [
+      "",
+      "위 그림",
+      "아래 그림"
+     ],
+     "rows": [
+      [
+       "그린 것",
+       "**헤드(Head)** 5 의 모든 자리",
+       "its 한 자리만"
+      ],
+      [
+       "헤드 수",
+       "하나",
+       "둘 (헤드 5 와 6)"
+      ],
+      [
+       "보이는 모양",
+       "선이 빽빽해요",
+       "선이 딱 두 개예요"
+      ],
+      [
+       "뜻",
+       "전체 그림",
+       "뾰족한 어텐션"
+      ]
+     ]
+    },
+    {
+     "kind": "check",
+     "q": "아래 그림에서 its 의 선이 두 개뿐인 것은 무엇을 뜻하나요?",
+     "choices": [
+      "**어텐션 가중치(Attention Weight)** 가 두 자리에 몰려 뾰족하다",
+      "가중치의 합이 2 이다",
+      "헤드가 두 층에 걸쳐 있다",
+      "밸류가 두 개뿐이다"
+     ],
+     "a": 0,
+     "why": "caption 의 the attentions are very sharp for this word 그대로예요. 합은 언제나 1 이에요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "14쪽을 짚어 읽어요",
+     "boxes": [
+      {
+       "x": 0.19,
+       "y": 0.21,
+       "w": 0.63,
+       "h": 0.065,
+       "say": "위 그림의 윗줄: 문장 토큰이 세로로 적혀 있어요. 헤드 5 의 쿼리 쪽이에요."
+      },
+      {
+       "x": 0.19,
+       "y": 0.39,
+       "w": 0.63,
+       "h": 0.062,
+       "say": "위 그림의 아랫줄: 같은 문장이에요. 선이 아주 빽빽해요."
+      },
+      {
+       "x": 0.375,
+       "y": 0.485,
+       "w": 0.06,
+       "h": 0.062,
+       "say": "아래 그림에서 회색으로 칠해진 its. 이 단어만 뽑았어요."
+      },
+      {
+       "x": 0.21,
+       "y": 0.665,
+       "w": 0.04,
+       "h": 0.045,
+       "say": "선이 닿는 첫 자리 Law. 진한 보라색 헤드가 여기로 가요."
+      },
+      {
+       "x": 0.398,
+       "y": 0.665,
+       "w": 0.05,
+       "h": 0.06,
+       "say": "선이 닿는 둘째 자리 application. 연한 색 헤드가 여기로 가요."
+      },
+      {
+       "x": 0.176,
+       "y": 0.774,
+       "w": 0.65,
+       "h": 0.044,
+       "say": "caption: layer 5 of 6, 대명사 해석으로 보인다, 아주 뾰족하다고 적혀 있어요."
+      }
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "its 와 Law 가 몇 칸 떨어져 있는지 세 보면",
+     "given": "The Law will never be perfect , but its application ...",
+     "steps": [
+      "문장 토큰을 왼쪽부터 세면 Law 는 2번째예요",
+      "its 는 9번째예요",
+      "9 빼기 2 는 7 이니 일곱 칸 떨어져 있어요",
+      "바로 옆의 application 은 10번째라 한 칸 차이예요",
+      "두 **헤드(Head)** 가 먼 자리와 가까운 자리를 나눠 보고 있는 셈이에요"
+     ],
+     "answer": "멀든 가깝든 셀프 어텐션에는 한 걸음이라서 둘 다 가능해요."
+    },
+    {
+     "kind": "points",
+     "head": "이 그림이 3.2.2 절의 어느 문장을 뒷받침하나",
+     "items": [
+      "3.2.2: allows the model to jointly attend to information from different representation subspaces",
+      "at different positions = 서로 다른 자리에서 서로 다른 관점으로 함께 본다",
+      "With a single attention head, averaging inhibits this = 헤드가 하나면 평균이 이것을 막는다",
+      "Figure 4 는 그 말을 눈으로 보여 주는 예시 하나예요"
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "논문이 쓴 말의 세기에 주의",
+     "items": [
+      "apparently involved in = 관여하는 것으로 보인다. 확인했다는 말이 아니에요",
+      "논문은 anaphora resolution 이라는 과제 이름을 붙였지만 그렇게 학습시킨 것은 아니에요",
+      "그림은 문장 하나의 예시예요. 모든 문장에서 그렇다는 증거는 아니에요"
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "Figure 4 의 두 그림 중 헤드가 두 개 나오는 것은?",
+     "choices": [
+      "아래 그림",
+      "위 그림",
+      "둘 다",
+      "둘 다 아니다"
+     ],
+     "a": 0,
+     "why": "위는 헤드 5 하나의 전체 어텐션이고, 아래가 헤드 5 와 6 의 its 만 뽑은 것이에요."
+    },
+    {
+     "kind": "english",
+     "head": "시험 답안에 쓸 문장 (멀티 헤드의 효과)",
+     "en": "**멀티 헤드 어텐션(Multi-Head Attention (MHA))** 은 서로 다른 표현 부분공간에서 서로 다른 자리를 함께 볼 수 있게 해 주고, **헤드(Head)** 가 하나면 평균 때문에 그것이 막혀요.",
+     "ko": "Figure 4 처럼 한 헤드는 먼 Law 를, 다른 헤드는 가까운 application 을 보는 것이 그 예시예요.",
+     "tip": "different representation subspaces 와 averaging inhibits this 두 구절을 외워요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "뾰족하다(sharp)는 것은 가중치가 몇 자리에 몰렸다는 뜻이지 합이 1 이 아니라는 뜻이 아니에요.",
+      "Figure 3 과 Figure 4 는 문장이 달라요. Figure 4 와 Figure 5 는 같은 문장이에요.",
+      "논문은 apparently 라고 적었어요. 헤드가 대명사 해석을 한다고 단정하면 안 돼요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 15,
+   "title": "Figure 5: 헤드마다 배우는 일이 다르다",
+   "terms": [
+    "Attention",
+    "Self-Attention",
+    "Encoder",
+    "Head",
+    "Multi-Head Attention (MHA)",
+    "Attention Weight",
+    "Attention Distribution",
+    "Transformer",
+    "Interpretability",
+    "Token"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "논문의 마지막 쪽이에요. Figure 5 하나만 있어요.",
+      "위아래 두 그림은 문장은 같은데 헤드가 달라요.",
+      "위 그림은 선이 넓게 퍼져 있고 아래 그림은 짧은 선이 규칙적으로 이어져요.",
+      "논문은 **헤드(Head)** 들이 분명히 서로 다른 일을 배웠다고 적었어요."
+     ]
+    },
+    {
+     "kind": "analogy",
+     "head": "같은 책을 읽는 두 사람의 밑줄",
+     "scene": "한 사람은 문단 전체에 넓게 밑줄을 긋고, 다른 사람은 바로 다음 낱말마다 짧게 긋는다면 두 사람이 보는 것이 다른 거예요.",
+     "map": [
+      [
+       "넓게 긋는 사람",
+       "위 그림의 헤드"
+      ],
+      [
+       "짧게 긋는 사람",
+       "아래 그림의 헤드"
+      ],
+      [
+       "두 밑줄을 합쳐 읽기",
+       "**멀티 헤드 어텐션(Multi-Head Attention (MHA))** 의 결과"
+      ]
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "위 그림과 아래 그림",
+     "cols": [
+      "",
+      "위 그림",
+      "아래 그림"
+     ],
+     "rows": [
+      [
+       "선 모양",
+       "여기저기 길게 퍼져요",
+       "짧고 규칙적이에요"
+      ],
+      [
+       "헤드",
+       "하나",
+       "다른 하나"
+      ],
+      [
+       "문장",
+       "같아요",
+       "같아요"
+      ],
+      [
+       "논문의 말",
+       "different tasks",
+       "different tasks"
+      ]
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "points",
+     "head": "caption 의 영어와 우리말 뜻",
+     "items": [
+      "Many of the attention heads exhibit behaviour = 많은 헤드가 어떤 행동을 보인다",
+      "that seems related to the structure of the sentence = 문장의 구조와 관련돼 보인다",
+      "two such examples above, from two different heads = 서로 다른 **헤드(Head)** 둘의 예 두 개",
+      "from the encoder self-attention at layer 5 of 6 = **인코더(Encoder)** **셀프 어텐션(Self-Attention)** 6층 중 5층에서",
+      "The heads clearly learned to perform different tasks = 헤드들이 분명히 서로 다른 일을 배웠다"
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "부록 그림 세 장을 한 줄로 이으면",
+     "given": "Figure 3, 4, 5",
+     "steps": [
+      "Figure 3 은 먼 단어를 붙잡는 헤드를 보여 줘요",
+      "Figure 4 는 대명사가 가리키는 곳을 찾는 듯한 헤드 두 개를 보여 줘요",
+      "Figure 5 는 헤드마다 하는 일이 다르다는 것을 보여 줘요",
+      "셋 다 인코더 셀프 어텐션의 6층 중 5층이에요",
+      "셋 다 4장의 **해석 가능성(Interpretability)** 문장과 3.2.2 절의 멀티 헤드 문장을 뒷받침해요"
+     ],
+     "answer": "그림 세 장은 멀티 헤드가 왜 여럿이어야 하는지를 눈으로 보여 주는 증거예요."
+    },
+    {
+     "kind": "check",
+     "q": "Figure 5 의 위 그림과 아래 그림에서 다른 것은?",
+     "choices": [
+      "**헤드(Head)** 가 다르다",
+      "문장이 다르다",
+      "층이 다르다",
+      "모델이 다르다"
+     ],
+     "a": 0,
+     "why": "caption 에 from two different heads 라고 적혀 있어요. 문장도 층도 같아요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "15쪽을 짚어 읽어요",
+     "boxes": [
+      {
+       "x": 0.19,
+       "y": 0.23,
+       "w": 0.63,
+       "h": 0.062,
+       "say": "위 그림의 윗줄: 문장 토큰이에요. 헤드 하나의 어텐션이에요."
+      },
+      {
+       "x": 0.19,
+       "y": 0.408,
+       "w": 0.63,
+       "h": 0.062,
+       "say": "위 그림의 아랫줄: 선이 넓게 퍼져 여러 자리로 흩어져요."
+      },
+      {
+       "x": 0.19,
+       "y": 0.505,
+       "w": 0.63,
+       "h": 0.062,
+       "say": "아래 그림의 윗줄: 같은 문장이에요. 다른 헤드예요."
+      },
+      {
+       "x": 0.19,
+       "y": 0.683,
+       "w": 0.63,
+       "h": 0.062,
+       "say": "아래 그림의 아랫줄: 짧고 규칙적인 선이 이어져요."
+      },
+      {
+       "x": 0.176,
+       "y": 0.759,
+       "w": 0.65,
+       "h": 0.044,
+       "say": "caption: 헤드들이 분명히 서로 다른 일을 배웠다고 적혀 있어요."
+      }
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "caption 에서 말의 세기가 한 문장 안에서도 달라요",
+     "items": [
+      "seems related to the structure of the sentence = 관련돼 보인다. 조심스러운 표현이에요",
+      "The heads clearly learned to perform different tasks = 분명히 다른 일을 배웠다. 여기는 단정이에요",
+      "다르다는 것은 단정하고, 그 다름이 문법 구조 때문인지는 조심스럽게 말한 거예요"
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "논문이 그림으로 보여 준 것과 보여 주지 못한 것",
+     "cols": [
+      "보여 준 것",
+      "보여 주지 못한 것"
+     ],
+     "rows": [
+      [
+       "**헤드(Head)** 마다 **어텐션 분포(Attention Distribution)** 가 다르다",
+       "그 차이가 성능에 얼마나 기여하는지"
+      ],
+      [
+       "먼 자리도 한 걸음에 본다",
+       "모든 문장에서 그런지"
+      ],
+      [
+       "뾰족한 어텐션이 생긴다",
+       "헤드가 정말 문법을 배운 것인지"
+      ]
+     ]
+    },
+    {
+     "kind": "bg",
+     "src": "4주차 Part 4",
+     "lines": [
+      "**멀티 헤드 어텐션(Multi-Head Attention (MHA))** 은 전체 차원을 h 로 나눠 쓰기 때문에 계산량이 늘지 않아요.",
+      "그래서 여러 관점을 거의 공짜로 얻는 셈이라고 배웠어요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "Figure 5 의 caption 에서 단정한 문장은?",
+     "choices": [
+      "The heads clearly learned to perform different tasks",
+      "seems related to the structure of the sentence",
+      "apparently involved in anaphora resolution",
+      "could yield more interpretable models"
+     ],
+     "a": 0,
+     "why": "clearly 가 붙은 이 문장만 단정이에요. 나머지 셋은 seems, apparently, could 로 조심스럽게 적었어요."
+    },
+    {
+     "kind": "english",
+     "head": "시험 답안에 쓸 문장 (부록 그림)",
+     "en": "부록의 Figure 3, 4, 5 는 모두 **인코더(Encoder)** **셀프 어텐션(Self-Attention)** 의 6층 중 5층을 그린 것으로, **헤드(Head)** 마다 보는 곳이 다르다는 것을 보여 줘요.",
+     "ko": "먼 의존을 붙잡는 헤드, 대명사가 가리키는 곳을 찾는 듯한 헤드, 문장 구조와 관련돼 보이는 헤드가 예시로 나와요.",
+     "tip": "그림 셋, 층 하나(5층), 결론 하나(헤드마다 다르다) 로 외워요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "그림 세 장이 모두 같은 층이라는 점을 놓치기 쉬워요. 전부 layer 5 of 6 이에요.",
+      "그림은 인코더 쪽이에요. 디코더의 마스킹된 어텐션이 아니에요.",
+      "**트랜스포머(Transformer)** 가 잘 되는 이유를 그림이 증명한 것은 아니에요. 논문도 예시라고만 했어요."
+     ]
+    },
+    {
+     "kind": "exam",
+     "src": "예상 문제",
+     "q": "부록 Attention Visualizations 의 그림 세 장이 공통으로 보여 주려는 것은 무엇인지 쓰시오.",
+     "qko": "Figure 3, 4, 5 를 한 문장으로 묶어 보세요.",
+     "solve": [
+      "세 그림 모두 인코더 셀프 어텐션의 6층 중 5층이에요",
+      "Figure 3 은 먼 의존을 따라가는 헤드를 보여 줘요",
+      "Figure 4 는 대명사가 가리키는 곳을 찾는 듯한 헤드 둘을 보여 줘요",
+      "Figure 5 는 헤드마다 배우는 일이 다르다는 것을 보여 줘요",
+      "묶으면 멀티 헤드가 서로 다른 관점을 배운다는 주장이에요"
+     ],
+     "answer": "헤드마다 서로 다른 일을 배우고, 먼 자리도 한 걸음에 본다는 것"
+    }
+   ]
+  }
+ ]
+}
