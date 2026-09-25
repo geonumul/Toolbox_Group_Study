@@ -213,6 +213,9 @@ def main():
     decks = [a for a in argv[1:] if a in cfg.get("decks", {})] or list(cfg.get("decks", {}))
     print(f"부분 읽기: {slug}")
     for deck in decks:
+        if not cfg["decks"][deck].get("pdf"):     # 실습 노트북 덱처럼 PDF 가 없는 덱은 부분 읽기를 만들 수 없다
+            print(f"  {deck}: PDF 가 없어 건너뜀")
+            continue
         build(slug, deck, str((ROOT / cfg["decks"][deck]["pdf"]).resolve()), sheet)   # pdf 는 저장소 기준 상대 경로
 
 
