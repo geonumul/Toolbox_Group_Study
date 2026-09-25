@@ -109,6 +109,22 @@ def check(path):
                 errs.append(f"{qid}: SVG 안에 id 속성 금지")
             if "viewBox" not in fig:
                 errs.append(f"{qid}: SVG viewBox 없음")
+    # 문는데 채점하지 않는 자리. 신호및시스템 9문항, IoT 5문항이 이 모양이었다.
+    # "판단하시오" 라고 묻고 숫자만 채점하면, 판정을 반대로 알고 있어도 정답이 된다.
+    # 못 채우는 경우도 있어서(글자 답은 숫자 칸에 못 받는다) 오류가 아니라 경고로 둔다
+    ASK = ("판단하", "판정하", "안정한지", "인과인지", "여부를")
+    for q in bank:
+        if q.get("type") != "calc":
+            continue
+        asked = " ".join(str(q.get(k) or "") for k in ("q", "qko"))
+        if not any(a in asked for a in ASK):
+            continue
+        labels = " ".join(str(b.get("label") or "") for b in q.get("blanks", []) if isinstance(b, dict))
+        # 판정을 받는 빈칸은 이름에 판정/판단/여부가 들어가거나, 숫자로 코드화한 안내가 붙는다
+        if not (any(w in labels for w in ("판정", "판단", "여부", "안정성", "인과성", "역시스템"))
+                or ("이면" in labels and "0" in labels)):
+            warns.append(f'{q.get("id")}: 문제는 판단을 묻는데 그 판정을 받는 빈칸이 없음 (숫자만 채점됨)')
+
     cnt = Counter(q.get("type") for q in bank)
     lv = Counter(q.get("level") for q in bank)
     level = lv.most_common(1)[0][0] if lv else "basic"
