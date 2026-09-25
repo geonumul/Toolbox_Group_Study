@@ -19,6 +19,16 @@ class Bank:
         self.n[t] = self.n.get(t, 0) + 1
         return f"{self.prefix}-{t}-{self.n[t]:03d}"
 
+    def retire(self, t, n=1):
+        """폐기한 문항 번호를 비워 둔다.
+
+        문항을 다시 쓰기로 해서 새 번호를 준 경우, 옛 번호는 영영 비워 두어야 한다.
+        id 는 만들어진 차례대로 매겨지므로(_id 참고), 중간 문항을 그냥 빼면 뒤 번호가
+        한 칸씩 당겨져 예전에 그 번호를 틀렸던 학생의 오답노트가 엉뚱한 문항을 가리킨다.
+        그래서 뺀 자리에서 이것을 불러 번호만 건너뛴다. 문항은 만들지 않는다.
+        """
+        self.n[t] = self.n.get(t, 0) + n
+
     def _base(self, t, unit, slides, src):
         q = {"id": self._id(t), "type": t, "part": self.part, "level": self.level,
              "unit": unit, "slides": slides}
