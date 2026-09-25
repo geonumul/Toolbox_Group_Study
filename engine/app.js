@@ -279,6 +279,13 @@ function weekQuizStat(week, level) {
   let seen = 0; list.forEach(q => { if (store.seen[q.id]) seen++; });
   return { total: list.length, seen };
 }
+/* 용어 문항만 센다. week 가 'all' 이거나 비면 전 주차 (홈 도구와 주차 용어 띠의 "전 주차 용어 퀴즈" 숫자) */
+function termQuizStat(week) {
+  const list = BANK.filter(q => q.unit === '용어' && (!week || week === 'all' || q.part === week));
+  let seen = 0; list.forEach(q => { if (store.seen[q.id]) seen++; });
+  return { total: list.length, seen };
+}
+const ALL_TERM_QUIZ = '#/quiz?week=all&unit=' + encodeURIComponent('용어') + '&start=1';
 const mins = frames => Math.max(3, Math.round(frames * 9 / 60));
 const unitDone = id => !!(store.units[id] || {}).done;
 function unitMeta(id) { for (const w of Object.keys(META.units)) { const u = (META.units[w] || []).find(x => x.id === id); if (u) return u; } return null; }
@@ -369,6 +376,7 @@ function pageHome() {
     + (hasLazy('note') ? '<a class="tool" href="#/note"><b>정리노트</b><span>쉬운 설명과 원문, 읽음 ' + nAll.filter(noteRead).length + ' / ' + nAll.length + '</span></a>' : '')
     + (hasLazy('time') ? '<a class="tool" href="#/time"><b>연표</b><span>양식 흐름도와 사건별 연표</span></a>' : '')
     + '<a class="tool" href="#/terms/all"><b>용어 카드</b><span>전 주차 용어 ' + Object.keys(TERM).length + '개' + (dueAll ? ', 오늘 복습 ' + dueAll + '개' : '') + '</span></a>'
+    + (termQuizStat('all').total ? '<a class="tool" href="' + ALL_TERM_QUIZ + '"><b>용어 퀴즈</b><span>전 주차 용어 문제 ' + termQuizStat('all').total + '개에서 섞어서</span></a>' : '')
     + (gPool('all').length ? '<a class="tool" href="#/game"><b>용어 게임</b><span>짝 맞추기, 뜻 고르기, 60초 스피드 퀴즈</span></a>' : '')
     + '<a class="tool" href="#/mock"><b>모의고사</b><span>시험지처럼 섞어서</span></a>'
     + '<a class="tool" href="#/wrong"><b>오답노트</b><span>틀린 문제만 다시</span></a>'
@@ -446,7 +454,7 @@ function pageWeek(week) {
       + (hasLazy('time') ? '<a class="btn" href="#/time">연표</a>' : '') + '</div></div>';
   } else if (!w.exam) h += '<div class="soon">만드는 중이에요.</div>';
   const wt = termsOfWeek(week), known = wt.filter(t => (store.terms[termKey(t)] || {}).known).length;
-  if (wt.length) h += '<div class="termbar"><div><b>용어 카드</b><div class="muted">이 주차 용어 ' + wt.length + '개, 외운 것 ' + known + '개' + (wt.filter(termDue).length ? ', 오늘 복습할 것 ' + wt.filter(termDue).length + '개' : '') + '</div></div><div class="btnrow" style="margin:0"><a class="btn" href="#/terms/' + week + '">카드 넘기기</a><a class="btn" href="#/quiz?week=' + week + '&unit=' + encodeURIComponent('용어') + '&start=1">용어 퀴즈</a>' + (gPool(week).length ? '<a class="btn" href="#/game?week=' + week + '">용어 게임</a>' : '') + '</div></div>';
+  if (wt.length) h += '<div class="termbar"><div><b>용어 카드</b><div class="muted">이 주차 용어 ' + wt.length + '개, 외운 것 ' + known + '개' + (wt.filter(termDue).length ? ', 오늘 복습할 것 ' + wt.filter(termDue).length + '개' : '') + '</div></div><div class="btnrow" style="margin:0"><a class="btn" href="#/terms/' + week + '">카드 넘기기</a><a class="btn" href="#/quiz?week=' + week + '&unit=' + encodeURIComponent('용어') + '&start=1">용어 퀴즈</a>' + (termQuizStat('all').total > termQuizStat(week).total ? '<a class="btn" href="' + ALL_TERM_QUIZ + '">전 주차 용어 퀴즈</a>' : '') + (gPool(week).length ? '<a class="btn" href="#/game?week=' + week + '">용어 게임</a>' : '') + '</div></div>';
   const sb = weekQuizStat(week, 'basic'), sh = weekQuizStat(week, 'hard');
   if (sb.total || sh.total) {
     h += '<h2 class="sec">문제 풀기</h2><div class="qbtns">'
