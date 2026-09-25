@@ -1,0 +1,116 @@
+{
+ "about": "움직이는 그림 자리표. python tools/viz_tool.py place work/nlp/notes/viz_place.json (다시 돌려도 같은 결과). 설명은 engine/viz/README.md",
+ "places": [
+  {
+   "id": "nlp-attn4-w43", "file": "slides_w4.json", "unit": "w4-3", "after": "손계산 2: 가중합으로 문맥 벡터 (N4 p.19)",
+   "frames": [
+    {"kind": "viz", "viz": "nlp.attn4", "head": "움직여 보기: 어텐션 네 단계",
+     "caption": "점수 3.6, 0.8, 0.5, 0.4 와 확률 0.87, 0.05, 0.04, 0.04 는 손계산 1 그대로예요. h 와 c = (1.78, 0.14) 는 예시 숫자예요."},
+    {"kind": "check", "q": "점수 3.6, 0.8, 0.5, 0.4 가 확률 0.87, 0.05, 0.04, 0.04 이 됐어요. 바로 다음 단계는?",
+     "choices": ["이 비율로 소스 상태를 섞어 **문맥 벡터(Context Vector)** 만들기", "점수를 한 번 더 내적하기", "가장 큰 점수만 남기고 버리기"], "a": 0,
+     "why": "네 단계는 점수, **소프트맥스(Softmax)**, **가중합(Weighted Sum)**, 예측이에요. 세 번째가 가중합이에요."}
+   ]
+  },
+  {
+   "id": "nlp-attn4-wb6", "file": "slides_wb.json", "unit": "wb-6", "after": "손계산 1: 점수 2, 1, 0 을 확률로",
+   "frames": [
+    {"kind": "viz", "viz": "nlp.attn4", "head": "움직여 보기: 점수가 확률이 되고, 그 비율로 섞여요",
+     "caption": "4주차 어텐션 그림이에요. 지금은 둘째 단계(exp 씌우고 합으로 나누기)만 보면 돼요. h 와 c 는 예시 숫자예요."}
+   ]
+  },
+  {
+   "id": "nlp-scale-w46", "file": "slides_w4.json", "unit": "w4-6", "after": "손계산: 나누기 전과 뒤",
+   "frames": [
+    {"kind": "viz", "viz": "nlp.scale", "head": "움직여 보기: 루트 d_k 로 나누기 전과 뒤",
+     "caption": "24, 8, 16 과 0.9997, 0.665 는 손계산 그대로예요. 0.0000, 0.0003, 0.090, 0.245 는 계산해 얻은 값이에요."},
+    {"kind": "check", "q": "점수 24, 8, 16 을 루트 d_k = 8 로 나누지 않고 바로 **소프트맥스(Softmax)** 에 넣으면?",
+     "choices": ["한 칸이 거의 1 이 되어 **기울기(Gradient)** 가 거의 안 흘러요", "확률의 합이 1 을 넘어요", "점수의 순서가 뒤바뀌어요"], "a": 0,
+     "why": "0.9997 처럼 뾰족하면 **기울기(Gradient)** 가 거의 0 이에요. 8 로 나눠 3, 1, 2 로 만들면 부드러워져요."}
+   ]
+  },
+  {
+   "id": "nlp-parallel-w46", "file": "slides_w4.json", "unit": "w4-6", "after": "왜 이게 빠른가 (N4 p.37)",
+   "frames": [
+    {"kind": "viz", "viz": "nlp.parallel", "head": "움직여 보기: 차례대로 5걸음 대 한 번에 1걸음",
+     "caption": "위는 **순환 신경망(Recurrent Neural Network (RNN))**, 아래는 **셀프 어텐션(Self-Attention)** 이에요. 예문은 N4 p.43 것이에요."}
+   ]
+  },
+  {
+   "id": "nlp-parallel-w39", "file": "slides_w3.json", "unit": "w3-9", "after": "고정 윈도우와 RNN (N3 p.48)",
+   "frames": [
+    {"kind": "viz", "viz": "nlp.parallel", "head": "움직여 보기: RNN 은 앞 걸음을 기다려요",
+     "caption": "h2 를 쓰려면 h1 이 먼저 나와야 해요. 아래쪽 **셀프 어텐션(Self-Attention)** 은 4주차 내용이에요."},
+    {"kind": "check", "q": "50단어 문장을 **순환 신경망(Recurrent Neural Network (RNN))** 으로 읽어요. 서로 다른 가중치 행렬은 몇 개일까요?",
+     "choices": ["Wh, We, U 세 개", "50 개", "50 x 3 = 150 개"], "a": 0,
+     "why": "걸음마다 같은 행렬을 다시 써요. 적용은 50번이지만 서로 다른 행렬은 3개라 모델 크기가 안 커져요."}
+   ]
+  },
+  {
+   "id": "nlp-posenc-w47", "file": "slides_w4.json", "unit": "w4-7", "after": "손계산: pos = 1, d = 4 일 때",
+   "frames": [
+    {"kind": "viz", "viz": "nlp.posenc", "head": "움직여 보기: 길이가 다른 물결 네 줄",
+     "caption": "0.8415, 0.5403, 0.0100 은 손계산 그대로예요. 자리 막대를 움직이면 같은 식으로 계산한 값이 나와요."},
+    {"kind": "check", "q": "**사인 코사인 위치 인코딩(Sinusoidal Positional Encoding)** 에서 뒤쪽 짝이 자리가 바뀌어도 거의 그대로인 까닭은?",
+     "choices": ["나누는 값이 100, 10000 처럼 커서 물결이 아주 느려요", "cos 만 쓰기 때문이에요", "그 칸은 언제나 0 이에요"], "a": 0,
+     "why": "pos 를 10000^(2i/d) 로 나눠요. i 가 커지면 나누는 값이 커져 각도가 거의 안 늘어나요."}
+   ]
+  },
+  {
+   "id": "nlp-mask-w47", "file": "slides_w4.json", "unit": "w4-7", "after": "장벽 3: 미래를 봐요 (N4 p.43)",
+   "frames": [
+    {"kind": "viz", "viz": "nlp.mask", "head": "움직여 보기: 오른쪽 위 삼각형 막기",
+     "caption": "예문과 표는 N4 p.43 그대로예요. 칸 안 1, 0.5, 0.33, 0.25, 0.2 는 고르게 나눈 예시 숫자예요."},
+    {"kind": "check", "q": "**인과 마스킹(Causal Masking)** 을 **소프트맥스(Softmax)** 앞에 거는 까닭은?",
+     "choices": ["앞에서 막으면 소프트맥스 뒤 가중치가 정확히 0 이 돼요", "뒤에 걸면 계산이 느려져요", "행과 열을 바꿔야 해요"], "a": 0,
+     "why": "소프트맥스 뒤에 0 을 곱하면 남은 칸의 합이 1 이 아니에요. 앞에서 막으면 exp 가 0 이라 합은 1 그대로예요."}
+   ]
+  },
+  {
+   "id": "nlp-tokenize-w21", "file": "slides_w2.json", "unit": "w2-1", "after": "세 길 한 장에",
+   "frames": [
+    {"kind": "viz", "viz": "nlp.tokenize", "head": "움직여 보기: 한 말을 세 가지로 자르기",
+     "caption": "unbelievable 의 1조각, 12조각, 3조각은 슬라이드 그림 그대로예요. 뒤쪽 17, 8, 4 는 N2 p.20 막대 값이에요."},
+    {"kind": "check", "q": "세 가지로 자를 때 **미등록 단어(Out-of-Vocabulary (OOV))** 가 생기는 것은?",
+     "choices": ["단어로 자르기", "글자로 자르기", "서브워드로 자르기"], "a": 0,
+     "why": "단어 통째로 **어휘(Vocabulary)** 에 넣으면 목록에 없는 말이 나와요. 글자와 서브워드는 잘게 쪼개니 그럴 일이 없어요."}
+   ]
+  },
+  {
+   "id": "nlp-tokenize-w23", "file": "slides_w2.json", "unit": "w2-3", "after": "손계산: 슬라이드 숫자로 **토큰 과다 분할(Fertility)** 구하기",
+   "frames": [
+    {"kind": "viz", "viz": "nlp.tokenize", "head": "움직여 보기: 같은 4어절, 토큰 17개와 8개",
+     "caption": "17 ÷ 4 = 4.25, 8 ÷ 4 = 2.0 은 손계산 그대로예요. 앞쪽 unbelievable 세 줄은 2-1 단원 그림이에요."},
+    {"kind": "check", "q": "4어절을 한 토크나이저는 17토큰, 다른 토크나이저는 8토큰으로 잘라요. **토큰 과다 분할(Fertility)** 은?",
+     "choices": ["4.25 와 2.0", "17 과 8", "1.17 과 2.1"], "a": 0,
+     "why": "**토큰 과다 분할(Fertility)** 은 토큰 수를 어절 수로 나눈 값이에요. 17 ÷ 4 = 4.25, 8 ÷ 4 = 2.0 이에요."}
+   ]
+  },
+  {
+   "id": "nlp-bpe-w22", "file": "slides_w2.json", "unit": "w2-2", "after": "손계산 3: 처음 보는 단어 lowest 자르기",
+   "frames": [
+    {"kind": "viz", "viz": "nlp.bpe", "head": "움직여 보기: 병합 한 라운드씩",
+     "caption": "말뭉치와 규칙 3줄은 N2 p.12 그대로예요. 2라운드 뒤 (o,w) 7, (n,e) 6 은 직접 세어 얻은 값이에요."},
+    {"kind": "check", "q": "**병합 규칙(Merge Rule)** 이 (e,s), (es,t), (l,o) 세 줄일 때 처음 보는 lowest 는?",
+     "choices": ["lo, w, est 세 조각", "[UNK] 한 조각", "l, o, w, e, s, t 여섯 조각"], "a": 0,
+     "why": "글자로 쪼갠 뒤 배운 순서대로 규칙을 다시 틀어요. es, est, lo 가 붙어 lo + w + est 가 돼요."}
+   ]
+  },
+  {
+   "id": "nlp-skipgram-w26", "file": "slides_w2.json", "unit": "w2-6", "after": "손계산: 기울기 한 번, 한 걸음 (앞 단원 숫자 이어서)",
+   "frames": [
+    {"kind": "viz", "viz": "nlp.skipgram", "head": "움직여 보기: 벡터가 정답 쪽으로 한 걸음",
+     "caption": "v = (1, 0.5), 확률 0.665, 새 v = (1.09, 0.745) 는 손계산 그대로예요. 0.168, 0.084, 벌점 0.291 은 계산값이에요."},
+    {"kind": "check", "q": "**기울기(Gradient)** 한 줄은 observed 빼기 expected 예요. 여기서 observed 는 무엇일까요?",
+     "choices": ["실제 이웃 banking 의 벡터 (1, 2)", "확률로 섞은 평균 (0.82, 1.51)", "**학습률(Learning Rate)** 0.5"], "a": 0,
+     "why": "observed 는 정답 이웃의 벡터, expected 는 확률로 섞은 평균이에요. 차이 (0.18, 0.49) 만큼 v 를 밀어요."}
+   ]
+  },
+  {
+   "id": "nlp-skipgram-w25", "file": "slides_w2.json", "unit": "w2-5", "after": "손계산: **어휘(Vocabulary)** 3개 **소프트맥스(Softmax)**",
+   "frames": [
+    {"kind": "viz", "viz": "nlp.skipgram", "head": "움직여 보기: 내적에서 확률, 그리고 벌점까지",
+     "caption": "여기서는 셋째 단계(벌점 0.408)까지만 보면 돼요. 뒤쪽 기울기와 한 걸음은 2-6 단원 내용이에요."}
+   ]
+  }
+ ]
+}

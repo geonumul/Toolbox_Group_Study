@@ -18,11 +18,15 @@
 | `engine/viz/eco.js` | 친환경건축(건축환경) 그림 8개 |
 | `engine/viz/modern.js` | 근현대 공간디자인 그림 7개 |
 | `engine/viz/interior.js` | 실내디자인시공과실무 그림 6개 |
+| `engine/viz/sig.js` | 신호및시스템 그림 8개 |
+| `engine/viz/nlp.js` | 자연어처리 그림 8개 |
+| `engine/viz/org.js` | 조직심리학 그림 6개 |
 | `engine/app.js` (`renderFrame` 의 `case 'viz'`) | 플레이어와 잇는 곳. GNN 은 `_작업/html/app.js` 에 같은 코드 |
 | `tools/build_site.py` (`viz_tags`) | 과목 JSON 에 `"kind": "viz"` 가 있으면 `viz.js` 와 쓰는 묶음만 `index.html` 에 넣어요 |
 | `tools/viz_tool.py` | `list` 등록 이름, `place` 자리표대로 슬라이드에 끼우기, `check-page` 페이지 자리표 확인, `sync-gnn` GNN 으로 복사 |
 | `tools/build_site.py` (`viz_page`) | `work/<과목>/pages/viz_<페이지>.json` 이 있으면 빌드할 때 그 페이지(정리노트, 답안 팁) 항목 안에 그림을 넣어요 |
 | `tools/checkers/slide_check.py`, `lesson_check.py` | `viz` kind 를 알아보고, 슬라이드의 그림 이름이 등록돼 있는지 봐요 |
+| `tools/checkers/viz_check.js` | jsdom 단위 시험. 묶음 이름을 안 주면 `engine/viz` 의 묶음을 전부 봐요 |
 
 ## JSON 모양 (프레임 하나)
 
@@ -187,9 +191,13 @@ python tools/viz_tool.py check-gnn     # 같은지만 확인
 
 ## 확인하는 법
 
-- 단위 시험 (jsdom): 모든 그림을 붙이고 상태를 끝까지 넘긴 뒤 거꾸로 돌아오며 SVG 가 같은지, 조절값을 바꿔도 오류가 없는지 봐요. 확인용 훅: 프레임 요소 `.vz` 의 `_viz` 에 `finish()`, `snapshot()`, `pose(s, k)`, `set(key, value)`, `state()` 가 있어요. 시험할 때는 `SDTViz.freeze = true` 로 장식 움직임을 멈춰요.
+- 단위 시험 (jsdom): `node tools/checkers/viz_check.js` (묶음 이름을 주면 그것만, 안 주면 전부). 모든 그림을 붙이고 상태를 끝까지 넘긴 뒤 거꾸로 돌아오며 SVG 가 같은지, 조절값을 바꿔도 오류가 없고 상태 수가 그대로인지, `id` 속성과 금지 문자와 `NaN`, `undefined` 가 없는지 봐요. 확인용 훅: 프레임 요소 `.vz` 의 `_viz` 에 `finish()`, `snapshot()`, `pose(s, k)`, `set(key, value)`, `state()` 가 있어요. 시험할 때는 `SDTViz.freeze = true` 로 장식 움직임을 멈춰요.
+- **jsdom 이 못 보는 것**: jsdom 은 글자 크기를 재지 않아서(`getBBox` 가 0) 글자가 서로 겹치거나 viewBox 를 벗어나는 것을 못 잡아요. 그건 진짜 브라우저로 봐야 해요. 헤드리스 크롬으로 상태마다 `getBBox` 를 재서 겹침과 밖으로 나감을 보는 방법은 아래 스크린샷 항목을 봐요. 실제로 이 방법으로만 잡힌 것: `nlp.tokenize` 의 값 글자가 오른쪽으로 6 넘어감, `nlp.posenc` 의 `pos` 축 이름이 눈금 `12` 를 덮음.
 - 사이트 시험: 과목 정리 슬라이드를 열어 `.vz` 가 붙는지, 다음/이전으로 같은 모습인지, 오류가 없는지.
 - 스크린샷: 헤드리스 Chrome 으로 1280, 390 폭. `pose(s, 0.6)` 으로 움직이는 중간 모습을 찍어 봐요.
+  - 크롬 쓰는 법이 까다로워요. `--dump-dom` 은 `--headless=old` 에서만 되고, `--screenshot` 은 `--headless=new` 에서만 돼요.
+  - 스크린샷을 여러 장 이어서 찍을 때는 한 번 부를 때마다 `--user-data-dir` 를 다르게 주고, `Start-Process -PassThru` 뒤에 `Wait-Process` 로 기다려요. 그냥 줄줄이 부르면 첫 장만 저장되고 나머지는 조용히 안 만들어져요.
+  - `chrome.exe` 를 이름으로 강제 종료하지 않아요(사용자 규칙). 그냥 끝나게 둬요.
 
 ## 등록된 그림
 
@@ -236,7 +244,34 @@ python tools/viz_tool.py check-gnn     # 같은지만 확인
 | `interior.gantt` | 네트워크와 바차트가 쌓이고 주공정선 10일, 여유시간, 지연. 지연 작업 단추와 날수 막대 | 정리노트 s5 |
 | `interior.demolish` | 배관 막기, 분진 대비, 마감재 철거, 구조체 해체(압쇄기, 브레이커), 폐기물 분리, 3년 보관 | 정리노트 s9 |
 
+| `sig.shift` | x(t-2), x(t+1), x(-t), x(-t+1), x(3t/2), x(3t/2+1) 로 꼭짓점이 옮겨가고 이동량은 b/a = 0.67. a, b 막대 | wb-2, w2-2 |
+| `sig.period` | cos 3t 를 T0 = 2.09 밀어 겹치기, cos(pi n/4) 는 8칸마다, cos(n) 은 6번 칸 0.96 으로 안 맞음 | w2-3, w2-6 |
+| `sig.evenodd` | x[-n] 로 뒤집고, 더해 반으로 짝수 2, 2, 2, 빼서 반으로 홀수 -1, 0, 1, 다시 더하면 1, 2, 3 | w2-4 |
+| `sig.euler` | 원 위의 점이 pi/4, pi/2, pi, 3pi/2 를 지나 한 바퀴 돌고, 가로 위치를 펴면 cos 곡선 | wb-6, w2-5 |
+| `sig.stamp` | 손뼉 3개로 쪼개고 메아리 도장 1, 1 을 크기만큼 찍어 더하면 1, 3, 3, 1, 길이 3+2-1 = 4칸 | wb-10, w3-2 |
+| `sig.conv` | h[k] 를 뒤집어 한 칸씩 밀며 겹친 곱을 더해 y[0]=1, y[1]=3, y[2]=3, y[3]=1, y[4]=0 | wb-10, w3-3 |
+| `sig.convint` | 도장 띠를 밀어 겹친 넓이가 y(1) = 0.632, y(2) = 0.87, y(3) = 0.95 로 자람 (Example 2.6). t 막대 | w3-4 |
+| `sig.step` | u[n] 에서 u[n-1] 을 빼면 델타, 델타를 처음 칸부터 누적 합하면 다시 계단 | wb-9, w2-7 |
+
+| `nlp.attn4` | 점수 3.6, 0.8, 0.5, 0.4 에서 소프트맥스 0.87, 가중합, 문맥 벡터 c = (1.78, 0.14), 예측 | w4-3, wb-6 |
+| `nlp.tokenize` | unbelievable 이 1조각, 12조각, 3조각으로, 한국어는 17 대 8 토큰 (fertility 4.25, 2.0) | w2-1, w2-3 |
+| `nlp.bpe` | 장난감 말뭉치의 쌍 개수 막대와 es, est, lo 병합 세 라운드, 처음 보는 lowest 자르기 | w2-2 |
+| `nlp.skipgram` | 내적 2, 1, 0 에서 확률 0.665, 벌점 0.408, 기울기 (0.18, 0.49), v 가 (1.09, 0.745) 로 이동 | w2-5, w2-6 |
+| `nlp.parallel` | RNN 은 h1 부터 5걸음, 셀프 어텐션은 z1~z5 를 한 번에. 점수 칸 5 x 5 = 25 | w3-9, w4-6 |
+| `nlp.posenc` | sin, cos 물결 네 줄과 자리 1 의 0.8415, 0.5403, 0.01, 1. 자리 막대 | w4-7 |
+| `nlp.mask` | 5 x 5 표의 오른쪽 위 10칸 막기, 소프트맥스 뒤 0, 인코더 25칸과 대비 | w4-7 |
+| `nlp.scale` | 점수 24, 8, 16 의 0.9997 과 루트 d_k 로 나눈 3, 1, 2 의 0.665 | w4-6 |
+
+| `org.asa` | 유인, 선발, 퇴출 깔때기를 두 라운드 돌며 안 맞는 사람이 빠지고 남은 사람이 비슷해짐, 자기강화 순환 화살표 | w3-3 |
+| `org.hawthorne` | 조명을 밝게, 어둡게 해도 오르는 생산량, 성과급에서 평평해지는 선과 집단 규범, 몇십 년 뒤 붙은 이름 | w2-4 |
+| `org.feldman` | 입사 선 앞의 선행 사회화부터 대면, 변화와 습득, 그리고 행동적 결과와 정서적 결과 | w3-5 |
+| `org.filedrawer` | 연구 10개 중 6개는 출판, 4개는 서랍으로, 메타분석이 본 평균이 오른쪽으로 치우침 | w2-9 |
+| `org.fit` | 내 능력과 직무 요구, 내 가치와 조직 가치 두 쌍의 원이 겹치는 정도가 바뀜 | w3-3 |
+| `org.socialdim` | 이방인이 역사, 언어, 정치, 사람, 목표와 가치, 수행 숙련성 여섯 칸을 지나 구성원이 되는 길과 온보딩 띠 | w3-4 |
+
 강의 자료에 없는 숫자는 각 자리표의 `caption` 에 가정이라고 적었어요. 예: 이슬점 공식, 열교 부위 U 3.0, 서울 태양 고도, 질량 법칙, 바깥 기온 10~30℃, 바이센호프 칸 자리.
+자연어처리는 `nlp.attn4` 의 h 벡터와 문맥 벡터, `nlp.mask` 의 고르게 나눈 가중치, `nlp.bpe` 2라운드 뒤 쌍 개수, `nlp.skipgram` 의 0.168, 0.084, 0.291 이 예시 숫자예요.
+조직심리학은 `org.filedrawer` 의 연구 10개와 6대 4, `org.hawthorne` 의 생산량 선 높낮이가 예시예요. 두 그림 모두 축에 눈금을 두지 않았고, 강의 자료에 생산량 숫자는 없어요.
 
 ## 새 과목에 붙일 때 순서 요약
 

@@ -2314,6 +2314,25 @@
      ]
     },
     {
+     "kind": "viz",
+     "viz": "nlp.parallel",
+     "head": "움직여 보기: RNN 은 앞 걸음을 기다려요",
+     "caption": "h2 를 쓰려면 h1 이 먼저 나와야 해요. 아래쪽 **셀프 어텐션(Self-Attention)** 은 4주차 내용이에요.",
+     "vp": "nlp-parallel-w39"
+    },
+    {
+     "kind": "check",
+     "q": "50단어 문장을 **순환 신경망(Recurrent Neural Network (RNN))** 으로 읽어요. 서로 다른 가중치 행렬은 몇 개일까요?",
+     "choices": [
+      "Wh, We, U 세 개",
+      "50 개",
+      "50 x 3 = 150 개"
+     ],
+     "a": 0,
+     "why": "걸음마다 같은 행렬을 다시 써요. 적용은 50번이지만 서로 다른 행렬은 3개라 모델 크기가 안 커져요.",
+     "vp": "nlp-parallel-w39"
+    },
+    {
      "kind": "points",
      "head": "교수님이 짚은 곳",
      "items": [
