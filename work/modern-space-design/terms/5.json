@@ -39,12 +39,12 @@
  },
  {
   "ko": "선형 집합주택",
-  "en": "Linear Housing Block",
+  "en": "",
   "say": "바이센호프 주거단지가 효시적 성격을 띤 집합주택 형식"
  },
  {
   "ko": "단위주택",
-  "en": "Dwelling Unit",
+  "en": "",
   "say": "서민에게 제공하려 한 중간 규모의 주택",
   "more": "바이센호프의 목표. 4층 아파트, 연립주택, 단독주택 등 다양한 유형."
  },
@@ -66,7 +66,7 @@
  },
  {
   "ko": "조립화",
-  "en": "Prefabrication of Components",
+  "en": "",
   "say": "바이센호프에서 그로피우스가 가능성을 제시한 건축 방식",
   "more": "그로피우스는 16-17번 주택."
  },
@@ -77,7 +77,7 @@
  },
  {
   "ko": "기능주의 주거건축",
-  "en": "Functionalist Housing",
+  "en": "",
   "say": "철근콘크리트와 유리로 '기능적'으로 계획한 주거건축",
   "more": "바이센호프 주거단지로 등장."
  },
@@ -89,7 +89,7 @@
  },
  {
   "ko": "합리적 계획과 표준화",
-  "en": "Rational Planning and Standardization",
+  "en": "",
   "say": "CIAM이 공동 활동의 주제로 내건 두 가지 방법"
  },
  {
@@ -100,19 +100,19 @@
  },
  {
   "ko": "평균적 인간을 위한 평균적 주거",
-  "en": "Average Dwelling for the Average Man",
+  "en": "",
   "say": "근대건축의 주거유형을 요약한 말",
   "more": "하나의 전형이 되어 세계화, 보편화됨."
  },
  {
   "ko": "공업화건축",
-  "en": "Industrialized Building",
+  "en": "",
   "say": "공장생산 방식으로 주택을 짓는 근대건축의 생산 방식",
   "more": "공장생산의 패러다임이 장식과 미적 요소에도 반영됨."
  },
  {
   "ko": "국제주의 세 가지 부재",
-  "en": "Three Absences of Internationalism",
+  "en": "",
   "say": "역사성, 국가적 소속, 맥락이 없다는 국제주의 건축의 요약",
   "more": "외우기: 역국맥."
  },
@@ -124,13 +124,13 @@
  },
  {
   "ko": "세 개의 동심원",
-  "en": "Three Concentric Circles",
+  "en": "",
   "say": "개인, 민족, 인류 중 인류가 나머지 둘을 포함한다는 그로피우스의 비유"
  },
  {
   "ko": "루이스 멈퍼드",
   "en": "Lewis Munford",
   "say": "과학과 기술로 인간이 기계에 적응해야 하는 시대가 됐다고 본 인물",
-  "more": "강의자료 표기는 L. 멈퍼드(Lewis Munford)."
+  "more": "강의자료 표기는 L. 멈퍼드(Lewis Munford). 통상 표기는 Lewis Mumford."
  }
 ]
