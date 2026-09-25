@@ -413,6 +413,63 @@ textarea.thdraft:focus{outline:0;border-color:var(--accent);box-shadow:0 0 0 3px
   .tcard.past{flex-direction:column;gap:2px;padding:7px 12px}
   .tcard.past .tface{max-width:none}
 }
+/* ---------- 슬라이드 부분씩 읽기 (walk) ---------- */
+#pslide:has(.walk){justify-content:flex-start;padding:18px 24px 20px}
+.walk{display:flex;flex-direction:column;gap:12px;width:100%;min-width:0}
+.wk-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.wk-n{font-size:14px;color:var(--sub);font-weight:550;white-space:nowrap}
+.walk .sh{margin:0}
+.wk-view{min-width:0}
+.wk-part{display:none}
+.wk-part.on{display:block;animation:wkIn .3s ease}
+@keyframes wkIn{from{opacity:0;transform:scale(.985)}to{opacity:1;transform:none}}
+.wk-scroll{display:flex;overflow-x:auto;overflow-y:hidden;touch-action:pan-x pan-y;overscroll-behavior-x:contain}
+.wk-crop{position:relative;flex:none;margin-inline:auto;aspect-ratio:var(--r);width:min(100%, calc(52vh * var(--r)), calc(var(--nw) * 1px));border:1px solid var(--line);border-radius:4px;background:#fff;overflow:hidden;line-height:0}
+.wk-crop img{position:absolute;inset:0;width:100%;height:100%;display:block;-webkit-user-select:none;user-select:none}
+.wk-hl{position:absolute;border:3px solid var(--accent);border-radius:4px;box-shadow:0 0 0 999px rgba(20,20,40,.16)}
+.wk-swipe{display:none;font-size:13px;color:var(--sub);text-align:right;margin-top:4px}
+.wk-part.scrolls .wk-swipe{display:block}
+.wk-part.full img{display:block;width:100%;max-height:56vh;object-fit:contain;border:1px solid var(--line);border-radius:4px;background:#fff}
+.wk-foot{display:grid;grid-template-columns:minmax(0,1fr) 150px;gap:16px;align-items:start}
+.walk.atfull .wk-foot{grid-template-columns:minmax(0,1fr)}
+.walk.atfull .wk-map{display:none}
+.wk-says{min-width:0;grid-column:1;grid-row:1}
+.wk-map{grid-column:2;grid-row:1}
+.wk-say{display:flex;gap:10px;align-items:flex-start;font-size:18.5px;line-height:1.6}
+.wk-say.hide,.wk-say.gone{display:none}
+.wk-tx{min-width:0;display:flex;flex-direction:column;gap:2px;word-break:keep-all;overflow-wrap:anywhere}
+.wk-tx p{margin:0}
+.wk-k{flex:none;width:26px;height:26px;margin-top:2px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-size:13.5px;font-weight:650;display:inline-flex;align-items:center;justify-content:center}
+.wk-lab{font-weight:650;color:var(--accent-deep)}
+.wk-tip{color:var(--sub);font-size:15.5px}
+.wk-map{position:relative;line-height:0}
+.wk-map img{width:100%;display:block;border:1px solid var(--line);border-radius:3px;background:#fff}
+.wk-mb{position:absolute;border:1px solid color-mix(in srgb,var(--accent) 30%,transparent);border-radius:2px}
+.wk-mb.past{background:color-mix(in srgb,var(--accent) 10%,transparent)}
+.wk-mb.cur{border:2px solid var(--accent);background:color-mix(in srgb,var(--accent) 24%,transparent)}
+@media (max-width:640px){
+  #pslide:has(.walk){padding:12px 10px 14px}
+  .wk-crop{width:100%;min-width:calc(var(--cw) * 1px)}
+  .wk-foot{display:block}
+  .wk-foot::after{content:"";display:block;clear:both}
+  .wk-map{float:right;width:84px;margin:4px 0 6px 10px}
+  .wk-say{font-size:16.5px;gap:8px}
+  .wk-k{width:23px;height:23px;font-size:12.5px}
+  .wk-tip{font-size:14.5px}
+}
+
+/* 2회독부터 한눈에 정리 (walkSumFrame) */
+#pslide:has(.wsum){justify-content:flex-start;padding:18px 24px 20px}
+.wsum{display:flex;flex-direction:column;gap:12px;width:100%;min-width:0}
+.ws-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:18px;align-items:start}
+.ws-slide{position:relative;line-height:0;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:#fff}
+.ws-slide img{width:100%;height:auto;display:block}
+.ws-b{position:absolute;border:2px solid var(--primary,#4E3FE5);border-radius:3px;background:rgba(78,63,229,.06)}
+.ws-b b{position:absolute;left:-2px;top:-2px;min-width:20px;height:20px;padding:0 5px;border-radius:0 0 6px 0;background:var(--primary,#4E3FE5);color:#fff;font-size:12px;line-height:20px;text-align:center;font-weight:500;font-style:normal}
+.ws-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.ws-list li{display:flex;gap:10px;align-items:flex-start;font-size:16px;line-height:1.6;word-break:keep-all}
+.ws-list li b{font-weight:600}
+@media (max-width:760px){.ws-grid{grid-template-columns:minmax(0,1fr)}#pslide:has(.wsum){padding:14px 14px 16px}.ws-list li{font-size:15px}}
 /* ---------- 용어 게임 (#/game) ---------- */
 .gscope{margin-top:14px}
 .gscope .muted{font-size:13.5px;margin-right:2px}

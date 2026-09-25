@@ -635,7 +635,7 @@ function schedule() {
   const el = $('#pslide');
   const vis = $$('[data-s]', el).filter(e => +e.dataset.s === P.step);
   const text = vis.length ? vis.map(e => e.textContent).join(' ') : el.textContent;
-  const ms = clamp(1500 + text.length * 60, 2200, 11000) + (f.kind === 'slideimg' ? 1500 : 0);
+  const ms = clamp(1500 + text.length * 60, 2200, 11000) + (f.kind === 'slideimg' || f.kind === 'walk' || f.kind === 'walksum' ? 1500 : 0);
   P.timer = setTimeout(pNext, ms + (f.kind === 'viz' ? 1800 : 0));   // 움직이는 그림은 움직임이 끝날 시간만큼 더
 }
 function drawTrail() {
@@ -679,6 +679,63 @@ function termSteps(f, kicker, lead, more) {
       const k = $('.tsn', el); if (k) k.textContent = n > 1 ? (cur + 1) + ' / ' + n : '';
     },
     after: () => { ts.forEach(t => { const k = String(t.en).toLowerCase(), r = store.terms[k] || (store.terms[k] = { seen: 0 }); r.seen++; }); save(); },
+  };
+}
+/* 슬라이드 부분씩 읽기: 글이 많은 슬라이드를 한 부분씩 크게 잘라 보여 주고, 아래에 그 부분 설명과 어디쯤인지 보여 주는 작은 그림.
+   parts: [{c: 잘라 보일 칸, b: 짚을 상자, r: 칸 가로/세로 비, img, say} | {head: 1, ...} | {full: 1}]  (tools/walk_build.py) */
+function walkSay(q, k, m, o) {
+  if (q.full) return '<div class="wk-tx"><b class="wk-lab">전체 한 번 보기</b><p class="wk-tip">방금 하나씩 읽은 ' + m + '부분이 슬라이드 전체에서 어디에 있었는지 봐요.</p></div>';
+  if (q.head) return '<div class="wk-tx"><b class="wk-lab">제목부터 읽어요</b><p>' + fmt(o.title) + '</p><p class="wk-tip">이 쪽은 ' + m + '부분으로 나눠서 한 부분씩 크게 보여 줘요. 누르면 다음 부분이에요.</p></div>';
+  const say = String(q.say || ''), mm = say.match(/^([^:*$\n]{1,34}):\s*([\s\S]+)$/);
+  return '<span class="wk-k num">' + k + '</span><div class="wk-tx">' + (!say ? '<p class="wk-tip">이 부분은 슬라이드 글을 직접 읽어 봐요.</p>' : mm ? '<b class="wk-lab">' + fmt(mm[1]) + '</b><p>' + fmt(mm[2]) + '</p>' : '<p>' + fmt(say) + '</p>') + '</div>';
+}
+function walkFrame(o) {
+  const parts = o.parts, m = parts.filter(q => !q.full && !q.head).length;
+  const pct = v => (Math.round(v * 10000) / 100) + '%';
+  let k = 0;
+  const nums = parts.map(q => q.full || q.head ? 0 : ++k);
+  const view = parts.map((q, i) => {
+    if (q.full) return '<div class="wk-part full" data-i="' + i + '"><img src="' + esc(o.slide) + '" alt="" loading="lazy" decoding="async"></div>';
+    const c = q.c, b = q.b, small = b && !q.head && (b[2] * b[3]) / (c[2] * c[3]) < 0.62;
+    const r = +q.r || 1.414;   // --nw: 그림 제 크기(더 키우면 흐려짐), --cw: 좁은 화면에서 가로로 긴 부분은 이 너비로 두고 옆으로 밀어 본다
+    return '<div class="wk-part" data-i="' + i + '"><div class="wk-scroll"><div class="wk-crop" style="--r:' + r + ';--nw:' + Math.round(c[2] * 1800) + ';--cw:' + (r >= 1.8 && c[2] > 0.5 ? Math.round(c[2] * 900) : 0) + '"><img src="' + esc(q.img) + '" alt="" loading="lazy" decoding="async">'
+      + (small ? '<i class="wk-hl" style="left:' + pct((b[0] - c[0]) / c[2]) + ';top:' + pct((b[1] - c[1]) / c[3]) + ';width:' + pct(b[2] / c[2]) + ';height:' + pct(b[3] / c[3]) + '"></i>' : '') + '</div></div><div class="wk-swipe">옆으로 밀면 나머지 글이 보여요</div></div>';
+  }).join('');
+  const map = '<div class="wk-map" aria-hidden="true"><img src="' + esc(o.slide) + '" alt="" loading="lazy" decoding="async">'
+    + parts.map((q, i) => q.full ? '' : '<i class="wk-mb" data-i="' + i + '" style="left:' + pct(q.b[0]) + ';top:' + pct(q.b[1]) + ';width:' + pct(q.b[2]) + ';height:' + pct(q.b[3]) + '"></i>').join('') + '</div>';
+  return {
+    html: '<div class="walk"><div class="wk-top"><span class="sk">' + esc(o.kicker) + '</span><span class="wk-n num"></span></div>' + (o.head ? '<h2 class="sh">' + fmt(o.head) + '</h2>' : '')
+      + '<div class="wk-view">' + view + '</div><div class="wk-foot">' + map + '<div class="wk-says">' + parts.map((q, i) => S(i, walkSay(q, nums[i], m, o), 'div', 'wk-say')).join('') + '</div></div></div>',
+    steps: parts.length - 1,
+    onStep: (s, el) => {
+      $$('.wk-part', el).forEach((x, i) => { x.classList.toggle('on', i === s); const sc = $('.wk-scroll', x); if (i === s && sc) x.classList.toggle('scrolls', sc.scrollWidth > sc.clientWidth + 4); });
+      $$('.wk-say', el).forEach((x, i) => x.classList.toggle('gone', i < s));
+      $$('.wk-mb', el).forEach(x => { const i = +x.dataset.i; x.classList.toggle('cur', i === s); x.classList.toggle('past', i < s); });
+      const q = parts[s] || {}, w = $('.walk', el);
+      if (w) w.classList.toggle('atfull', !!q.full);
+      const n = $('.wk-n', el); if (n) n.textContent = q.full ? '전체' : q.head ? '제목' : nums[s] + ' / ' + m + ' 부분';
+    },
+    after: el => {
+      $$('.wk-scroll', el).forEach(sc => ['touchstart', 'touchend'].forEach(ev => sc.addEventListener(ev, e => { if (sc.scrollWidth > sc.clientWidth + 4) e.stopPropagation(); }, { passive: true })));
+    },
+  };
+}
+/* 2회독부터: 부분씩 넘기지 않고 슬라이드 한 장에 번호를 붙여 한눈에 정리 */
+function walkSumFrame(o) {
+  const parts = (o.parts || []).filter(q => q && q.b && !q.full && !q.head);
+  const pct = v => (Math.round(v * 10000) / 100) + '%';
+  const first = s => { const m = String(s || '').match(/^[\s\S]*?[.?!](?=\s|$)/); return m ? m[0] : String(s || ''); };
+  const item = (q, i) => {
+    const say = String(q.say || ''), mm = say.match(/^([^:*$\n]{1,34}):\s*([\s\S]+)$/);
+    const body = !say ? '<span class="muted">슬라이드 글을 직접 읽어 봐요.</span>' : mm ? '<b>' + fmt(mm[1]) + '</b> ' + fmt(first(mm[2])) : fmt(first(say));
+    return '<li><span class="wk-k num">' + (i + 1) + '</span><div>' + body + '</div></li>';
+  };
+  return {
+    html: '<div class="wsum"><div class="wk-top"><span class="sk">' + esc(o.kicker) + '</span><span class="wk-n num">' + parts.length + '부분 한눈에</span></div>'
+      + '<div class="ws-grid"><div class="ws-slide"><img src="' + esc(o.slide) + '" alt="" loading="lazy" decoding="async">'
+      + parts.map((q, i) => '<i class="ws-b" style="left:' + pct(q.b[0]) + ';top:' + pct(q.b[1]) + ';width:' + pct(q.b[2]) + ';height:' + pct(q.b[3]) + '"><b>' + (i + 1) + '</b></i>').join('')
+      + '</div><ol class="ws-list">' + parts.map(item).join('') + '</ol></div></div>',
+    steps: 0,
   };
 }
 function renderFrame(f, st) {
@@ -745,8 +802,17 @@ function renderFrame(f, st) {
           }));
         },
       };
+    case 'walksum': {
+      const w = f.walk || {};
+      return walkSumFrame({ parts: w.parts || [], slide: f.src, kicker: 'p.' + f._p + ' 한눈에 정리' });
+    }
+    case 'walk': {
+      const w = f.walk || {};
+      return walkFrame({ parts: (w.head ? [Object.assign({ head: 1 }, w.head)] : []).concat(w.parts || [], [{ full: 1 }]), slide: f.src, title: f._t, kicker: 'p.' + f._p + ' 부분씩 읽기' });
+    }
     case 'look': {
       const boxes = f.boxes || [];
+      if (boxes.length && boxes.every(b => b.img && b.c)) return walkFrame({ parts: boxes.map(b => ({ b: [b.x, b.y, b.w, b.h], c: b.c, r: b.r, img: b.img, say: b.say })), slide: st.opts.imgOf(f), title: f._t, head: f.head, kicker: '슬라이드를 짚어 읽어요' });
       return {
         html: head(f.head) + '<div class="lookwrap"><img src="' + esc(st.opts.imgOf(f)) + '" alt="" decoding="async">'
           + boxes.map((b, i) => '<div class="lbox bld" data-s="' + (i + 1) + '" style="left:' + (b.x * 100) + '%;top:' + (b.y * 100) + '%;width:' + (b.w * 100) + '%;height:' + (b.h * 100) + '%"><em>' + (i + 1) + '</em></div>').join('')
@@ -823,10 +889,13 @@ async function pageLesson(deck, passStr, jump, all) {
   L.slides.forEach(s => {
     const layers = cum ? [1, 2, 3, 4].filter(n => n <= pass) : [pass];
     const content = [];
-    layers.forEach(n => (s['pass' + n] || []).forEach((f, ix) => content.push(Object.assign({ _pass: n, _ix: ix }, f))));
-    if (!content.length) return;
+    let walked = false;   // 부분 읽기로 옮긴 look 프레임은 첫 장면(부분씩 읽기)에 들어 있다
+    layers.forEach(n => (s['pass' + n] || []).forEach((f, ix) => { if (f.walked) walked = true; else content.push(Object.assign({ _pass: n, _ix: ix }, f)); }));
+    if (!content.length && !walked) return;
     const start = frames.length;
-    frames.push({ kind: 'slideimg', src: 'img/' + deck + '/p' + pad3(s.p) + '.jpg', alt: 'p.' + s.p + ' ' + s.title, cap: 'p.' + s.p + '  ' + s.title, _p: s.p, _t: s.title });
+    const src = 'img/' + deck + '/p' + pad3(s.p) + '.jpg';
+    frames.push(s.walk ? { kind: pass === 1 ? 'walk' : 'walksum', walk: s.walk, src, _p: s.p, _t: s.title }
+      : { kind: 'slideimg', src, alt: 'p.' + s.p + ' ' + s.title, cap: 'p.' + s.p + '  ' + s.title, _p: s.p, _t: s.title });
     content.forEach(f => { f._p = s.p; f._t = s.title; frames.push(f); });
     groups.push({ start, end: frames.length - 1, p: s.p });
   });
@@ -843,7 +912,7 @@ async function pageLesson(deck, passStr, jump, all) {
     backHref: '#/week/' + week,
     chips: passChips,
     imgOf: f => 'img/' + deck + '/p' + pad3(f._p) + '.jpg',
-    inkKey: f => f.kind === 'end' ? null : f.kind === 'slideimg' ? 'slide/' + deck + '/p' + pad3(f._p) : 'lesson/' + deck + '/p' + pad3(f._p) + '/' + f._pass + '/' + f._ix,
+    inkKey: f => f.kind === 'end' ? null : f.kind === 'slideimg' ? 'slide/' + deck + '/p' + pad3(f._p) : f.kind === 'walk' ? 'walk/' + deck + '/p' + pad3(f._p) : 'lesson/' + deck + '/p' + pad3(f._p) + '/' + f._pass + '/' + f._ix,
     title: f => esc(deckTitle) + ' ' + pass + '회독 <small>' + (f._p ? 'p.' + f._p + ' ' + esc(f._t || '') : '마무리') + (cum && f._pass ? ', ' + f._pass + '회독 내용' : '') + '</small>',
     onProgress: i => {
       rec.i = i; rec.max = Math.max(rec.max || 0, i + 1); rec.total = frames.length;
