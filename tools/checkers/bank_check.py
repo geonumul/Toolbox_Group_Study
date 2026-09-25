@@ -30,11 +30,11 @@ def check(path):
     for k, v in ids.items():
         if v > 1 or not k:
             errs.append(f"id 중복/없음: {k}")
-    # 유형은 키에 넣지 않는다. 한쪽이 객관식이고 한쪽이 단답이어도 학생에게는 같은 문제다
-    qs = Counter(" ".join(str(q.get("q") or "").split()) for q in bank)
+    # 작성규칙은 "같은 사실을 유형만 바꿔 물어도 된다" 고 허용한다. 그래서 유형까지 같을 때만 중복이다
+    qs = Counter((q.get("type"), " ".join(str(q.get("q") or "").split())) for q in bank)
     for k, v in qs.items():
-        if v > 1 and k:
-            errs.append(f"질문 중복: {k[:40]}")
+        if v > 1 and k[1]:
+            errs.append(f"질문 중복: {k[1][:40]}")
     for q in bank:
         qid = q.get("id", "?")
         t = q.get("type")
@@ -146,12 +146,15 @@ def cross_check(paths):
                 errs.append(f"id 중복: {qid} ({seen_id[qid]} 와 {path})")
             elif qid:
                 seen_id[qid] = path
-            # 유형은 키에 넣지 않는다. 같은 문장이 한쪽은 객관식, 한쪽은 단답이어도 학생에게는 같은 문제다
+            # 유형만 다른 것은 작성규칙이 허용한다. 다만 주차가 다르면 새어 나간 것이라 잡는다
             key = " ".join(str(q.get("q") or "").split())
-            if key and key in seen_q:
-                errs.append(f"질문 중복: {key[:40]} ({seen_q[key]} 와 {path})")
-            elif key:
-                seen_q[key] = path
+            if key:
+                prev = seen_q.get(key)
+                if prev and (prev[1] == q.get("type") or prev[2] != q.get("part")):
+                    why = "같은 유형" if prev[1] == q.get("type") else f'주차 {prev[2]} 와 {q.get("part")}'
+                    errs.append(f"질문 중복({why}): {key[:40]} ({prev[0]} 와 {path})")
+                elif not prev:
+                    seen_q[key] = (path, q.get("type"), q.get("part"))
     if len(paths) > 1:
         print(f"파일 {len(paths)}개 교차 검사:", "통과" if not errs else f"오류 {len(errs)}건")
         for e in errs[:30]:

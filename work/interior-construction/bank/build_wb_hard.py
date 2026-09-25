@@ -366,7 +366,8 @@ nox = sum(1 for q in bank if q["type"] == "ox")
 ntrue = sum(1 for q in bank if q["type"] == "ox" and q["a"])
 assert ntrue * 2 == nox, "ox 참 %d / 전체 %d" % (ntrue, nox)
 assert len({q["id"] for q in bank}) == len(bank)
-assert len({(q["type"], q["q"]) for q in bank}) == len(bank)
+# 유형이 달라도 문장이 같으면 학생에게는 같은 문제다 (tools/checkers/bank_check.py 와 같은 기준)
+assert len({" ".join(q["q"].split()) for q in bank}) == len(bank), "질문 문장 중복"
 for q in bank:
     if q["type"] == "mcq":
         assert len(set(q["c"])) == 4, q["id"]

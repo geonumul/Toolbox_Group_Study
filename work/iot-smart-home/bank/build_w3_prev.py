@@ -3,7 +3,7 @@ r"""3주차(I3) basic 문제은행 재생성기. 실행: python build_w3_prev.py
 
 이 문항들은 구 형식 회독 원고에서 옮겨 온 것이라 본문 원본이 따로 있다.
   원본: ..\_src\prev\unit3\bank_unit3.json (문항 순서 그대로, level 과 id 가 없는 상태)
-스크립트가 하는 일은 셋이다.
+스크립트가 하는 일은 넷이다.
   1) 원본 문항마다 level "basic" 과 IDS 의 id 를 붙인다. id 해시 생성기는 남아 있지 않아
      IDS 에 원본 순서대로 박아 둔다. 순서를 바꾸거나 id 를 새로 매기지 말 것.
   2) TEXT_FIX: 사이트가 본문을 KaTeX 로 렌더링해서 홀로 있는 '$' 가 수식 시작으로 읽혀
@@ -11,6 +11,8 @@ r"""3주차(I3) basic 문제은행 재생성기. 실행: python build_w3_prev.py
   3) ESSAY: 서술형에 모범답안을 붙인다(slides, model, qko, answer, answer_ko).
      근거는 lesson\I3_*.json 의 pass3(자세히)와 notes\slides_w3.json, I3 슬라이드 그림이다.
      points 배열이 채점 항목이므로 answer 는 그 항목을 순서대로 담는다.
+  4) REWRITE: 원본이 같은 질문 문장을 두 형식으로 중복 출제한 자리를, 같은 단원의 다른
+     문항으로 바꿔 쓴다. type, part, unit, level, id, 순서는 건드리지 않고 내용만 간다.
 """
 import json, os
 from collections import Counter
@@ -184,6 +186,23 @@ IDS = [
 # ---------------------------------------------------------------- KaTeX 깨짐 방지
 TEXT_FIX = {"$99": "99달러"}
 
+# ---------------------------------------------------------------- 질문 중복 해소
+# 원본은 "Zigbee PAN을 최초 생성하고 보안 및 라우팅 테이블을 총괄하는 장치는?" 을
+# mcq(w3p-b8f88795) 와 short(w3p-eb84b0c6) 로 두 번 묻는다. 이 사실은 코디네이터,
+# 라우터, 엔드 디바이스, 보더 라우터를 갈라 보게 하는 mcq 가 임자라서(원고 3-3 확인
+# 문제도 같은 4지선다 형식이다) mcq 를 그대로 두고, short 자리는 같은 3-3 단원의
+# 숫자 암기 항목(Zigbee 의 2.4GHz ISM 채널 수)으로 바꾼다. 근거는
+# ..\_src\prev\unit3\unit3.json 의 lessons[2].r3 마지막 pick 으로,
+# "필기 가이드북에 제시된 Zigbee(802.15.4) 2.4GHz ISM 대역의 채널 수와 전송 속도"
+# 가 16채널, 250kbps 이다.
+REWRITE = {
+    "w3p-eb84b0c6": {
+        "q": "Zigbee가 2.4GHz ISM 대역을 나누어 쓰는 채널의 개수는?",
+        "a": ["16", "16채널", "16개", "16 channels"],
+        "e": "2.4~2.4835GHz 를 16채널로 나누어 쓰고, 전송 속도는 250kbps 예요."
+    }
+}
+
 # ---------------------------------------------------------------- 서술형 모범답안
 ESSAY = {
     "w3p-0e6a7445": {
@@ -270,9 +289,16 @@ for q, qid in zip(src, IDS):
     if it["type"] == "essay":
         assert qid in ESSAY, f"{qid}: 모범답안 없음"
         it.update(ESSAY[qid])
+    if qid in REWRITE:
+        before = set(it)
+        it.update(REWRITE[qid])
+        assert set(it) == before, f"{qid}: REWRITE 가 필드 구성을 바꿈"
     bank.append(it)
 
 assert len(ESSAY) == sum(1 for q in bank if q["type"] == "essay"), "ESSAY 개수 불일치"
+assert set(REWRITE) <= {q["id"] for q in bank}, "REWRITE id 불일치"
+assert len({q["id"] for q in bank}) == len(bank), "id 중복"
+assert len({" ".join(q["q"].split()) for q in bank}) == len(bank), "질문 문장 중복"
 
 json.dump(bank, open(OUT, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
 

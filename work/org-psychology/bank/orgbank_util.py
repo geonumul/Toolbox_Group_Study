@@ -63,9 +63,11 @@ class Bank:
         raw = json.dumps(self.items, ensure_ascii=False, indent=1)
         for ch in BAD_CHARS:
             assert ch not in raw, f"금지 문자 {ch!r}"
+        # 유형은 키에 넣지 않는다. 한쪽이 객관식이고 한쪽이 단답이어도 학생에게는 같은 문제다
+        # (tools/checkers/bank_check.py 와 같은 기준).
         qs = {}
         for it in self.items:
-            key = (it["type"], it["q"])
+            key = " ".join(str(it["q"]).split())
             assert key not in qs, f"질문 중복: {it['q'][:40]}"
             qs[key] = 1
         (HERE / name).write_text(raw, encoding="utf-8")
