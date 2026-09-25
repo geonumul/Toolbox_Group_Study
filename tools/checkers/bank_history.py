@@ -33,9 +33,28 @@ def need_ref(ref):
         sys.exit(2)
 
 
+def built_bank(slug, ref):
+    """저장소 밖 문제은행(그래프신경망)은 빌드된 subjects/<과목>/data/bank.js 를 기준으로 삼는다.
+       원본이 git 밖에 있어도 학생이 실제로 본 문항은 그 파일에 들어 있기 때문이다."""
+    r = subprocess.run(["git", "show", f"{ref}:subjects/{slug}/data/bank.js"], cwd=ROOT, capture_output=True)
+    if r.returncode:
+        return None
+    s = r.stdout.decode("utf-8")
+    i, j = s.find("["), s.rfind("]")
+    try:
+        return json.loads(s[i:j + 1]) if i >= 0 and j > i else None
+    except Exception:
+        return None
+
+
 def old_version(path, ref):
     """(옛 내용, 왜) 를 준다. 옛 내용이 None 이면 그 파일은 기준에 없다."""
-    rel = Path(path).resolve().relative_to(ROOT).as_posix()
+    try:
+        rel = Path(path).resolve().relative_to(ROOT).as_posix()
+    except ValueError:
+        # 저장소 밖 경로: 그래프신경망 문제은행이 여기 해당한다
+        b = built_bank("gnn", ref)
+        return (b, "빌드본 기준") if b is not None else (None, "저장소 밖이고 빌드본도 없음")
     r = subprocess.run(["git", "show", f"{ref}:{rel}"], cwd=ROOT, capture_output=True)
     if r.returncode:
         msg = r.stderr.decode("utf-8", "replace")
@@ -46,6 +65,47 @@ def old_version(path, ref):
         return json.loads(r.stdout.decode("utf-8")), ""
     except Exception as e:
         return None, f"기준본 JSON 오류: {e}"
+
+
+def check_outside(paths, ref):
+    """저장소 밖 문제은행: 빌드본은 여러 파일을 합친 것이라 파일 하나와 견주면 안 된다.
+       준 파일들을 한 덩어리로 모아 빌드본과 한 번에 견준다."""
+    old = built_bank("gnn", ref)
+    if old is None:
+        print("저장소 밖 문제은행: 빌드본(subjects/gnn/data/bank.js)이 기준에 없음")
+        return False
+    new_items = []
+    for path in paths:
+        try:
+            new_items += json.loads(Path(path).read_text(encoding="utf-8"))
+        except Exception as e:
+            print(f"{path}: JSON 오류 {e}")
+            return False
+    # 빌드가 자동으로 만드는 용어 퀴즈(term-...)는 원본 파일에 없으니 견주지 않는다
+    om = {q.get("id"): q for q in old
+          if isinstance(q, dict) and not str(q.get("id", "")).startswith("term-")}
+    nm = {q.get("id"): q for q in new_items if isinstance(q, dict)}
+    hits, gone = [], [i for i in om if i not in nm]
+    for qid, q in nm.items():
+        o = om.get(qid)
+        if not o:
+            continue
+        for f in WATCH:
+            a, b = o.get(f), q.get(f)
+            if isinstance(a, str) and isinstance(b, str):
+                a, b = " ".join(a.split()), " ".join(b.split())
+            if a != b:
+                hits.append((qid, f, o.get(f), q.get(f)))
+                break
+    print(f"저장소 밖 문제은행 {len(paths)}개 파일, 문항 {len(nm)}개, 빌드본 기준 내용 바뀐 것 {len(hits)}개"
+          + (f", 사라진 번호 {len(gone)}개" if gone else ""))
+    for qid, f, a, b in hits[:20]:
+        print(f"  오류: {qid} 의 {f} 가 바뀜")
+        print(f"     전: {str(a)[:70]}")
+        print(f"     후: {str(b)[:70]}")
+    for i in gone[:10]:
+        print(f"  오류: {i} 번호가 사라짐. 그 번호를 푼 기록도 같이 사라진다")
+    return not hits and not gone
 
 
 def check(path, ref):
@@ -98,6 +158,14 @@ if __name__ == "__main__":
     need_ref(ref)
     if "--all" in args or not args:
         args = [str(p) for p in sorted(ROOT.glob("work/*/bank/*.json"))]
-    ok = all([check(p, ref) for p in args])
+    inside, outside = [], []
+    for a in args:
+        try:
+            Path(a).resolve().relative_to(ROOT); inside.append(a)
+        except ValueError:
+            outside.append(a)
+    ok = all([check(p, ref) for p in inside])
+    if outside:
+        ok = check_outside(outside, ref) and ok
     print("결과:", "통과" if ok else "오류 있음")
     sys.exit(0 if ok else 1)
