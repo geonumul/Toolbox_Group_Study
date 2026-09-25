@@ -289,6 +289,43 @@ const ALL_TERM_QUIZ = '#/quiz?week=all&unit=' + encodeURIComponent('용어') + '
 const mins = frames => Math.max(3, Math.round(frames * 9 / 60));
 const unitDone = id => !!(store.units[id] || {}).done;
 function unitMeta(id) { for (const w of Object.keys(META.units)) { const u = (META.units[w] || []).find(x => x.id === id); if (u) return u; } return null; }
+const unitWeek = id => Object.keys(META.units).find(w => (META.units[w] || []).some(u => u.id === id)) || null;
+/* 받침이 있으면 앞의 것, 없으면 뒤의 것. "4주차를", "기출을" 처럼 조사를 맞춘다 */
+function josa(word, withJong, noJong) {
+  const s = String(word || '').replace(/[\s)\]}]+$/, ''), c = s.charCodeAt(s.length - 1);
+  if (!(c >= 0xAC00 && c <= 0xD7A3)) return noJong;
+  return (c - 0xAC00) % 28 ? withJong : noJong;
+}
+/* 이 주차를 보려면 필요한 기초 단원만.
+   과목이 prereq 를 적어 두었으면 그것을 쓰고, 없으면 기초 단원마다 붙은 for 로 찾는다.
+   for 는 그 단원의 "어디에 나오나" 슬라이드에서 뽑은 주차 목록이라 슬라이드와 어긋나지 않는다 */
+function prereqUnits(week) {
+  const hand = ((META.prereq || {})[week] || []).map(unitMeta).filter(Boolean);
+  if (hand.length) return hand;
+  const out = [];
+  META.weeks.forEach(bw => {
+    const id = String(bw.id);
+    if (bw.deck || id === String(week)) return;   // 강의가 붙은 주차는 기초 주차가 아니다
+    (META.units[id] || []).forEach(u => {
+      const f = u['for'];
+      if (f === 'all' || (Array.isArray(f) && f.indexOf(String(week)) >= 0)) out.push(u);
+    });
+  });
+  return out;
+}
+/* 주차 페이지 위쪽에 놓는 한 줄. 기초 다지기 열 단원을 처음부터 보지 않아도 되게 한다 */
+function prereqBar(week) {
+  const pre = prereqUnits(week); if (!pre.length) return '';
+  const w = weekOf(week), name = (w && w.short) || weekName(week);
+  const bw = []; pre.forEach(u => { const k = unitWeek(u.id); if (k && bw.indexOf(k) < 0) bw.push(k); });
+  const tot = bw.reduce((a, k) => a + (META.units[k] || []).length, 0);
+  return '<div class="termbar prebar"><div><b>' + esc(name) + josa(name, '을', '를') + ' 보려면 이 기초가 필요해요</b>'
+    + '<div class="muted">' + (tot > pre.length ? '기초 ' + tot + '단원 가운데 ' + pre.length + '개만 보면 돼요. ' : '') + '이미 알면 건너뛰어도 돼요. 처음부터 차례대로 보고 싶으면 전체 보기로 가요.</div></div>'
+    + '<div class="pillrow" style="margin:0">'
+    + pre.map(u => '<a class="chip' + (unitDone(u.id) ? ' on' : '') + '" href="#/unit/' + esc(u.id) + '">' + esc(String(u.title).split(':')[0]) + '</a>').join('')
+    + bw.map(k => '<a class="chip" href="#/week/' + esc(k) + '">' + esc(weekName(k)) + ' 전체</a>').join('')
+    + '</div></div>';
+}
 
 /* ---------- 길잡이: 주차마다 할 일 순서 ---------- */
 function weekSteps(week) {
@@ -311,6 +348,8 @@ function weekSteps(week) {
     if (ex.length) steps.push({ t: '모의고사', d: '시험지처럼 섞어서 한 번에 풀어요.', done: !!store.mockDone[week], href: '#/mock?week=' + week, meta: '' });
     return steps;
   }
+  // 길잡이는 그대로 둔다. 순서대로 가는 길을 흔들지 않으려고 여기서는 prereq 만 쓴다.
+  // 주차마다 필요한 기초는 주차 페이지 위쪽 prereqBar 가 따로 알려 준다.
   const pre = (META.prereq[week] || []).map(unitMeta).filter(Boolean);
   if (pre.length) steps.push({ t: '필요한 기초만 먼저', d: '이 주차에 나오는 수학, 딥러닝 기초예요. 이미 알면 건너뛰어도 돼요.', done: pre.every(u => unitDone(u.id)), href: '#/unit/' + nextUnit(pre).id, chips: pre, meta: pre.length + '개 단원' });
   const lp = (n, t, desc) => { if (d && d.frames[n - 1]) steps.push({ t, d: desc, done: lessonProg(w.deck, n).done, href: '#/lesson/' + w.deck + '/' + n, meta: '약 ' + mins(d.frames[n - 1]) + '분', prog: lessonProg(w.deck, n) }); };
@@ -428,6 +467,7 @@ function pageWeek(week) {
   if (!w) { location.hash = '#/'; return; }
   const d = w.deck ? META.decks[w.deck] : null;
   let h = '<a class="back" href="#/">홈</a><div class="whead"><div class="eyebrow">' + esc(w.short) + '</div><h1>' + esc(w.title) + '</h1><p>' + esc(w.topics) + '</p></div>';
+  h += prereqBar(week);          // 이 주차에 필요한 기초 단원만 (기초 다지기 전체는 주차 목록에 그대로 있다)
   h += guideCard(week, true);
   if (d) {
     h += '<h2 class="sec">강의 회독 <small>같은 강의를 ' + PASS_INFO.length + '번, 갈수록 깊게</small></h2>';

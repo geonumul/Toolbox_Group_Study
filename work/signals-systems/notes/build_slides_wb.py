@@ -11,6 +11,10 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, "slides_wb.json")
 GLOSS = os.path.join(HERE, "..", "rules", "용어사전.json")
 
+_WORK = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # work/signals-systems
+sys.path.insert(0, os.path.dirname(_WORK))                            # work/
+import _wb_for   # noqa: E402
+
 # ---------------------------------------------------------------- 용어 (사전 표기 그대로)
 TERMS = {t["ko"]: (t["en"], t["say"]) for t in json.load(open(GLOSS, encoding="utf-8"))}
 
@@ -2052,6 +2056,9 @@ UNITS.append(unit(
 
 
 # ================================================================ 저장
+_weeks = json.load(open(os.path.join(_WORK, "subject.json"), encoding="utf-8"))["weeks"]
+_wb_for.attach_for(UNITS, _weeks)
+
 DATA = {"week": "b", "title": "기초 다지기. 신호및시스템에 필요한 수학 처음부터", "units": UNITS}
 with open(OUT, "w", encoding="utf-8") as f:
     json.dump(DATA, f, ensure_ascii=False, indent=1)

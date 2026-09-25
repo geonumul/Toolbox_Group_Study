@@ -13,12 +13,19 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 sys.dont_write_bytecode = True
 
+_WORK = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # work/nlp
+sys.path.insert(0, os.path.dirname(_WORK))                            # work/
+import _wb_for   # noqa: E402
+
 import wb_units_1_4, wb_units_5_7, wb_units_8_10   # noqa: E402
 
 OUT = os.path.join(HERE, "slides_wb.json")
 UNITS = wb_units_1_4.UNITS + wb_units_5_7.UNITS + wb_units_8_10.UNITS
 
 assert [u["id"] for u in UNITS] == ["wb-%d" % i for i in range(1, 11)], [u["id"] for u in UNITS]
+
+_weeks = json.load(open(os.path.join(_WORK, "subject.json"), encoding="utf-8"))["weeks"]
+_wb_for.attach_for(UNITS, _weeks)
 
 DATA = {"week": "b", "title": "기초 다지기. 자연어처리에 필요한 수학과 파이썬 처음부터", "units": UNITS}
 raw = json.dumps(DATA, ensure_ascii=False, indent=1)

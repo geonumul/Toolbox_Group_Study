@@ -28,6 +28,57 @@ const go = async h => { w.location.hash = h; await wait(60); };
   const meta = w.GNN_META || w.SDT_META;   // GNN 저장소는 GNN_META, 과목 사이트는 SDT_META
   const weeks = (meta.weeks || []).map(x => String(x.id));
   for (const wk of weeks) { await go('#/week/' + wk); console.log('week', wk, 'ptiles', $$('.ptile').length, 'units', $$('.ucard').length, 'qbtns', $$('.qbtn').length); }
+  // ---------- 주차마다 "이 주차를 보려면 이 기초가 필요해요" 줄 (.prebar) ----------
+  // 기초 단원의 for (그 단원의 "어디에 나오나" 슬라이드에서 나온 주차 목록) 나 meta.prereq 에서 온다.
+  // 링크가 정말 그 주차를 가리키는 단원으로 가는지, 없어야 할 주차에는 안 나오는지 본다.
+  {
+    const uOf = id => { for (const k of Object.keys(meta.units || {})) { const u = (meta.units[k] || []).find(x => x.id === id); if (u) return u; } return null; };
+    const basicsWeeks = (meta.weeks || []).filter(x => !x.deck).map(x => String(x.id));
+    const want = {};   // 주차 -> 기대하는 단원 id 목록
+    weeks.forEach(wk => {
+      const hand = ((meta.prereq || {})[wk] || []).concat((meta.codeprereq || {})[wk] || []).filter(id => uOf(id));
+      if (hand.length) { want[wk] = hand; return; }
+      const out = [];
+      basicsWeeks.forEach(bw => { if (bw === wk) return; (meta.units[bw] || []).forEach(u => { const f = u['for']; if (f === 'all' || (Array.isArray(f) && f.indexOf(wk) >= 0)) out.push(u.id); }); });
+      want[wk] = out;
+    });
+    const withBar = weeks.filter(wk => want[wk].length), without = weeks.filter(wk => !want[wk].length);
+    console.log('prereq bar: 있어야 할 주차', withBar.join(',') || '없음', '/ 없어야 할 주차', without.join(',') || '없음');
+    for (const wk of weeks) {
+      await go('#/week/' + wk);
+      const bar = $('.prebar');
+      if (!want[wk].length) { if (bar) errs.push('기초 줄이 없어야 할 주차(' + wk + ')에 나왔어요'); continue; }
+      if (!bar) { errs.push('기초 줄이 있어야 할 주차(' + wk + ')에 없어요: ' + want[wk].join(',')); continue; }
+      const head = (bar.querySelector('b') || {}).textContent || '';
+      if (head.indexOf('보려면 이 기초가 필요해요') < 0) errs.push('기초 줄 문구가 이상해요(' + wk + '): ' + head);
+      const hrefs = [...bar.querySelectorAll('a.chip')].map(a => a.getAttribute('href') || '');
+      const gotU = hrefs.filter(x => x.indexOf('#/unit/') === 0).map(x => x.slice('#/unit/'.length));
+      if (gotU.join(',') !== want[wk].join(',')) errs.push('기초 줄 단원이 달라요(' + wk + '): ' + gotU.join(',') + ' vs ' + want[wk].join(','));
+      gotU.forEach(id => {
+        const u = uOf(id);
+        if (!u) { errs.push('기초 줄 링크가 없는 단원을 가리켜요(' + wk + '): ' + id); return; }
+        const f = u['for'], hand = ((meta.prereq || {})[wk] || []).concat((meta.codeprereq || {})[wk] || []);
+        const ok = hand.indexOf(id) >= 0 || f === 'all' || (Array.isArray(f) && f.indexOf(wk) >= 0);
+        if (!ok) errs.push('기초 줄 링크가 이 주차와 상관없는 단원이에요(' + wk + '): ' + id + ' for=' + JSON.stringify(f));
+      });
+      const back = hrefs.filter(x => x.indexOf('#/week/') === 0).map(x => x.slice('#/week/'.length));
+      if (!back.length) errs.push('기초 줄에 기초 다지기 전체로 가는 링크가 없어요(' + wk + ')');
+      back.forEach(b => { if (basicsWeeks.indexOf(b) < 0) errs.push('기초 줄의 전체 링크가 기초 주차가 아니에요(' + wk + '): ' + b); });
+      if (wk === withBar[0]) console.log('  week', wk, 'chips', hrefs.join(' '), '|', head);
+    }
+    // 링크를 실제로 눌러 그 단원이 열리는지 한 번 확인한다
+    if (withBar.length) {
+      await go('#/week/' + withBar[0]);
+      const first = $('.prebar a.chip[href^="#/unit/"]');
+      if (first) {
+        const id = first.getAttribute('href').slice('#/unit/'.length);
+        await go(first.getAttribute('href')); await wait(80);
+        const open = ($('.whead h1') || $('#pslide') || {}).textContent || '';
+        console.log('  prereq chip ->', id, 'opened:', !!$('#pcount'), $('#pcount') ? $('#pcount').textContent : open.slice(0, 20));
+        if (!$('#pcount')) errs.push('기초 줄 링크를 눌렀는데 단원이 안 열려요: ' + id);
+      }
+    }
+  }
   const qweek = weeks.find(x => (meta.units || {})[x]) || weeks[0];   // 문제가 있는 주차 하나를 골라 풀어 본다
   await go('#/quiz?week=' + qweek + '&level=basic&mode=all&start=1&n=0');
   let types = {}, guard = 0;

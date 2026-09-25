@@ -8,10 +8,16 @@
 용어: terms\\b.json 을 wb_common.load_basics_terms() 로 msdslide_lib.TERMS 에 더한다.
 단원 제목: bank\\wb_basic.json, wb_hard.json 의 unit 문자열과 글자까지 같아야 한다.
 """
+import json
 import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+_WORK = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # work/modern-space-design
+sys.path.insert(0, os.path.dirname(_WORK))                            # work/
+import _wb_for   # noqa: E402
+
 from wb_common import load_basics_terms
 
 load_basics_terms("b")
@@ -1064,4 +1070,6 @@ U.append(unit(
               MANTRA),
     ], recall=["개구부", "평면"]))
 
+_weeks = json.load(open(os.path.join(_WORK, "subject.json"), encoding="utf-8"))["weeks"]
+_wb_for.attach_for(U, _weeks)
 write(out("b"), "b", "기초 다지기. 건물을 보고 말하는 법", U)

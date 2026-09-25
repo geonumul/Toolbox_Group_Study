@@ -207,7 +207,8 @@
       "오늘의 용어: 발주자(client, owner), 시공자(builder, contractor), 감리자(construction supervisor), 가설공사, 철거공사, 도급"
      ]
     }
-   ]
+   ],
+   "for": "all"
   },
   {
    "id": "wb-2",
@@ -424,6 +425,9 @@
       "오늘의 용어: 발주자(client, owner), 시공자(builder, contractor), 감리자(construction supervisor), 원도급자, 하도급자, 현장소장"
      ]
     }
+   ],
+   "for": [
+    "2"
    ]
   },
   {
@@ -651,6 +655,9 @@
       "오늘의 용어: 도급, 직영공사, 일식도급, 정액도급, 단가도급, 턴키(Turn-key), 공개경쟁입찰(open competitive bidding), 수의계약(optional contract)"
      ]
     }
+   ],
+   "for": [
+    "2"
    ]
   },
   {
@@ -854,6 +861,9 @@
       "오늘의 용어: 직접공사비, 순공사비, 공사원가, 총원가, 일반관리비, 계약금액"
      ]
     }
+   ],
+   "for": [
+    "2"
    ]
   },
   {
@@ -1048,6 +1058,9 @@
       "오늘의 용어: 공정계획(process planning), 네트워크 공정표(Network), 바차트 공정표(Bar chart), 주공정선(Critical Path), 여유시간(Float)"
      ]
     }
+   ],
+   "for": [
+    "2"
    ]
   },
   {
@@ -1273,7 +1286,8 @@
       "오늘의 용어: 평면도(Floor Plan), 입면도(Elevation), 단면도(Section), 천장도(Ceiling Plan), 상세도, 해칭(Hatching), 범례(Legend)"
      ]
     }
-   ]
+   ],
+   "for": "all"
   },
   {
    "id": "wb-7",
@@ -1486,7 +1500,8 @@
       "오늘의 용어: 축척(Scale), 밀리미터(mm), 치수선(Dimension Line), 실측, 먹매김, 평면도(Floor Plan)"
      ]
     }
-   ]
+   ],
+   "for": "all"
   },
   {
    "id": "wb-8",
@@ -1717,7 +1732,8 @@
       "오늘의 용어: 가설공사, 철거공사, 먹매김, 보양, 비계, 경량철골, 건식벽체(Dry-Wall)"
      ]
     }
-   ]
+   ],
+   "for": "all"
   }
  ]
 }

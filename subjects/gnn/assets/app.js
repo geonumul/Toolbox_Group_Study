@@ -253,6 +253,43 @@ const ALL_TERM_QUIZ = '#/quiz?week=all&unit=' + encodeURIComponent('용어') + '
 const mins = frames => Math.max(3, Math.round(frames * 9 / 60));
 const unitDone = id => !!(store.units[id] || {}).done;
 function unitMeta(id) { for (const w of Object.keys(META.units)) { const u = (META.units[w] || []).find(x => x.id === id); if (u) return u; } return null; }
+const unitWeek = id => Object.keys(META.units).find(w => (META.units[w] || []).some(u => u.id === id)) || null;
+/* 받침이 있으면 앞의 것, 없으면 뒤의 것. "4주차를", "기출을" 처럼 조사를 맞춘다 */
+function josa(word, withJong, noJong) {
+  const s = String(word || '').replace(/[\s)\]}]+$/, ''), c = s.charCodeAt(s.length - 1);
+  if (!(c >= 0xAC00 && c <= 0xD7A3)) return noJong;
+  return (c - 0xAC00) % 28 ? withJong : noJong;
+}
+/* 이 주차를 보려면 필요한 기초 단원만 (기초 다지기 + 코딩 기초).
+   build_site.py 의 PREREQ, CODE_PREREQ 를 먼저 쓰고,
+   없으면 기초 단원마다 붙은 for (그 단원의 "어디에 나오나" 슬라이드에서 뽑은 주차) 로 찾는다 */
+function prereqUnits(week) {
+  const hand = ((META.prereq || {})[week] || []).concat((META.codeprereq || {})[week] || []).map(unitMeta).filter(Boolean);
+  if (hand.length) return hand;
+  const out = [];
+  META.weeks.forEach(bw => {
+    const id = String(bw.id);
+    if (bw.deck || id === String(week)) return;   // 강의가 붙은 주차는 기초 주차가 아니다
+    (META.units[id] || []).forEach(u => {
+      const f = u['for'];
+      if (f === 'all' || (Array.isArray(f) && f.indexOf(String(week)) >= 0)) out.push(u);
+    });
+  });
+  return out;
+}
+/* 주차 페이지 위쪽에 놓는 한 줄. 기초 다지기를 1단원부터 다 볼 필요가 없게 한다 */
+function prereqBar(week) {
+  const pre = prereqUnits(week); if (!pre.length) return '';
+  const w = weekOf(week), name = (w && w.short) || weekName(week);
+  const bw = []; pre.forEach(u => { const k = unitWeek(u.id); if (k && bw.indexOf(k) < 0) bw.push(k); });
+  const tot = bw.reduce((a, k) => a + (META.units[k] || []).length, 0);
+  return '<div class="termbar prebar"><div><b>' + esc(name) + josa(name, '을', '를') + ' 보려면 이 기초가 필요해요</b>'
+    + '<div class="muted">' + (tot > pre.length ? '기초 ' + tot + '단원 가운데 ' + pre.length + '개만 보면 돼요. ' : '') + '이미 알면 건너뛰어도 돼요. 처음부터 차례대로 보고 싶으면 전체 보기로 가요.</div></div>'
+    + '<div class="pillrow" style="margin:0">'
+    + pre.map(u => '<a class="chip' + (unitDone(u.id) ? ' on' : '') + '" href="#/unit/' + esc(u.id) + '">' + esc(String(u.title).split(':')[0]) + '</a>').join('')
+    + bw.map(k => '<a class="chip" href="#/week/' + esc(k) + '">' + esc(weekName(k)) + ' 전체</a>').join('')
+    + '</div></div>';
+}
 
 /* ---------- 길잡이: 주차마다 할 일 순서 ---------- */
 function weekSteps(week) {
@@ -321,10 +358,14 @@ function overallNext() {
 function pageHome() {
   const nx = overallNext();
   let h = '<section class="intro"><div><div class="eyebrow">그래프 신경망 2026 가을, 이오준 교수님</div>'
-    + '<h1>' + (nx ? esc(weekName(nx.week)) + '<br>' + esc(nx.step.t) : '남은 건<br>모의고사예요') + '</h1>'
+    // 큰 버튼은 "마지막으로 본 곳" 이 먼저다. 순서대로 가는 길은 그 옆에 둔다.
+    // 4주차를 보다 나갔는데 홈에 올 때마다 기초 다지기로 끌려가면 방해가 되기 때문이다
+    + '<h1>' + (store.last ? esc(store.last.label) + '<br>이어서 봐요' : nx ? esc(weekName(nx.week)) + '<br>' + esc(nx.step.t) : '남은 건<br>모의고사예요') + '</h1>'
     + '<p>기초 다지기, 1주차, 2주차, 3주차 순서예요. 각 주차 안에서는 길잡이가 지금 할 일을 하나씩 알려 줘요. 모르는 용어는 눌러서 뜻을 봐요.</p>'
-    + '<div class="cta">' + (nx ? '<a class="btn primary" href="' + esc(nx.step.href) + '">이어서 하기</a>' : '<a class="btn primary" href="#/mock">모의고사</a>')
-    + (store.last ? '<a class="btn" href="' + esc(store.last.href) + '">마지막으로 본 곳</a>' : '') + '</div></div>'
+    + '<div class="cta">'
+    + (store.last ? '<a class="btn primary" href="' + esc(store.last.href) + '">이어서 하기</a>' : nx ? '<a class="btn primary" href="' + esc(nx.step.href) + '">이어서 하기</a>' : '<a class="btn primary" href="#/mock">모의고사</a>')
+    + (nx && store.last && nx.step.href !== store.last.href ? '<a class="btn" href="' + esc(nx.step.href) + '">순서대로: ' + esc(weekName(nx.week)) + ' ' + esc(nx.step.t) + '</a>' : '')
+    + '</div></div>'
     + '<div class="pathcard"><div class="pc-h"><span>기초, 1~7주차, 8주차 중간고사</span><span class="num">' + overallPct() + '% 진행</span></div>' + weekPathSvg() + '</div></section>';
   h += '<h2 class="sec">주차별로 공부하기</h2><div class="weekcards">';
   META.weeks.forEach(w => {
@@ -394,6 +435,7 @@ function pageWeek(week) {
   if (!w) { location.hash = '#/'; return; }
   const d = w.deck ? META.decks[w.deck] : null;
   let h = '<a class="back" href="#/">홈</a><div class="whead"><div class="eyebrow">' + esc(w.short) + '</div><h1>' + esc(w.title) + '</h1><p>' + esc(w.topics) + '</p></div>';
+  h += prereqBar(week);          // 이 주차에 필요한 기초 단원만 (기초 다지기 전체는 주차 목록에 그대로 있다)
   h += guideCard(week, true);
   if (d) {
     h += '<h2 class="sec">강의 회독 <small>같은 강의를 네 번, 갈수록 깊게</small></h2>';

@@ -18,6 +18,10 @@ sys.stdout.reconfigure(encoding="utf-8")
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, "slides_wb.json")
 
+_WORK = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # work/eco-architecture
+sys.path.insert(0, os.path.dirname(_WORK))                            # work/
+import _wb_for   # noqa: E402
+
 UNITS = []
 
 
@@ -1614,6 +1618,8 @@ def selfcheck(data):
 def main():
     data = {"week": "b", "title": "기초 다지기: 건축환경 처음부터", "units": UNITS}
     selfcheck(data)
+    _weeks = json.load(open(os.path.join(_WORK, "subject.json"), encoding="utf-8"))["weeks"]
+    _wb_for.attach_for(UNITS, _weeks)
     with open(OUT, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=1)
     n = sum(len(u["slides"]) for u in UNITS)

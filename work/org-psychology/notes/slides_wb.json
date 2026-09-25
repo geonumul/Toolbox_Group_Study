@@ -215,6 +215,10 @@
       "오늘의 용어: 산업 및 조직심리학(Industrial & Organizational Psychology), 산업심리학(Industrial Psychology), 조직심리학(Organizational Psychology), 응용심리학(Applied Psychology), 인적 자원 관리(Human Resource Management), 조직행동(Organizational Behavior)"
      ]
     }
+   ],
+   "for": [
+    "1",
+    "2"
    ]
   },
   {
@@ -452,6 +456,9 @@
       "오늘의 용어: 과학자-실천가 모델(Scientist-Practitioner Model), 과학적 탐구(Scientific Inquiry), 실증적 연구(Empirical Research), 기술(Description), 설명(Explanation), 예측(Prediction), 통제(Control), 적용(Application)"
      ]
     }
+   ],
+   "for": [
+    "2"
    ]
   },
   {
@@ -683,6 +690,9 @@
       "오늘의 용어: 변인(Variable), 독립변인(Independent Variable), 종속변인(Dependent Variable), 예측변인(Predictor Variable), 준거변인(Criterion Variable), 양적변인(Quantitative Variable), 범주변인(Categorical Variable), 처치(Treatment)"
      ]
     }
+   ],
+   "for": [
+    "2"
    ]
   },
   {
@@ -919,6 +929,9 @@
       "오늘의 용어: 기술통계(Descriptive Statistics), 집중경향성(Central Tendency), 평균(Mean), 중앙값(Median), 최빈값(Mode), 이상치(Outlier)"
      ]
     }
+   ],
+   "for": [
+    "2"
    ]
   },
   {
@@ -1151,6 +1164,9 @@
       "오늘의 용어: 변산성(Variability), 범위(Range), 표준편차(Standard Deviation), 정규분포(Normal Distribution), 왜곡분포(Skewed Distribution), 분포(Distribution)"
      ]
     }
+   ],
+   "for": [
+    "2"
    ]
   },
   {
@@ -1383,6 +1399,9 @@
       "오늘의 용어: 상관(Correlation), 상관계수(Correlation Coefficient), 정적 상관(Positive Correlation), 부적 상관(Negative Correlation), 인과관계(Causation), 회귀분석(Regression Analysis)"
      ]
     }
+   ],
+   "for": [
+    "2"
    ]
   },
   {
@@ -1602,6 +1621,9 @@
       "오늘의 용어: 통계적 유의미(Statistical Significance), T검증(T-test), F검증(F-test), 가설(Hypothesis), 실험집단(Experimental Group), 통제집단(Control Group)"
      ]
     }
+   ],
+   "for": [
+    "2"
    ]
   },
   {
@@ -1831,6 +1853,9 @@
       "오늘의 용어: 타당도(Validity), 내적 타당도(Internal Validity), 외적 타당도(External Validity), 신뢰도(Reliability), 실험실 실험(Laboratory Experiment), 유사실험(Quasi-experiment)"
      ]
     }
+   ],
+   "for": [
+    "2"
    ]
   },
   {
@@ -2068,6 +2093,9 @@
       "오늘의 용어: 표본(Sample), 모집단(Population), 대표성(Representativeness), 일반화(Generalization), 일반화 가능성(Generalizability), 설문조사(Questionnaire), 표집 편파(Sampling Bias)"
      ]
     }
+   ],
+   "for": [
+    "2"
    ]
   },
   {
@@ -2297,6 +2325,9 @@
       "오늘의 용어: 이차적 연구방법(Secondary Research Methods), 메타분석(Meta-analysis), 효과 크기(Effect Size), 서류 서랍 효과(File Drawer Effect), 분석의 수준(Level of Analysis), 데이터마이닝(Data Mining), 빅데이터(Big Data)"
      ]
     }
+   ],
+   "for": [
+    "2"
    ]
   }
  ]

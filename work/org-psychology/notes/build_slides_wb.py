@@ -8,10 +8,14 @@
   용어사전에 있는 말은 그 표기를 그대로 쓴다.
 - 단원 본문은 wb_units_1_4.py, wb_units_5_7.py, wb_units_8_10.py 에 나눠 두었다.
 """
-import os, sys
+import json, os, sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
+
+_WORK = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # work/org-psychology
+sys.path.insert(0, os.path.dirname(_WORK))                            # work/
+import _wb_for   # noqa: E402
 
 import wb_common                      # 용어 주입이 먼저 일어나야 한다
 from orgslide_lib import write
@@ -30,6 +34,8 @@ for i, u in enumerate(UNITS, 1):
     assert kinds.count("check") >= 2, "%s: 퀴즈 %d개" % (u["id"], kinds.count("check"))
 
 OUT = os.path.join(HERE, "slides_wb.json")
+_weeks = json.load(open(os.path.join(_WORK, "subject.json"), encoding="utf-8"))["weeks"]
+_wb_for.attach_for(UNITS, _weeks)
 write(OUT, "b", "기초 다지기. 심리학과 통계, 연구방법 처음부터", UNITS)
 for u in UNITS:
     print("  %-5s %-34s %2d장, 그림 %d, 퀴즈 %d"

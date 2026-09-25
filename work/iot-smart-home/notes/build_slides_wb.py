@@ -6,6 +6,10 @@ sys.stdout.reconfigure(encoding="utf-8")
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, "slides_wb.json")
 
+_WORK = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # work/iot-smart-home
+sys.path.insert(0, os.path.dirname(_WORK))                            # work/
+import _wb_for   # noqa: E402
+
 # ---------------------------------------------------------------- 용어 표
 # ko: (en, say). 본문에서 [[ko]] 또는 [[ko|은/는]] 으로 쓰면 **ko(en)** + 받침에 맞는 조사가 된다.
 # 표기는 rules\용어사전.json 과 같게 한다.
@@ -1577,6 +1581,10 @@ UNITS.append(unit(
 # ---------------------------------------------------------------- 저장
 ids = [u["id"] for u in UNITS]
 assert ids == ["wb-%d" % i for i in range(1, 11)], ids
+
+_weeks = json.load(open(os.path.join(_WORK, "subject.json"), encoding="utf-8"))["weeks"]
+_wb_for.attach_for(UNITS, _weeks)
+
 with open(OUT, "w", encoding="utf-8") as f:
     json.dump({"week": "b", "title": "기초 다지기", "units": UNITS}, f, ensure_ascii=False, indent=1)
 print("저장", OUT, "단원", len(UNITS), "슬라이드", sum(len(u["slides"]) for u in UNITS))

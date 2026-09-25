@@ -10,6 +10,11 @@
 import json, os, sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+_WORK = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # work/interior-construction
+sys.path.insert(0, os.path.dirname(_WORK))                            # work/
+import _wb_for   # noqa: E402
+
 import icslide_lib as IC
 
 # ---------------------------------------------------------------- 기초 용어(terms/b.json)를 사전에 얹기
@@ -590,4 +595,6 @@ U.append(unit("wb-8", "현장이 굴러가는 순서", gl,
               recall=["현장소장", "축척"]))
 
 # ================================================================
+_weeks = json.load(open(os.path.join(_WORK, "subject.json"), encoding="utf-8"))["weeks"]
+_wb_for.attach_for(U, _weeks)
 write(out("b"), "b", "기초 다지기. 공사 한 건을 읽는 법 처음부터", U)

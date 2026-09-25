@@ -246,6 +246,12 @@
       "오늘의 용어: 파사드(Facade), 입면(Elevation), 개구부(Opening), 기단(Base), 코니스(Cornice), 비례(Proportion), 양식(Style)"
      ]
     }
+   ],
+   "for": [
+    "2",
+    "3",
+    "4",
+    "6"
    ]
   },
   {
@@ -481,6 +487,12 @@
       "오늘의 용어: 평면(Plan), 입면(Elevation), 단면(Section), 층고(Floor Height), 중정(Courtyard), 라움플란(Raumplan)"
      ]
     }
+   ],
+   "for": [
+    "1",
+    "3",
+    "4",
+    "5"
    ]
   },
   {
@@ -716,6 +728,12 @@
       "오늘의 용어: 기둥(Column), 기둥과 보(Post and Beam), 조적조(Masonry), 압축(Compression), 스팬(Span), 커튼월(curtain wall)"
      ]
     }
+   ],
+   "for": [
+    "1",
+    "2",
+    "3",
+    "4"
    ]
   },
   {
@@ -958,6 +976,13 @@
       "오늘의 용어: 아치(Arch), 볼트(Vault), 돔 지붕(Dome), 인장(Tension), 압축(Compression), 트러스(Truss), 스팬(Span)"
      ]
     }
+   ],
+   "for": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "6"
    ]
   },
   {
@@ -1192,6 +1217,10 @@
       "오늘의 용어: 주철(cast iron), 단철(wrought iron), 철골(강철)(steel), 판유리(Plate Glass), 장스팬, 커튼월(curtain wall)"
      ]
     }
+   ],
+   "for": [
+    "1",
+    "2"
    ]
   },
   {
@@ -1425,6 +1454,12 @@
       "오늘의 용어: 철근콘크리트(Reinforced Concrete), 캔틸레버(cantilever), 필로티(Pilotis), 평지붕(Flat Roof), 조소성, 인장(Tension)"
      ]
     }
+   ],
+   "for": [
+    "1",
+    "4",
+    "5",
+    "6"
    ]
   },
   {
@@ -1661,6 +1696,11 @@
       "오늘의 용어: 양식(Style), 절충주의, 역사주의(Historism), 미술공예운동(Arts and Crafts Movement), 아르 누보(Art Nouveau), 매스(Mass)"
      ]
     }
+   ],
+   "for": [
+    "1",
+    "2",
+    "3"
    ]
   },
   {
@@ -1901,7 +1941,8 @@
       "오늘의 용어: 캡션(Caption), 파사드(Facade), 양식(Style), 처마(Eaves), 박공(Gable), 지붕창(Dormer)"
      ]
     }
-   ]
+   ],
+   "for": "all"
   }
  ]
 }

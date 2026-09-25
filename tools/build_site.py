@@ -254,8 +254,11 @@ def main(slug, skip, home=True):
         for u in d.get("units", []):
             for t in u.get("terms", []):
                 add_term(week, t)
+        # "for": 이 기초 단원이 필요한 주차 목록 ("all" 이면 강의가 있는 주차 전부).
+        #        work/_wb_for.py 가 그 단원의 "어디에 나오나" 슬라이드에서 뽑아 넣어 준다.
         meta["units"][week] = [{"id": u["id"], "title": u["title"], "goal": u.get("goal", ""), "n": len(u.get("slides", [])),
-                                "terms": [(t.get("ko") or t.get("en")) for t in u.get("terms", []) if isinstance(t, dict) and (t.get("ko") or t.get("en"))]}
+                                "terms": [(t.get("ko") or t.get("en")) for t in u.get("terms", []) if isinstance(t, dict) and (t.get("ko") or t.get("en"))],
+                                **({"for": u["for"]} if u.get("for") else {})}
                                for u in d.get("units", [])]
         write(out, js_assign("SDT_NOTES", week, d))
         print(f"  정리 슬라이드 {week}: 단원 {len(d.get('units', []))}개")
