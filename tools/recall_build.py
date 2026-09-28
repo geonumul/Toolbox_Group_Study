@@ -56,7 +56,7 @@ def _gnn():
     return {
         "name": "gnn",
         # 사이트 그림은 한글 슬라이드라서 한글을 입힌 PDF 에서 글자 위치를 읽는다
-        "decks": {d: str(GNN / "번역" / "img" / f"{d}_ko.pdf") for d in ("L1", "L2", "L3", "L4")},
+        "decks": {d: str(GNN / "번역" / "img" / f"{d}_ko.pdf") for d in ("L1", "L2", "L3", "L4", "L5")},
         "lesson": str(work / "lesson" / "{deck}_*.json"),
         "glossary": [],
         "corpus": [str(work / "문제은행" / "*.json"), str(work / "기출_텍스트" / "*.txt")],
