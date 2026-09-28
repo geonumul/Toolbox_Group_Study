@@ -2,7 +2,8 @@
 """자연어처리 '직접 해보기' 연습 노트북 (Colab 에서 바로 실행). 교수님 실습 노트북과 별개로 새로 만든 연습.
 
 사용: python work/nlp/practice/build_practice.py [--test]
-출력: subjects/nlp/practice/nlp_wb_practice.ipynb, nlp_w2_practice.ipynb, nlp_w3_practice.ipynb, nlp_w4_practice.ipynb
+출력: subjects/nlp/practice/nlp_wb_practice.ipynb, nlp_w2_practice.ipynb, nlp_w3_practice.ipynb,
+     nlp_w4_practice.ipynb, nlp_w5_practice.ipynb
 --test: 빈칸 자리에 정답 코드를 넣은 노트북을 만들어 nbclient 로 끝까지 실행해 본다 (검사용, 결과는 임시 폴더)
 노트북 구성: 문제 설명(마크다운) → 빈칸 코드(TODO) → 확인 셀(assert). 맨 끝에 정답 코드 모음(마크다운 코드 블록).
 
@@ -434,6 +435,200 @@ WB = {
 }
 
 
+
+W5 = {
+    "file": "nlp_w5_practice.ipynb",
+    "title": "5주차 직접 해보기: 사전 학습 언어 모델",
+    "intro": ("사이트의 5주차 회독과 정리 슬라이드를 본 다음 풀어요. 위에서부터 차례로 `Shift+Enter` 로 실행해요.\n\n"
+              "- 문제마다 **생각 순서**가 먼저 나와요. 코드를 치기 전에 그 순서를 말로 한 번 읊어요.\n"
+              "- `# TODO` 가 있는 칸의 `None` 을 알맞은 코드로 바꿔요.\n"
+              "- 바로 아래 **확인 셀**을 실행하면 맞았는지 알려 줘요. 틀리면 빨간 AssertionError 와 힌트가 나와요.\n"
+              "- 막히면 맨 아래 **정답 코드**를 봐요.\n\n"
+              "GPU 도, 인터넷 다운로드도, 모델 내려받기도 없어요. 실습 노트북 Lab 4 와 달리 여기서는 숫자만 손으로 따라가요."),
+    "setup": "import math\nimport numpy as np\nimport torch\nimport torch.nn as nn\ntorch.manual_seed(0)\n" + CHECK_HEAD + "print('준비 끝')",
+    "ex": [
+        {"md": "## 1. 15 퍼센트 마스킹과 80/10/10 세기\n\n강의 N5 p.19-20. **마스크 언어 모델(Masked Language Modelling (MLM))** 은 토큰의 15 퍼센트를 골라서 가리고, 그 자리를 맞히게 해요.\n\n고른 15 퍼센트가 전부 **마스크 토큰([MASK])** 이 되는 것은 아니에요. 그중 80 퍼센트만 [MASK] 가 되고, 10 퍼센트는 아무 토큰으로 바뀌고, 10 퍼센트는 그대로 둬요. 세 경우 모두 원래 단어를 맞혀야 해요.",
+         "think": ["먼저 몇 개를 고르는지 세요. 토큰 200개의 15 퍼센트예요",
+                   "그 30개를 다시 80 대 10 대 10 으로 나눠요",
+                   "80 퍼센트는 30 의 0.8 이라서 24개예요",
+                   "10 퍼센트는 3개씩이고, 24 더하기 3 더하기 3 이 30 이어야 해요",
+                   "손실을 세는 자리는 [MASK] 가 된 24개가 아니라 고른 30개 전부예요"],
+         "pseudo": ["고른 수 = 전체 토큰 수 곱하기 0.15",
+                    "마스크로 바꾸는 수 = 고른 수 곱하기 0.8",
+                    "아무 토큰으로 바꾸는 수 = 고른 수 곱하기 0.1",
+                    "그대로 두는 수 = 고른 수 빼기 앞의 둘",
+                    "손실을 세는 자리 수 = 고른 수"],
+         "pseudo_first": True,
+         "pseudo_show": True,
+         "next": "N5 p.20 이 80/10/10 그림이고, 미세조정 때는 [MASK] 가 아예 없어서 모델이 [MASK] 를 보는 데 기대면 안 된다는 것이 이유예요. 실습 N5L p.13 에서 실제로 빈칸을 채워 봐요.",
+         "todo": "n_tokens = 200\n\nchosen = None      # TODO: 15 퍼센트를 고르기 (int() 로 버림)\nto_mask = None     # TODO: 고른 것의 80 퍼센트\nto_random = None   # TODO: 고른 것의 10 퍼센트\nto_keep = None     # TODO: 나머지 (고른 수에서 둘을 빼기)\nloss_positions = None   # TODO: 손실을 세는 자리 수\n\nprint(chosen, to_mask, to_random, to_keep, loss_positions)",
+         "sol": "n_tokens = 200\n\nchosen = int(0.15 * n_tokens)\nto_mask = int(0.8 * chosen)\nto_random = int(0.1 * chosen)\nto_keep = chosen - to_mask - to_random\nloss_positions = chosen\n\nprint(chosen, to_mask, to_random, to_keep, loss_positions)",
+         "check": "ok(chosen == 30, '200 의 15 퍼센트는 30개예요')\nok(to_mask == 24, '30 의 80 퍼센트는 24개가 [MASK] 가 돼요')\nok(to_random == 3 and to_keep == 3, '10 퍼센트씩 3개는 아무 토큰으로, 3개는 그대로 둬요')\nok(to_mask + to_random + to_keep == chosen, '셋을 더하면 고른 30개가 다시 나와요')\nok(loss_positions == 30, '손실은 [MASK] 24자리가 아니라 고른 30자리 전부에서 세요')"},
+
+        {"md": "## 2. 마스크 자리에서만 손실 세기\n\n강의 N5 p.19. **손실 함수(Loss Function)** 는 가린 자리에서만 계산해요. 가리지 않은 자리는 답이 그대로 보이니까 점수를 매길 이유가 없어요.\n\n한 자리의 손실은 2주차, 3주차에서 본 그대로예요. 어휘 전체에 **소프트맥스(Softmax)** 를 씌워 확률을 만들고, 정답 토큰에 준 확률의 음의 로그가 **교차 엔트로피(Cross-Entropy)** 예요.",
+         "think": ["어휘가 5개라서 한 자리마다 점수가 5개 나와요",
+                   "줄마다 소프트맥스를 해요. 줄 합이 1 이 되어야 해요",
+                   "첫 줄의 정답은 0번 칸, 둘째 줄의 정답은 1번 칸이에요",
+                   "정답 칸의 확률을 꺼내고 음의 로그를 씌워요",
+                   "가린 자리가 두 개니까 두 값을 평균 내요. 나머지 세 자리는 아예 안 세요"],
+         "pseudo": ["줄마다 최댓값을 빼고 exp 를 씌운 뒤 줄 합으로 나눈다",
+                    "정답 칸의 확률만 꺼낸다",
+                    "음의 로그를 씌운다",
+                    "가린 자리 수로 평균을 낸다"],
+         "pseudo_first": True,
+         "pseudo_show": True,
+         "next": "N2 p.33 의 소프트맥스와 N3 p.41 의 교차 엔트로피가 그대로 쓰여요. 실습 N5L p.13 의 빈칸 채우기 출력에 나오는 서울 0.64 같은 숫자가 바로 이 확률이에요.",
+         "todo": "scores = np.array([[2.0, 1.0, 0.0, 0.0, 1.0],\n                   [0.0, 3.0, 1.0, 0.0, 0.0]])\ngold = np.array([0, 1])\n\ndef row_softmax(M):\n    M = M - M.max(axis=1, keepdims=True)\n    e = np.exp(M)\n    return e / e.sum(axis=1, keepdims=True)\n\nP = None          # TODO: 줄마다 소프트맥스\np_gold = None     # TODO: 정답 칸의 확률만 꺼내기 (P[np.arange(2), gold])\nloss = None       # TODO: 음의 로그를 씌워 평균 내기\n\nprint(P.round(4))\nprint(p_gold.round(4), round(float(loss), 4))",
+         "sol": "scores = np.array([[2.0, 1.0, 0.0, 0.0, 1.0],\n                   [0.0, 3.0, 1.0, 0.0, 0.0]])\ngold = np.array([0, 1])\n\ndef row_softmax(M):\n    M = M - M.max(axis=1, keepdims=True)\n    e = np.exp(M)\n    return e / e.sum(axis=1, keepdims=True)\n\nP = row_softmax(scores)\np_gold = P[np.arange(2), gold]\nloss = -np.log(p_gold).mean()\n\nprint(P.round(4))\nprint(p_gold.round(4), round(float(loss), 4))",
+         "check": "ok(np.allclose(P.sum(axis=1), 1.0), '줄마다 합이 정확히 1 이에요')\nok(np.allclose(p_gold, [0.4984, 0.7784], atol=1e-4), '정답 확률은 0.4984 와 0.7784 예요')\nok(abs(float(loss) - 0.4734) < 1e-4, '두 자리 손실의 평균은 약 0.4734 예요')\nok(abs(float(loss) - float(-np.log(P[0, 0]) - np.log(P[1, 1])) / 2) < 1e-12, '가린 두 자리만 더해서 2 로 나눈 값이에요')"},
+
+        {"md": "## 3. 양쪽을 다 보는 BERT, 앞만 보는 GPT\n\n강의 N5 p.17-18, 4주차 N4 p.43. 4주차에서 **인코더(Encoder)** 는 양쪽을 다 보고 **디코더(Decoder)** 는 앞만 본다고 배웠죠. 그 차이가 5주차에서 **버트(BERT)** 와 **지피티(GPT)** 로 갈려요.\n\n디코더는 **인과 마스킹(Causal Masking)** 때문에 오른쪽 위가 막혀 있어요. 인코더는 막힌 데가 없어서 다음 단어 맞히기가 아예 문제가 되지 않아요. 답이 이미 입력에 보이니까요.",
+         "think": ["토큰 4개짜리 문장 하나로 해 봐요. 표는 4 곱하기 4 예요",
+                   "BERT 는 모든 칸이 1 이에요. np.ones 로 만들면 끝이에요",
+                   "GPT 는 아래쪽 삼각형만 1 이에요. np.tril 이 그 표를 만들어요",
+                   "볼 수 있는 칸을 세면 BERT 는 16, GPT 는 1 더하기 2 더하기 3 더하기 4 로 10 이에요",
+                   "GPT 의 줄마다 개수를 찍어 보면 1, 2, 3, 4 로 늘어나요"],
+         "pseudo": ["bert = 4 곱하기 4 짜리 전부 1 인 표",
+                    "gpt = 같은 크기에서 아래쪽 삼각형만 1 인 표",
+                    "각각 다 더해서 볼 수 있는 칸 수를 센다",
+                    "gpt 는 줄마다 합을 따로 찍어 본다"],
+         "pseudo_first": False,
+         "next": "N4 p.43 의 인과 마스킹이 GPT 표를 만들고, N5 p.18 이 그래서 인코더로는 다음 단어 맞히기를 못 한다고 말해요. N5 p.30 의 디코더 목적 함수는 3주차 N3 p.46-47 의 RNN 언어 모델과 같은 일이에요.",
+         "todo": "n = 4\n\nbert_mask = None   # TODO: 4 x 4 전부 1 (np.ones)\ngpt_mask = None    # TODO: 아래쪽 삼각형만 1 (np.tril 에 np.ones 를 넣기)\n\nbert_seen = None   # TODO: 볼 수 있는 칸 수 (int(...sum()))\ngpt_seen = None    # TODO: 볼 수 있는 칸 수\n\nprint(gpt_mask)\nprint(bert_seen, gpt_seen, gpt_mask.sum(axis=1))",
+         "sol": "n = 4\n\nbert_mask = np.ones((n, n))\ngpt_mask = np.tril(np.ones((n, n)))\n\nbert_seen = int(bert_mask.sum())\ngpt_seen = int(gpt_mask.sum())\n\nprint(gpt_mask)\nprint(bert_seen, gpt_seen, gpt_mask.sum(axis=1))",
+         "check": "ok(bert_seen == 16, 'BERT 는 16칸을 다 봐요. 그래서 다음 단어가 이미 보여요')\nok(gpt_seen == 10, 'GPT 는 10칸만 봐요. 1 더하기 2 더하기 3 더하기 4 예요')\nok(np.allclose(gpt_mask.sum(axis=1), [1, 2, 3, 4]), '줄마다 1, 2, 3, 4 로 늘어나요')\nok(np.allclose(np.triu(gpt_mask, 1), 0.0), '오른쪽 위, 곧 미래는 전부 0 이에요')"},
+
+        {"md": "## 4. BERT 를 숫자로 읽기\n\n강의 N5 p.22. **버트(BERT)** 는 두 가지 크기로 나왔어요.\n\n| | 층 | 은닉 | 헤드 | 파라미터 |\n|---|---|---|---|---|\n| BERT-base | 12 | 768 | 12 | 110M |\n| BERT-large | 24 | 1024 | 16 | 340M |\n\n4주차 N4 p.47 에서 **멀티 헤드 어텐션(Multi-Head Attention (MHA))** 은 전체 차원을 헤드 수로 나눠 쓴다고 배웠어요. 그 규칙을 여기 숫자에 그대로 대 봐요.",
+         "think": ["헤드 하나가 쓰는 칸 수는 은닉을 헤드 수로 나눈 값이에요",
+                   "base 는 768 나누기 12, large 는 1024 나누기 16 이에요",
+                   "두 값이 같은지 보세요. 둘 다 64 가 나와요",
+                   "large 가 base 보다 파라미터가 몇 배인지도 나눠 보면 돼요",
+                   "340 나누기 110 은 약 3.09 배예요. 층은 2배인데 파라미터는 3배가 넘어요"],
+         "pseudo": ["base 헤드 차원 = 768 나누기 12",
+                    "large 헤드 차원 = 1024 나누기 16",
+                    "파라미터 배수 = 340 나누기 110",
+                    "세 값을 찍어서 비교한다"],
+         "pseudo_first": False,
+         "next": "N4 p.47 의 d 나누기 h 규칙이 그대로예요. 실습 N5L p.10 에서 쓰는 `klue/bert-base` 가 바로 이 표의 왼쪽 줄, 곧 층 12, 은닉 768, 파라미터 110M 짜리 한국어 BERT 예요.",
+         "todo": "base = {\"layers\": 12, \"hidden\": 768, \"heads\": 12, \"params_m\": 110}\nlarge = {\"layers\": 24, \"hidden\": 1024, \"heads\": 16, \"params_m\": 340}\n\nbase_head_dim = None    # TODO: 은닉을 헤드 수로 나누기 (// 사용)\nlarge_head_dim = None   # TODO: 같은 방식으로\nparam_ratio = None      # TODO: large 파라미터가 base 의 몇 배인지\n\nprint(base_head_dim, large_head_dim, round(param_ratio, 4))",
+         "sol": "base = {\"layers\": 12, \"hidden\": 768, \"heads\": 12, \"params_m\": 110}\nlarge = {\"layers\": 24, \"hidden\": 1024, \"heads\": 16, \"params_m\": 340}\n\nbase_head_dim = base[\"hidden\"] // base[\"heads\"]\nlarge_head_dim = large[\"hidden\"] // large[\"heads\"]\nparam_ratio = large[\"params_m\"] / base[\"params_m\"]\n\nprint(base_head_dim, large_head_dim, round(param_ratio, 4))",
+         "check": "ok(base_head_dim == 64, '768 나누기 12 는 64. 헤드 하나가 64칸을 봐요')\nok(large_head_dim == 64, '1024 나누기 16 도 64 예요. 크기를 키워도 헤드 한 개의 칸 수는 그대로예요')\nok(abs(param_ratio - 3.0909) < 1e-3, '340 나누기 110 은 약 3.09 배예요')\nok(base[\"layers\"] * 2 == large[\"layers\"], '층은 정확히 2배인데 파라미터는 3배가 넘어요')"},
+
+        {"md": "## 5. 몸통은 그대로, 과제 헤드만 갈아 끼우기\n\n강의 N5 p.23. 같은 **몸통(Body)** 위에 **과제 헤드(Task Head)** 만 바꿔 끼우면 거의 모든 과제가 돼요. 공구 자루 하나에 날만 갈아 끼우는 것과 같아요.\n\n**인코더(Encoder)** 가 내놓는 것은 토큰마다 768칸짜리 줄이에요. 문장 하나를 분류할 때는 **분류 토큰([CLS])** 자리만 쓰고, 토큰마다 꼬리표를 붙일 때는 모든 자리를 써요.",
+         "think": ["인코더 출력 모양부터 적어요. (문장 4개, 토큰 16개, 768칸) 이에요",
+                   "문장 분류는 [CLS] 자리 한 줄만 꺼내요. x[:, 0] 이 그 자리예요",
+                   "토큰 태깅은 모든 자리에 그대로 씌워요. 모양이 (4, 16, 태그 수) 가 돼요",
+                   "헤드 파라미터는 Linear(768, k) 라서 768 곱하기 k 에 편향 k 를 더한 값이에요",
+                   "2 클래스면 1538개. 몸통 1억 1천만 개에 견주면 거의 없는 수준이에요"],
+         "pseudo": ["인코더 출력 자리에 (4, 16, 768) 짜리 0 텐서를 둔다",
+                    "분류 헤드 = Linear(768, 2), [CLS] 자리 한 줄에만 씌운다",
+                    "태깅 헤드 = Linear(768, 9), 모든 자리에 씌운다",
+                    "파라미터 수 = 768 곱하기 클래스 수 더하기 클래스 수",
+                    "몸통 대비 몇 퍼센트인지 나눠 본다"],
+         "pseudo_first": True,
+         "pseudo_show": False,
+         "next": "N5 p.23 의 네 가지 과제 모양(문장 하나, 문장 쌍, 토큰 태깅, 스팬 추출)이 이 계산이에요. 실습 N5L p.14 에서 Hugging Face 가 마스크 언어 모델 헤드를 버리고 2 클래스 헤드를 새로 붙이는 장면이 바로 이것이고, N5L p.15 의 학습 전 정확도 57.0 퍼센트가 그 새 헤드가 아직 무작위라는 증거예요.",
+         "todo": "enc_out = torch.zeros(4, 16, 768)    # (문장 4개, 토큰 16개, 768칸)\n\ncls_head = nn.Linear(768, 2)         # 문장 하나 분류\ntag_head = nn.Linear(768, 9)         # 토큰마다 꼬리표 9종\n\ncls_logits = None    # TODO: [CLS] 자리(enc_out[:, 0])에만 cls_head 를 씌우기\ntag_logits = None    # TODO: 모든 자리에 tag_head 를 씌우기\n\ncls_params = None    # TODO: 768 곱하기 2 더하기 2\nbody_params = 110_000_000\nhead_share = None    # TODO: cls_params 가 body_params 의 몇 퍼센트인지\n\nprint(tuple(cls_logits.shape), tuple(tag_logits.shape))\nprint(cls_params, round(head_share, 4))",
+         "sol": "enc_out = torch.zeros(4, 16, 768)    # (문장 4개, 토큰 16개, 768칸)\n\ncls_head = nn.Linear(768, 2)         # 문장 하나 분류\ntag_head = nn.Linear(768, 9)         # 토큰마다 꼬리표 9종\n\ncls_logits = cls_head(enc_out[:, 0])\ntag_logits = tag_head(enc_out)\n\ncls_params = 768 * 2 + 2\nbody_params = 110_000_000\nhead_share = 100 * cls_params / body_params\n\nprint(tuple(cls_logits.shape), tuple(tag_logits.shape))\nprint(cls_params, round(head_share, 4))",
+         "check": "ok(tuple(cls_logits.shape) == (4, 2), '문장 분류는 문장마다 답 하나라서 (4, 2)')\nok(tuple(tag_logits.shape) == (4, 16, 9), '토큰 태깅은 토큰마다 답이라서 (4, 16, 9)')\nok(cls_params == 1538, '768 곱하기 2 에 편향 2 를 더해 1538개')\nok(cls_params == sum(p.numel() for p in cls_head.parameters()), 'PyTorch 가 센 수와 같아요')\nok(head_share < 0.01, '몸통의 0.01 퍼센트도 안 돼요. 새로 배우는 것은 이것뿐이에요')"},
+
+        {"md": "## 6. 미세조정 레시피를 걸음 수로 바꾸기\n\n강의 N5 p.44. **미세조정(Finetuning)** 은 네 숫자면 끝이에요. **학습률(Learning Rate)** 2e-5 에서 5e-5, **에폭(Epoch)** 2 에서 4, **배치 크기(Batch Size)** 16 또는 32, 그리고 처음 약 10 퍼센트 걸음은 **워밍업(Warmup)** 이에요.\n\n실습 N5L p.20 이 정확히 이 숫자로 돌아가요. 레이블 15,000개, 배치 32, 에폭 2 일 때 몇 걸음을 걷는지 세어 봐요.",
+         "think": ["한 에폭은 데이터를 한 번 다 보는 것이에요",
+                   "한 에폭의 걸음 수는 15000 나누기 32 인데, 남는 것도 한 걸음이라 올림이에요",
+                   "math.ceil(15000 / 32) 은 469 예요. 468.75 를 올린 값이에요",
+                   "에폭이 2 이니까 전체 걸음은 469 곱하기 2 로 938 이에요",
+                   "워밍업은 전체의 10 퍼센트를 버림해서 93 걸음이에요",
+                   "미세조정 학습률이 사전 학습보다 100배 작다고 했으니, 거꾸로 100을 곱하면 사전 학습 쪽 보폭이에요"],
+         "pseudo": ["한 에폭 걸음 수 = 데이터 수 나누기 배치 크기, 올림",
+                    "전체 걸음 수 = 한 에폭 걸음 수 곱하기 에폭 수",
+                    "워밍업 걸음 수 = 전체 걸음 수 곱하기 0.1, 버림",
+                    "사전 학습 학습률 = 미세조정 학습률 곱하기 100"],
+         "pseudo_first": True,
+         "pseudo_show": True,
+         "next": "실습 N5L p.20 의 `warmup_steps=max(1, int(0.1 * total_steps))` 가 그대로 이 계산이에요. N5 p.44 는 가장 흔한 실수가 사전 학습 학습률을 그대로 쓰는 것이라고 경고해요. 그러면 모델이 알던 것이 지워져요.",
+         "todo": "n_train, batch, epochs = 15000, 32, 2\nlr_finetune = 2e-5\n\nsteps_per_epoch = None   # TODO: 올림 (math.ceil)\ntotal_steps = None       # TODO: 에폭 수만큼 곱하기\nwarmup_steps = None      # TODO: 전체의 10 퍼센트, 버림 (int)\nlr_pretrain = None       # TODO: 미세조정보다 100배 큰 값\n\nprint(steps_per_epoch, total_steps, warmup_steps, lr_pretrain)",
+         "sol": "n_train, batch, epochs = 15000, 32, 2\nlr_finetune = 2e-5\n\nsteps_per_epoch = math.ceil(n_train / batch)\ntotal_steps = steps_per_epoch * epochs\nwarmup_steps = int(0.1 * total_steps)\nlr_pretrain = lr_finetune * 100\n\nprint(steps_per_epoch, total_steps, warmup_steps, lr_pretrain)",
+         "check": "ok(steps_per_epoch == 469, '15000 나누기 32 는 468.75, 올려서 469 걸음이에요')\nok(total_steps == 938, '에폭 2 니까 938 걸음이에요')\nok(warmup_steps == 93, '938 의 10 퍼센트를 버림하면 93 걸음이에요')\nok(abs(lr_pretrain - 2e-3) < 1e-12, '미세조정 2e-5 의 100배는 2e-3 이에요. 이 보폭으로 미세조정하면 안 돼요')"},
+
+        {"md": "## 7. 1 퍼센트만 움직이기\n\n강의 N5 p.46. **파라미터 효율적 미세조정(Parameter-efficient Finetuning (PEFT))** 은 사전 학습된 **몸통(Body)** 을 **동결(Freezing)** 하고 작은 **어댑터(Adapter)** 만 학습해요. 움직이는 가중치가 전체의 약 1 퍼센트예요.\n\n왜 좋은지는 과제가 여러 개일 때 확 드러나요. 전체 미세조정은 과제마다 모델을 통째로 한 벌씩 저장해야 하지만, PEFT 는 몸통 한 벌에 작은 조각만 여러 개 붙여 두면 돼요.",
+         "think": ["몸통은 1억 1천만 개예요. 파이썬으로는 110_000_000 이라고 써도 돼요",
+                   "1 퍼센트는 0.01 을 곱한 값이라서 110만 개예요",
+                   "전체 미세조정은 몸통 전부가 움직이니 110만 개의 100배를 움직여요",
+                   "과제 10개를 전부 전체 미세조정하면 110M 짜리를 10벌 저장해요",
+                   "PEFT 는 몸통 1벌에 110만 짜리 조각 10개만 더하면 돼요",
+                   "두 저장 용량을 나눠 보면 9배가 넘게 차이가 나요"],
+         "pseudo": ["움직이는 수 = 몸통 수 곱하기 0.01",
+                    "몇 배 적게 움직이나 = 몸통 수 나누기 움직이는 수",
+                    "전체 미세조정 저장량 = 몸통 수 곱하기 과제 수",
+                    "PEFT 저장량 = 몸통 수 더하기 움직이는 수 곱하기 과제 수",
+                    "두 저장량을 나눈다"],
+         "pseudo_first": True,
+         "pseudo_show": False,
+         "next": "N5 p.46 이 1 퍼센트라는 숫자가 나오는 쪽이고, LoRA 와 어댑터가 그 방법이에요. N5 p.48 의 '한 번 비싸게 배우고 계속 다시 쓴다' 가 이 계산으로 설명돼요. 이 과목에서 직접 PEFT 를 돌리지는 않아요.",
+         "todo": "body = 110_000_000\ntasks = 10\n\ntrainable = None      # TODO: 몸통의 1 퍼센트 (int 로)\nfewer_times = None    # TODO: 몸통이 trainable 의 몇 배인지 (// 사용)\nfull_store = None     # TODO: 전체 미세조정으로 과제 10개를 저장할 때\npeft_store = None     # TODO: PEFT 로 과제 10개를 저장할 때 (몸통 1벌 + 조각 10개)\n\nprint(trainable, fewer_times)\nprint(full_store, peft_store, round(full_store / peft_store, 4))",
+         "sol": "body = 110_000_000\ntasks = 10\n\ntrainable = int(0.01 * body)\nfewer_times = body // trainable\nfull_store = body * tasks\npeft_store = body + trainable * tasks\n\nprint(trainable, fewer_times)\nprint(full_store, peft_store, round(full_store / peft_store, 4))",
+         "check": "ok(trainable == 1_100_000, '1억 1천만의 1 퍼센트는 110만 개예요')\nok(fewer_times == 100, '몸통은 그 100배예요')\nok(full_store == 1_100_000_000, '과제 10개면 11억 개를 저장해요')\nok(peft_store == 121_000_000, 'PEFT 는 1억 2천 1백만 개면 끝이에요')\nok(abs(full_store / peft_store - 9.0909) < 1e-3, '약 9.09배 차이예요')"},
+
+        {"md": "## 8. 혼동 행렬에서 네 가지 숫자 구하기\n\n실습 N5L p.24. **정확도(Accuracy)** 하나로는 언제 틀리는지 알 수 없어요. **혼동 행렬(Confusion Matrix)** 로 쪼개 봐야 해요.\n\n먼저 노트북에 저장된 보고서를 거꾸로 풀어 봐요. 부정 리뷰 2516건의 **재현율(Recall)** 이 0.874, 긍정 리뷰 2484건의 재현율도 0.874 였어요. 재현율은 '실제로 그 반인 것 중 몇 개를 맞혔나' 예요.\n\n그다음에는 연습용 작은 표로 네 숫자를 모두 구해 봐요.",
+         "think": ["재현율 곱하기 실제 개수가 맞힌 개수예요",
+                   "부정은 0.874 곱하기 2516 이라서 약 2199 건이에요",
+                   "긍정은 0.874 곱하기 2484 라서 약 2171 건이에요",
+                   "둘을 더해 전체 5000 으로 나누면 정확도 0.874 가 그대로 나와요",
+                   "작은 표에서는 오른쪽 아래가 맞힌 긍정, 오른쪽 위가 긍정이라고 잘못 부른 것이에요",
+                   "정밀도는 긍정이라고 부른 것 중 맞은 비율, 재현율은 실제 긍정 중 맞은 비율이에요",
+                   "F1 은 두 값의 조화 평균이라 2pr 나누기 (p 더하기 r) 예요"],
+         "pseudo": ["맞힌 부정 = 0.874 곱하기 2516, 반올림",
+                    "맞힌 긍정 = 0.874 곱하기 2484, 반올림",
+                    "정확도 = (둘의 합) 나누기 5000",
+                    "작은 표에서 정확도 = 대각선 합 나누기 전체",
+                    "정밀도 = 오른쪽 아래 나누기 오른쪽 열 합",
+                    "재현율 = 오른쪽 아래 나누기 아랫줄 합",
+                    "F1 = 2 곱하기 정밀도 곱하기 재현율 나누기 (정밀도 더하기 재현율)"],
+         "pseudo_first": True,
+         "pseudo_show": True,
+         "next": "실습 N5L p.24 의 보고서가 이 숫자이고, N5L p.25 는 확신까지 하면서 틀린 12건을 꺼내 읽어요. 노트북 본문은 정확도를 87.5 퍼센트라고 적었지만 저장된 출력은 0.8740 이에요. 출력 숫자를 따라요.",
+         "todo": "rec_neg, n_neg = 0.874, 2516\nrec_pos, n_pos = 0.874, 2484\n\ncorrect_neg = None   # TODO: 재현율 곱하기 개수, 반올림 (round)\ncorrect_pos = None   # TODO: 같은 방식\naccuracy = None      # TODO: 둘을 더해 5000 으로 나누기\n\ncm = np.array([[45, 5],\n               [10, 40]])   # 줄: 실제 부정, 실제 긍정 / 칸: 부정이라 부름, 긍정이라 부름\n\nacc2 = None      # TODO: 대각선 합 나누기 전체 합\nprecision = None # TODO: cm[1, 1] 나누기 긍정이라 부른 것 전체 (cm[:, 1].sum())\nrecall = None    # TODO: cm[1, 1] 나누기 실제 긍정 전체 (cm[1].sum())\nf1 = None        # TODO: 2 곱하기 precision 곱하기 recall 나누기 (precision 더하기 recall)\n\nprint(correct_neg, correct_pos, accuracy)\nprint(acc2, round(precision, 4), recall, round(f1, 4))",
+         "sol": "rec_neg, n_neg = 0.874, 2516\nrec_pos, n_pos = 0.874, 2484\n\ncorrect_neg = round(rec_neg * n_neg)\ncorrect_pos = round(rec_pos * n_pos)\naccuracy = (correct_neg + correct_pos) / 5000\n\ncm = np.array([[45, 5],\n               [10, 40]])   # 줄: 실제 부정, 실제 긍정 / 칸: 부정이라 부름, 긍정이라 부름\n\nacc2 = (cm[0, 0] + cm[1, 1]) / cm.sum()\nprecision = cm[1, 1] / cm[:, 1].sum()\nrecall = cm[1, 1] / cm[1].sum()\nf1 = 2 * precision * recall / (precision + recall)\n\nprint(correct_neg, correct_pos, accuracy)\nprint(acc2, round(precision, 4), recall, round(f1, 4))",
+         "check": "ok(correct_neg == 2199 and correct_pos == 2171, '부정 2199건, 긍정 2171건을 맞혔어요')\nok(abs(accuracy - 0.874) < 1e-12, '4370 나누기 5000 은 정확히 0.874. 노트북 출력과 같아요')\nok(abs(acc2 - 0.85) < 1e-12, '작은 표의 정확도는 85 나누기 100 으로 0.85 예요')\nok(abs(precision - 40 / 45) < 1e-12, '긍정이라 부른 45건 중 40건이 맞아서 약 0.8889')\nok(abs(recall - 0.8) < 1e-12, '실제 긍정 50건 중 40건을 찾아서 0.8')\nok(abs(f1 - 16 / 19) < 1e-12, 'F1 은 약 0.8421. 정밀도와 재현율 사이에 있어요')"},
+
+        {"md": "## 9. 레이블을 늘리면 얼마나 좋아질까\n\n강의 N5 p.45, 실습 N5L p.30. 사전 학습은 레이블을 사 줘요. 몇 백 개만 있어도 꽤 멀리 가요.\n\n실습에서 같은 모델을 레이블 500개, 2,000개, 15,000개로 각각 미세조정했더니 정확도가 0.8050, 0.8418, 0.8740 이 나왔어요. **수확 체감(Diminishing Returns)** 이 어떤 모습인지 숫자로 봐요.",
+         "think": ["상승폭은 뒤 정확도에서 앞 정확도를 뺀 값이에요. 퍼센트 포인트로 보려면 100을 곱해요",
+                   "500 에서 2000 은 3.68 포인트, 2000 에서 15000 은 3.22 포인트 올라요",
+                   "그런데 데이터는 각각 4배, 7.5배가 들었어요",
+                   "상승폭은 비슷한데 값이 점점 비싸지는 게 수확 체감이에요",
+                   "500개만으로 15000개 성능의 몇 퍼센트인지도 나눠 봐요. 92 퍼센트가 넘어요",
+                   "데이터는 3.3 퍼센트만 썼는데 성능은 92 퍼센트예요"],
+         "pseudo": ["상승폭 = (뒤 정확도 빼기 앞 정확도) 곱하기 100",
+                    "데이터 배수 = 뒤 레이블 수 나누기 앞 레이블 수",
+                    "성능 비율 = 500 정확도 나누기 15000 정확도, 곱하기 100",
+                    "데이터 비율 = 500 나누기 15000, 곱하기 100"],
+         "pseudo_first": False,
+         "next": "N5 p.45 의 그림은 schematic, 곧 눈금이 실제 측정값이 아니라고 슬라이드에 적혀 있어요. 실습 N5L p.30, p.31 이 진짜 측정값이에요. 노트북 본문 표는 80.5, 84.1, 87.5 로 반올림해 적었는데, 저장된 출력은 0.8050, 0.8418, 0.8740 이에요.",
+         "todo": "acc = {500: 0.8050, 2000: 0.8418, 15000: 0.8740}\n\ngain1 = None      # TODO: 500 에서 2000 으로 갈 때 오른 퍼센트 포인트\ngain2 = None      # TODO: 2000 에서 15000 으로 갈 때\ncost1 = None      # TODO: 데이터가 몇 배 들었는지 (2000 나누기 500)\ncost2 = None      # TODO: 15000 나누기 2000\n\nshare_perf = None # TODO: 500 정확도가 15000 정확도의 몇 퍼센트인지\nshare_data = None # TODO: 500 이 15000 의 몇 퍼센트인지\n\nprint(round(gain1, 2), round(gain2, 2), cost1, cost2)\nprint(round(share_perf, 1), round(share_data, 1))",
+         "sol": "acc = {500: 0.8050, 2000: 0.8418, 15000: 0.8740}\n\ngain1 = 100 * (acc[2000] - acc[500])\ngain2 = 100 * (acc[15000] - acc[2000])\ncost1 = 2000 / 500\ncost2 = 15000 / 2000\n\nshare_perf = 100 * acc[500] / acc[15000]\nshare_data = 100 * 500 / 15000\n\nprint(round(gain1, 2), round(gain2, 2), cost1, cost2)\nprint(round(share_perf, 1), round(share_data, 1))",
+         "check": "ok(abs(gain1 - 3.68) < 1e-6, '500 에서 2000 은 3.68 포인트 올라요')\nok(abs(gain2 - 3.22) < 1e-6, '2000 에서 15000 은 3.22 포인트 올라요')\nok(cost1 == 4.0 and cost2 == 7.5, '같은 크기 상승에 데이터가 4배, 그다음 7.5배 들었어요')\nok(abs(share_perf - 92.1) < 0.05, '500개만으로 15000개 성능의 약 92.1 퍼센트예요')\nok(abs(share_data - 3.3) < 0.05, '데이터는 3.3 퍼센트만 썼어요. 첫 몇 백 개가 가장 값져요')"},
+
+        {"md": "## 10. T5 의 스팬 손상 만들어 보기\n\n강의 N5 p.37. **티파이브(T5)** 는 토큰 하나가 아니라 **스팬(Span)**, 곧 이어진 여러 토큰을 통째로 지워요. 지운 자리마다 서로 다른 **센티널 토큰(Sentinel Token)** 을 넣고, **디코더(Decoder)** 가 빠진 조각만 써 내게 해요.\n\n슬라이드 예시를 그대로 코드로 만들어 봐요. `Thank you for inviting me to your party last week` 에서 `for inviting` 과 `last` 를 지워요.",
+         "think": ["토큰 목록을 왼쪽부터 훑어요",
+                   "지금 자리가 스팬의 시작이면 센티널을 넣고, 그 스팬 끝까지 건너뛰어요",
+                   "스팬이 아니면 토큰을 그대로 인코더 입력에 넣어요",
+                   "디코더 쪽은 센티널을 쓰고, 그 뒤에 지운 토큰들을 이어 붙여요",
+                   "맨 끝에는 다음 센티널 하나를 더 붙여서 끝을 알려요",
+                   "센티널 이름은 슬라이드처럼 X, Y, Z 를 꺾쇠에 넣어 써요"],
+         "pseudo": ["i 를 0 부터 시작해 토큰을 훑는다",
+                    "i 가 다음 스팬의 시작이면: 인코더에 센티널을 넣고, 디코더에 센티널과 지운 토큰들을 넣고, i 를 스팬 끝으로 옮긴다",
+                    "아니면: 인코더에 토큰을 그대로 넣고 i 를 하나 늘린다",
+                    "다 끝나면 디코더 끝에 센티널 하나를 더 붙인다"],
+         "pseudo_first": True,
+         "pseudo_show": False,
+         "next": "N5 p.37 이 이 그림이고, N5 p.36 의 인코더 디코더는 4주차 N4 p.52-53 에서 이미 만든 구조예요. N5 p.17 의 표에서 인코더 디코더 칸의 목적 함수가 바로 이 스팬 손상이에요. BERT 의 마스킹(N5 p.19)과 견줘 보면 어느 쪽이 더 어려운 문제인지 보여요.",
+         "todo": "tokens = [\"Thank\", \"you\", \"for\", \"inviting\", \"me\", \"to\", \"your\", \"party\", \"last\", \"week\"]\nspans = [(2, 4), (8, 9)]          # 반열린 구간. (2, 4) 는 for, inviting\nsentinels = [\"<X>\", \"<Y>\", \"<Z>\"]\n\nenc, dec, i, k = [], [], 0, 0\nwhile i < len(tokens):\n    if k < len(spans) and i == spans[k][0]:\n        enc.append(None)                      # TODO: 이 자리에 넣을 센티널\n        dec.append(sentinels[k])\n        dec += None                           # TODO: 지운 토큰들 (tokens 의 스팬 구간)\n        i = spans[k][1]\n        k += 1\n    else:\n        enc.append(tokens[i])\n        i += 1\ndec.append(sentinels[k])\n\nprint(\"encoder input :\", \" \".join(enc))\nprint(\"decoder target:\", \" \".join(dec))",
+         "sol": "tokens = [\"Thank\", \"you\", \"for\", \"inviting\", \"me\", \"to\", \"your\", \"party\", \"last\", \"week\"]\nspans = [(2, 4), (8, 9)]          # 반열린 구간. (2, 4) 는 for, inviting\nsentinels = [\"<X>\", \"<Y>\", \"<Z>\"]\n\nenc, dec, i, k = [], [], 0, 0\nwhile i < len(tokens):\n    if k < len(spans) and i == spans[k][0]:\n        enc.append(sentinels[k])\n        dec.append(sentinels[k])\n        dec += tokens[spans[k][0]:spans[k][1]]\n        i = spans[k][1]\n        k += 1\n    else:\n        enc.append(tokens[i])\n        i += 1\ndec.append(sentinels[k])\n\nprint(\"encoder input :\", \" \".join(enc))\nprint(\"decoder target:\", \" \".join(dec))",
+         "check": "ok(enc == ['Thank', 'you', '<X>', 'me', 'to', 'your', 'party', '<Y>', 'week'], '인코더 입력이 슬라이드 그림과 같아요')\nok(dec == ['<X>', 'for', 'inviting', '<Y>', 'last', '<Z>'], '디코더는 빠진 조각만 써요')\nok(len(enc) == 9 and len(dec) == 6, '원문 10개가 인코더 9개, 디코더 6개가 돼요')\nok(all(t not in dec for t in ('Thank', 'you', 'me', 'week')), '지우지 않은 토큰은 디코더가 다시 쓰지 않아요')"},
+    ],
+}
+
+
 def md(text):
     return {"cell_type": "markdown", "metadata": {}, "source": text.splitlines(True)}
 
@@ -482,12 +677,19 @@ def notebook(spec, solved=False):
 
 def main(test=False):
     OUT.mkdir(parents=True, exist_ok=True)
-    for spec in (WB, W2, W3, W4):
+    for spec in (WB, W2, W3, W4, W5):
         for e in spec["ex"]:
             assert "None" in e["todo"] and "TODO" in e["todo"], e["md"][:20]
             assert e["todo"] != e["sol"], e["md"][:20]
         if spec is W4:
             assert all(e.get("think") for e in spec["ex"]), "W4 는 문제마다 생각 순서가 있어야 해요"
+        if spec is W5:
+            for e in spec["ex"]:
+                head = e["md"][:24]
+                assert e.get("think") and e.get("pseudo"), f"{head}: 생각 순서와 의사코드가 둘 다 있어야 해요"
+                assert e.get("next"), f"{head}: 나중에 어디서 만나는지 한 줄이 있어야 해요"
+                if e.get("pseudo_first"):
+                    assert "pseudo_show" in e, f"{head}: 쓰기형 문제는 pseudo_show 를 정해 줘야 해요"
         if spec is WB:
             for e in spec["ex"]:
                 head = e["md"][:24]

@@ -68,6 +68,20 @@
    "topics": "Q, K, V 만들기, 점수와 스케일링, 소프트맥스, 가중합, 마스킹, 멀티헤드, 트랜스포머 블록"
   },
   {
+   "id": "5",
+   "short": "5주차",
+   "title": "사전 학습 언어 모델",
+   "deck": "N5",
+   "topics": "사전 학습과 미세조정, 전이 학습, BERT(마스크 언어 모델, NSP)와 GPT(자기회귀), 인코더와 디코더의 갈림길, T5 와 텍스트-투-텍스트, 토큰 임베딩과 세그먼트 임베딩, [CLS] 와 [SEP], 다운스트림 과제 붙이기, 스케일링과 등장 능력, 프롬프트와 인컨텍스트 러닝"
+  },
+  {
+   "id": "5L",
+   "short": "5주차 실습",
+   "title": "Lab 4 한국어 BERT 미세조정 코드 읽기",
+   "deck": "N5L",
+   "topics": "Hugging Face 토크나이저와 모델 불러오기, NSMC 데이터, 토큰화와 배치 만들기, Trainer 로 미세조정, 평가와 추론, 저장과 불러오기"
+  },
+  {
    "id": "P",
    "short": "참고 논문",
    "title": "논문 Attention Is All You Need 문단별 읽기",
@@ -107,6 +121,15 @@
   "N4L": {
    "title": "Lab 3 Self-Attention from Scratch (코드)",
    "week": "4L"
+  },
+  "N5": {
+   "title": "5강 Pre-trained Language Models",
+   "week": "5",
+   "pdf": "../../01_수업자료/자연어처리/강의자료/05주차_Pre-trained Language Models.pdf"
+  },
+  "N5L": {
+   "title": "Lab 4 Fine-tuning a Korean BERT (코드)",
+   "week": "5L"
   },
   "NP": {
    "title": "참고 논문 Attention Is All You Need (Vaswani et al. 2017)",

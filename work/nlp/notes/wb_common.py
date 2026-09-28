@@ -215,8 +215,10 @@ def warn(head, *items):
 
 
 def where(*items):
-    """단원 recap 바로 앞에 넣는 '이게 이 과목 어디에 나오나' 슬라이드."""
-    return pts("이게 이 과목 어디에 나오나", *items)
+    """단원 recap 바로 앞에 넣는 '이게 이 과목 어디에 나오나' 슬라이드.
+    주차가 늘면 줄도 는다. 여기는 pts 와 달리 6줄까지 받는다 (slide_check 는 points 항목 1~6 을 허용)."""
+    assert 2 <= len(items) <= 6, "이게 이 과목 어디에 나오나"
+    return {"kind": "points", "head": "이게 이 과목 어디에 나오나", "items": list(items)}
 
 
 def recap(*items):

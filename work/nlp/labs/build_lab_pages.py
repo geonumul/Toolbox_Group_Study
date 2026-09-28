@@ -25,6 +25,7 @@ LABS = {
     "N2L": SRC / "02주차" / "Lab0-1_Tokenization and Word Vectors_full.ipynb",
     "N3L": SRC / "03주차" / "Lab2_Neural Nets and RNN Language Models.ipynb",
     "N4L": SRC / "04주차" / "Lab3_Self-Attention from Scratch_Full.ipynb",
+    "N5L": SRC / "05주차" / "Lab4_Fine-tuning a Korean BERT_full.ipynb",
 }
 CHROME = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
 FONT = ROOT.parent.parent / "02_작업" / "그래프신경망" / "번역" / "_tools" / "fonts"

@@ -1,0 +1,646 @@
+# -*- coding: utf-8 -*-
+"""5주차(N5 Pre-trained Language Models + N5L Lab 4) hard 문제은행 생성기.
+출력: work/nlp/bank/w5_hard.json
+계산 문항 정답은 아래에서 numpy/python 으로 실제 계산하고 assert 로 확인한다.
+5주차는 녹음이 없어서 교수님 발언을 인용하지 않는다."""
+import json, math, os
+import optshuffle
+import numpy as np
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+OUT = os.path.join(HERE, "w5_hard.json")
+
+U1 = "5-1 사전 학습이 왜 필요한가"
+U2 = "5-2 빈칸 채우기와 자기 지도 학습"
+U3 = "5-3 세 구조와 마스크 언어 모델"
+U4 = "5-4 NSP, 규모, 네 가지 과제 모양"
+U5 = "5-5 인코더의 한계와 더 나은 BERT"
+U6 = "5-6 GPT 와 디코더, 인컨텍스트 러닝"
+U7 = "5-7 T5 와 인코더 디코더, 무엇을 고를까"
+U8 = "5-8 미세조정 실전과 스케일"
+
+
+# =====================================================================
+# 계산 확인 (numpy / python 으로 실제 계산)
+# =====================================================================
+# --- H1 사전 학습 비율 (N5 p.10: 2017년 약 5 퍼센트, 오늘 약 99.9 퍼센트)
+H1_old_pre, H1_new_pre = 5.0, 99.9
+H1_old_rand = 100 - H1_old_pre
+H1_new_rand = 100 - H1_new_pre
+assert H1_old_rand == 95.0 and round(H1_new_rand, 1) == 0.1
+assert round(H1_old_rand / H1_new_rand) == 950
+assert round(H1_new_pre - H1_old_pre, 1) == 94.9
+
+# --- H2 학습 데이터 증가 (N5 p.14: 0.8B, 3.3B, 30B, 300B)
+d_gpt1, d_bert, d_roberta, d_gpt3 = 0.8, 3.3, 30.0, 300.0
+assert round(d_bert / d_gpt1, 3) == 4.125
+assert round(d_gpt3 / d_gpt1, 1) == 375.0
+assert 10 ** 1 == 10          # 로그 눈금 한 칸은 10배
+
+# --- H3 [MASK] 개수에서 거꾸로 (N5 p.19-20)
+H3_mask = 240
+H3_n = round(H3_mask / (0.15 * 0.8))
+assert H3_n == 2000
+H3_pick = int(H3_n * 0.15)
+assert H3_pick == 300
+H3_rand = int(H3_pick * 0.1)
+H3_keep = H3_pick - H3_mask - H3_rand
+assert (H3_rand, H3_keep) == (30, 30)
+assert H3_mask + H3_rand + H3_keep == H3_pick == 300
+
+# --- H4 GLUE 평균 점수 (N5 p.24)
+elmo, oai_gpt, bert_base, bert_large = 71.0, 75.1, 79.6, 82.1
+assert round(bert_large - elmo, 1) == 11.1
+assert round(bert_large - oai_gpt, 1) == 7.0
+assert round(bert_base - oai_gpt, 1) == 4.5
+assert round(bert_large - bert_base, 1) == 2.5
+
+# --- H5 BERT 이후 데이터가 얼마나 더 늘었나 (N5 p.14, p.26)
+assert round(d_roberta / d_bert, 2) == 9.09
+assert round(d_gpt3 / d_bert, 2) == 90.91
+assert round(d_gpt3 / d_roberta, 1) == 10.0
+
+# --- H6 GPT-3 과 BERT-base 의 파라미터 (N5 p.33, p.31, p.22)
+p_bert_base = 110e6
+p_gpt1 = 117e6
+p_gpt3 = 175e9
+assert round(p_gpt3 / p_bert_base, 2) == 1590.91
+assert round(p_gpt1 / p_bert_base, 2) == 1.06
+assert round((p_gpt1 - p_bert_base) / 1e6) == 7
+
+# --- H7 스팬 손상의 길이 (N5 p.37)
+H7_orig, H7_enc, H7_dec = 10, 9, 6
+H7_sentinels_in_target = 3          # <X>, <Y>, <Z>
+assert round(H7_dec / H7_orig, 2) == 0.6
+assert round(H7_enc / H7_orig, 2) == 0.9
+assert H7_dec - H7_sentinels_in_target == 3   # 가려진 단어 for, inviting, last
+
+# --- H8 레이블 500건, 에폭 3 (N5L p.20 의 finetune(), p.30 에서 epochs=3 으로 호출)
+H8_n, H8_batch, H8_epochs = 500, 32, 3
+H8_per_epoch = math.ceil(H8_n / H8_batch)
+assert H8_per_epoch == 16 and 500 / 32 == 15.625
+H8_total = H8_per_epoch * H8_epochs
+assert H8_total == 48
+H8_warm = max(1, int(0.1 * H8_total))
+assert H8_warm == 4 and round(0.1 * H8_total, 1) == 4.8
+
+# --- H9 학습 곡선 (N5L p.30 저장된 출력)
+curve = {500: 0.8050, 2000: 0.8418, 15000: 0.8740}
+H9_gain1 = round((curve[2000] - curve[500]) * 100, 2)
+H9_gain2 = round((curve[15000] - curve[2000]) * 100, 2)
+assert H9_gain1 == 3.68 and H9_gain2 == 3.22
+assert 2000 / 500 == 4.0 and 15000 / 2000 == 7.5
+assert H9_gain2 < H9_gain1                     # 수확 체감
+
+# --- H10 분류 보고서 (N5L p.24 저장된 출력)
+sup_neg, sup_pos = 2516, 2484
+acc = 0.874
+prec_neg, prec_pos = 0.875, 0.873
+assert sup_neg + sup_pos == 5000
+H10_right = round(acc * 5000)
+assert H10_right == 4370
+H10_wrong = 5000 - H10_right
+assert H10_wrong == 630
+assert round(H10_wrong / 5000 * 100, 1) == 12.6
+assert round((prec_neg + prec_pos) / 2, 3) == 0.874
+
+bank = []
+cnt = {}
+
+
+def add(t, unit, slides, src=None, **kw):
+    cnt[t] = cnt.get(t, 0) + 1
+    item = {"id": f"w5h-{t}-{cnt[t]:03d}", "type": t, "part": "5", "level": "hard",
+            "unit": unit, "slides": slides}
+    if src:
+        item["src"] = src
+    item.update(kw)
+    bank.append(item)
+
+
+def mcq(unit, slides, q, c, a, e, src="예상"):
+    add("mcq", unit, slides, src, q=q, c=c, a=a, e=e)
+
+
+def ox(unit, slides, q, a, e, src="예상"):
+    add("ox", unit, slides, src, q=q, a=a, e=e)
+
+
+def short(unit, slides, q, a, e, src="예상", num=False, tol=None):
+    kw = dict(q=q, a=a, e=e)
+    if num:
+        kw["num"] = True
+        kw["tol"] = tol if tol is not None else 0.01
+    add("short", unit, slides, src, **kw)
+
+
+def essay(unit, slides, model, q, answer, points, src="예상"):
+    add("essay", unit, slides, src, model=model, q=q, answer=answer, points=points)
+
+
+def calc(unit, slides, model, q, qko, blanks, steps, answer, e, src="예상"):
+    add("calc", unit, slides, src, model=model, q=q, qko=qko, blanks=blanks,
+        steps=steps, answer=answer, e=e)
+
+
+# =====================================================================
+# MCQ (16)
+# =====================================================================
+mcq(U1, "N5 p.8-9",
+    "2017년처럼 **임베딩(Embedding)** 표만 **사전 학습(Pre-training)** 해서는 모자랐던 근본 이유로 가장 적절한 것은?",
+    ["**임베딩(Embedding)** 표가 너무 커서 메모리를 많이 쓰기 때문이다",
+     "문맥을 읽어 낱말 뜻을 바꾸는 층이 여전히 무작위여서 내 **레이블(Label)** 로만 배워야 했기 때문이다",
+     "**word2vec** 은 **자기 지도 학습(Self-Supervision)** 이 아니어서 **레이블(Label)** 이 필요했기 때문이다",
+     "**임베딩(Embedding)** 표가 **토큰화(Tokenization)** 와 맞지 않았기 때문이다"],
+    1,
+    "슬라이드의 the catch 세 줄이 그것이에요. 한 낱말의 임베딩이 문장에 상관없이 같고, 문맥 처리는 여전히 내 레이블로 배워야 해요. word2vec 도 자기 지도 학습이라 세 번째 보기는 틀려요.")
+
+mcq(U1, "N5 p.10",
+    "모델 전체를 **사전 학습(Pre-training)** 하는 방식이 옛 방식보다 유리해지는 조건으로 가장 적절한 것은?",
+    ["**다운스트림 과제(Downstream Task)** 가 늘어날수록 유리해진다",
+     "**다운스트림 과제(Downstream Task)** 가 하나뿐일 때 가장 유리하다",
+     "**레이블(Label)** 이 아주 많을수록 유리해진다",
+     "모델이 작을수록 유리해진다"],
+    0,
+    "비싼 **사전 학습(Pre-training)** 은 한 번이고 싼 **미세조정(Finetuning)** 만 과제 수만큼 해요. 과제가 늘수록 이득이 커져요. 레이블이 아주 많으면 오히려 격차가 줄어요(N5 p.45).")
+
+mcq(U2, "N5 p.12-13",
+    "5주차에서 **자기 지도 학습(Self-Supervision)** 과 **지도 학습(Supervised Learning)** 이 각각 쓰이는 자리로 옳은 것은?",
+    ["**사전 학습(Pre-training)** 은 **지도 학습(Supervised Learning)**, **미세조정(Finetuning)** 은 **자기 지도 학습(Self-Supervision)**",
+     "**사전 학습(Pre-training)** 은 **자기 지도 학습(Self-Supervision)**, **미세조정(Finetuning)** 은 **지도 학습(Supervised Learning)**",
+     "둘 다 **자기 지도 학습(Self-Supervision)**",
+     "둘 다 **지도 학습(Supervised Learning)**"],
+    1,
+    "**사전 학습(Pre-training)** 은 글 자체에서 정답을 만들고, **미세조정(Finetuning)** 은 사람이 붙인 **레이블(Label)** 을 써요. 이 두 줄이 5주차의 뼈대예요.")
+
+mcq(U2, "N5 p.12, p.14",
+    "학습에 쓰는 글의 양이 4년 만에 약 400배로 늘 수 있었던 가장 직접적인 이유는?",
+    ["GPU 가 빨라져서",
+     "**레이블(Label)** 을 붙이는 값이 싸져서",
+     "**자기 지도 학습(Self-Supervision)** 덕분에 **레이블(Label)** 없이 아무 글이나 쓸 수 있어서",
+     "**토큰화(Tokenization)** 가 좋아져서"],
+    2,
+    "글이 입력이자 정답이므로 사람이 손을 댈 필요가 없어요. 사람이 붙여야 했다면 300B 단어는 불가능해요. 계산 자원은 필요조건이지 이 쪽이 말하는 이유가 아니에요.")
+
+mcq(U3, "N5 p.18-19, N4 p.43",
+    "**인과 마스킹(Causal Masking)** 과 **마스크 언어 모델(Masked Language Modelling (MLM))** 의 차이로 가장 적절한 것은?",
+    ["앞의 것은 방향을 막고, 뒤의 것은 특정 자리를 가린다",
+     "앞의 것은 특정 자리를 가리고, 뒤의 것은 방향을 막는다",
+     "둘 다 같은 것을 다르게 부르는 이름이다",
+     "앞의 것은 **인코더(Encoder)**, 뒤의 것은 **디코더(Decoder)** 가 쓴다"],
+    0,
+    "**인과 마스킹(Causal Masking)** 은 뒤쪽을 아예 못 보게 막고, **마스크 언어 모델(Masked Language Modelling (MLM))** 은 뒤쪽이 보이는 채로 가운데 자리를 **마스크 토큰([MASK])** 로 숨겨요. 네 번째 보기는 쓰는 쪽이 반대예요.")
+
+mcq(U3, "N5 p.19-20",
+    "**마스크 언어 모델(Masked Language Modelling (MLM))** 에서 **손실 함수(Loss Function)** 를 세는 자리로 가장 정확한 것은?",
+    ["**마스크 토큰([MASK])** 로 바뀐 자리에서만",
+     "고른 15 퍼센트 자리 전부에서",
+     "문장의 모든 자리에서",
+     "**분류 토큰([CLS])** 자리 하나에서"],
+    1,
+    "80/10/10 중 **마스크 토큰([MASK])** 가 되지 않은 20 퍼센트도 원래 낱말을 맞혀야 해요. 그래서 손실은 고른 자리 전부에서 세요. [MASK] 로 바뀐 자리에서만 센다는 보기가 가장 헷갈리는 오답이에요.")
+
+mcq(U4, "N5 p.21, p.26",
+    "**로베르타(RoBERTa)** 가 **다음 문장 예측(Next Sentence Prediction (NSP))** 을 빼고 더 좋은 결과를 얻은 사실의 해석으로 가장 적절한 것은?",
+    ["**다음 문장 예측(Next Sentence Prediction (NSP))** 은 어떤 경우에도 해롭다",
+     "학습 시간과 데이터도 함께 바뀌었으므로 한 부품만의 효과로 단정할 수 없다",
+     "**버트(BERT)** 논문이 계산을 잘못한 것이다",
+     "제거 실험은 믿을 수 없는 방법이다"],
+    1,
+    "**로베르타(RoBERTa)** 는 NSP 제거와 함께 훨씬 오래, 훨씬 많은 글로 학습하고 동적 마스킹도 썼어요. 제거 실험 표의 한 줄은 나머지 설정이 고정일 때만 그 부품의 값을 말해 줘요.")
+
+mcq(U4, "N5 p.23",
+    "네 가지 과제 모양 중 출력 개수가 나머지 셋과 다른 것은?",
+    ["문장 하나", "**문장 쌍(Sentence Pair)**", "**토큰 태깅(Token Tagging)**", "**스팬 추출(Span Extraction)**"],
+    2,
+    "**토큰 태깅(Token Tagging)** 만 **토큰(Token)** 마다 답을 내요. 문장 하나와 **문장 쌍(Sentence Pair)** 은 답 하나, **스팬 추출(Span Extraction)** 은 시작과 끝 두 포인터예요.")
+
+mcq(U5, "N5 p.18, p.25",
+    "**버트(BERT)** 가 글을 이어 쓰지 못하는 이유를 학습 방식과 연결한 설명으로 가장 적절한 것은?",
+    ["**마스크 언어 모델(Masked Language Modelling (MLM))** 로 학습해서 다음 자리라는 개념 자체가 없다",
+     "**어텐션(Attention)** 이 없어서 이전 **토큰(Token)** 을 참고할 수 없다",
+     "**어휘(Vocabulary)** 가 작아서 만들 수 있는 낱말이 적다",
+     "**파라미터(Parameter)** 가 110M 으로 작아서 생성 품질이 낮다"],
+    0,
+    "**인코더(Encoder)** 는 **자기회귀(Autoregressive)** 구조가 아니에요. 빈칸 하나를 한 번 채우고 끝이라 계속 써 나갈 자연스러운 방법이 없어요.")
+
+mcq(U5, "N5 p.26",
+    "**로베르타(RoBERTa)** 와 **스팬버트(SpanBERT)** 가 각각 바꾼 것을 바르게 짝지은 것은?",
+    ["RoBERTa 는 가리는 단위, SpanBERT 는 학습 레시피",
+     "RoBERTa 는 학습 레시피, SpanBERT 는 가리는 단위",
+     "둘 다 모델 구조",
+     "RoBERTa 는 모델 구조, SpanBERT 는 학습 레시피"],
+    1,
+    "**로베르타(RoBERTa)** 는 더 오래, 더 많은 글, NSP 제거, 동적 마스킹으로 레시피를 고쳤고, **스팬버트(SpanBERT)** 는 **토큰(Token)** 하나 대신 이어진 **스팬(Span)** 을 가려요. 둘 다 구조는 그대로예요.")
+
+mcq(U6, "N5 p.23, p.32",
+    "**버트(BERT)** 미세조정과 **지피티(GPT)** 미세조정의 구조적 차이로 가장 적절한 것은?",
+    ["BERT 는 **분류 토큰([CLS])** 자리를 읽고, GPT 는 **구분자(Delimiter)** 로 한 줄로 이어 붙인 뒤 마지막 자리를 읽는다",
+     "BERT 는 마지막 자리를 읽고, GPT 는 **분류 토큰([CLS])** 자리를 읽는다",
+     "BERT 는 새 층을 안 쓰고, GPT 는 새 층을 여러 개 쓴다",
+     "BERT 는 **레이블(Label)** 이 필요 없고, GPT 는 필요하다"],
+    0,
+    "**지피티(GPT)** 에는 [CLS] 도 둘째 입력 줄도 없어요. [START], [DELIM], [EXTRACT] 로 한 줄을 만들고 마지막 자리 위에 선형 층 하나만 올려요.")
+
+mcq(U6, "N5 p.34-35",
+    "**인컨텍스트 러닝(In-Context Learning)** 과 **미세조정(Finetuning)** 을 가르는 가장 핵심적인 기준은?",
+    ["쓰는 데이터의 양", "가중치가 바뀌는지 여부", "모델 구조", "**토큰화(Tokenization)** 방식"],
+    1,
+    "슬라이드 표의 첫 줄이 what changes 이고 답은 the weights 대 only the input text 예요. 예시를 몇 개 주든 **인컨텍스트 러닝(In-Context Learning)** 은 **기울기(Gradient)** 걸음이 0 이에요.")
+
+mcq(U7, "N5 p.36-37",
+    "인코더 디코더를 그냥 **언어 모델(Language Model (LM))** 로 **사전 학습(Pre-training)** 하지 않고 **스팬 손상(Span Corruption)** 을 쓰는 이유로 가장 적절한 것은?",
+    ["**디코더(Decoder)** 가 학습되지 않기 때문이다",
+     "**인코더(Encoder)** 가 할 일이 거의 없어 낭비되기 때문이다",
+     "**언어 모델(Language Model (LM))** 은 **레이블(Label)** 이 필요하기 때문이다",
+     "**크로스 어텐션(Cross-Attention)** 을 쓸 수 없기 때문이다"],
+    1,
+    "슬라이드 기울임 글: plain language modelling wastes the encoder. 스팬 손상은 인코더와 디코더를 동시에 학습시켜요.")
+
+mcq(U7, "N5 p.40",
+    "한국어 기사 한 편을 세 문장 요약으로 바꾸는 시스템을 만든다면 슬라이드 기준으로 고를 구조는?",
+    ["**인코더(Encoder)**", "인코더 디코더", "**디코더(Decoder)** 만", "**RNN(순환 신경망)**"],
+    1,
+    "출력이 입력을 고쳐 쓴 글이므로 표의 둘째 줄이에요. 예시 모델은 T5, BART, mT5 이고 이유는 input and output are different texts 예요.")
+
+mcq(U8, "N5 p.44",
+    "**미세조정(Finetuning)** 에 **사전 학습(Pre-training)** **학습률(Learning Rate)** 을 그대로 썼을 때 생기는 일로 슬라이드가 든 것은?",
+    ["학습이 느려진다", "메모리가 모자란다", "모델이 알던 것을 전부 지워 버린다", "**배치 크기(Batch Size)** 를 줄여야 한다"],
+    2,
+    "빨간 상자: the most common mistake: the pretraining learning rate. It erases everything the model knew. 좋은 출발점에서 너무 멀리 튕겨 나가요.")
+
+mcq(U8, "N5 p.47",
+    "700억 규모 모델이 훨씬 많은 **토큰(Token)** 으로 학습해 GPT-3 을 이겼다는 사실이 말해 주는 것으로 가장 적절한 것은?",
+    ["**파라미터(Parameter)** 수만 늘리는 것이 답이 아니고 크기와 데이터의 배분이 중요하다",
+     "**스케일링 법칙(Scaling Laws)** 이 틀렸다",
+     "작은 모델이 언제나 더 좋다",
+     "**토큰(Token)** 수는 성능과 상관없다"],
+    0,
+    "슬라이드: size alone was never the point, size and data together are. GPT-3 은 예산을 잘못 나눈 쪽이었다고 적혀 있어요.")
+
+# =====================================================================
+# OX (12)
+# =====================================================================
+ox(U1, "N5 p.8, p.10",
+   "2017년에는 **파라미터(Parameter)** 의 약 5 퍼센트만 **사전 학습(Pre-training)** 되어 있었고, 오늘은 약 99.9 퍼센트가 사전 학습되어 있다.",
+   True, "슬라이드 두 그림 아래에 ~5% of the parameters pretrained 와 ~99.9% of the parameters pretrained 라고 적혀 있어요.")
+
+ox(U2, "N5 p.12",
+   "**자기 지도 학습(Self-Supervision)** 에는 **손실 함수(Loss Function)** 가 없다.",
+   False, "손실은 분명히 있어요. 정답을 사람이 붙이지 않고 글에서 만들어 쓸 뿐이에요.")
+
+ox(U2, "N5 p.14",
+   "슬라이드가 든 학습 글의 양은 GPT-1 0.8B, **버트(BERT)** 3.3B, **로베르타(RoBERTa)** 30B, GPT-3 300B 이다.",
+   True, "막대 네 개의 값이 그대로예요. GPT-3.5 이후는 undisclosed 로 적혀 있어요.")
+
+ox(U3, "N5 p.17",
+   "**인코더(Encoder)** 와 **디코더(Decoder)** 는 서로 다른 **트랜스포머(Transformer)** 블록을 쓰며, 다른 점은 블록의 생김새다.",
+   False, "블록은 같고 다른 것은 마스크와 목적 함수예요. 슬라이드: the mask you train with decides what the model is good for.")
+
+ox(U3, "N5 p.20",
+   "80/10/10 에서 10 퍼센트를 무작위 **토큰(Token)** 으로 바꾸는 까닭은 **미세조정(Finetuning)** 때 **마스크 토큰([MASK])** 가 없기 때문이다.",
+   True, "슬라이드 아래 기울임 글이 그 이유예요. 모델이 그 표시에 기대지 않게 하려는 장치예요.")
+
+ox(U4, "N5 p.22, p.24",
+   "**글루(GLUE)** 에서 **버트(BERT)** large 는 OpenAI **지피티(GPT)** 보다 11.1점 높았다.",
+   False, "OpenAI GPT 75.1 과의 차이는 $82.1 - 75.1 = 7.0$ 점이에요. 11.1점은 BiLSTM + ELMo 71.0 과의 차이예요.")
+
+ox(U5, "N5 p.25, p.40",
+   "고정된 **분류(Classification)** 과제라면 2026년에도 1억 개 규모 **인코더(Encoder)** 가 더 싸고 좋은 답일 수 있다.",
+   True, "N5 p.40 아래 굵은 글이 그대로 그렇게 적혀 있어요. 디코더가 흔하다고 언제나 더 좋은 것은 아니에요.")
+
+ox(U6, "N5 p.31",
+   "**지피티(GPT)**(2018)는 **버트(BERT)** 와 달리 위키백과를 주 **말뭉치(Corpus)** 로 썼다.",
+   False, "GPT-1 은 BooksCorpus 를 썼어요. 위키백과를 더한 쪽이 **버트(BERT)** 예요.")
+
+ox(U6, "N5 p.33-34",
+   "**인컨텍스트 러닝(In-Context Learning)** 은 작은 모델에서도 잘 작동한다.",
+   False, "슬라이드 기울임 글: this only starts working at very large scale, and nobody fully understands why.")
+
+ox(U7, "N5 p.38",
+   "**텍스트-투-텍스트(Text-to-Text)** 방식에서는 두 문장 유사도 점수 같은 숫자도 문자열로 써 낸다.",
+   True, "슬라이드 세 번째 예의 출력이 3.8 이라는 문자열이에요. 분류도 회귀도 생성도 전부 글이 돼요.")
+
+ox(U8, "N5 p.46",
+   "**파라미터 효율적 미세조정(Parameter-efficient Finetuning (PEFT))** 을 쓰면 추론할 때 필요한 **파라미터(Parameter)** 수도 1 퍼센트로 줄어든다.",
+   False, "학습하는 부분만 작아요. 얼린 **몸통(Body)** 은 그대로 있어야 하므로 추론에는 전체가 필요해요.")
+
+ox(U8, "N5L p.22, p.30",
+   "Lab 4 에서 얼린 **버트(BERT)** 위에 **로지스틱 회귀(Logistic Regression)** 만 얹어도 **우연 수준(Chance Level)** 보다 30 퍼센트포인트 넘게 높았다.",
+   True, "저장된 출력은 항상 긍정 49.7 퍼센트, 얼린 BERT + 로지스틱 회귀 81.8 퍼센트예요. 차이가 32.1 퍼센트포인트예요.")
+
+# =====================================================================
+# SHORT (8)
+# =====================================================================
+short(U1, "N5 p.10",
+      "2017년 방식에서 무작위로 시작하던 **파라미터(Parameter)** 비율은 약 몇 퍼센트인가요?",
+      ["95", "95%", "95 퍼센트"],
+      "사전 학습된 것이 약 5 퍼센트였으므로 무작위는 약 95 퍼센트예요. 오늘은 약 0.1 퍼센트예요.", num=True, tol=0.5)
+
+short(U2, "N5 p.15",
+      "**말뭉치(Corpus)** 에 섞여 들어가 **암기(Memorization)** 를 통해 다시 나올 수 있는, 개인을 알아볼 수 있는 정보를 뜻하는 줄임말을 쓰세요.",
+      ["PII", "pii", "Personally Identifiable Information", "개인 식별 정보"],
+      "이름, 전화번호, 주소 같은 것이에요. N5 p.43 의 개인정보 문제로 이어져요.")
+
+short(U3, "N5 p.19",
+      "**마스크 언어 모델(Masked Language Modelling (MLM))** 이 가르치는, 왼쪽과 오른쪽을 모두 보는 성질을 무엇이라 하나요?",
+      ["양방향 문맥", "Bidirectional Context", "bidirectional context", "양방향", "bidirectional"],
+      "I ___ to the store 의 빈칸을 채우려면 뒤의 store 를 봐야 해요. **버트(BERT)** 의 B 가 바로 이것이에요.")
+
+short(U4, "N5 p.21",
+      "어떤 부품을 빼 보고 성능이 어떻게 되는지 재는 실험을 무엇이라 하나요?",
+      ["제거 실험", "ablation", "Ablation", "어블레이션", "ablation study", "제거 실험(ablation)"],
+      "슬라이드: not every good idea survives an ablation. **로베르타(RoBERTa)** 가 NSP 를 빼 본 것이 그 예예요.")
+
+short(U5, "N5 p.26",
+      "**로베르타(RoBERTa)** 가 같은 문장에도 매번 다른 자리를 가리도록 바꾼 방식의 이름을 쓰세요.",
+      ["동적 마스킹", "dynamic masking", "Dynamic Masking", "다이내믹 마스킹"],
+      "슬라이드: use dynamic masking (new random masks every time). 같은 글에서 더 많은 문제를 뽑아 쓸 수 있어요.")
+
+short(U6, "N5 p.32",
+      "**지피티(GPT)** 미세조정에서 전제와 가설 사이를 끊는 데 쓰는 특별한 **토큰(Token)** 을 슬라이드 표기대로 쓰세요.",
+      ["[DELIM]", "DELIM", "delim", "구분자", "[delim]"],
+      "그림의 한 줄은 [START], 전제, [DELIM], 가설, [EXTRACT] 예요. **버트(BERT)** 의 [SEP] 와 역할은 비슷하지만 이름이 달라요.")
+
+short(U7, "N5 p.37",
+      "**스팬 손상(Span Corruption)** 이 속하는 더 큰 갈래의 이름을 쓰세요.",
+      ["잡음 제거", "Denoising", "denoising", "디노이징", "잡음 제거(Denoising)"],
+      "N5 p.17 의 가운데 상자에 span corruption (denoising) 이라고 함께 적혀 있어요.")
+
+short(U8, "N5L p.24",
+      "Lab 4 의 분류 보고서에서 negative 의 support 는 몇 건인가요?",
+      ["2516", "2,516"],
+      "저장된 출력에 negative 2516, positive 2484 로 적혀 있고 합이 5000 이에요.", num=True, tol=0.5)
+
+# =====================================================================
+# ESSAY (8)
+# =====================================================================
+essay(U1, "N5 p.8-9", "why-embedding-only-fails",
+      "**word2vec** 처럼 **임베딩(Embedding)** 표만 **사전 학습(Pre-training)** 하는 방식의 한계를 세 가지로 나누어 설명하시오.",
+      "첫째, 한 낱말의 **임베딩(Embedding)** 이 어떤 문장에서든 똑같아요. 배가 고프다, 배를 타다, 배를 먹다 의 배가 같은 벡터를 받아요. "
+      "둘째, 문맥을 다루는 일은 여전히 내 **레이블(Label)** 로 배워야 해요. 그 부분은 무작위에서 출발해요. "
+      "셋째, 대부분의 **파라미터(Parameter)** 는 내 데이터 말고는 아무것도 본 적이 없어요. 사전 학습된 것은 전체의 몇 퍼센트뿐이에요. "
+      "그래서 낱말 뜻이 문장에 따라 달라지는 것을 표현하려면 문맥을 읽는 층 자체를 사전 학습해야 해요. "
+      "그 답이 **트랜스포머(Transformer)** 전체를 사전 학습하는 요즘 방식이에요.",
+      ["임베딩이 문장과 무관하게 고정", "다의어 예(배)로 설명",
+       "문맥 처리는 여전히 내 레이블로 학습", "대부분의 파라미터는 내 데이터만 봄",
+       "사전 학습된 비율이 몇 퍼센트뿐", "해결은 문맥을 읽는 층 전체를 사전 학습"])
+
+essay(U2, "N5 p.12, p.15", "self-supervision-and-its-cost",
+      "**자기 지도 학습(Self-Supervision)** 이 준 힘과 그것이 함께 끌고 온 문제를 연결해 서술하시오.",
+      "**자기 지도 학습(Self-Supervision)** 은 글이 입력이면서 정답이 되게 해서, 인터넷의 아무 글이나 학습 데이터로 바꿔 놓았어요. "
+      "덕분에 학습 글의 양이 4년 만에 약 400배로 늘 수 있었어요. **레이블(Label)** 을 붙이는 값이 병목이 아니게 된 거예요. "
+      "그런데 **레이블(Label)** 을 안 붙여도 된다는 말이 아무 글이나 써도 된다는 뜻은 아니에요. "
+      "슬라이드는 저작권, **암기(Memorization)**, **편향(Bias)** 세 가지를 문제로 들었어요. 인터넷에 있었다는 말과 학습에 써도 된다는 말은 같은 말이 아니에요. "
+      "이 문제는 N5 p.43 의 개인정보 이야기로 그대로 이어져요.",
+      ["글이 입력이자 정답이라 레이블이 공짜", "그래서 인터넷 전체가 학습 데이터",
+       "4년 만에 약 400배 증가", "저작권, 암기, 편향 세 가지 문제",
+       "인터넷에 있었다와 써도 된다는 다른 말", "아직 정리되지 않은 법적, 윤리적 문제"])
+
+essay(U3, "N5 p.18-19, N4 p.43", "causal-mask-vs-mlm",
+      "**인과 마스킹(Causal Masking)** 과 **마스크 언어 모델(Masked Language Modelling (MLM))** 의 차이를 설명하고, 왜 **인코더(Encoder)** 에는 후자가 필요한지 서술하시오.",
+      "**인과 마스킹(Causal Masking)** 은 4주차에서 배운 것으로, 미래 자리의 **어텐션 점수(Attention Score)** 를 막아 뒤쪽을 아예 못 보게 해요. 방향을 막는 마스크예요. "
+      "**마스크 언어 모델(Masked Language Modelling (MLM))** 은 뒤쪽이 보이는 채로 가운데 한 자리를 **마스크 토큰([MASK])** 로 바꿔 숨겨요. 자리를 가리는 마스크예요. "
+      "**인코더(Encoder)** 는 방향을 막지 않으므로 다음 낱말이 이미 입력에 보여요. 그래서 **다음 토큰 예측(Next Token Prediction)** 이 문제가 되지 않아요. "
+      "슬라이드 표현으로 the answer is in the input 이고 The model learns nothing 이에요. "
+      "그래서 **인코더(Encoder)** 에는 입력 일부를 가리고 되살리는 다른 놀이가 필요하고, 그것이 빈칸 채우기예요.",
+      ["인과 마스킹은 방향을 막음", "MLM 은 특정 자리를 가림",
+       "인코더는 방향을 막지 않아 정답이 보임", "그래서 다음 토큰 예측이 과제가 되지 않음",
+       "the answer is in the input", "대안이 빈칸 채우기, 곧 MLM"])
+
+essay(U4, "N5 p.22-23", "one-body-four-heads",
+      "하나의 **사전 학습(Pre-training)** 된 **인코더(Encoder)** 로 네 가지 과제 모양을 모두 풀 수 있는 까닭을 비용까지 함께 서술하시오.",
+      "**사전 학습(Pre-training)** 은 과제와 무관한 언어 지식을 **몸통(Body)** 에 심어 둬요. 문법, 낱말 뜻, 문맥 해석 같은 것들이에요. "
+      "과제마다 달라지는 것은 그 표현을 어떤 모양의 답으로 바꾸느냐뿐이에요. 그래서 위에 얹는 **과제 헤드(Task Head)** 만 갈아 끼우면 돼요. "
+      "문장 하나와 **문장 쌍(Sentence Pair)** 은 답 하나, **토큰 태깅(Token Tagging)** 은 **토큰(Token)** 마다 답, **스팬 추출(Span Extraction)** 은 시작과 끝 두 포인터예요. "
+      "비용으로 보면 **사전 학습(Pre-training)** 은 TPU 칩 64개로 4일이 드는 비싼 일이지만 한 번만 하고, **미세조정(Finetuning)** 은 GPU 한 장으로 몇 분에서 몇 시간이면 돼요. "
+      "그래서 과제가 늘어날수록 이 방식이 더 유리해져요.",
+      ["몸통에 과제 무관 언어 지식이 저장됨", "과제마다 다른 것은 답의 모양뿐",
+       "과제 헤드만 갈아 끼움", "네 모양의 출력 개수 차이",
+       "사전 학습은 64 TPU 4일, 한 번만", "미세조정은 GPU 한 장, 과제 수만큼"])
+
+essay(U5, "N5 p.25-26", "bert-limits-and-fixes",
+      "**사전 학습(Pre-training)** 된 **인코더(Encoder)** 의 한계와, **로베르타(RoBERTa)** 와 **스팬버트(SpanBERT)** 가 각각 무엇을 고쳤는지 서술하시오.",
+      "**인코더(Encoder)** 의 한계는 생성이에요. 빈칸 하나를 한 번 채우고 끝이라 계속 써 나갈 자연스러운 방법이 없어요. 출력이 자유로운 글이면 잘못된 도구예요. "
+      "다만 **분류(Classification)**, **토큰 태깅(Token Tagging)**, 검색용 **임베딩(Embedding)** 은 잘해요. "
+      "**로베르타(RoBERTa)** 는 구조를 그대로 두고 레시피를 고쳤어요. 훨씬 오래, 훨씬 많은 글로 학습하고 **다음 문장 예측(Next Sentence Prediction (NSP))** 을 빼고 동적 마스킹을 썼어요. "
+      "**스팬버트(SpanBERT)** 는 가리는 단위를 **토큰(Token)** 하나에서 이어진 **스팬(Span)** 으로 바꿔 더 어려운 문제를 냈어요. "
+      "두 연구가 함께 보여 준 교훈은, 구조를 바꾸지 않아도 계산과 데이터를 늘리면 **사전 학습(Pre-training)** 이 좋아진다는 것이에요.",
+      ["인코더의 한계는 생성", "빈칸 하나, 한 번으로 끝",
+       "잘하는 일은 분류, 태깅, 검색", "RoBERTa 는 레시피(더 오래, 더 많이, NSP 제거, 동적 마스킹)",
+       "SpanBERT 는 가리는 단위를 스팬으로", "구조를 안 바꿔도 계산과 데이터로 좋아짐"])
+
+essay(U6, "N5 p.33-35", "prompting-vs-finetuning-tradeoff",
+      "**프롬프팅(Prompting)** 과 **미세조정(Finetuning)** 의 트레이드오프를 무엇이 바뀌는지, 무엇이 필요한지, 무엇이 남는지로 나누어 서술하시오.",
+      "무엇이 바뀌는지로 보면, **미세조정(Finetuning)** 은 가중치가 바뀌고 **프롬프팅(Prompting)** 은 입력 글만 바뀌어요. "
+      "무엇이 필요한지로 보면, **미세조정(Finetuning)** 은 **레이블(Label)** 데이터와 GPU 가 필요하고 1억 개 규모 모델부터 되지만, **프롬프팅(Prompting)** 은 좋은 **프롬프트(Prompt)** 하나면 되는 대신 수십억 개 규모 모델이 필요해요. "
+      "무엇이 남는지로 보면, 앞쪽은 가중치를 갖게 되고 뒤쪽은 문자열 하나를 갖게 돼요. "
+      "데이터가 있고 과제가 고정이면 **미세조정(Finetuning)**, 데이터가 없거나 과제가 많으면 **프롬프팅(Prompting)** 이 대체로 유리해요. "
+      "**프롬프팅(Prompting)** 이 가능해진 배경에는 GPT-1 에서 GPT-3 까지 약 1500배 커진 규모가 있어요.",
+      ["바뀌는 것: 가중치 대 입력 글", "필요한 것: 레이블과 GPU 대 좋은 프롬프트",
+       "모델 크기: 1억 개부터 대 수십억 개 필요", "남는 것: 가중치 대 문자열",
+       "데이터와 과제 수에 따른 선택 기준", "규모가 커져서 프롬프팅이 가능해짐"])
+
+essay(U7, "N5 p.36-38", "t5-two-ideas",
+      "**티파이브(T5)** 의 두 가지 아이디어를 설명하고, **버트(BERT)** 방식과 무엇이 다른지 서술하시오.",
+      "첫째 아이디어는 **스팬 손상(Span Corruption)** 이에요. 이어진 **스팬(Span)** 을 통째로 지우고 그 자리에 서로 다른 **센티널 토큰(Sentinel Token)** 을 넣은 뒤, **디코더(Decoder)** 가 빠진 조각만 다시 쓰게 해요. "
+      "**토큰(Token)** 하나 가리기보다 어렵고, **인코더(Encoder)** 와 **디코더(Decoder)** 를 동시에 학습시킨다는 장점이 있어요. "
+      "둘째 아이디어는 **텍스트-투-텍스트(Text-to-Text)** 예요. 과제 전용 출력 층을 없애고 입력 앞에 **과제 접두어(Task Prefix)** 를 붙여 답을 문자열로 쓰게 해요. "
+      "**버트(BERT)** 방식은 과제마다 다른 **과제 헤드(Task Head)** 를 얹고 **레이블(Label)** 번호나 점수를 내지만, **티파이브(T5)** 는 접두어만 새로 적으면 새 과제가 돼요. "
+      "그 결과 **분류(Classification)** 도 회귀도 생성도 모두 한 형식으로 통일돼요.",
+      ["첫째는 스팬 손상", "센티널 토큰과 빠진 조각만 쓰기",
+       "인코더와 디코더를 동시에 학습", "둘째는 텍스트-투-텍스트",
+       "과제 접두어로 과제를 구별", "BERT 는 헤드 교체, T5 는 접두어 교체"])
+
+essay(U8, "N5 p.47", "scaling-laws-and-budget",
+      "**스케일링 법칙(Scaling Laws)** 이 무엇이고, GPT-3 의 사례가 무엇을 다시 가르쳐 주었는지 서술하시오.",
+      "**스케일링 법칙(Scaling Laws)** 은 학습 계산량을 늘리면 **손실 함수(Loss Function)** 값이 예측 가능하게 줄어드는 관계예요. "
+      "로그-로그 그림에서 직선으로 보이기 때문에, 작은 모델 몇 개만 학습해도 큰 모델의 손실을 미리 알 수 있어요. 이것이 사람들이 계속 모델을 키운 이유예요. "
+      "GPT-3 은 **파라미터(Parameter)** 1750억 개를 3000억 **토큰(Token)** 으로 학습했어요. "
+      "그런데 나중 연구는 이것이 예산을 잘못 나눈 배분이었다고 보았고, 700억 규모 모델을 훨씬 많은 **토큰(Token)** 으로 학습한 쪽이 더 좋았어요. "
+      "곧 크기만이 답이 아니라 크기와 데이터를 함께 맞추는 것이 핵심이에요.",
+      ["계산량과 손실의 예측 가능한 관계", "로그-로그 그림에서 직선",
+       "작은 모델로 큰 모델을 예측", "GPT-3 은 175B 파라미터, 300B 토큰",
+       "예산 배분이 잘못되었다는 평가", "70B 모델이 더 많은 토큰으로 이김"])
+
+# =====================================================================
+# CALC (10)
+# =====================================================================
+calc(U1, "N5 p.10", "random-share-shrink",
+     "2017년에는 **파라미터(Parameter)** 의 약 5 퍼센트가 **사전 학습(Pre-training)** 되어 있었고, 오늘은 약 99.9 퍼센트가 사전 학습되어 있다. "
+     "두 시절에 무작위로 시작하는 비율과, 그 비율이 몇 배로 줄었는지를 구하시오.",
+     "무작위 비율은 100 에서 사전 학습 비율을 뺀 값이에요. 배수는 반올림해 정수로 쓰세요.",
+     [{"label": "2017년 무작위 비율(퍼센트)", "ans": 95.0, "tol": 0.05},
+      {"label": "오늘 무작위 비율(퍼센트)", "ans": 0.1, "tol": 0.005},
+      {"label": "몇 배로 줄었나", "ans": 950}],
+     ["2017년 무작위: $100 - 5 = 95$ 퍼센트예요",
+      "오늘 무작위: $100 - 99.9 = 0.1$ 퍼센트예요",
+      "줄어든 배수: $95 / 0.1 = 950$ 배예요",
+      "곧 내 **레이블(Label)** 이 처음부터 가르쳐야 할 부분이 950배 줄었어요"],
+     "95 퍼센트에서 0.1 퍼센트로, 950배",
+     "99.9 에서 5 를 뺀 94.9 는 사전 학습 비율의 차이(퍼센트포인트)예요. 무작위 비율의 배수는 95 를 0.1 로 나눠야 나와요.")
+
+calc(U2, "N5 p.14", "training-text-growth",
+     "**사전 학습(Pre-training)** 에 쓴 글의 양은 GPT-1 이 0.8B 단어, **버트(BERT)** 가 3.3B, GPT-3 이 300B 이다. "
+     "BERT 가 GPT-1 의 몇 배인지, GPT-3 이 GPT-1 의 몇 배인지, 그리고 세로축 로그 눈금 한 칸이 몇 배인지를 구하시오.",
+     "큰 값을 작은 값으로 나눠요. 배수는 소수 셋째 자리까지 쓰세요.",
+     [{"label": "BERT / GPT-1", "ans": 4.125, "tol": 0.001},
+      {"label": "GPT-3 / GPT-1", "ans": 375.0, "tol": 0.05},
+      {"label": "로그 눈금 한 칸의 배수", "ans": 10}],
+     ["$3.3 / 0.8 = 4.125$ 배예요",
+      "$300 / 0.8 = 375$ 배예요. 슬라이드는 이것을 about four hundred times 라고 적었어요",
+      "세로축은 $10^{0}, 10^{1}, 10^{2}, 10^{3}$ 으로 적혀 있으므로 한 칸이 10배예요",
+      "보통 눈금이면 0.8 막대는 300 막대 옆에서 보이지도 않아요"],
+     "4.125배, 375배, 한 칸은 10배",
+     "슬라이드의 400배는 375 를 어림한 값이에요. 정확히 400 이 나오지는 않아요.")
+
+calc(U3, "N5 p.19-20", "mlm-reverse-from-mask-count",
+     "어떤 글을 **마스크 언어 모델(Masked Language Modelling (MLM))** 로 학습했더니 **마스크 토큰([MASK])** 로 바뀐 자리가 240개였다. "
+     "15 퍼센트를 고르고 그중 80 퍼센트를 [MASK] 로 바꾸는 규칙일 때 전체 **토큰(Token)** 수, 고른 자리 수, "
+     "무작위 토큰으로 바꾼 수, 그대로 둔 수를 구하시오.",
+     "[MASK] 수는 전체의 $0.15 \\times 0.8$ 이에요. 거꾸로 나눠서 전체를 먼저 구해요. 정수로 쓰세요.",
+     [{"label": "전체 토큰 수", "ans": 2000},
+      {"label": "고른 자리 수", "ans": 300},
+      {"label": "무작위 토큰으로 바꾼 수", "ans": 30},
+      {"label": "그대로 둔 수", "ans": 30}],
+     ["[MASK] 가 되는 비율은 전체의 $0.15 \\times 0.8 = 0.12$ 예요",
+      "전체 토큰 수: $240 / 0.12 = 2{,}000$ 개예요",
+      "고른 자리: $2{,}000 \\times 0.15 = 300$ 자리예요",
+      "무작위 토큰: $300 \\times 0.1 = 30$ 개예요",
+      "그대로: $300 - 240 - 30 = 30$ 개예요",
+      "손실은 고른 300 자리 전부에서 세요"],
+     "전체 2,000개, 고른 자리 300개, 무작위 30개, 그대로 30개",
+     "$240 / 0.15 = 1{,}600$ 으로 계산하기 쉬워요. 240 은 고른 자리가 아니라 그 안의 80 퍼센트예요.")
+
+calc(U4, "N5 p.24", "glue-score-gaps",
+     "**글루(GLUE)** 평균 점수는 BiLSTM + ELMo 71.0, OpenAI **지피티(GPT)** 75.1, **버트(BERT)** base 79.6, **버트(BERT)** large 82.1 이다. "
+     "BERT large 와 BiLSTM + ELMo 의 차이, BERT large 와 OpenAI GPT 의 차이, BERT base 와 BERT large 의 차이를 구하시오.",
+     "각 칸의 이름이 가리키는 대로 큰 값에서 작은 값을 빼요. 소수 첫째 자리까지 쓰세요. 단위는 점이에요.",
+     [{"label": "BERT large - BiLSTM+ELMo", "ans": 11.1, "tol": 0.05},
+      {"label": "BERT large - OpenAI GPT", "ans": 7.0, "tol": 0.05},
+      {"label": "BERT large - BERT base", "ans": 2.5, "tol": 0.05}],
+     ["$82.1 - 71.0 = 11.1$ 점이에요",
+      "$82.1 - 75.1 = 7.0$ 점이에요",
+      "$82.1 - 79.6 = 2.5$ 점이에요",
+      "같은 **미세조정(Finetuning)** 방법으로 아홉 과제를 다 했다는 것이 진짜 뉴스예요"],
+     "11.1점, 7.0점, 2.5점",
+     "막대 하나가 아홉 과제의 평균 점수예요. 한 과제의 점수가 아니에요.")
+
+calc(U5, "N5 p.26, p.14", "roberta-more-data",
+     "**로베르타(RoBERTa)** 는 훨씬 많은 글을 쓰라는 처방을 따랐다. 학습 글의 양이 **버트(BERT)** 3.3B, "
+     "**로베르타(RoBERTa)** 30B, GPT-3 300B 일 때 RoBERTa 가 BERT 의 몇 배인지, GPT-3 이 BERT 의 몇 배인지, "
+     "GPT-3 이 RoBERTa 의 몇 배인지를 구하시오.",
+     "큰 값을 작은 값으로 나눠요. 소수 둘째 자리까지 쓰세요.",
+     [{"label": "RoBERTa / BERT", "ans": 9.09, "tol": 0.01},
+      {"label": "GPT-3 / BERT", "ans": 90.91, "tol": 0.01},
+      {"label": "GPT-3 / RoBERTa", "ans": 10.0, "tol": 0.05}],
+     ["$30 / 3.3 = 9.0909...$ 이므로 약 $9.09$ 배예요",
+      "$300 / 3.3 = 90.909...$ 이므로 약 $90.91$ 배예요",
+      "$300 / 30 = 10$ 배예요",
+      "구조를 바꾸지 않고 계산과 데이터만 늘려도 **사전 학습(Pre-training)** 이 좋아진다는 것이 N5 p.26 의 결론이에요"],
+     "약 9.09배, 약 90.91배, 10배",
+     "RoBERTa 는 구조를 바꾼 것이 아니에요. 늘어난 것은 글의 양과 학습 시간이에요.")
+
+calc(U6, "N5 p.33, p.31, p.22", "gpt3-vs-bert-base",
+     "**파라미터(Parameter)** 수가 BERT-base 110M, **지피티(GPT)**-1 117M, GPT-3 175B 일 때 "
+     "GPT-3 이 BERT-base 의 몇 배인지, GPT-1 이 BERT-base 의 몇 배인지, 그리고 GPT-1 과 BERT-base 의 차이(백만 단위)를 구하시오.",
+     "1B 는 1,000M 이에요. 배수는 소수 둘째 자리까지 쓰세요.",
+     [{"label": "GPT-3 / BERT-base", "ans": 1590.91, "tol": 0.05},
+      {"label": "GPT-1 / BERT-base", "ans": 1.06, "tol": 0.01},
+      {"label": "GPT-1 - BERT-base (백만 개)", "ans": 7}],
+     ["175B 를 백만 단위로 바꾸면 $175{,}000$ M 이에요",
+      "$175{,}000 / 110 = 1590.909...$ 이므로 약 $1590.91$ 배예요",
+      "$117 / 110 = 1.0636...$ 이므로 약 $1.06$ 배예요",
+      "$117 - 110 = 7$ 백만 개 차이예요",
+      "GPT-1 과 BERT-base 는 층 12, 은닉 768 로 거의 같은 덩치예요. 갈라 놓은 것은 마스크와 목적 함수예요"],
+     "약 1590.91배, 약 1.06배, 7백만 개 차이",
+     "1B 를 1,000,000 으로 잘못 놓기 쉬워요. 1B 는 1,000M, 곧 10억이에요.")
+
+calc(U7, "N5 p.37", "span-corruption-ratio",
+     "**스팬 손상(Span Corruption)** 예에서 원문은 10 **토큰(Token)**, **인코더(Encoder)** 입력은 9칸, **디코더(Decoder)** 목표는 6칸이다. "
+     "디코더 목표에 들어 있는 **센티널 토큰(Sentinel Token)** 의 개수, 디코더 목표 길이가 원문의 몇 배인지, "
+     "인코더 입력 길이가 원문의 몇 배인지를 구하시오.",
+     "센티널은 <X>, <Y>, <Z> 처럼 붙는 번호표예요. 비율은 소수 둘째 자리까지 쓰세요.",
+     [{"label": "디코더 목표의 센티널 개수", "ans": 3},
+      {"label": "디코더 목표 / 원문", "ans": 0.6, "tol": 0.01},
+      {"label": "인코더 입력 / 원문", "ans": 0.9, "tol": 0.01}],
+     ["디코더 목표는 <X> for inviting <Y> last <Z> 이므로 센티널이 3개예요",
+      "나머지 3칸이 가려졌던 단어 for, inviting, last 예요",
+      "디코더 목표 비율: $6 / 10 = 0.6$ 이에요",
+      "인코더 입력 비율: $9 / 10 = 0.9$ 예요",
+      "디코더가 원문 전체를 다시 쓰지 않아서 같은 계산으로 더 많은 문장을 볼 수 있어요"],
+     "센티널 3개, 0.6배, 0.9배",
+     "인코더 입력에는 센티널이 <X>, <Y> 두 개뿐이에요. 끝을 알리는 <Z> 는 디코더 목표에만 있어요.")
+
+calc(U8, "N5L p.20, p.30", "steps-for-500-labels",
+     "Lab 4 의 학습 곡선 실험은 **레이블(Label)** 500건을 **배치 크기(Batch Size)** 32, **에폭(Epoch)** 3 으로 **미세조정(Finetuning)** 한다. "
+     "한 **에폭(Epoch)** 의 걸음 수(남는 것은 한 걸음으로 센다), 전체 걸음 수, 그리고 **워밍업(Warmup)** 을 "
+     "전체의 10 퍼센트로 잡고 소수를 버릴 때의 걸음 수를 구하시오.",
+     "한 에폭 걸음 수는 올림, 워밍업은 10 퍼센트를 곱한 뒤 버림이에요. 정수로 쓰세요.",
+     [{"label": "한 에폭의 걸음 수", "ans": 16},
+      {"label": "전체 걸음 수", "ans": 48},
+      {"label": "워밍업 걸음 수", "ans": 4}],
+     ["$500 / 32 = 15.625$ 이고 올림하면 $16$ 걸음이에요",
+      "**에폭(Epoch)** 이 3 이므로 $16 \\times 3 = 48$ 걸음이에요",
+      "$48 \\times 0.1 = 4.8$ 이에요",
+      "노트북 코드가 `warmup_steps=max(1, int(0.1 * total_steps))` 이라 소수를 버려서 $4$ 걸음이에요",
+      "걸음이 48 뿐이라 이 실험은 0.1 분 만에 끝났어요"],
+     "16걸음, 48걸음, 워밍업 4걸음",
+     "4.8 을 반올림해 5 로 적기 쉬워요. 노트북은 int 로 버려서 4 예요. 학습 곡선 실험만 에폭이 3 이고 본 실험은 2 예요.")
+
+calc(U8, "N5L p.30", "learning-curve-gains",
+     "Lab 4 에 저장된 **정확도(Accuracy)** 는 **레이블(Label)** 500건 0.8050, 2,000건 0.8418, 15,000건 0.8740 이다. "
+     "두 구간의 상승폭(퍼센트포인트)과 그 상승을 얻는 데 든 **레이블(Label)** 배수를 각각 구하시오.",
+     "상승폭은 정확도 차이에 100 을 곱해요. 소수 둘째 자리까지 쓰세요.",
+     [{"label": "500에서 2,000 상승폭(퍼센트포인트)", "ans": 3.68, "tol": 0.01},
+      {"label": "2,000에서 15,000 상승폭(퍼센트포인트)", "ans": 3.22, "tol": 0.01},
+      {"label": "500에서 2,000 레이블 배수", "ans": 4.0, "tol": 0.01},
+      {"label": "2,000에서 15,000 레이블 배수", "ans": 7.5, "tol": 0.01}],
+     ["$0.8418 - 0.8050 = 0.0368$ 이므로 $3.68$ 퍼센트포인트예요",
+      "$0.8740 - 0.8418 = 0.0322$ 이므로 $3.22$ 퍼센트포인트예요",
+      "$2{,}000 / 500 = 4$ 배예요",
+      "$15{,}000 / 2{,}000 = 7.5$ 배예요",
+      "상승폭은 거의 비슷한데 값이 4배에서 7.5배로 비싸졌어요. 이것이 **수확 체감(Diminishing Returns)** 이에요"],
+     "3.68포인트와 3.22포인트, 레이블은 4배와 7.5배",
+     "노트북 본문 표는 상승폭을 둘 다 +3.5 로, 정확도를 80.5 / 84.1 / 87.5 로 반올림해 적었어요. 저장된 출력 숫자를 따라요.")
+
+calc(U8, "N5L p.24", "confusion-report",
+     "Lab 4 의 분류 보고서는 negative 정밀도 0.875 재현율 0.874 support 2516, positive 정밀도 0.873 재현율 0.874 support 2484, "
+     "전체 **정확도(Accuracy)** 0.874 이다. 전체 건수, 맞힌 건수, 틀린 건수, 그리고 두 정밀도의 단순 평균을 구하시오.",
+     "맞힌 건수는 정확도에 전체 건수를 곱해 반올림해요. 평균은 소수 셋째 자리까지 쓰세요.",
+     [{"label": "전체 건수", "ans": 5000},
+      {"label": "맞힌 건수", "ans": 4370},
+      {"label": "틀린 건수", "ans": 630},
+      {"label": "정밀도의 단순 평균", "ans": 0.874, "tol": 0.001}],
+     ["support 를 더해요. $2{,}516 + 2{,}484 = 5{,}000$ 건이에요",
+      "맞힌 건수: $0.874 \\times 5{,}000 = 4{,}370$ 건이에요",
+      "틀린 건수: $5{,}000 - 4{,}370 = 630$ 건이에요",
+      "정밀도 평균: $(0.875 + 0.873) / 2 = 0.874$ 예요",
+      "보고서의 macro avg 줄에 적힌 0.874 와 같은 값이에요"],
+     "5,000건, 맞힌 4,370건, 틀린 630건, 정밀도 평균 0.874",
+     "정밀도와 재현율을 섞지 마세요. 재현율의 분모는 support 이고 정밀도의 분모는 그렇게 예측한 건수예요.")
+
+# =====================================================================
+# ------------------------------------------------- 보기 자리 섞기와 id 고정
+optshuffle.shuffle_bank(bank)
+IDS = [
+    "w5h-mcq-001", "w5h-mcq-002", "w5h-mcq-003", "w5h-mcq-004", "w5h-mcq-005", "w5h-mcq-006",
+    "w5h-mcq-007", "w5h-mcq-008", "w5h-mcq-009", "w5h-mcq-010", "w5h-mcq-011", "w5h-mcq-012",
+    "w5h-mcq-013", "w5h-mcq-014", "w5h-mcq-015", "w5h-mcq-016",
+    "w5h-ox-001", "w5h-ox-002", "w5h-ox-003", "w5h-ox-004", "w5h-ox-005", "w5h-ox-006",
+    "w5h-ox-007", "w5h-ox-008", "w5h-ox-009", "w5h-ox-010", "w5h-ox-011", "w5h-ox-012",
+    "w5h-short-001", "w5h-short-002", "w5h-short-003", "w5h-short-004", "w5h-short-005",
+    "w5h-short-006", "w5h-short-007", "w5h-short-008",
+    "w5h-essay-001", "w5h-essay-002", "w5h-essay-003", "w5h-essay-004", "w5h-essay-005",
+    "w5h-essay-006", "w5h-essay-007", "w5h-essay-008",
+    "w5h-calc-001", "w5h-calc-002", "w5h-calc-003", "w5h-calc-004", "w5h-calc-005",
+    "w5h-calc-006", "w5h-calc-007", "w5h-calc-008", "w5h-calc-009", "w5h-calc-010",
+]
+optshuffle.check_ids(bank, IDS)
+
+raw = json.dumps(bank, ensure_ascii=False, indent=1)
+for ch in ("—", "–", "·", "・"):
+    assert ch not in raw, ch
+with open(OUT, "w", encoding="utf-8") as f:
+    f.write(raw)
+print("saved", OUT, len(bank), "문항", cnt)

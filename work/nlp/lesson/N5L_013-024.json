@@ -1,0 +1,2506 @@
+{
+ "deck": "N5L",
+ "from": 13,
+ "to": 24,
+ "glossary": [
+  {
+   "ko": "버트",
+   "en": "BERT",
+   "say": "글의 양쪽을 다 보고 빈칸을 채우도록 사전 학습한 인코더 모델이에요.",
+   "more": "오늘은 한국어 판 klue/bert-base 를 써요. 강의 N5 p.22 의 BERT-base 숫자 그대로예요."
+  },
+  {
+   "ko": "사전 학습",
+   "en": "Pre-training",
+   "say": "레이블 없는 글을 잔뜩 읽혀서 모델 전체를 미리 학습시켜 두는 것이에요.",
+   "more": "아무 책이나 많이 읽어 둔 신입 같아요. 강의 N5 p.13 은 이것을 파라미터 초기화라고 불렀어요."
+  },
+  {
+   "ko": "미세조정",
+   "en": "Finetuning",
+   "say": "사전 학습한 모델을 우리 과제 데이터로 조금만 더 학습시키는 것이에요.",
+   "more": "그 신입에게 우리 회사 일만 며칠 가르치는 것이에요. 학습률이 사전 학습보다 100배 작아요(N5 p.44)."
+  },
+  {
+   "ko": "마스크 언어 모델",
+   "en": "Masked Language Modelling (MLM)",
+   "say": "글의 일부를 가리고 가려진 자리의 원래 단어를 맞히는 학습이에요.",
+   "more": "빈칸 채우기 시험지예요. 강의 N5 p.19 에서 토큰의 15 퍼센트를 가려요."
+  },
+  {
+   "ko": "마스크 토큰",
+   "en": "[MASK]",
+   "say": "가려진 자리를 나타내는 특별 토큰이에요.",
+   "more": "빈칸 채우기 시험지의 빈칸이에요. 이 노트북에서는 직접 넣어 무엇이 나오는지 봐요."
+  },
+  {
+   "ko": "분류 토큰",
+   "en": "[CLS]",
+   "say": "문장 맨 앞에 붙는 특별 토큰이에요. 문장 전체를 대표해요.",
+   "more": "분류 헤드는 이 자리의 768차원 벡터 하나만 봐요. 강의 N5 p.23 의 분류 과제 모양이에요."
+  },
+  {
+   "ko": "양방향 문맥",
+   "en": "Bidirectional Context",
+   "say": "한 단어를 판단할 때 왼쪽과 오른쪽을 함께 보는 것이에요.",
+   "more": "BERT 의 힘이에요. 대신 다음 단어 맞히기는 못 해요(강의 N5 p.18)."
+  },
+  {
+   "ko": "소프트맥스",
+   "en": "Softmax",
+   "say": "점수를 모두 더해 1 이 되는 확률 파이로 나누는 함수예요.",
+   "more": "2주차 N2 p.33 에서 배웠어요. 어휘 32,000칸 점수를 32,000칸 확률로 바꿔요."
+  },
+  {
+   "ko": "로짓",
+   "en": "Logits",
+   "say": "소프트맥스에 들어가기 전의 날것 점수예요.",
+   "more": "합이 1 이 아니고 음수도 나와요. 가장 큰 칸만 보면 되니, 예측에는 로짓만으로 충분해요."
+  },
+  {
+   "ko": "사실 지식",
+   "en": "World Knowledge",
+   "say": "세상에 대한 사실을 알고 있는 것이에요. 수도 이름 같은 것이에요.",
+   "more": "강의 N5 p.42 내용이에요. 들쭉날쭉하게 배우니 데이터베이스처럼 믿으면 안 돼요."
+  },
+  {
+   "ko": "암기",
+   "en": "Memorization",
+   "say": "일반화가 아니라 학습 글을 그대로 외워 버리는 것이에요.",
+   "more": "강의 N5 p.43 It Also Remembers 예요. 사생활 문제로 이어질 수 있어요."
+  },
+  {
+   "ko": "과제 헤드",
+   "en": "Task Head",
+   "say": "몸통 위에 갈아 끼우는 작은 마지막 층이에요.",
+   "more": "같은 몸통에 갈아 끼우는 공구 날 같아요. 분류 헤드는 2칸짜리 층 하나면 돼요."
+  },
+  {
+   "ko": "몸통",
+   "en": "Body",
+   "say": "사전 학습이 끝난 트랜스포머 층 전체예요. 글을 벡터로 바꿔 주는 부분이에요.",
+   "more": "klue/bert-base 의 몸통은 12층, 은닉 768 이에요. 여기가 한국어를 알고 있어요."
+  },
+  {
+   "ko": "파라미터 초기화",
+   "en": "Parameter Initialisation",
+   "say": "학습을 시작할 때 파라미터에 넣어 두는 첫 값이에요.",
+   "more": "강의 N5 p.13 은 사전 학습이 바로 이 일이라고 했어요. 새 헤드만 무작위 값에서 출발해요."
+  },
+  {
+   "ko": "우연 수준",
+   "en": "Chance Level",
+   "say": "아무것도 모르고 찍었을 때 나오는 점수예요.",
+   "more": "이 데이터는 긍정과 부정이 반반이라 약 50 퍼센트예요. 측정의 바닥이에요."
+  },
+  {
+   "ko": "정확도",
+   "en": "Accuracy",
+   "say": "전체 중 맞힌 비율이에요.",
+   "more": "전체 미세조정 결과는 87.4 퍼센트예요. 바닥이 50 퍼센트라는 것을 같이 봐야 해요."
+  },
+  {
+   "ko": "F1 점수",
+   "en": "F1 Score",
+   "say": "정밀도와 재현율을 함께 본 점수예요. 둘의 조화 평균이에요.",
+   "more": "한쪽으로 치우친 모델을 걸러내요. 오늘 결과는 0.8733 이에요."
+  },
+  {
+   "ko": "동결",
+   "en": "Freezing",
+   "say": "가중치를 학습하지 않고 그대로 묶어 두는 것이에요.",
+   "more": "기울기가 흐르지 않아요. 강의 N5 p.46 PEFT 도 몸통을 얼리는 방식이에요."
+  },
+  {
+   "ko": "선형 프로빙",
+   "en": "Linear Probing",
+   "say": "몸통을 얼려 두고 위에 직선 하나만 맞춰 보는 방법이에요.",
+   "more": "사전 학습된 표현이 얼마나 값을 하는지 싸게 재는 방법이에요. 오늘은 81.8 퍼센트가 나왔어요."
+  },
+  {
+   "ko": "로지스틱 회귀",
+   "en": "Logistic Regression",
+   "say": "직선 하나로 두 갈래를 가르는 가장 단순한 분류기예요.",
+   "more": "sklearn 한 줄로 학습해요. 여기서는 얼린 [CLS] 벡터를 입력으로 받아요."
+  },
+  {
+   "ko": "기울기",
+   "en": "Gradient",
+   "say": "값을 조금 바꾸면 결과가 얼마나, 어느 쪽으로 바뀌는지 알려 주는 숫자예요.",
+   "more": "기울기가 흐르지 않으면 그 층은 배우지 않아요. 동결이 바로 그 상태예요."
+  },
+  {
+   "ko": "허깅페이스",
+   "en": "Hugging Face",
+   "say": "사전 학습 모델과 토크나이저를 내려받아 쓰게 해 주는 도구와 저장소예요.",
+   "more": "from_pretrained 한 줄로 남이 학습한 가중치를 가져와요. 오늘 실습의 바탕이에요."
+  },
+  {
+   "ko": "트레이너",
+   "en": "Trainer",
+   "say": "허깅페이스가 주는 학습 루프 자동 실행기예요.",
+   "more": "배치 만들기, 기울기 계산, 학습률 조절, 로그를 다 해 줘요. 우리는 레시피 숫자만 정해요."
+  },
+  {
+   "ko": "학습률",
+   "en": "Learning Rate",
+   "say": "한 걸음을 얼마나 크게 디딜지 정하는 숫자, 곧 보폭이에요.",
+   "more": "미세조정은 2e-5 에서 5e-5 를 써요. 사전 학습보다 약 100배 작아요(강의 N5 p.44)."
+  },
+  {
+   "ko": "에폭",
+   "en": "Epoch",
+   "say": "학습 데이터를 처음부터 끝까지 한 번 다 보는 것이에요.",
+   "more": "미세조정은 2에서 4 에폭을 권해요. 더 돌리면 학습 데이터를 외우기 시작해요."
+  },
+  {
+   "ko": "배치 크기",
+   "en": "Batch Size",
+   "say": "한 걸음에 함께 보는 예시 개수예요.",
+   "more": "오늘은 32 예요. 메모리에 들어가는 만큼 잡으면 돼요(강의 N5 p.44)."
+  },
+  {
+   "ko": "워밍업",
+   "en": "Warmup",
+   "say": "처음 몇 걸음은 학습률을 0 에서 천천히 올리는 것이에요.",
+   "more": "새 헤드가 무작위 상태라, 처음부터 크게 움직이면 몸통이 알던 것을 망가뜨려요."
+  },
+  {
+   "ko": "과적합",
+   "en": "Overfitting",
+   "say": "학습 데이터만 잘 맞히고 새 데이터에서는 못 맞히는 상태예요.",
+   "more": "에폭을 너무 늘리면 그렇게 돼요. 노트북은 3에서 4 에폭을 넘기면 외우기 시작한다고 적었어요."
+  },
+  {
+   "ko": "혼동 행렬",
+   "en": "Confusion Matrix",
+   "say": "정답과 예측을 가로세로로 놓고 개수를 센 표예요.",
+   "more": "대각선은 맞힌 것, 대각선 밖은 틀린 것이에요. 어느 쪽으로 치우쳤는지 바로 보여요."
+  },
+  {
+   "ko": "오류 분석",
+   "en": "Error Analysis",
+   "say": "언제 틀리는지 직접 들여다보는 일이에요.",
+   "more": "정확도 숫자 하나만 보고하는 것이 보고서에서 가장 흔한 잘못이에요."
+  },
+  {
+   "ko": "편향",
+   "en": "Bias",
+   "say": "모델이 한쪽으로 치우치는 것이에요.",
+   "more": "혼동 행렬의 대각선 밖 두 칸 크기가 많이 다르면 치우쳤다는 뜻이에요."
+  },
+  {
+   "ko": "레이블",
+   "en": "Label",
+   "say": "사람이 붙여 준 정답표예요. 여기서는 긍정 1, 부정 0 이에요.",
+   "more": "레이블은 사람 손이 들어가서 비싸요. 그래서 사전 학습이 값을 하는 거예요."
+  },
+  {
+   "ko": "감성 분석",
+   "en": "Sentiment Analysis",
+   "say": "글이 긍정인지 부정인지 가려내는 과제예요.",
+   "more": "오늘 실습의 다운스트림 과제예요. 리뷰 한 줄에 긍정 또는 부정 하나를 답해요."
+  },
+  {
+   "ko": "잘라내기",
+   "en": "Truncation",
+   "say": "정해진 길이를 넘는 토큰을 잘라 버리는 것이에요.",
+   "more": "오늘은 64개에서 자르는데 리뷰가 짧아서 거의 잘리지 않아요."
+  },
+  {
+   "ko": "패딩",
+   "en": "Padding",
+   "say": "짧은 문장 뒤에 빈 토큰을 채워 길이를 맞추는 것이에요.",
+   "more": "배치 안에서 가장 긴 문장에만 맞추면 동적 패딩이에요. 학습이 훨씬 빨라져요."
+  },
+  {
+   "ko": "토크나이저",
+   "en": "Tokenizer",
+   "say": "글을 토큰 조각으로 잘라 주는 도구예요.",
+   "more": "모델과 짝이에요. klue/bert-base 에 딸린 워드피스 토크나이저를 써요."
+  },
+  {
+   "ko": "인코더",
+   "en": "Encoder",
+   "say": "문장 전체를 한꺼번에 읽어 벡터로 바꾸는 쪽이에요.",
+   "more": "4주차 N4 p.52-53 의 갈림길이에요. 인코더는 양쪽을 다 보고, 디코더는 앞만 봐요."
+  },
+  {
+   "ko": "자기 지도 학습",
+   "en": "Self-Supervision",
+   "say": "사람이 답을 달지 않고, 글 자체를 문제와 답으로 함께 쓰는 학습이에요.",
+   "more": "강의 N5 p.12 Labels for Free 예요. 빈칸을 뚫고 원래 단어를 답으로 써요."
+  },
+  {
+   "ko": "지도 학습",
+   "en": "Supervised Learning",
+   "say": "사람이 붙인 정답표를 보고 배우는 학습이에요.",
+   "more": "미세조정이 이것이에요. 레이블이 있어야 하니 비싸요."
+  },
+  {
+   "ko": "손실 함수",
+   "en": "Loss Function",
+   "say": "틀린 정도를 매기는 벌점이에요.",
+   "more": "벌점을 줄이는 쪽으로 파라미터를 고쳐요. 학습 로그의 loss 가 그 값이에요."
+  },
+  {
+   "ko": "파라미터",
+   "en": "Parameter",
+   "say": "모델이 학습하면서 값을 고쳐 나가는 숫자들이에요.",
+   "more": "klue/bert-base 는 약 1억 1천만 개예요. 강의 N5 p.22 의 BERT-base 110M 그대로예요."
+  },
+  {
+   "ko": "텐서",
+   "en": "Tensor",
+   "say": "PyTorch 가 쓰는 숫자 배열이에요. 벡터, 행렬, 그 이상이에요.",
+   "more": "4주차 실습에서 계속 봤어요. .shape 로 모양을 확인하는 습관이 중요해요."
+  },
+  {
+   "ko": "다운스트림 과제",
+   "en": "Downstream Task",
+   "say": "사전 학습이 끝난 모델을 실제로 써먹는 우리 과제예요.",
+   "more": "강의 N5 p.23 에서 몸통은 그대로 두고 위에 올릴 것만 고른다고 했어요."
+  }
+ ],
+ "slides": [
+  {
+   "p": 13,
+   "title": "사전 학습된 모델에게 빈칸을 채워 보라고 시키기",
+   "terms": [
+    "Masked Language Modelling (MLM)",
+    "[MASK]",
+    "Softmax",
+    "Logits",
+    "Pre-training",
+    "BERT",
+    "Bidirectional Context",
+    "Tokenizer",
+    "Tensor",
+    "World Knowledge",
+    "Self-Supervision"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "이제 **버트(BERT)** 가 실제로 학습한 일을 그대로 시켜 봐요.",
+      "문장에 **마스크 토큰([MASK])** 을 넣고, 그 자리에 올 말 다섯 개를 물어봐요.",
+      "우리는 아직 아무것도 학습시키지 않았어요. 받아 온 그대로예요."
+     ]
+    },
+    {
+     "kind": "analogy",
+     "head": "마스크 언어 모델은 빈칸 채우기 시험지",
+     "scene": "빈칸 하나가 뚫린 시험지를 줘요. 앞뒤를 다 읽고 그 자리에 들어갈 말을 적어야 해요.",
+     "map": [
+      [
+       "뚫린 빈칸",
+       "**마스크 토큰([MASK])**"
+      ],
+      [
+       "앞뒤를 다 읽기",
+       "**양방향 문맥(Bidirectional Context)**"
+      ],
+      [
+       "답 후보에 매기는 점수",
+       "**로짓(Logits)**"
+      ],
+      [
+       "점수를 확률로 바꾸기",
+       "**소프트맥스(Softmax)**"
+      ]
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "pyterm",
+     "name": "AutoModelForMaskedLM 과 .eval()",
+     "say": [
+      "`AutoModelForMaskedLM.from_pretrained(이름)` 은 빈칸 채우기 머리를 달고 모델을 받아 와요.",
+      "`.to(DEVICE)` 는 모델을 GPU 로 옮겨요. `.eval()` 은 평가 모드로 바꿔요.",
+      "평가 모드는 학습용 장치를 끄는 것이에요. 같은 입력에 늘 같은 답이 나와요."
+     ],
+     "example": "name = \"klue/bert-base\"\nprint(name.startswith(\"klue\"))",
+     "out": "True"
+    },
+    {
+     "kind": "pyterm",
+     "name": "torch.no_grad()",
+     "say": [
+      "`with torch.no_grad():` 안에서는 **기울기(Gradient)** 를 기록하지 않아요.",
+      "학습하지 않고 답만 볼 때 쓰면 메모리를 아끼고 빨라져요.",
+      "지금은 받아 온 모델을 구경하는 중이니 딱 맞는 설정이에요."
+     ],
+     "example": "import torch\nwith torch.no_grad():\n    print(torch.tensor([1.0]).sum().item())",
+     "out": "1.0"
+    },
+    {
+     "kind": "pyterm",
+     "name": "사전 컴프리헨션과 return_tensors=\"pt\"",
+     "say": [
+      "`tokenizer(문장, return_tensors=\"pt\")` 는 PyTorch **텐서(Tensor)** 로 번호를 만들어 줘요.",
+      "결과는 input_ids 와 attention_mask 가 든 사전이에요.",
+      "`{kk: v.to(DEVICE) for kk, v in ....items()}` 는 사전의 값마다 같은 일을 해요."
+     ],
+     "example": "d = {\"a\": 1, \"b\": 2}\nprint({k: v * 10 for k, v in d.items()})",
+     "out": "{'a': 10, 'b': 20}"
+    },
+    {
+     "kind": "pyterm",
+     "name": ".nonzero() 로 마스크 자리 찾기",
+     "say": [
+      "`enc[\"input_ids\"][0] == tokenizer.mask_token_id` 는 마스크 번호와 같은 자리에 True 를 놓아요.",
+      "`.nonzero()` 는 True 인 자리의 번호를 돌려줘요.",
+      "`[0, 0]` 은 그중 첫 번째 자리 하나만 꺼내는 것이에요."
+     ],
+     "example": "import torch\nprint((torch.tensor([3, 7, 3]) == 7).nonzero()[0, 0].item())",
+     "out": "1"
+    },
+    {
+     "kind": "pyterm",
+     "name": "argsort(descending=True) 와 .item()",
+     "say": [
+      "`probs.argsort(descending=True)` 는 확률이 큰 순서대로 어휘 번호를 늘어놓아요.",
+      "`probs[idx].item()` 은 **텐서(Tensor)** 한 칸에서 파이썬 숫자를 꺼내요.",
+      "`tokenizer.decode([idx])` 는 번호를 다시 글자로 되돌려요."
+     ],
+     "example": "import torch\nprint(torch.tensor([0.1, 0.7, 0.2]).argsort(descending=True).tolist())",
+     "out": "[1, 2, 0]"
+    },
+    {
+     "kind": "points",
+     "head": "강의 슬라이드 짝",
+     "items": [
+      "강의 N5 p.19 마스크 언어 모델을 여기서 직접 돌려 봐요.",
+      "N5 p.42 What Did Pretraining Actually Teach 의 빈칸들이 바로 이 셀이에요.",
+      "N5 p.19 은 고른 자리에서만 손실을 센다고 했어요. 그래서 마스크 자리만 봐요.",
+      "N5 p.18 은 **인코더(Encoder)** 가 왜 다음 단어 맞히기를 못 하는지 설명해요.",
+      "N5 p.12 는 이 학습이 **자기 지도 학습(Self-Supervision)** 이라고 했어요. 지운 단어가 곧 정답이에요.",
+      "**양방향 문맥(Bidirectional Context)** 이라 빈칸의 왼쪽과 오른쪽을 함께 봐요."
+     ]
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "code",
+     "head": "빈칸 하나에 들어갈 말 다섯 개 뽑기",
+     "file": "Lab4 노트북 셀 17",
+     "code": "mlm = AutoModelForMaskedLM.from_pretrained(MODEL_NAME).to(DEVICE).eval()\nM = tokenizer.mask_token          # '[MASK]'\n\ndef fill_blank(sentence, k=5):\n    '''Show the k most likely words for the [MASK] position.'''\n    enc = {kk: v.to(DEVICE) for kk, v in tokenizer(sentence, return_tensors=\"pt\").items()}\n    pos = (enc[\"input_ids\"][0] == tokenizer.mask_token_id).nonzero()[0, 0]\n    with torch.no_grad():\n        probs = mlm(**enc).logits[0, pos].softmax(-1)\n    order = probs.argsort(descending=True)\n    out = []\n    for idx in order:                       # skip special tokens and bare punctuation\n        w = tokenizer.decode([idx]).strip()\n        if w in tokenizer.all_special_tokens or not any(c.isalnum() for c in w):\n            continue\n        out.append(\"%s (%.2f)\" % (w, probs[idx].item()))\n        if len(out) == k:\n            break\n    print(\"%-34s -> %s\" % (sentence, \",  \".join(out)))\n\nfill_blank(f\"한국의 수도는 {M}이다.\")\nfill_blank(f\"세종대왕은 {M}을 만들었다.\")\nfill_blank(f\"손흥민은 {M} 선수이다.\")\nfill_blank(f\"이 배우의 연기는 정말 {M}.\")\nfill_blank(f\"물이 끓는 온도는 섭씨 {M}도이다.\")",
+     "lines": [
+      {
+       "from": 1,
+       "to": 2,
+       "say": "빈칸 채우기 머리를 단 모델을 받아 GPU 로 옮기고 평가 모드로 둬요. 주석처럼 M 은 [MASK] 글자예요."
+      },
+      {
+       "from": 4,
+       "to": 5,
+       "say": "함수를 정의해요. 설명글에 '[MASK] 자리에 올 가장 그럴듯한 k 개를 보여 준다' 고 적혀 있어요."
+      },
+      {
+       "from": 6,
+       "to": 6,
+       "say": "문장을 번호 **텐서(Tensor)** 로 바꾸고 GPU 로 옮겨요."
+      },
+      {
+       "from": 7,
+       "to": 7,
+       "say": "**마스크 토큰([MASK])** 이 몇 번째 자리인지 찾아요."
+      },
+      {
+       "from": 8,
+       "to": 9,
+       "say": "**기울기(Gradient)** 기록 없이 한 번 계산하고, 그 자리의 **로짓(Logits)** 에 **소프트맥스(Softmax)** 를 걸어요."
+      },
+      {
+       "from": 10,
+       "to": 11,
+       "say": "확률이 큰 순서로 어휘 번호를 늘어놓고, 담을 빈 목록을 만들어요."
+      },
+      {
+       "from": 12,
+       "to": 15,
+       "say": "번호를 차례로 보면서 특별 토큰이거나 글자, 숫자가 없는 것은 건너뛰어요."
+      },
+      {
+       "from": 16,
+       "to": 18,
+       "say": "글자와 확률을 소수 둘째 자리까지 담고, k 개가 차면 멈춰요."
+      },
+      {
+       "from": 19,
+       "to": 19,
+       "say": "문장과 뽑힌 말들을 한 줄로 찍어요."
+      },
+      {
+       "from": 21,
+       "to": 25,
+       "say": "문장 다섯 개를 차례로 넣어 봐요. 사실, 문법, 감성, 숫자를 각각 시험해요."
+      }
+     ],
+     "link": "강의 N5 p.19 Masked Language Modelling"
+    },
+    {
+     "kind": "points",
+     "head": "강의 노트북에 저장된 출력",
+     "items": [
+      "`한국의 수도는 [MASK]이다.                  -> 서울 (0.64),  광화문 (0.05),  평양 (0.04),  수원 (0.02),  부산 (0.02)`",
+      "`세종대왕은 [MASK]을 만들었다.                -> 훈민정음 (0.45),  한글 (0.04),  동의보감 (0.02),  세종 (0.01),  책 (0.01)`",
+      "`손흥민은 [MASK] 선수이다.                  -> 뛰어난 (0.14),  엄청난 (0.12),  그런 (0.08),  놀라운 (0.05),  토트넘 (0.05)`",
+      "`이 배우의 연기는 정말 [MASK].               -> 돋보인다 (0.16),  좋아 (0.10),  아름다워 (0.02),  최고 (0.02),  ##다 (0.01)`",
+      "`물이 끓는 온도는 섭씨 [MASK]도이다.            -> 30 (0.03),  10 (0.02),  40 (0.02),  1 (0.02),  5 (0.02)`"
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "출력 다섯 줄을 하나씩 읽기",
+     "steps": [
+      "`한국의 수도는 [MASK]이다.` -> 서울 0.64 예요. **사실 지식(World Knowledge)** 을 알아요.",
+      "`세종대왕은 [MASK]을 만들었다.` -> 훈민정음 0.45 예요. 이것도 사실이에요.",
+      "`손흥민은 [MASK] 선수이다.` -> 뛰어난 0.14 예요. 그 자리에 형용사가 온다는 문법을 알아요.",
+      "`이 배우의 연기는 정말 [MASK].` -> 돋보인다 0.16 이에요. 이미 긍정 쪽으로 기울어요.",
+      "`물이 끓는 온도는 섭씨 [MASK]도이다.` -> 30 이 0.03 이에요. 100 이 아니라 틀렸어요."
+     ],
+     "answer": "우리가 **미세조정(Finetuning)** 하려는 **감성 분석(Sentiment Analysis)** 지식이 이미 안에 들어 있어요."
+    },
+    {
+     "kind": "points",
+     "head": "확률 숫자 읽는 법",
+     "items": [
+      "0.64 는 **어휘(Vocabulary)** 32,000칸 중 서울 칸에 64 퍼센트가 몰렸다는 뜻이에요.",
+      "0.03 처럼 낮으면 모델도 자신이 없다는 뜻이에요. 물 끓는 온도가 그랬어요.",
+      "다섯 칸의 확률을 다 더해도 1 이 안 돼요. 나머지 칸들이 남아 있으니까요.",
+      "**소프트맥스(Softmax)** 는 32,000칸 전체를 더해서 1 로 만들어요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "이 셀에서 모델을 학습시켰나요?",
+     "choices": [
+      "아니요, 받아 온 그대로 답만 물어봤어요",
+      "네, 2 **에폭(Epoch)** 학습했어요",
+      "네, **과제 헤드(Task Head)** 를 학습했어요",
+      "아니요, 아무 계산도 안 했어요"
+     ],
+     "a": 0,
+     "why": "`torch.no_grad()` 와 `.eval()` 이 그 증거예요. **사전 학습(Pre-training)** 은 남이 이미 끝냈어요."
+    },
+    {
+     "kind": "check",
+     "q": "`물이 끓는 온도는 섭씨 [MASK]도이다.` 에서 30 이 나온 것이 알려 주는 것은?",
+     "choices": [
+      "**사실 지식(World Knowledge)** 은 들쭉날쭉하게 배운다는 것",
+      "**토크나이저(Tokenizer)** 가 잘못됐다는 것",
+      "**소프트맥스(Softmax)** 가 틀렸다는 것",
+      "GPU 가 부족하다는 것"
+     ],
+     "a": 0,
+     "why": "강의 N5 p.42 의 내용이에요. 언어 모델을 데이터베이스처럼 믿으면 안 돼요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리는 점",
+     "items": [
+      "확률 0.64 는 '64 퍼센트 확률로 맞다' 가 아니라 '어휘 중 서울 칸에 64 퍼센트가 갔다' 는 뜻이에요.",
+      "특별 토큰을 건너뛰는 줄이 있어서, 진짜 1위가 [SEP] 같은 것이면 목록에 안 나와요.",
+      "이 셀의 숫자는 씨앗을 심어도 라이브러리 버전에 따라 조금 달라질 수 있어요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 14,
+   "title": "다섯 줄이 강의 전체다, 그런데 분류 헤드는 무작위다",
+   "terms": [
+    "World Knowledge",
+    "Masked Language Modelling (MLM)",
+    "Sentiment Analysis",
+    "Task Head",
+    "Body",
+    "Parameter Initialisation",
+    "Chance Level",
+    "Accuracy",
+    "Finetuning",
+    "Hugging Face",
+    "Memorization"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "노트북은 앞 출력 다섯 줄이 강의 전체라고 말해요.",
+      "사실, 문법, 감성은 이미 알고, 어떤 사실은 틀려요.",
+      "그런데 분류기로 불러오면 **과제 헤드(Task Head)** 는 무작위예요."
+     ]
+    },
+    {
+     "kind": "analogy",
+     "head": "과제 헤드는 갈아 끼우는 공구 날",
+     "scene": "전동 드릴 몸통은 하나예요. 나사용 날, 구멍용 날을 필요할 때 갈아 끼워요.",
+     "map": [
+      [
+       "드릴 몸통",
+       "**몸통(Body)**, 사전 학습된 12층"
+      ],
+      [
+       "갈아 끼우는 날",
+       "**과제 헤드(Task Head)**"
+      ],
+      [
+       "새 날은 아직 날이 안 선 상태",
+       "무작위 **파라미터 초기화(Parameter Initialisation)**"
+      ],
+      [
+       "날을 몇 번 갈기",
+       "**미세조정(Finetuning)**"
+      ]
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "points",
+     "head": "영어 문장의 뜻 (앞부분)",
+     "items": [
+      "**they are the whole lecture in one output** = 이 출력 하나에 강의 전체가 들어 있어요.",
+      "**the model knows facts about the world** = **사실 지식(World Knowledge)** 을 알아요.",
+      "**Nobody labelled that** = 아무도 정답을 달아 주지 않았어요.",
+      "**it knows an adjective belongs in that slot. That is syntax** = 그 자리에 형용사가 온다는 문법을 알아요.",
+      "**Facts are learned patchily** = 사실은 들쭉날쭉하게 배워요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "영어 문장의 뜻 (뒷부분)",
+     "items": [
+      "**it already leans towards positive words here** = 이미 긍정 쪽 단어로 기울어요.",
+      "**exactly the task we are about to finetune for** = 바로 우리가 **미세조정(Finetuning)** 하려는 그 과제예요.",
+      "**finetuning mostly teaches the model how to report it** = 미세조정은 그것을 어떤 형식으로 내놓을지를 주로 가르쳐요.",
+      "**Do not treat a language model as a database** = 언어 모델을 데이터베이스처럼 믿지 마세요.",
+      "**the classifier head is random** = 분류 **과제 헤드(Task Head)** 는 무작위예요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "용어 하나하나",
+     "items": [
+      "**과제 헤드(Task Head)** = **몸통(Body)** 위에 올리는 작은 마지막 층이에요.",
+      "**파라미터 초기화(Parameter Initialisation)** = 학습 시작 때 넣어 두는 첫 값이에요.",
+      "**우연 수준(Chance Level)** = 아무것도 모르고 찍었을 때 나오는 점수, 여기서는 약 50 퍼센트예요.",
+      "**암기(Memorization)** = 일반화가 아니라 학습 글을 그대로 외워 버리는 것이에요(강의 N5 p.43)."
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "다섯 줄이 각각 보여 준 것",
+     "cols": [
+      "빈칸 문장",
+      "모델이 아는 것"
+     ],
+     "rows": [
+      [
+       "한국의 수도는",
+       "**사실 지식(World Knowledge)**"
+      ],
+      [
+       "세종대왕은",
+       "**사실 지식(World Knowledge)**"
+      ],
+      [
+       "손흥민은 ___ 선수이다",
+       "문법(형용사 자리)"
+      ],
+      [
+       "이 배우의 연기는 정말",
+       "**감성 분석(Sentiment Analysis)** 의 씨앗"
+      ],
+      [
+       "물이 끓는 온도는 섭씨",
+       "여기서는 틀려요"
+      ]
+     ]
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "points",
+     "head": "분류기로 불러오면 무슨 일이 일어나나",
+     "items": [
+      "**허깅페이스(Hugging Face)** 가 빈칸 채우기 머리를 버려요.",
+      "그 자리에 2칸짜리 새 층을 무작위 값으로 붙여요.",
+      "**몸통(Body)** 12층은 그대로예요. 한국어를 아는 부분은 남아 있어요.",
+      "그래서 강의 N5 p.13 말로 '무작위인 것은 **과제 헤드(Task Head)** 뿐' 이에요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "왜 50 퍼센트가 나와야 정상인가",
+     "items": [
+      "새 **과제 헤드(Task Head)** 는 아무 뜻 없는 숫자예요. 그냥 잡음이에요.",
+      "잡음으로 두 갈래를 고르면 반은 맞아요. 그것이 **우연 수준(Chance Level)** 이에요.",
+      "노트북도 '50 퍼센트 근처가 나와야 정상' 이라고 적었어요.",
+      "그런데 다음 쪽 출력은 57.0 퍼센트예요. 그 까닭도 함께 봐요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "강의 슬라이드 짝",
+     "items": [
+      "강의 N5 p.42 What Did Pretraining Actually Teach 가 이 쪽의 본문이에요.",
+      "N5 p.43 It Also Remembers 는 **암기(Memorization)** 이야기예요.",
+      "N5 p.13 은 **사전 학습(Pre-training)** 이 **파라미터 초기화(Parameter Initialisation)** 라고 했어요.",
+      "N5 p.23 One Encoder, Four Task Shapes 가 헤드를 갈아 끼우는 그림이에요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "분류기로 불러올 때 무작위로 새로 만들어지는 것은?",
+     "choices": [
+      "**과제 헤드(Task Head)** 만",
+      "**몸통(Body)** 12층 전체",
+      "**토크나이저(Tokenizer)**",
+      "**어휘(Vocabulary)**"
+     ],
+     "a": 0,
+     "why": "**몸통(Body)** 은 **사전 학습(Pre-training)** 된 채로 남아요. 그래서 미세조정이 짧게 끝나요."
+    },
+    {
+     "kind": "check",
+     "q": "`이 배우의 연기는 정말 [MASK].` 에서 긍정 단어가 나온 것이 뜻하는 것은?",
+     "choices": [
+      "우리가 미세조정할 **감성 분석(Sentiment Analysis)** 지식이 이미 안에 있다는 것",
+      "**레이블(Label)** 을 이미 봤다는 것",
+      "**과제 헤드(Task Head)** 가 학습됐다는 것",
+      "우연이에요"
+     ],
+     "a": 0,
+     "why": "노트북 말로 미세조정은 그 지식을 어떤 형식으로 내놓을지를 주로 가르치는 일이에요."
+    },
+    {
+     "kind": "english",
+     "head": "시험 답안에 쓸 문장",
+     "en": "사전 학습은 문법과 의미를 든든하게, 사실 지식은 들쭉날쭉하게 가르치므로, 미세조정은 몸통이 이미 아는 것을 과제 형식으로 내놓게 만드는 일에 가깝다.",
+     "ko": "핵심은 세 가지예요. 문법과 의미는 잘, 사실은 들쭉날쭉, 미세조정은 형식 가르치기.",
+     "tip": "외우는 요령: 빈칸 다섯 줄이 각각 사실, 사실, 문법, 감성, 실패였어요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리는 점",
+     "items": [
+      "무작위인 것은 **과제 헤드(Task Head)** 뿐이에요. **몸통(Body)** 까지 무작위인 것이 아니에요.",
+      "'모델이 감성을 이미 안다' 는 말이 '미세조정이 필요 없다' 는 뜻은 아니에요.",
+      "노트북 본문은 사실 지식(World Knowledge)를 라고 적었어요. 조사가 어긋난 오타예요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 15,
+   "title": "토큰화해서 담고, 학습 전 정확도를 재기",
+   "terms": [
+    "Truncation",
+    "Padding",
+    "Task Head",
+    "Parameter Initialisation",
+    "Accuracy",
+    "Chance Level",
+    "Logits",
+    "Tensor",
+    "Trainer",
+    "Label",
+    "Tokenizer",
+    "Hugging Face"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "리뷰를 **토크나이저(Tokenizer)** 로 번호로 바꿔 담아요.",
+      "그리고 학습 전에 **정확도(Accuracy)** 를 한 번 재요.",
+      "**과제 헤드(Task Head)** 가 무작위니 50 퍼센트 근처가 나와야 해요."
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "pyterm",
+     "name": "tokenizer(목록, truncation=True, max_length=64)",
+     "say": [
+      "문장 여러 개를 한 번에 번호로 바꿔요. 결과는 목록의 목록이에요.",
+      "`truncation=True, max_length=64` 는 **잘라내기(Truncation)** 를 64에서 하라는 뜻이에요.",
+      "여기서는 **패딩(Padding)** 을 안 해요. 배치를 만들 때 하니까요."
+     ],
+     "example": "toks = [[1, 2], [3, 4, 5]]\nprint([len(t) for t in toks])",
+     "out": "[2, 3]"
+    },
+    {
+     "kind": "pyterm",
+     "name": "DataCollatorWithPadding",
+     "say": [
+      "예시 여러 개를 배치 하나로 묶으면서 **패딩(Padding)** 을 붙여 주는 도구예요.",
+      "그 배치에서 가장 긴 문장에만 맞춰요. 그래서 동적 **패딩(Padding)** 이에요.",
+      "**허깅페이스(Hugging Face)** **트레이너(Trainer)** 도 이 도구를 받아서 써요."
+     ],
+     "example": "lens = [5, 9, 3]\nprint(max(lens))",
+     "out": "9"
+    },
+    {
+     "kind": "pyterm",
+     "name": "@torch.no_grad() 꾸미기",
+     "say": [
+      "함수 위에 `@torch.no_grad()` 를 붙이면 그 함수 전체가 **기울기(Gradient)** 없이 돌아요.",
+      "앞 쪽의 `with torch.no_grad():` 와 같은 일을 함수 단위로 하는 것이에요.",
+      "평가만 하는 함수에 붙이면 코드가 깔끔해져요."
+     ],
+     "example": "def f():\n    return 1\nprint(f())",
+     "out": "1"
+    },
+    {
+     "kind": "pyterm",
+     "name": "torch.cat 과 .argmax(-1)",
+     "say": [
+      "`torch.cat(목록)` 은 **텐서(Tensor)** 여러 개를 이어 하나로 만들어요.",
+      "`.argmax(-1)` 은 마지막 축에서 가장 큰 칸의 번호를 돌려줘요. 곧 예측 **레이블(Label)** 이에요.",
+      "**로짓(Logits)** 을 확률로 바꾸지 않아도 순서는 같아서, 예측에는 로짓만으로 충분해요."
+     ],
+     "example": "import torch\nprint(torch.tensor([[0.1, 0.9]]).argmax(-1).item())",
+     "out": "1"
+    },
+    {
+     "kind": "pyterm",
+     "name": ".float().mean().item()",
+     "say": [
+      "`lg.argmax(-1) == yy` 는 맞았는지 틀렸는지의 참, 거짓 **텐서(Tensor)** 예요.",
+      "`.float()` 로 1 과 0 으로 바꾸고 `.mean()` 하면 맞힌 비율, 곧 **정확도(Accuracy)** 예요.",
+      "`.item()` 으로 파이썬 숫자를 꺼내요."
+     ],
+     "example": "import torch\nprint((torch.tensor([True, False]).float().mean().item()))",
+     "out": "0.5"
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "code",
+     "head": "토큰화해서 담기, 예측 함수, 학습 전 정확도",
+     "file": "Lab4 노트북 셀 19",
+     "code": "def encode(df):\n    '''Tokenize a dataframe into the list-of-dicts format the Trainer expects.'''\n    enc = tokenizer(df.document.tolist(), truncation=True, max_length=64)\n    return [{\"input_ids\": enc[\"input_ids\"][i],\n             \"attention_mask\": enc[\"attention_mask\"][i],\n             \"labels\": int(df.label.iloc[i])} for i in range(len(df))]\n\ntrain_ds = encode(train_df)\ntest_ds  = encode(test_df)\ncollator = DataCollatorWithPadding(tokenizer)\nprint(\"encoded:\", len(train_ds), \"train /\", len(test_ds), \"test\")\n\n@torch.no_grad()\ndef predict(model, dataset, bs=64):\n    '''Return (logits, labels) for a dataset, in evaluation mode.'''\n    model.eval().to(DEVICE)\n    logits, labels = [], []\n    for i in range(0, len(dataset), bs):\n        batch = collator(dataset[i:i + bs])\n        y = batch.pop(\"labels\")\n        batch = {k: v.to(DEVICE) for k, v in batch.items()}\n        logits.append(model(**batch).logits.cpu())\n        labels.append(y)\n    return torch.cat(logits), torch.cat(labels)\n\nset_seed(SEED)\nraw_clf = AutoModelForSequenceClassification.from_pretrained(MODEL_NAME, num_labels=2)\nlg, yy = predict(raw_clf, test_ds[:2000])\nacc_before = (lg.argmax(-1) == yy).float().mean().item()\nprint(\"\\naccuracy BEFORE finetuning : %.1f%%   (chance is 50%%)\" % (100 * acc_before))",
+     "lines": [
+      {
+       "from": 1,
+       "to": 3,
+       "say": "표를 받아 토큰화하는 함수예요. 64에서 **잘라내기(Truncation)** 해요."
+      },
+      {
+       "from": 4,
+       "to": 6,
+       "say": "**트레이너(Trainer)** 가 원하는 모양, 곧 사전들의 목록으로 만들어 돌려줘요."
+      },
+      {
+       "from": 8,
+       "to": 9,
+       "say": "학습용과 시험용을 각각 토큰화해요."
+      },
+      {
+       "from": 10,
+       "to": 11,
+       "say": "동적 **패딩(Padding)** 도구를 만들고, 담긴 개수를 출력해요."
+      },
+      {
+       "from": 13,
+       "to": 15,
+       "say": "**기울기(Gradient)** 없이 도는 예측 함수를 정의해요."
+      },
+      {
+       "from": 16,
+       "to": 17,
+       "say": "모델을 평가 모드로 GPU 에 올리고, 결과를 담을 빈 목록 둘을 만들어요."
+      },
+      {
+       "from": 18,
+       "to": 21,
+       "say": "64개씩 묶어 배치를 만들고, **레이블(Label)** 을 따로 빼고, 나머지를 GPU 로 옮겨요."
+      },
+      {
+       "from": 22,
+       "to": 24,
+       "say": "**로짓(Logits)** 과 레이블을 모아 두고, 마지막에 이어 붙여 돌려줘요."
+      },
+      {
+       "from": 26,
+       "to": 27,
+       "say": "씨앗을 다시 심고, 분류기로 모델을 불러와요. 이때 **과제 헤드(Task Head)** 가 무작위예요."
+      },
+      {
+       "from": 28,
+       "to": 30,
+       "say": "시험 앞 2,000건으로 예측하고, 학습 전 **정확도(Accuracy)** 를 출력해요."
+      }
+     ],
+     "link": "강의 N5 p.13 사전 학습은 파라미터 초기화"
+    },
+    {
+     "kind": "points",
+     "head": "강의 노트북에 저장된 출력",
+     "items": [
+      "`encoded: 15000 train / 5000 test`",
+      "`accuracy BEFORE finetuning : 57.0%   (chance is 50%)`"
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "57.0 퍼센트를 어떻게 읽나",
+     "steps": [
+      "**우연 수준(Chance Level)** 은 약 49.7 퍼센트예요.",
+      "학습 전 **정확도(Accuracy)** 는 57.0 퍼센트예요.",
+      "57.0 빼기 49.7 은 7.3 포인트예요.",
+      "노트북은 50 퍼센트 근처가 나와야 정상이라고 적었어요."
+     ],
+     "answer": "무작위 **과제 헤드(Task Head)** 로도 7.3 포인트가 붙어요. 무작위 방향이 어쩌다 조금 맞은 것이에요."
+    },
+    {
+     "kind": "points",
+     "head": "왜 여기서는 2,000건만 쓰나",
+     "items": [
+      "`test_ds[:2000]` 이라고 적혀 있어요. 시험 5,000건 중 앞 2,000건만 써요.",
+      "학습 전 값이라 빨리 보기만 하면 되니까요.",
+      "그래서 이 57.0 퍼센트는 뒤의 87.4 퍼센트와 잰 자가 조금 달라요.",
+      "**파라미터 초기화(Parameter Initialisation)** 가 무작위라 씨앗을 바꾸면 값이 흔들려요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "`test_ds[:2000]` 은 무엇을 뜻하나요?",
+     "choices": [
+      "시험 데이터 앞 2,000건만 쓴다는 뜻",
+      "2,000 **에폭(Epoch)** 을 돌린다는 뜻",
+      "**배치 크기(Batch Size)** 가 2,000 이라는 뜻",
+      "**잘라내기(Truncation)** 를 2,000에서 한다는 뜻"
+     ],
+     "a": 0,
+     "why": "파이썬의 자르기 문법이에요. 그래서 이 값은 전체 5,000건으로 잰 값과 자가 달라요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리는 점",
+     "items": [
+      "57.0 퍼센트는 '조금은 안다' 가 아니에요. 무작위 헤드가 어쩌다 한쪽으로 기운 것이에요.",
+      "씨앗을 바꾸면 이 값은 크게 흔들려요. 실행할 때마다 조금 달라져요.",
+      "예측에 **소프트맥스(Softmax)** 를 걸지 않았어요. 가장 큰 칸만 보면 되니까요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 16,
+   "title": "몸통은 한국어를 안다: 얼려 놓고 값어치를 재기",
+   "terms": [
+    "Body",
+    "Task Head",
+    "Freezing",
+    "Linear Probing",
+    "Logistic Regression",
+    "[CLS]",
+    "Gradient",
+    "Pre-training",
+    "Accuracy",
+    "Encoder"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "**몸통(Body)** 은 한국어를 아는데 **과제 헤드(Task Head)** 가 잡음이에요.",
+      "그래서 이 과제에 대해서는 모델 전체가 아직 쓸모없어요.",
+      "이제 **몸통(Body)** 이 얼마나 값어치를 하는지 싸게 재 봐요."
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "analogy",
+     "head": "동결은 엔진을 손대지 않고 계기판만 달기",
+     "scene": "차 엔진을 열지 않아요. 밖에 계기판만 하나 달아서 엔진이 내는 값을 읽어요.",
+     "map": [
+      [
+       "손대지 않는 엔진",
+       "얼린 **몸통(Body)**"
+      ],
+      [
+       "새로 단 계기판",
+       "**로지스틱 회귀(Logistic Regression)**"
+      ],
+      [
+       "엔진을 안 고침",
+       "**동결(Freezing)**, **기울기(Gradient)** 가 안 흘러요"
+      ],
+      [
+       "계기판이 읽는 값",
+       "**분류 토큰([CLS])** 벡터"
+      ]
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "영어 문장의 뜻",
+     "items": [
+      "**the body knows Korean, but the head is noise** = **몸통(Body)** 은 한국어를 알지만 헤드는 잡음이에요.",
+      "**the model as a whole is useless for this task** = 이 과제에 대해서는 모델 전체가 쓸모없어요.",
+      "**only the head is random** = 무작위인 것은 헤드뿐이에요.",
+      "**Here is a cheap way to measure what the pretrained body is worth** = **몸통(Body)** 의 값어치를 싸게 재는 방법이에요.",
+      "**No gradients flow into BERT at all** = BERT 쪽으로는 **기울기(Gradient)** 가 전혀 흐르지 않아요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "용어 하나하나",
+     "items": [
+      "**동결(Freezing)** = 가중치를 학습하지 않고 그대로 묶어 두는 것이에요.",
+      "**선형 프로빙(Linear Probing)** = 얼린 **몸통(Body)** 위에 직선 하나만 맞춰 보는 방법이에요.",
+      "**로지스틱 회귀(Logistic Regression)** = 직선 하나로 두 갈래를 가르는 가장 단순한 분류기예요.",
+      "**분류 토큰([CLS])** = 문장 맨 앞 특별 토큰이에요. 이 자리 벡터 하나가 문장 전체를 대표해요."
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "두 방법의 차이",
+     "cols": [
+      "항목",
+      "**선형 프로빙(Linear Probing)**",
+      "전체 **미세조정(Finetuning)**"
+     ],
+     "rows": [
+      [
+       "**몸통(Body)**",
+       "얼려요",
+       "함께 학습해요"
+      ],
+      [
+       "**기울기(Gradient)**",
+       "안 흘러요",
+       "끝까지 흘러요"
+      ],
+      [
+       "학습하는 것",
+       "직선 하나",
+       "약 1억 1천만 개"
+      ],
+      [
+       "재는 것",
+       "**사전 학습(Pre-training)** 의 값어치",
+       "실제로 쓸 성능"
+      ]
+     ]
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "points",
+     "head": "768 이라는 숫자",
+     "items": [
+      "**분류 토큰([CLS])** 자리의 벡터는 768칸이에요. BERT-base 의 은닉 차원이에요.",
+      "리뷰 한 줄이 768개 숫자 하나로 줄어들어요.",
+      "그 768개 숫자만 보고 긍정, 부정을 가르는 직선을 찾아요.",
+      "**인코더(Encoder)** 라서 문장 전체를 보고 이 벡터를 만들어요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "왜 이 실험이 값진가",
+     "items": [
+      "**몸통(Body)** 을 학습시키지 않으니 몇십 초면 끝나요.",
+      "결과가 높으면 **사전 학습(Pre-training)** 된 표현이 이미 좋다는 뜻이에요.",
+      "결과가 낮으면 **미세조정(Finetuning)** 을 해도 크게 안 오를 거라는 신호예요.",
+      "강의 N5 p.46 의 PEFT 도 **몸통(Body)** 을 얼리는 방식이에요. 생각이 같아요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "**동결(Freezing)** 이란 무엇인가요?",
+     "choices": [
+      "가중치를 학습하지 않고 그대로 묶어 두는 것",
+      "모델을 GPU 에서 내리는 것",
+      "**잘라내기(Truncation)** 를 하는 것",
+      "**배치 크기(Batch Size)** 를 줄이는 것"
+     ],
+     "a": 0,
+     "why": "**기울기(Gradient)** 가 흐르지 않아요. 그래서 그 부분은 배우지 않아요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리는 점",
+     "items": [
+      "**선형 프로빙(Linear Probing)** 은 성능을 올리려는 것이 아니라 **몸통(Body)** 을 재려는 실험이에요.",
+      "**분류 토큰([CLS])** 벡터 하나가 문장 전체를 대표한다는 것이 이 방법의 가정이에요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 17,
+   "title": "얼린 BERT 에 로지스틱 회귀 하나: 81.8 퍼센트",
+   "terms": [
+    "Freezing",
+    "Linear Probing",
+    "Logistic Regression",
+    "[CLS]",
+    "Body",
+    "Accuracy",
+    "Gradient",
+    "Tensor",
+    "Padding",
+    "Truncation",
+    "Chance Level"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "**몸통(Body)** 을 완전히 얼리고 **분류 토큰([CLS])** 벡터만 뽑아요.",
+      "그 위에 **로지스틱 회귀(Logistic Regression)** 하나를 맞춰요.",
+      "결과가 81.8 퍼센트예요. BERT 는 한 걸음도 학습하지 않았어요."
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "pyterm",
+     "name": "base.bert 로 몸통만 꺼내기",
+     "say": [
+      "분류기 모델은 **몸통(Body)** 과 **과제 헤드(Task Head)** 로 되어 있어요.",
+      "`base.bert` 는 그 안에서 **몸통(Body)** 만 꺼내는 것이에요.",
+      "`.eval()` 로 평가 모드로 두면 학습용 장치가 꺼져요."
+     ],
+     "example": "class M:\n    bert = \"body\"\nprint(M.bert)",
+     "out": "body"
+    },
+    {
+     "kind": "pyterm",
+     "name": ".last_hidden_state[:, 0]",
+     "say": [
+      "`bert_body(**enc).last_hidden_state` 는 모든 자리의 벡터를 담은 **텐서(Tensor)** 예요.",
+      "모양은 (문장 수, 토큰 수, 768) 이에요.",
+      "`[:, 0]` 은 각 문장의 0번 자리, 곧 **분류 토큰([CLS])** 벡터만 고르는 것이에요."
+     ],
+     "example": "import torch\nprint(torch.zeros(2, 5, 768)[:, 0].shape)",
+     "out": "torch.Size([2, 768])"
+    },
+    {
+     "kind": "pyterm",
+     "name": "padding=True 와 np.vstack",
+     "say": [
+      "`padding=True` 는 이 묶음에서 가장 긴 문장에 맞춰 **패딩(Padding)** 을 채워요.",
+      "`truncation=True, max_length=64` 는 64에서 **잘라내기(Truncation)** 예요.",
+      "`np.vstack(out)` 은 64개씩 나온 조각들을 위아래로 쌓아 하나의 표로 만들어요."
+     ],
+     "example": "import numpy as np\nprint(np.vstack([np.zeros((2, 3)), np.zeros((1, 3))]).shape)",
+     "out": "(3, 3)"
+    },
+    {
+     "kind": "pyterm",
+     "name": "LogisticRegression().fit 과 .score",
+     "say": [
+      "`LogisticRegression(max_iter=2000).fit(X, y)` 는 직선을 찾아 학습해요.",
+      "`max_iter=2000` 은 최대 2,000번까지 고쳐 보라는 뜻이에요.",
+      "`lr.score(X, y)` 는 맞힌 비율, 곧 **정확도(Accuracy)** 를 바로 돌려줘요."
+     ],
+     "example": "from sklearn.linear_model import LogisticRegression\nprint(LogisticRegression().max_iter)",
+     "out": "100"
+    },
+    {
+     "kind": "pyterm",
+     "name": "del 과 torch.cuda.empty_cache()",
+     "say": [
+      "`del base, bert_body` 는 그 이름을 지워 메모리를 놓아 줘요.",
+      "`torch.cuda.empty_cache()` 는 GPU 가 잡아 둔 빈 메모리를 돌려줘요.",
+      "다음 셀에서 새 모델을 올려야 하니 자리를 비우는 것이에요."
+     ],
+     "example": "x = [1, 2]\ndel x\nprint(\"gone\")",
+     "out": "gone"
+    },
+    {
+     "kind": "points",
+     "head": "강의 슬라이드 짝",
+     "items": [
+      "강의 N5 p.46 You Need Not Move Every Weight 가 **몸통(Body)** 을 얼리는 생각이에요.",
+      "그 슬라이드의 PEFT 는 얼린 몸통에 작은 어댑터를 붙여 약 1 퍼센트만 학습해요.",
+      "여기서는 어댑터 대신 **로지스틱 회귀(Logistic Regression)** 를 밖에 붙였어요.",
+      "N5 p.42 는 **사전 학습(Pre-training)** 이 무엇을 가르쳤나를 묻는 슬라이드예요."
+     ]
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "code",
+     "head": "얼린 몸통에서 [CLS] 벡터를 뽑아 직선 하나 맞추기",
+     "file": "Lab4 노트북 셀 21",
+     "code": "from sklearn.linear_model import LogisticRegression\n\nbase = AutoModelForSequenceClassification.from_pretrained(MODEL_NAME, num_labels=2)\nbert_body = base.bert.to(DEVICE).eval()\n\n@torch.no_grad()\ndef cls_vectors(df, bs=64):\n    '''Mean-free sentence vectors: take the [CLS] hidden state of the frozen encoder.'''\n    out = []\n    for i in range(0, len(df), bs):\n        chunk = df.document.iloc[i:i + bs].tolist()\n        enc = tokenizer(chunk, truncation=True, max_length=64,\n                        padding=True, return_tensors=\"pt\").to(DEVICE)\n        h = bert_body(**enc).last_hidden_state[:, 0]      # [CLS] position\n        out.append(h.cpu().numpy())\n    return np.vstack(out)\n\nt0 = time.time()\nXtr = cls_vectors(train_df.iloc[:5000])\nXte = cls_vectors(test_df.iloc[:2000])\nprint(\"extracted features in %.1f min\" % ((time.time() - t0) / 60))\n\nlr = LogisticRegression(max_iter=2000).fit(Xtr, train_df.label.iloc[:5000])\nacc_frozen = lr.score(Xte, test_df.label.iloc[:2000])\nprint(\"accuracy with a FROZEN BERT + logistic regression : %.1f%%\" % (100 * acc_frozen))\n\ndel base, bert_body\nif DEVICE == \"cuda\":\n    torch.cuda.empty_cache()",
+     "lines": [
+      {
+       "from": 1,
+       "to": 1,
+       "say": "sklearn 의 **로지스틱 회귀(Logistic Regression)** 를 불러와요."
+      },
+      {
+       "from": 3,
+       "to": 4,
+       "say": "분류기를 불러온 뒤 `base.bert` 로 **몸통(Body)** 만 꺼내 평가 모드로 둬요."
+      },
+      {
+       "from": 6,
+       "to": 8,
+       "say": "**기울기(Gradient)** 없이 도는 함수를 정의해요. 설명글에 얼린 인코더의 [CLS] 은닉 상태를 쓴다고 적혀 있어요."
+      },
+      {
+       "from": 9,
+       "to": 11,
+       "say": "담을 목록을 만들고, 리뷰를 64개씩 잘라 가져와요."
+      },
+      {
+       "from": 12,
+       "to": 13,
+       "say": "64개를 한 번에 토큰화해요. **잘라내기(Truncation)** 64, **패딩(Padding)** 은 이 묶음 기준이에요."
+      },
+      {
+       "from": 14,
+       "to": 15,
+       "say": "주석처럼 [CLS] 자리의 768칸 벡터만 골라 NumPy 로 담아요."
+      },
+      {
+       "from": 16,
+       "to": 16,
+       "say": "조각들을 위아래로 쌓아 하나의 표로 돌려줘요."
+      },
+      {
+       "from": 18,
+       "to": 21,
+       "say": "시간을 재면서 학습 5,000건, 시험 2,000건의 벡터를 뽑고 걸린 시간을 찍어요."
+      },
+      {
+       "from": 23,
+       "to": 25,
+       "say": "직선을 학습하고 시험 **정확도(Accuracy)** 를 재서 출력해요."
+      },
+      {
+       "from": 27,
+       "to": 29,
+       "say": "쓴 모델을 지우고 GPU 메모리를 돌려줘요."
+      }
+     ],
+     "link": "강의 N5 p.46 PEFT 도 몸통을 얼려요"
+    },
+    {
+     "kind": "points",
+     "head": "강의 노트북에 저장된 출력",
+     "items": [
+      "`extracted features in 0.4 min`",
+      "`accuracy with a FROZEN BERT + logistic regression : 81.8%`"
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "81.8 퍼센트가 얼마나 큰 숫자인가",
+     "steps": [
+      "**우연 수준(Chance Level)** 약 49.7 퍼센트에서 출발해요.",
+      "무작위 헤드로는 57.0 퍼센트였어요.",
+      "얼린 **몸통(Body)** 에 직선 하나만 얹으니 81.8 퍼센트예요.",
+      "81.8 빼기 57.0 은 24.8 포인트예요."
+     ],
+     "answer": "24.8 포인트가 전부 **사전 학습(Pre-training)** 이 지불한 값이에요. BERT 가중치는 하나도 안 움직였어요."
+    },
+    {
+     "kind": "points",
+     "head": "걸린 시간과 쓴 데이터",
+     "items": [
+      "`extracted features in 0.4 min` 이니 벡터 뽑기는 약 24초예요.",
+      "학습에 5,000건, 시험에 2,000건만 썼어요. 전체 미세조정과 자가 달라요.",
+      "이 시간은 GPU 상태에 따라 실행할 때마다 조금 달라요.",
+      "**동결(Freezing)** 이라 **기울기(Gradient)** 계산이 없어서 이렇게 빨라요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "81.8 퍼센트를 얻을 때 BERT **몸통(Body)** 의 가중치는 몇 개 움직였나요?",
+     "choices": [
+      "하나도 안 움직였어요",
+      "전부 움직였어요",
+      "약 1 퍼센트만",
+      "**과제 헤드(Task Head)** 만"
+     ],
+     "a": 0,
+     "why": "`@torch.no_grad()` 와 `.eval()` 로 얼려 두고 **분류 토큰([CLS])** 벡터만 뽑아 썼어요."
+    },
+    {
+     "kind": "check",
+     "q": "**선형 프로빙(Linear Probing)** 이 재는 것은?",
+     "choices": [
+      "**사전 학습(Pre-training)** 된 표현이 이미 얼마나 잘 갈라 놓았는지",
+      "GPU 속도",
+      "**잘라내기(Truncation)** 길이",
+      "**레이블(Label)** 의 정확함"
+     ],
+     "a": 0,
+     "why": "직선 하나로 81.8 퍼센트가 나온다는 것은 표현이 이미 꽤 갈려 있다는 뜻이에요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리는 점",
+     "items": [
+      "이 실험은 학습 5,000건, 시험 2,000건이에요. 뒤의 87.4 퍼센트는 15,000건과 5,000건이에요.",
+      "**로지스틱 회귀(Logistic Regression)** 는 BERT 밖에 있어요. BERT 안의 헤드가 아니에요.",
+      "`0.4 min` 은 GPU 사정에 따라 달라요. 비교할 값이 아니에요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 18,
+   "title": "이 숫자를 기억해 두세요: 81.8 퍼센트",
+   "terms": [
+    "Linear Probing",
+    "Freezing",
+    "Chance Level",
+    "Accuracy",
+    "Pre-training",
+    "Body",
+    "Logistic Regression"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "BERT 를 전혀 학습시키지 않았는데 81.8 퍼센트가 나왔어요.",
+      "**사전 학습(Pre-training)** 된 표현이 이미 긍정과 부정을 꽤 갈라 놓았다는 뜻이에요.",
+      "이 숫자를 기억해 두고, 마지막에 전체 **미세조정(Finetuning)** 과 비교해요."
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "points",
+     "head": "영어 문장의 뜻",
+     "items": [
+      "**Well above chance** = **우연 수준(Chance Level)** 을 크게 웃돌아요.",
+      "**with zero training of BERT itself** = BERT 자체는 전혀 학습하지 않았어요.",
+      "**The pretrained representations already separate positive from negative** = **사전 학습(Pre-training)** 된 표현이 이미 둘을 갈라 놓았어요.",
+      "**a linear boundary is enough to find most of it** = 직선 하나로 그 대부분을 찾을 수 있어요.",
+      "**Keep this number** = 이 숫자를 기억해 두세요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "용어 하나하나",
+     "items": [
+      "표현(representation) = **몸통(Body)** 이 만든 벡터를 말해요. 리뷰 하나가 768칸 숫자가 돼요.",
+      "선형 경계(linear boundary) = 직선 하나로 가르는 것이에요. **로지스틱 회귀(Logistic Regression)** 가 찾아요.",
+      "**동결(Freezing)** 을 했으니 이 결과는 **사전 학습(Pre-training)** 만의 몫이에요.",
+      "이 방법을 **선형 프로빙(Linear Probing)** 이라고 불러요."
+     ]
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "steps",
+     "head": "세 숫자를 나란히 놓기",
+     "steps": [
+      "항상 한쪽으로만 찍기: 약 49.7 퍼센트, 곧 **우연 수준(Chance Level)** 이에요.",
+      "**사전 학습(Pre-training)** 된 **몸통(Body)** + 무작위 헤드: 57.0 퍼센트",
+      "얼린 BERT + **로지스틱 회귀(Logistic Regression)**: 81.8 퍼센트",
+      "81.8 빼기 49.7 은 32.1 포인트예요."
+     ],
+     "answer": "직선 하나를 맞추는 일만 했는데 32 포인트가 올라요. 값은 **사전 학습(Pre-training)** 이 미리 지불했어요."
+    },
+    {
+     "kind": "points",
+     "head": "왜 이 비교가 중요한가",
+     "items": [
+      "**미세조정(Finetuning)** 이 실제로 더해 주는 몫을 따로 떼어 볼 수 있어요.",
+      "이 숫자가 없으면 87.4 퍼센트가 어디서 온 것인지 알 수 없어요.",
+      "프로젝트 보고서에서도 이렇게 바닥부터 쌓아 올려 보여 주는 것이 좋아요.",
+      "강의 N5 p.48 Why This Paradigm Won 과 같은 이야기예요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "81.8 퍼센트가 뜻하는 것은?",
+     "choices": [
+      "**사전 학습(Pre-training)** 만으로 이미 긍정과 부정이 꽤 갈려 있다는 것",
+      "**미세조정(Finetuning)** 이 필요 없다는 것",
+      "데이터가 잘못됐다는 것",
+      "GPU 가 빠르다는 것"
+     ],
+     "a": 0,
+     "why": "직선 하나로 이만큼 나온다는 것이 그 증거예요. 그래도 뒤에서 5.6 포인트를 더 얻어요."
+    },
+    {
+     "kind": "english",
+     "head": "시험 답안에 쓸 문장",
+     "en": "몸통을 얼린 채 [CLS] 벡터에 직선 하나만 맞춰도 우연 수준보다 훨씬 높은 정확도가 나오므로, 사전 학습된 표현 자체가 이미 과제 정보를 담고 있다고 말할 수 있다.",
+     "ko": "핵심은 세 가지예요. 몸통 동결, 직선 하나, 그래도 크게 오름.",
+     "tip": "외우는 요령: 49.7 -> 57.0 -> 81.8 -> 87.4 네 숫자를 순서로 외우세요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리는 점",
+     "items": [
+      "노트북 본문은 이 숫자를 81.8 퍼센트라고 썼고 출력도 81.8 퍼센트예요. 여기는 어긋나지 않아요.",
+      "다음 쪽 뒤에 나오는 본문에서는 81.9 퍼센트라고 적혀 있어요. 출력 숫자를 따르세요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 19,
+   "title": "Part 3 트레이너로 미세조정: 레시피는 네 숫자뿐",
+   "terms": [
+    "Trainer",
+    "Hugging Face",
+    "Learning Rate",
+    "Epoch",
+    "Batch Size",
+    "Warmup",
+    "Overfitting",
+    "Finetuning",
+    "Task Head",
+    "Body",
+    "Gradient",
+    "Memorization",
+    "Supervised Learning",
+    "Label",
+    "Self-Supervision",
+    "Downstream Task",
+    "Masked Language Modelling (MLM)"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "이제 **몸통(Body)** 까지 **기울기(Gradient)** 를 흘려요.",
+      "**허깅페이스(Hugging Face)** **트레이너(Trainer)** 가 학습 루프를 다 해 줘요.",
+      "우리가 제대로 정해야 하는 것은 레시피, 곧 네 숫자뿐이에요."
+     ]
+    },
+    {
+     "kind": "analogy",
+     "head": "학습률은 보폭",
+     "scene": "안개 낀 산에서 발밑 기울기만 보고 내려가요. 보폭이 너무 크면 골짜기를 지나쳐 버려요.",
+     "map": [
+      [
+       "산 내려가기",
+       "경사 하강법"
+      ],
+      [
+       "보폭",
+       "**학습률(Learning Rate)**"
+      ],
+      [
+       "처음 몇 걸음은 살살",
+       "**워밍업(Warmup)**"
+      ],
+      [
+       "산을 몇 번 다 돌기",
+       "**에폭(Epoch)**"
+      ]
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "points",
+     "head": "영어 문장의 뜻",
+     "items": [
+      "**Now we let gradients flow into the whole model** = 이제 모델 전체로 **기울기(Gradient)** 를 흘려요.",
+      "**handles the training loop, evaluation, checkpointing and logging** = 학습 루프, 평가, 저장, 기록을 다 해 줘요.",
+      "**the only thing we really have to get right is the recipe** = 우리가 제대로 정할 것은 레시피뿐이에요.",
+      "**and the recipe is short** = 그리고 레시피는 짧아요.",
+      "**we are nudging, not rebuilding** = 우리는 슬쩍 밀어 주는 것이지 새로 짓는 게 아니에요."
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "강의 N5 p.44 의 레시피 네 줄",
+     "cols": [
+      "항목",
+      "값",
+      "왜"
+     ],
+     "rows": [
+      [
+       "**학습률(Learning Rate)**",
+       "2e-5",
+       "사전 학습보다 약 100배 작아요"
+      ],
+      [
+       "**에폭(Epoch)**",
+       "2",
+       "3에서 4를 넘으면 학습 데이터를 외우기 시작해요"
+      ],
+      [
+       "**배치 크기(Batch Size)**",
+       "32",
+       "메모리에 들어가는 만큼"
+      ],
+      [
+       "**워밍업(Warmup)**",
+       "처음 약 10 퍼센트 걸음",
+       "새 헤드가 잡음이라 몸통을 망가뜨리지 않게"
+      ]
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "용어 하나하나",
+     "items": [
+      "**학습률(Learning Rate)** = 한 걸음의 보폭이에요. 2e-5 는 0.00002 예요.",
+      "**에폭(Epoch)** = 학습 데이터를 처음부터 끝까지 한 번 다 보는 것이에요.",
+      "**배치 크기(Batch Size)** = 한 걸음에 함께 보는 예시 개수예요.",
+      "**워밍업(Warmup)** = 처음 몇 걸음은 학습률을 0 에서 천천히 올리는 것이에요.",
+      "**과적합(Overfitting)** = 학습 데이터만 잘 맞히고 새 데이터에서는 못 맞히는 상태예요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "강의 슬라이드 짝",
+     "items": [
+      "N5 p.44 미세조정 레시피가 이 표의 숫자예요.",
+      "그 슬라이드는 가장 흔한 실수가 사전 학습 학습률을 그대로 쓰는 것이라고 했어요.",
+      "N5 p.43 It Also Remembers 가 **암기(Memorization)** 이야기예요. 에폭을 늘리면 그렇게 돼요.",
+      "N5 p.13 은 **사전 학습(Pre-training)** 이 출발점을 고르는 일이라고 했어요."
+     ]
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "steps",
+     "head": "걸음 수와 **워밍업(Warmup)** 걸음 수 손계산",
+     "steps": [
+      "학습 데이터 15,000건, **배치 크기(Batch Size)** 32 예요.",
+      "한 **에폭(Epoch)** 의 걸음 수 = 15,000 나누기 32 = 468.75 -> 올려서 469 걸음",
+      "2 에폭이니 전체 걸음 수 = 469 곱하기 2 = 938 걸음",
+      "**워밍업(Warmup)** = 938 의 10 퍼센트 = 93.8 -> 버려서 93 걸음"
+     ],
+     "answer": "938 걸음 중 앞 93 걸음이 **워밍업(Warmup)** 이에요. 코드의 `max(1, int(0.1 * total_steps))` 가 이 계산이에요."
+    },
+    {
+     "kind": "points",
+     "head": "왜 학습률이 그렇게 작은가",
+     "items": [
+      "**몸통(Body)** 은 이미 좋은 값이에요. 크게 움직이면 알던 것을 잊어요.",
+      "강의 N5 p.44 는 2e-5 에서 5e-5 를, 사전 학습보다 100배 작다고 했어요.",
+      "노트북 마무리 셀은 10배 큰 2e-4 로 돌리면 정확도가 무너진다고 알려 줘요.",
+      "그것이 강의에서 말한 catastrophic forgetting 이에요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "**지도 학습(Supervised Learning)** 으로 바뀌는 자리",
+     "items": [
+      "**사전 학습(Pre-training)** 은 **레이블(Label)** 없이 했어요.",
+      "여기서부터는 사람이 붙인 **레이블(Label)** 을 봐요. 곧 **지도 학습(Supervised Learning)** 이에요.",
+      "그래서 데이터가 비싸고, 몇 개면 되는지가 중요한 질문이 돼요.",
+      "그 질문은 Part 5 에서 직접 재 봐요.",
+      "**사전 학습(Pre-training)** 쪽은 **마스크 언어 모델(Masked Language Modelling (MLM))** 로 **자기 지도 학습(Self-Supervision)** 했어요.",
+      "우리 **다운스트림 과제(Downstream Task)** 는 긍정, 부정 두 갈래 분류예요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "**미세조정(Finetuning)** 의 **학습률(Learning Rate)** 이 사전 학습보다 훨씬 작은 까닭은?",
+     "choices": [
+      "**몸통(Body)** 이 이미 아는 것을 망가뜨리지 않으려고",
+      "GPU 가 느려서",
+      "**배치 크기(Batch Size)** 가 작아서",
+      "**레이블(Label)** 이 적어서"
+     ],
+     "a": 0,
+     "why": "강의 N5 p.44 의 핵심이에요. 슬쩍 밀어 주는 것이지 새로 짓는 것이 아니에요."
+    },
+    {
+     "kind": "check",
+     "q": "15,000건을 **배치 크기(Batch Size)** 32 로 2 **에폭(Epoch)** 돌면 걸음 수는?",
+     "choices": [
+      "938 걸음",
+      "469 걸음",
+      "15,000 걸음",
+      "32 걸음"
+     ],
+     "a": 0,
+     "why": "한 에폭 469 걸음(15,000 나누기 32 를 올림), 곱하기 2 에폭이에요."
+    },
+    {
+     "kind": "english",
+     "head": "시험 답안에 쓸 문장",
+     "en": "미세조정 레시피는 학습률 2e-5 에서 5e-5, 에폭 2에서 4, 배치 크기 16 또는 32, 워밍업 처음 약 10 퍼센트 걸음이며, 가장 흔한 실수는 사전 학습 학습률을 그대로 쓰는 것이다.",
+     "ko": "네 숫자와 실수 하나를 함께 외워요. 강의 N5 p.44 그대로예요.",
+     "tip": "외우는 요령: 작은 보폭, 짧은 에폭, 적당한 배치, 살살 출발."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리는 점",
+     "items": [
+      "노트북 표의 에폭 칸에는 3에서 4를 넘으면 외운다고 적혀 있고, 실제 설정은 2 에폭이에요.",
+      "**워밍업(Warmup)** 은 학습률을 올리는 구간이에요. 학습을 쉬는 구간이 아니에요.",
+      "노트북 원본 표에는 이 자리에 다른 줄표가 쓰여 있어요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 20,
+   "title": "미세조정 함수 한 덩어리: 48줄을 둘로 나눠 읽기",
+   "terms": [
+    "Trainer",
+    "Accuracy",
+    "F1 Score",
+    "Batch Size",
+    "Learning Rate",
+    "Epoch",
+    "Warmup",
+    "Logits",
+    "Label",
+    "Hugging Face",
+    "Overfitting",
+    "Loss Function"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "이 셀은 48줄이에요. 이 노트북에서 가장 긴 셀이에요.",
+      "하는 일은 하나예요. 미세조정 한 번을 함수로 묶어 둬요.",
+      "그래야 15,000건, 2,000건, 500건으로 여러 번 부를 수 있어요."
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "pyterm",
+     "name": "from sklearn.metrics import accuracy_score, f1_score",
+     "say": [
+      "`accuracy_score(정답, 예측)` 은 **정확도(Accuracy)** 를 재요.",
+      "`f1_score(정답, 예측)` 은 **F1 점수(F1 Score)** 를 재요.",
+      "**F1 점수(F1 Score)** 는 정밀도와 재현율을 함께 본 값이에요."
+     ],
+     "example": "from sklearn.metrics import accuracy_score\nprint(accuracy_score([1, 0], [1, 1]))",
+     "out": "0.5"
+    },
+    {
+     "kind": "pyterm",
+     "name": "np.argmax(logits, axis=-1)",
+     "say": [
+      "`logits` 는 **로짓(Logits)** 표예요. 문장마다 2칸이에요.",
+      "`np.argmax(..., axis=-1)` 은 각 줄에서 큰 칸의 번호를 골라요. 곧 예측 **레이블(Label)** 이에요.",
+      "0 이면 부정, 1 이면 긍정이에요."
+     ],
+     "example": "import numpy as np\nprint(np.argmax([[0.2, 0.8]], axis=-1))",
+     "out": "[1]"
+    },
+    {
+     "kind": "pyterm",
+     "name": "math.ceil 과 max(1, int(...))",
+     "say": [
+      "`math.ceil(15000 / 32)` 은 468.75 를 469 로 올려요. 걸음은 소수가 될 수 없으니까요.",
+      "`int(0.1 * total_steps)` 은 소수를 버려요. 93.8 이 93 이 돼요.",
+      "`max(1, ...)` 은 결과가 0 이 되지 않게 막아요. 데이터가 아주 적을 때를 위한 안전장치예요."
+     ],
+     "example": "import math\nprint(math.ceil(15000 / 32), int(0.1 * 938))",
+     "out": "469 93"
+    },
+    {
+     "kind": "pyterm",
+     "name": "f-string 으로 이름 만들기",
+     "say": [
+      "`f\"out_{tag}\"` 은 tag 가 main 이면 out_main 이 돼요.",
+      "`tag=f\"n{n}\"` 은 n 이 500 이면 n500 이 돼요.",
+      "여러 번 실험할 때 저장 폴더 이름이 겹치지 않게 하는 요령이에요."
+     ],
+     "example": "tag = \"main\"\nprint(f\"out_{tag}\")",
+     "out": "out_main"
+    },
+    {
+     "kind": "pyterm",
+     "name": "fp16 과 여러 값 return",
+     "say": [
+      "`fp16=(DEVICE == \"cuda\")` 는 GPU 면 16비트 계산을 켜요. 메모리를 아끼고 빨라져요.",
+      "`return trainer, m, logits, labels` 는 네 값을 한 번에 돌려줘요.",
+      "받는 쪽도 `a, b, c, d = finetune(...)` 처럼 네 이름으로 받아요."
+     ],
+     "example": "def f():\n    return 1, 2\na, b = f()\nprint(a, b)",
+     "out": "1 2"
+    },
+    {
+     "kind": "points",
+     "head": "설정 이름 읽기",
+     "items": [
+      "`eval_strategy=\"no\"` 는 학습 중간에 평가하지 않는다는 뜻이에요. 우리가 끝에 직접 재요.",
+      "`save_strategy=\"no\"` 는 체크포인트를 저장하지 않는다는 뜻이에요. 디스크를 아껴요.",
+      "`logging_steps=100` 은 100걸음마다 **손실 함수(Loss Function)** 값을 찍으라는 뜻이에요.",
+      "`weight_decay=0.01` 은 가중치가 너무 커지지 않게 눌러 주는 것이에요. **과적합(Overfitting)** 을 조금 막아요.",
+      "`processing_class=tokenizer` 는 요즘 버전에서 토크나이저를 넘기는 이름이에요."
+     ]
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "code",
+     "head": "설정 만들기까지 (1/2)",
+     "file": "Lab4 노트북 셀 24 (1/2)",
+     "code": "from sklearn.metrics import accuracy_score, f1_score\n\ndef compute_metrics(eval_pred):\n    logits, labels = eval_pred\n    preds = np.argmax(logits, axis=-1)\n    return {\"accuracy\": accuracy_score(labels, preds),\n            \"f1\": f1_score(labels, preds)}\n\nBATCH, LR, EPOCHS = 32, 2e-5, 2\n\ndef finetune(n_train, epochs=EPOCHS, tag=\"run\", log_every=100):\n    '''Finetune klue/bert-base on the first n_train examples. Returns (trainer, metrics).'''\n    set_seed(SEED)\n    model = AutoModelForSequenceClassification.from_pretrained(MODEL_NAME, num_labels=2)\n    subset = train_ds[:n_train]\n    total_steps = math.ceil(len(subset) / BATCH) * epochs\n\n    args = make_training_args(\n        output_dir=f\"out_{tag}\",\n        learning_rate=LR,\n        per_device_train_batch_size=BATCH,\n        per_device_eval_batch_size=64,\n        num_train_epochs=epochs,\n        warmup_steps=max(1, int(0.1 * total_steps)),\n        weight_decay=0.01,\n        eval_strategy=\"no\",\n        save_strategy=\"no\",\n        logging_steps=log_every,\n        seed=SEED,\n        report_to=[],\n        fp16=(DEVICE == \"cuda\"),\n    )\n    trainer = Trainer(model=model, args=args, train_dataset=subset,\n                      data_collator=collator, compute_metrics=compute_metrics,\n                      processing_class=tokenizer)\n\n    t0 = time.time()\n    trainer.train()\n    mins = (time.time() - t0) / 60\n\n    logits, labels = predict(model, test_ds)\n    m = {\"n_train\": n_train,\n         \"accuracy\": accuracy_score(labels, logits.argmax(-1)),\n         \"f1\": f1_score(labels, logits.argmax(-1)),\n         \"minutes\": mins}\n    print(\"\\n[%s]  n_train=%d  accuracy=%.4f  f1=%.4f  (%.1f min)\"\n          % (tag, n_train, m[\"accuracy\"], m[\"f1\"], mins))\n    return trainer, m, logits, labels",
+     "lines": [
+      {
+       "from": 1,
+       "to": 1,
+       "say": "sklearn 의 **정확도(Accuracy)** 와 **F1 점수(F1 Score)** 함수를 불러와요."
+      },
+      {
+       "from": 3,
+       "to": 7,
+       "say": "**트레이너(Trainer)** 가 부를 채점 함수예요. **로짓(Logits)** 에서 예측을 뽑아 두 지표를 사전으로 돌려줘요."
+      },
+      {
+       "from": 9,
+       "to": 9,
+       "say": "레시피 세 숫자예요. **배치 크기(Batch Size)** 32, **학습률(Learning Rate)** 2e-5, **에폭(Epoch)** 2 예요."
+      },
+      {
+       "from": 11,
+       "to": 12,
+       "say": "미세조정 한 번을 하는 함수를 정의해요. 설명글에 앞 n_train 개로 학습한다고 적혀 있어요."
+      },
+      {
+       "from": 13,
+       "to": 14,
+       "say": "씨앗을 다시 심고, 모델을 새로 불러와요. 매번 같은 출발점에서 시작하려는 것이에요."
+      },
+      {
+       "from": 15,
+       "to": 15,
+       "say": "학습 데이터 앞 n_train 개만 잘라 써요."
+      },
+      {
+       "from": 16,
+       "to": 16,
+       "say": "전체 걸음 수를 계산해요. 데이터 수를 배치로 나눠 올리고, **에폭(Epoch)** 을 곱해요."
+      },
+      {
+       "from": 18,
+       "to": 19,
+       "say": "설정을 만들기 시작해요. 저장 폴더 이름에 tag 를 넣어요."
+      },
+      {
+       "from": 20,
+       "to": 23,
+       "say": "**학습률(Learning Rate)**, 학습과 평가의 **배치 크기(Batch Size)**, **에폭(Epoch)** 을 넣어요."
+      },
+      {
+       "from": 24,
+       "to": 24,
+       "say": "**워밍업(Warmup)** 걸음 수를 전체의 10 퍼센트로 정해요. 최소 1 걸음이에요."
+      }
+     ],
+     "link": "강의 N5 p.44 The Finetuning Recipe"
+    },
+    {
+     "kind": "code",
+     "head": "학습하고 지표 재기까지 (2/2)",
+     "file": "Lab4 노트북 셀 24 (2/2)",
+     "code": "from sklearn.metrics import accuracy_score, f1_score\n\ndef compute_metrics(eval_pred):\n    logits, labels = eval_pred\n    preds = np.argmax(logits, axis=-1)\n    return {\"accuracy\": accuracy_score(labels, preds),\n            \"f1\": f1_score(labels, preds)}\n\nBATCH, LR, EPOCHS = 32, 2e-5, 2\n\ndef finetune(n_train, epochs=EPOCHS, tag=\"run\", log_every=100):\n    '''Finetune klue/bert-base on the first n_train examples. Returns (trainer, metrics).'''\n    set_seed(SEED)\n    model = AutoModelForSequenceClassification.from_pretrained(MODEL_NAME, num_labels=2)\n    subset = train_ds[:n_train]\n    total_steps = math.ceil(len(subset) / BATCH) * epochs\n\n    args = make_training_args(\n        output_dir=f\"out_{tag}\",\n        learning_rate=LR,\n        per_device_train_batch_size=BATCH,\n        per_device_eval_batch_size=64,\n        num_train_epochs=epochs,\n        warmup_steps=max(1, int(0.1 * total_steps)),\n        weight_decay=0.01,\n        eval_strategy=\"no\",\n        save_strategy=\"no\",\n        logging_steps=log_every,\n        seed=SEED,\n        report_to=[],\n        fp16=(DEVICE == \"cuda\"),\n    )\n    trainer = Trainer(model=model, args=args, train_dataset=subset,\n                      data_collator=collator, compute_metrics=compute_metrics,\n                      processing_class=tokenizer)\n\n    t0 = time.time()\n    trainer.train()\n    mins = (time.time() - t0) / 60\n\n    logits, labels = predict(model, test_ds)\n    m = {\"n_train\": n_train,\n         \"accuracy\": accuracy_score(labels, logits.argmax(-1)),\n         \"f1\": f1_score(labels, logits.argmax(-1)),\n         \"minutes\": mins}\n    print(\"\\n[%s]  n_train=%d  accuracy=%.4f  f1=%.4f  (%.1f min)\"\n          % (tag, n_train, m[\"accuracy\"], m[\"f1\"], mins))\n    return trainer, m, logits, labels",
+     "lines": [
+      {
+       "from": 25,
+       "to": 25,
+       "say": "가중치가 너무 커지지 않게 0.01 만큼 눌러요."
+      },
+      {
+       "from": 26,
+       "to": 27,
+       "say": "학습 중간 평가와 체크포인트 저장을 둘 다 끄고요."
+      },
+      {
+       "from": 28,
+       "to": 30,
+       "say": "100걸음마다 기록하고, 씨앗을 넣고, 외부 기록 도구는 쓰지 않아요."
+      },
+      {
+       "from": 31,
+       "to": 32,
+       "say": "GPU 면 16비트 계산을 켜요. 설정 만들기가 끝나요."
+      },
+      {
+       "from": 33,
+       "to": 35,
+       "say": "모델, 설정, 학습 데이터, **패딩(Padding)** 도구, 채점 함수, **토크나이저(Tokenizer)** 를 넘겨 **트레이너(Trainer)** 를 만들어요."
+      },
+      {
+       "from": 37,
+       "to": 39,
+       "say": "시간을 재면서 학습을 돌리고, 걸린 분을 계산해요."
+      },
+      {
+       "from": 41,
+       "to": 41,
+       "say": "학습이 끝난 모델로 시험 5,000건을 예측해요."
+      },
+      {
+       "from": 42,
+       "to": 45,
+       "say": "데이터 수, **정확도(Accuracy)**, **F1 점수(F1 Score)**, 걸린 시간을 사전에 담아요."
+      },
+      {
+       "from": 46,
+       "to": 47,
+       "say": "그 네 값을 한 줄로 찍어요."
+      },
+      {
+       "from": 48,
+       "to": 48,
+       "say": "**트레이너(Trainer)**, 지표, **로짓(Logits)**, **레이블(Label)** 네 개를 돌려줘요."
+      }
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "이 셀은 아직 아무것도 학습하지 않아요",
+     "items": [
+      "출력이 없어요. 함수를 정의만 했으니까요.",
+      "실제 학습은 다음 쪽에서 `finetune(N_TRAIN, tag=\"main\")` 을 부를 때 시작해요.",
+      "같은 함수를 Part 5 에서 500건, 2,000건으로 다시 불러요.",
+      "그래서 세 실험의 조건이 딱 같아요. 이것이 좋은 실험 설계예요."
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "한 번 더, 걸음 수를 손으로",
+     "steps": [
+      "n_train 이 15,000, **배치 크기(Batch Size)** 32, **에폭(Epoch)** 2 예요.",
+      "`math.ceil(15000 / 32)` = 469",
+      "`469 곱하기 2` = 938 걸음",
+      "`int(0.1 곱하기 938)` = 93 걸음이 **워밍업(Warmup)** 이에요."
+     ],
+     "answer": "938 과 93 이 이 함수가 실제로 쓰는 숫자예요."
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "이 셀을 돌리면 학습이 시작되나요?",
+     "choices": [
+      "아니요, 함수를 정의만 해요",
+      "네, 2 **에폭(Epoch)** 돌아요",
+      "네, 하지만 500건만요",
+      "아니요, 오류가 나요"
+     ],
+     "a": 0,
+     "why": "출력이 없다는 것이 증거예요. `def` 로 정의만 하고 부르지는 않았어요."
+    },
+    {
+     "kind": "check",
+     "q": "`total_steps` 를 계산할 때 `math.ceil` 을 쓰는 까닭은?",
+     "choices": [
+      "걸음 수는 소수가 될 수 없어서",
+      "속도를 올리려고",
+      "**정확도(Accuracy)** 를 높이려고",
+      "메모리를 아끼려고"
+     ],
+     "a": 0,
+     "why": "15,000 나누기 32 는 468.75 예요. 남은 예시도 한 걸음으로 보니까 469 예요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리는 점",
+     "items": [
+      "`per_device_eval_batch_size=64` 는 평가용이라 학습 **배치 크기(Batch Size)** 32 와 다른 숫자예요.",
+      "`fp16` 은 계산을 16비트로 하는 것이라, 결과가 실행할 때마다 아주 조금 달라질 수 있어요.",
+      "`eval_strategy=\"no\"` 라서 학습 중간 **정확도(Accuracy)** 는 안 찍혀요. 손실만 찍혀요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 21,
+   "title": "미세조정 한 번 돌리기: 로그를 읽는 법",
+   "terms": [
+    "Trainer",
+    "Loss Function",
+    "Learning Rate",
+    "Warmup",
+    "Epoch",
+    "Accuracy",
+    "F1 Score",
+    "Gradient",
+    "Finetuning",
+    "Batch Size"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "한 줄을 부르면 실제 **미세조정(Finetuning)** 이 시작돼요.",
+      "T4 로 약 2분이에요. 100걸음마다 **손실 함수(Loss Function)** 값이 찍혀요.",
+      "결과는 **정확도(Accuracy)** 0.8740, **F1 점수(F1 Score)** 0.8733 이에요."
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "pyterm",
+     "name": "네 값을 한 번에 받기",
+     "say": [
+      "`trainer, main_metrics, main_logits, main_labels = finetune(N_TRAIN, tag=\"main\")` 이에요.",
+      "함수가 네 값을 돌려주니 이름 네 개로 받아요.",
+      "`main_logits` 와 `main_labels` 는 Part 4 오류 분석에서 다시 써요."
+     ],
+     "example": "def f():\n    return 1, 2, 3\na, b, c = f()\nprint(c)",
+     "out": "3"
+    },
+    {
+     "kind": "points",
+     "head": "로그 한 줄의 항목 뜻",
+     "items": [
+      "`loss` = 이 구간의 평균 **손실 함수(Loss Function)** 값이에요. 줄어들어야 해요.",
+      "`grad_norm` = **기울기(Gradient)** 의 크기예요. 너무 크면 학습이 흔들려요.",
+      "`learning_rate` = 지금 걸음의 **학습률(Learning Rate)** 이에요. 점점 줄어들어요.",
+      "`epoch` = 데이터를 몇 바퀴 돌았는지예요. 0.2132 는 첫 바퀴의 21 퍼센트 지점이에요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "강의 슬라이드 짝",
+     "items": [
+      "N5 p.44 미세조정 레시피가 이 로그의 숫자예요.",
+      "`learning_rate` 가 1.986e-05 에서 9.231e-07 로 줄어드는 것이 보여요.",
+      "**워밍업(Warmup)** 93걸음이 끝난 뒤부터 계속 내려가는 모양이에요.",
+      "N5 p.43 It Also Remembers 처럼, 더 돌리면 학습 데이터를 외우기 시작해요."
+     ]
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "code",
+     "head": "미세조정 한 번 부르기",
+     "file": "Lab4 노트북 셀 26",
+     "code": "trainer, main_metrics, main_logits, main_labels = finetune(N_TRAIN, tag=\"main\")",
+     "lines": [
+      {
+       "from": 1,
+       "to": 1,
+       "say": "앞에서 만든 함수에 15,000 을 넣어 부르고, 돌려받은 네 값을 이름에 담아요."
+      }
+     ],
+     "link": "강의 N5 p.44 The Finetuning Recipe"
+    },
+    {
+     "kind": "points",
+     "head": "강의 노트북에 저장된 출력",
+     "items": [
+      "`{'loss': '0.5209', 'grad_norm': '5.8', 'learning_rate': '1.986e-05', 'epoch': '0.2132'}`",
+      "`{'loss': '0.3566', 'grad_norm': '3.31', 'learning_rate': '1.749e-05', 'epoch': '0.4264'}`",
+      "`{'loss': '0.3243', 'grad_norm': '3.761', 'learning_rate': '1.512e-05', 'epoch': '0.6397'}`",
+      "`{'loss': '0.3166', 'grad_norm': '5.606', 'learning_rate': '1.276e-05', 'epoch': '0.8529'}`",
+      "`{'loss': '0.3028', 'grad_norm': '6.085', 'learning_rate': '1.039e-05', 'epoch': '1.066'}`"
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "로그 뒷부분과 마지막 줄",
+     "items": [
+      "`{'loss': '0.2067', 'grad_norm': '4.11', 'learning_rate': '8.024e-06', 'epoch': '1.279'}`",
+      "`{'loss': '0.2451', 'grad_norm': '4.711', 'learning_rate': '5.657e-06', 'epoch': '1.493'}`",
+      "`{'loss': '0.1974', 'grad_norm': '2.587', 'learning_rate': '3.29e-06', 'epoch': '1.706'}`",
+      "`{'loss': '0.2156', 'grad_norm': '5.38', 'learning_rate': '9.231e-07', 'epoch': '1.919'}`",
+      "`{'train_runtime': '116.6', 'train_samples_per_second': '257.4', 'train_steps_per_second': '8.048', 'train_loss': '0.2945`",
+      "`[main]  n_train=15000  accuracy=0.8740  f1=0.8733  (1.9 min)`"
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "로그를 읽어 보기",
+     "steps": [
+      "첫 기록에서 `loss` 가 0.5209 예요. 아직 헤드가 잡음에 가까워요.",
+      "두 번째에 0.3566 으로 크게 떨어져요. 헤드가 자리를 잡은 것이에요.",
+      "1 **에폭(Epoch)** 을 넘은 뒤에는 0.2067, 0.1974 처럼 더 낮아요.",
+      "`learning_rate` 가 1.986e-05 에서 9.231e-07 까지 줄어요."
+     ],
+     "answer": "마지막 줄: `train_loss 0.2945`, 2 에폭 학습 약 116.6초예요. 실행할 때마다 조금 달라요."
+    },
+    {
+     "kind": "steps",
+     "head": "최종 두 숫자",
+     "steps": [
+      "`accuracy=0.8740` 이니 87.40 퍼센트예요.",
+      "`f1=0.8733` 이니 **F1 점수(F1 Score)** 는 0.8733 이에요.",
+      "시험 5,000건 전체로 잰 값이에요.",
+      "얼린 BERT 의 81.8 퍼센트에서 5.6 포인트 올랐어요."
+     ],
+     "answer": "87.4 퍼센트가 오늘의 최종 결과예요. **우연 수준(Chance Level)** 49.7 에서 37.7 포인트 위예요."
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "로그의 `learning_rate` 가 점점 줄어드는 까닭은?",
+     "choices": [
+      "**워밍업(Warmup)** 뒤에 학습률을 서서히 낮추는 것이 기본 설정이라",
+      "GPU 가 느려져서",
+      "**손실 함수(Loss Function)** 가 줄어서",
+      "데이터가 줄어서"
+     ],
+     "a": 0,
+     "why": "처음에는 올리고(워밍업) 그다음 계속 내려요. 끝에서 살살 다듬는 것이에요."
+    },
+    {
+     "kind": "check",
+     "q": "`epoch: 1.066` 이 뜻하는 것은?",
+     "choices": [
+      "데이터를 한 바퀴 다 돌고 두 번째 바퀴의 6.6 퍼센트 지점",
+      "1.066 퍼센트 학습했다는 뜻",
+      "**에폭(Epoch)** 을 1.066 로 설정했다는 뜻",
+      "1,066걸음 걸었다는 뜻"
+     ],
+     "a": 0,
+     "why": "**에폭(Epoch)** 은 데이터를 한 바퀴 도는 것이에요. 소수는 바퀴의 몇 퍼센트 지점인지예요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리는 점",
+     "items": [
+      "로그의 loss 숫자와 걸린 시간은 학습 결과라서 실행할 때마다 조금 달라져요.",
+      "`accuracy=0.8740` 은 비율이에요. 퍼센트로 읽으면 87.40 퍼센트예요.",
+      "학습 중간에는 **정확도(Accuracy)** 가 안 찍혀요. 설정에서 중간 평가를 껐으니까요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 22,
+   "title": "네 숫자를 나란히 놓고 막대로 그리기",
+   "terms": [
+    "Accuracy",
+    "Chance Level",
+    "Linear Probing",
+    "Logistic Regression",
+    "Task Head",
+    "Body",
+    "Finetuning",
+    "Pre-training",
+    "Label"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "이제 네 숫자를 한 화면에 나란히 놓아요.",
+      "49.7, 57.0, 81.8, 87.4 퍼센트예요.",
+      "이렇게 놓으면 각 단계가 얼마를 벌었는지 바로 보여요."
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "pyterm",
+     "name": "튜플이 든 목록",
+     "say": [
+      "`rows = [(\"이름\", 숫자), (\"이름\", 숫자)]` 은 짝을 묶어 둔 목록이에요.",
+      "`for name, v in rows:` 로 두 값을 한 번에 꺼내 쓸 수 있어요.",
+      "표를 만들 때 아주 흔한 모양이에요."
+     ],
+     "example": "rows = [(\"a\", 1), (\"b\", 2)]\nfor n, v in rows:\n    print(n, v)",
+     "out": "a 1\nb 2"
+    },
+    {
+     "kind": "pyterm",
+     "name": "문자열 서식으로 표 맞추기",
+     "say": [
+      "`\"%-38s %6.1f%%\" % (name, v)` 는 이름을 38칸 왼쪽, 숫자를 6칸 오른쪽에 찍어요.",
+      "`%.1f` 는 소수 첫째 자리까지, 마지막 `%%` 는 퍼센트 기호예요.",
+      "`print(\"-\" * 52)` 는 빼기 기호를 52번 이어 줄을 그어요."
+     ],
+     "example": "print(\"-\" * 5)",
+     "out": "-----"
+    },
+    {
+     "kind": "pyterm",
+     "name": "enumerate 와 ax.bar",
+     "say": [
+      "`ax.bar(names, vals)` 는 막대 그림을 그려요.",
+      "`for i, v in enumerate(vals):` 는 번호와 값을 함께 꺼내요.",
+      "`ax.text(i, v + 1, ...)` 는 막대 위에 숫자를 적어 줘요."
+     ],
+     "example": "for i, v in enumerate([7, 8]):\n    print(i, v)",
+     "out": "0 7\n1 8"
+    },
+    {
+     "kind": "points",
+     "head": "용어 하나하나",
+     "items": [
+      "항상 한쪽으로 찍기 = **우연 수준(Chance Level)** 이에요. 시험 긍정 비율 49.7 퍼센트예요.",
+      "**사전 학습(Pre-training)** 된 **몸통(Body)** + 무작위 **과제 헤드(Task Head)** = 57.0 퍼센트",
+      "얼린 BERT + **로지스틱 회귀(Logistic Regression)** = **선형 프로빙(Linear Probing)**, 81.8 퍼센트",
+      "전체 **미세조정(Finetuning)** = 87.4 퍼센트"
+     ]
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "code",
+     "head": "네 숫자를 표와 막대로",
+     "file": "Lab4 노트북 셀 28",
+     "code": "rows = [(\"always guess 'positive'\", 100 * test_df.label.mean()),\n        (\"pretrained body, random head\", 100 * acc_before),\n        (\"frozen BERT + logistic regression\", 100 * acc_frozen),\n        (\"full finetuning (this run)\", 100 * main_metrics[\"accuracy\"])]\nprint(\"%-38s %s\" % (\"\", \"accuracy\"))\nprint(\"-\" * 52)\nfor name, v in rows:\n    print(\"%-38s %6.1f%%\" % (name, v))\n\nfig, ax = plt.subplots(figsize=(7.2, 2.8))\nnames = [r[0].replace(\" + \", \"\\n+ \").replace(\"body, \", \"body,\\n\") for r in rows]\nvals = [r[1] for r in rows]\ncols = [\"#9E9E9E\", \"#9E9E9E\", \"#C0562F\", \"#2E7D32\"]\nax.bar(names, vals, color=cols)\nfor i, v in enumerate(vals):\n    ax.text(i, v + 1, \"%.1f\" % v, ha=\"center\", fontweight=\"bold\")\nax.set_ylim(0, 100); ax.set_ylabel(\"accuracy (%)\")\nax.tick_params(labelsize=8)\nfor s in (\"top\", \"right\"):\n    ax.spines[s].set_visible(False)\nplt.tight_layout(); plt.show()",
+     "lines": [
+      {
+       "from": 1,
+       "to": 4,
+       "say": "네 가지 방법의 이름과 **정확도(Accuracy)** 를 짝으로 묶어요. 시험 긍정 비율이 첫 줄이에요."
+      },
+      {
+       "from": 5,
+       "to": 6,
+       "say": "표 머리글을 찍고 빼기 기호로 줄을 그어요."
+      },
+      {
+       "from": 7,
+       "to": 8,
+       "say": "짝을 하나씩 꺼내 이름과 값을 줄 맞춰 찍어요."
+      },
+      {
+       "from": 10,
+       "to": 10,
+       "say": "가로 7.2, 높이 2.8 인치 그림판을 만들어요."
+      },
+      {
+       "from": 11,
+       "to": 13,
+       "say": "긴 이름을 줄 바꿈해서 다듬고, 값 목록과 색 목록을 만들어요."
+      },
+      {
+       "from": 14,
+       "to": 14,
+       "say": "막대 그림을 그려요."
+      },
+      {
+       "from": 15,
+       "to": 16,
+       "say": "막대마다 위에 값을 굵게 적어요."
+      },
+      {
+       "from": 17,
+       "to": 18,
+       "say": "세로축을 0에서 100 으로 고정하고 이름을 붙이고, 눈금 글자를 작게 해요."
+      },
+      {
+       "from": 19,
+       "to": 20,
+       "say": "위쪽과 오른쪽 테두리를 지워요."
+      },
+      {
+       "from": 21,
+       "to": 21,
+       "say": "여백을 정리하고 그림을 띄워요."
+      }
+     ],
+     "link": "강의 N5 p.48 Why This Paradigm Won"
+    },
+    {
+     "kind": "points",
+     "head": "강의 노트북에 저장된 출력",
+     "items": [
+      "`accuracy`",
+      "`----------------------------------------------------`",
+      "`always guess 'positive'                  49.7%`",
+      "`pretrained body, random head             57.0%`",
+      "`frozen BERT + logistic regression        81.8%`",
+      "`full finetuning (this run)               87.4%`"
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "단계마다 얼마를 벌었나",
+     "steps": [
+      "항상 한쪽으로 찍기 49.7 퍼센트에서 출발해요.",
+      "무작위 **과제 헤드(Task Head)** 로 57.0, 곧 7.3 포인트 올라요.",
+      "얼린 BERT 에 직선 하나, 곧 **선형 프로빙(Linear Probing)** 으로 81.8 이라 24.8 포인트 올라요.",
+      "전체 **미세조정(Finetuning)** 으로 87.4, 곧 5.6 포인트 더 올라요."
+     ],
+     "answer": "가장 큰 몫 24.8 포인트는 **사전 학습(Pre-training)** 이 지불했어요. **미세조정(Finetuning)** 의 몫은 5.6 포인트예요."
+    },
+    {
+     "kind": "points",
+     "head": "세로축을 0에서 100 으로 고정한 까닭",
+     "items": [
+      "`ax.set_ylim(0, 100)` 이 그 줄이에요.",
+      "축을 좁게 잡으면 작은 차이가 크게 보여요. 그림으로 속이기 쉬워요.",
+      "0부터 그리면 차이가 정직하게 보여요.",
+      "프로젝트 보고서에서도 축을 정직하게 잡는 것이 중요해요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "네 숫자 중 가장 큰 상승을 만든 것은?",
+     "choices": [
+      "**사전 학습(Pre-training)** 된 표현, 곧 57.0 에서 81.8",
+      "무작위 헤드, 49.7 에서 57.0",
+      "전체 **미세조정(Finetuning)**, 81.8 에서 87.4",
+      "**레이블(Label)** 개수"
+     ],
+     "a": 0,
+     "why": "24.8 포인트 대 5.6 포인트예요. 강의 N5 p.48 이 말한 이 패러다임이 이긴 까닭이에요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리는 점",
+     "items": [
+      "57.0 과 81.8 은 시험 2,000건, 87.4 는 시험 5,000건으로 잰 값이에요. 자가 조금 달라요.",
+      "49.7 퍼센트는 시험 데이터의 긍정 비율이에요. 그래서 '항상 긍정으로 찍기' 점수와 같아요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 23,
+   "title": "세 단계가 각각 말해 주는 것",
+   "terms": [
+    "Accuracy",
+    "Task Head",
+    "Body",
+    "Gradient",
+    "Pre-training",
+    "Finetuning",
+    "Linear Probing",
+    "[CLS]",
+    "Freezing",
+    "Chance Level"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "노트북은 세 단계가 각각 무언가를 말해 준다고 해요.",
+      "무작위 헤드는 거의 쓸모없고, 직선 하나가 큰 몫을 하고,",
+      "**몸통(Body)** 까지 **기울기(Gradient)** 를 흘리면 마지막 5.6 포인트를 얻어요."
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "points",
+     "head": "영어 문장의 뜻",
+     "items": [
+      "**A random head is worth almost nothing** = 무작위 **과제 헤드(Task Head)** 는 거의 쓸모없어요.",
+      "**nothing is reading that knowledge out yet** = 그 지식을 읽어낼 장치가 아직 없어요.",
+      "**just by fitting a straight line** = 직선 하나를 맞췄을 뿐인데요.",
+      "**Not one weight inside BERT moved** = BERT 안의 가중치는 하나도 안 움직였어요.",
+      "**that whole jump is paid for by pretraining alone** = 그 상승은 전부 **사전 학습(Pre-training)** 이 지불했어요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "용어 하나하나",
+     "items": [
+      "직선 하나 = **선형 프로빙(Linear Probing)** 이에요. 얼린 **분류 토큰([CLS])** 벡터에 맞춰요.",
+      "**기울기(Gradient)** 를 몸통까지 흘린다 = 전체 **미세조정(Finetuning)** 을 한다는 뜻이에요.",
+      "**동결(Freezing)** 을 풀면 약 1억 1천만 개가 함께 움직여요.",
+      "마지막 5.6 포인트가 **미세조정(Finetuning)** 이 실제로 사 주는 것이에요."
+     ]
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "steps",
+     "head": "세 단계를 숫자로 정리",
+     "steps": [
+      "1단계: 무작위 헤드 57.0 퍼센트. 바닥 49.7 에서 7.3 포인트예요.",
+      "2단계: 얼린 **분류 토큰([CLS])** 벡터에 직선 하나, 81.8 퍼센트예요.",
+      "3단계: **몸통(Body)** 까지 학습, 87.4 퍼센트예요.",
+      "87.4 빼기 81.8 은 5.6 포인트예요."
+     ],
+     "answer": "노트북 본문의 5.6 포인트와 출력으로 센 5.6 포인트가 맞아요."
+    },
+    {
+     "kind": "points",
+     "head": "왜 몸통을 그냥 얼려 두지 않나",
+     "items": [
+      "5.6 포인트는 작아 보이지만, 틀리는 비율로 보면 18.2 에서 12.6 으로 줄어든 것이에요.",
+      "그리고 얼린 채로는 더 올릴 방법이 거의 없어요.",
+      "**미세조정(Finetuning)** 은 몇 분이면 끝나니 값이 싸요.",
+      "강의 N5 p.46 처럼 데이터가 아주 적거나 GPU 가 없으면 얼리는 쪽도 답이에요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "보고서에 쓸 방식",
+     "items": [
+      "숫자 하나만 쓰지 말고 바닥부터 쌓아 올려 보여 주세요.",
+      "**우연 수준(Chance Level)** -> 무작위 헤드 -> **선형 프로빙(Linear Probing)** -> 전체 **미세조정(Finetuning)** 순서예요.",
+      "그러면 어느 단계가 얼마를 벌었는지 읽는 사람이 알 수 있어요.",
+      "팀 프로젝트의 추가 분석 항목으로도 좋은 모양이에요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "**미세조정(Finetuning)** 이 실제로 더해 준 몫은 몇 포인트인가요?",
+     "choices": [
+      "약 5.6 포인트",
+      "약 24.8 포인트",
+      "약 32.1 포인트",
+      "약 37.7 포인트"
+     ],
+     "a": 0,
+     "why": "81.8 에서 87.4 예요. 24.8 포인트는 **사전 학습(Pre-training)** 의 몫이에요."
+    },
+    {
+     "kind": "english",
+     "head": "시험 답안에 쓸 문장",
+     "en": "무작위 헤드로는 우연 수준을 조금 넘을 뿐이고, 얼린 몸통에 직선 하나를 얹으면 크게 오르며, 몸통까지 기울기를 흘려 얻는 마지막 몫은 그보다 작다.",
+     "ko": "핵심은 세 단계와 각 단계의 몫이에요.",
+     "tip": "외우는 요령: 49.7 -> 57.0 -> 81.8 -> 87.4, 그리고 7.3 / 24.8 / 5.6."
+    },
+    {
+     "kind": "warn",
+     "head": "노트북 글과 출력 숫자가 조금 달라요",
+     "items": [
+      "본문은 57 퍼센트에서 81.9 퍼센트, 81.9 퍼센트에서 87.5 퍼센트라고 적었어요.",
+      "실제 출력은 81.8 퍼센트와 87.4 퍼센트예요. 출력 숫자를 따르세요.",
+      "차이가 5.6 포인트인 것은 두 방식 모두 같아요. 결론은 바뀌지 않아요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 24,
+   "title": "Part 4 어디서 틀리나: 혼동 행렬부터",
+   "terms": [
+    "Confusion Matrix",
+    "Error Analysis",
+    "Accuracy",
+    "F1 Score",
+    "Label",
+    "Logits",
+    "Bias",
+    "Tensor",
+    "Downstream Task",
+    "Bidirectional Context",
+    "BERT"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "**정확도(Accuracy)** 는 얼마나 자주 맞히는지만 말해 줘요.",
+      "언제 틀리는지는 말해 주지 않아요.",
+      "그래서 **혼동 행렬(Confusion Matrix)** 부터 봐요."
+     ]
+    },
+    {
+     "kind": "analogy",
+     "head": "혼동 행렬은 성적표의 문항 분석",
+     "scene": "시험 점수 87점만 보면 모르지만, 어떤 유형을 틀렸는지 보면 다음에 무엇을 고칠지 알아요.",
+     "map": [
+      [
+       "총점 87점",
+       "**정확도(Accuracy)** 87.4 퍼센트"
+      ],
+      [
+       "유형별 오답 수",
+       "**혼동 행렬(Confusion Matrix)** 의 대각선 밖"
+      ],
+      [
+       "한 유형만 몰아서 틀림",
+       "**편향(Bias)**"
+      ],
+      [
+       "오답 노트 쓰기",
+       "**오류 분석(Error Analysis)**"
+      ]
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "points",
+     "head": "영어 문장의 뜻",
+     "items": [
+      "**An accuracy number tells you how often the model is right, not when it is wrong** = 정확도는 언제 틀리는지를 말해 주지 않아요.",
+      "**Reporting only the number is the most common mistake in a project write-up** = 숫자만 보고하는 것이 보고서에서 가장 흔한 잘못이에요.",
+      "**The confusion matrix** = **혼동 행렬(Confusion Matrix)** 이에요.",
+      "**precision** = 정밀도, 그렇다고 답한 것 중 맞은 비율이에요.",
+      "**recall** = 재현율, 정말 그런 것 중 찾아낸 비율이에요. **support** = 그 갈래의 개수예요."
+     ]
+    },
+    {
+     "kind": "pyterm",
+     "name": "confusion_matrix 와 classification_report",
+     "say": [
+      "`confusion_matrix(정답, 예측)` 은 2 x 2 표를 돌려줘요.",
+      "`classification_report(...)` 는 정밀도, 재현율, **F1 점수(F1 Score)** 를 글로 찍어 줘요.",
+      "`target_names=[...]` 로 0 과 1 에 이름을 붙이고, `digits=3` 으로 소수 셋째 자리까지 봐요."
+     ],
+     "example": "from sklearn.metrics import confusion_matrix\nprint(confusion_matrix([0, 1], [0, 1]).tolist())",
+     "out": "[[1, 0], [0, 1]]"
+    },
+    {
+     "kind": "pyterm",
+     "name": ".numpy() 와 이중 for",
+     "say": [
+      "`main_logits.argmax(-1).numpy()` 는 **로짓(Logits)** **텐서(Tensor)** 에서 예측 **레이블(Label)** 을 NumPy 로 꺼내요.",
+      "`for i in range(2): for j in range(2):` 는 표의 네 칸을 하나씩 돌아요.",
+      "`f\"{cm[i, j]:,}\"` 는 1000 을 1,000 처럼 쉼표를 넣어 적어요."
+     ],
+     "example": "print(f\"{2516:,}\")",
+     "out": "2,516"
+    },
+    {
+     "kind": "points",
+     "head": "용어 하나하나",
+     "items": [
+      "**혼동 행렬(Confusion Matrix)** = 정답과 예측을 가로세로로 놓고 개수를 센 표예요.",
+      "대각선은 맞힌 것, 대각선 밖은 틀린 것이에요.",
+      "**편향(Bias)** = 한쪽으로 치우친 것이에요. 대각선 밖 두 칸이 많이 다르면 그래요.",
+      "**오류 분석(Error Analysis)** = 언제 틀리는지 직접 들여다보는 일이에요."
+     ]
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "code",
+     "head": "혼동 행렬 그림과 자세한 지표 보고서",
+     "file": "Lab4 노트북 셀 31",
+     "code": "from sklearn.metrics import confusion_matrix, classification_report\n\npreds = main_logits.argmax(-1).numpy()\ngold  = main_labels.numpy()\ncm = confusion_matrix(gold, preds)\n\nfig, ax = plt.subplots(figsize=(4.2, 3.6))\nim = ax.imshow(cm, cmap=\"Blues\")\nfor i in range(2):\n    for j in range(2):\n        ax.text(j, i, f\"{cm[i, j]:,}\", ha=\"center\", va=\"center\", fontsize=14,\n                color=\"white\" if cm[i, j] > cm.max() / 2 else \"#21252B\",\n                fontweight=\"bold\")\nax.set_xticks([0, 1]); ax.set_xticklabels([\"pred neg\", \"pred pos\"])\nax.set_yticks([0, 1]); ax.set_yticklabels([\"true neg\", \"true pos\"])\nax.set_title(\"confusion matrix (%d test reviews)\" % len(gold))\nplt.tight_layout(); plt.show()\n\nprint(classification_report(gold, preds, target_names=[\"negative\", \"positive\"], digits=3))",
+     "lines": [
+      {
+       "from": 1,
+       "to": 1,
+       "say": "sklearn 에서 **혼동 행렬(Confusion Matrix)** 과 보고서 함수를 불러와요."
+      },
+      {
+       "from": 3,
+       "to": 5,
+       "say": "**로짓(Logits)** 에서 예측을 뽑고, 정답 **레이블(Label)** 도 NumPy 로 꺼내 표를 만들어요."
+      },
+      {
+       "from": 7,
+       "to": 8,
+       "say": "작은 그림판을 만들고 표를 색 농도로 그려요."
+      },
+      {
+       "from": 9,
+       "to": 13,
+       "say": "네 칸을 돌면서 개수를 가운데 굵게 적어요. 진한 칸에는 흰 글자를 써요."
+      },
+      {
+       "from": 14,
+       "to": 16,
+       "say": "가로축에 pred neg, pred pos, 세로축에 true neg, true pos 를 붙이고 제목을 달아요."
+      },
+      {
+       "from": 17,
+       "to": 17,
+       "say": "여백을 정리하고 그림을 띄워요."
+      },
+      {
+       "from": 19,
+       "to": 19,
+       "say": "정밀도, 재현율, **F1 점수(F1 Score)** 보고서를 소수 셋째 자리까지 찍어요."
+      }
+     ],
+     "link": "강의 N5 p.44 미세조정 뒤에는 반드시 평가와 오류 분석"
+    },
+    {
+     "kind": "points",
+     "head": "강의 노트북에 저장된 출력",
+     "items": [
+      "`precision    recall  f1-score   support`",
+      "`negative      0.875     0.874     0.875      2516`",
+      "`positive      0.873     0.874     0.873      2484`",
+      "`accuracy                          0.874      5000`",
+      "`macro avg      0.874     0.874     0.874      5000`",
+      "`weighted avg      0.874     0.874     0.874      5000`"
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "보고서 숫자를 손으로 확인",
+     "steps": [
+      "support 를 더하면 2,516 + 2,484 = 5,000 이에요. 시험 전체와 같아요.",
+      "**정확도(Accuracy)** 0.874 에 5,000 을 곱하면 4,370건 맞혔어요.",
+      "5,000 빼기 4,370 은 630건 틀렸어요.",
+      "negative 와 positive 의 **F1 점수(F1 Score)** 가 0.875 와 0.873 으로 거의 같아요."
+     ],
+     "answer": "두 갈래의 숫자가 거의 같아요. **편향(Bias)** 이 거의 없다는 뜻이에요."
+    },
+    {
+     "kind": "points",
+     "head": "보고서를 읽는 순서",
+     "items": [
+      "먼저 support 를 봐요. 두 갈래가 몇 개씩인지 알아야 나머지가 읽혀요.",
+      "다음에 두 갈래의 **F1 점수(F1 Score)** 를 비교해요. 많이 다르면 **편향(Bias)** 이에요.",
+      "macro avg 는 두 갈래를 똑같이 취급한 평균이에요.",
+      "weighted avg 는 개수로 가중한 평균이에요. 여기서는 둘이 같아요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "어떤 과제에서도 같은 순서로 봐요",
+     "items": [
+      "**다운스트림 과제(Downstream Task)** 가 바뀌어도 이 순서는 같아요.",
+      "**정확도(Accuracy)** 하나 -> **혼동 행렬(Confusion Matrix)** -> 조건별로 쪼개기 순서예요.",
+      "**버트(BERT)** 는 **양방향 문맥(Bidirectional Context)** 으로 문장을 읽으니 긴 글에서 더 유리해요.",
+      "그 예상이 맞는지는 p.27 에서 길이별로 쪼개어 확인해요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "**혼동 행렬(Confusion Matrix)** 의 대각선 밖 두 칸은 무엇인가요?",
+     "choices": [
+      "틀린 예측들",
+      "맞힌 예측들",
+      "**레이블(Label)** 개수",
+      "**F1 점수(F1 Score)**"
+     ],
+     "a": 0,
+     "why": "한쪽이 다른 쪽보다 훨씬 크면 모델이 한 갈래로 **편향(Bias)** 되어 있다는 뜻이에요."
+    },
+    {
+     "kind": "check",
+     "q": "negative 의 support 가 2,516 이라는 말의 뜻은?",
+     "choices": [
+      "시험 5,000건 중 실제로 부정인 것이 2,516건",
+      "부정이라고 예측한 것이 2,516건",
+      "부정을 2,516건 맞혔다는 뜻",
+      "학습에 부정 2,516건을 썼다는 뜻"
+     ],
+     "a": 0,
+     "why": "support 는 그 갈래의 실제 개수예요. 2,516 + 2,484 = 5,000 이에요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리는 점",
+     "items": [
+      "**정확도(Accuracy)** 0.874 는 비율이에요. 87.4 퍼센트로 읽어요.",
+      "정밀도와 재현율은 방향이 다른 지표예요. 정밀도는 답한 것 기준, 재현율은 실제 것 기준이에요.",
+      "그림은 저장된 출력에 `[그림 출력]` 으로만 남아 있어요. 직접 돌리면 색 표가 나와요."
+     ]
+    }
+   ]
+  }
+ ]
+}

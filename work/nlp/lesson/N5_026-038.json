@@ -1,0 +1,2836 @@
+{
+ "deck": "N5",
+ "from": 26,
+ "to": 38,
+ "glossary": [
+  {
+   "ko": "사전 학습",
+   "en": "Pre-training",
+   "say": "아무 글이나 잔뜩 읽히면서 모델 전체를 미리 학습시켜 두는 단계",
+   "more": "레이블 없이 글자만 있으면 돼요. 한 번 비싸게 해 두고 여러 과제에서 계속 재사용해요."
+  },
+  {
+   "ko": "미세조정",
+   "en": "Finetuning",
+   "say": "미리 학습된 모델을 우리 과제 데이터로 조금만 더 학습시키기",
+   "more": "그 신입에게 우리 회사 일만 며칠 가르치는 것과 같아요. 학습률을 아주 작게 써요."
+  },
+  {
+   "ko": "전이 학습",
+   "en": "Transfer Learning",
+   "say": "한 곳에서 배운 것을 다른 과제로 옮겨 쓰기",
+   "more": "사전 학습과 미세조정을 묶어 부르는 큰 이름이에요."
+  },
+  {
+   "ko": "자기 지도 학습",
+   "en": "Self-Supervision",
+   "say": "사람이 답을 달아 주지 않고 글 자체에서 답을 만들어 쓰는 학습",
+   "more": "빈칸을 뚫고 원래 단어를 맞히게 하면 인터넷의 아무 글이나 학습 데이터가 돼요."
+  },
+  {
+   "ko": "파라미터 초기화",
+   "en": "Parameter Initialisation",
+   "say": "학습을 시작할 때 가중치를 어떤 값에서 출발시킬지 정하는 일",
+   "more": "사전 학습은 과제가 아니라 경사 하강법의 출발점을 고르는 일이에요."
+  },
+  {
+   "ko": "버트",
+   "en": "BERT",
+   "say": "앞뒤를 다 보는 인코더 방식 사전 학습 모델",
+   "more": "빈칸 채우기로 학습해서 분류와 태깅을 잘해요. 글을 이어 쓰지는 못해요."
+  },
+  {
+   "ko": "지피티",
+   "en": "GPT",
+   "say": "앞만 보고 다음 토큰을 만드는 디코더 방식 사전 학습 모델",
+   "more": "2018년 BERT 와 같은 해에 반대 방향으로 건 내기예요. 쓰기를 잘해요."
+  },
+  {
+   "ko": "티파이브",
+   "en": "T5",
+   "say": "인코더와 디코더를 둘 다 쓰고 모든 과제를 글로 주고받는 모델",
+   "more": "Text-to-Text Transfer Transformer 의 다섯 글자 T 를 딴 이름이에요."
+  },
+  {
+   "ko": "로베르타",
+   "en": "RoBERTa",
+   "say": "BERT 를 더 오래, 더 많은 글로 다시 학습시킨 후속 모델",
+   "more": "구조는 그대로 두고 레시피만 고쳤어요. NSP 를 빼고 동적 마스킹을 썼어요."
+  },
+  {
+   "ko": "스팬버트",
+   "en": "SpanBERT",
+   "say": "토큰 하나가 아니라 이어진 덩어리를 통째로 가리는 후속 모델",
+   "more": "더 어려운 빈칸 채우기라서 더 쓸모 있는 것을 배워요."
+  },
+  {
+   "ko": "스팬",
+   "en": "Span",
+   "say": "글에서 이어져 있는 토큰 덩어리",
+   "more": "구절 하나가 스팬이에요. 스팬을 통째로 가리면 문제가 훨씬 어려워져요."
+  },
+  {
+   "ko": "다음 문장 예측",
+   "en": "Next Sentence Prediction (NSP)",
+   "say": "문장 B 가 정말 문장 A 다음에 오는 문장인지 맞히는 예/아니오 문제",
+   "more": "BERT 의 두 번째 목적 함수였는데 RoBERTa 가 빼 버렸더니 오히려 좋아졌어요."
+  },
+  {
+   "ko": "마스크 언어 모델",
+   "en": "Masked Language Modelling (MLM)",
+   "say": "빈칸 채우기 시험지. 가린 자리의 원래 단어를 맞히기",
+   "more": "양쪽을 다 보고 가운데를 맞혀요. 인코더를 학습시키는 목적 함수예요."
+  },
+  {
+   "ko": "마스크 토큰",
+   "en": "[MASK]",
+   "say": "가린 자리에 대신 넣어 두는 특별한 토큰",
+   "more": "미세조정 때는 이 토큰이 아예 없어요. 그래서 80/10/10 이 필요해요."
+  },
+  {
+   "ko": "분류 토큰",
+   "en": "[CLS]",
+   "say": "문장 맨 앞에 붙여 두고 문장 전체의 요약으로 쓰는 특별한 토큰",
+   "more": "BERT 는 이 자리를 읽어 분류 답을 내요. GPT 에는 이 토큰이 없어요."
+  },
+  {
+   "ko": "구분 토큰",
+   "en": "[SEP]",
+   "say": "두 문장 사이를 끊어 주는 특별한 토큰",
+   "more": "문장 쌍 과제에서 A 와 B 를 나눌 때 써요."
+  },
+  {
+   "ko": "인코더",
+   "en": "Encoder",
+   "say": "입력 문장을 앞뒤로 다 읽어 자리마다 표현을 만드는 쪽",
+   "more": "4주차에 배운 그 인코더예요. 마스킹을 안 해서 양쪽을 다 봐요."
+  },
+  {
+   "ko": "디코더",
+   "en": "Decoder",
+   "say": "답 문장을 한 토큰씩 만들어 내는 쪽",
+   "more": "4주차에 배운 그 디코더예요. 인과 마스킹 때문에 앞만 봐요."
+  },
+  {
+   "ko": "인과 마스킹",
+   "en": "Causal Masking",
+   "say": "미래 자리의 어텐션 점수를 소프트맥스 전에 막아 버리기",
+   "more": "4주차 N4 p.43 에서 배웠어요. 이것이 있어야 다음 토큰 예측이 진짜 문제가 돼요."
+  },
+  {
+   "ko": "양방향 문맥",
+   "en": "Bidirectional Context",
+   "say": "한 토큰이 왼쪽과 오른쪽을 모두 볼 수 있는 상태",
+   "more": "인코더의 성질이에요. 이 성질 때문에 인코더는 언어 모델이 될 수 없어요."
+  },
+  {
+   "ko": "자기회귀",
+   "en": "Autoregressive",
+   "say": "자기가 만든 토큰을 다시 입력으로 넣어 다음 토큰을 만드는 방식",
+   "more": "디코더가 글을 이어 쓰는 방식이에요. 그래서 멈출 때까지 계속 쓸 수 있어요."
+  },
+  {
+   "ko": "다음 토큰 예측",
+   "en": "Next Token Prediction",
+   "say": "지금까지의 토큰으로 바로 다음 토큰을 맞히기",
+   "more": "3주차 RNN 언어 모델과 완전히 같은 목적 함수예요. 디코더는 새 목적 함수가 필요 없어요."
+  },
+  {
+   "ko": "언어 모델",
+   "en": "Language Model (LM)",
+   "say": "다음 단어를 맞히는 모델. 휴대폰 자판의 다음 단어 추천 같은 것",
+   "more": "인코더는 양쪽을 다 봐서 이것이 될 수 없고, 디코더는 될 수 있어요."
+  },
+  {
+   "ko": "과제 헤드",
+   "en": "Task Head",
+   "say": "같은 몸통 위에 갈아 끼우는 공구 날 같은 작은 출력 층",
+   "more": "분류면 한 개 레이블, 태깅이면 토큰마다 레이블을 내는 날로 바꿔 끼워요."
+  },
+  {
+   "ko": "몸통",
+   "en": "Body",
+   "say": "내려받아 그대로 쓰는 사전 학습된 본체",
+   "more": "몸통은 그대로 두고 과제 헤드만 바꾸는 것이 이 패러다임의 핵심이에요."
+  },
+  {
+   "ko": "다운스트림 과제",
+   "en": "Downstream Task",
+   "say": "사전 학습이 끝난 모델을 가져다 푸는 우리 진짜 과제",
+   "more": "감성 분석, 개체명 인식, 질의응답 같은 것이 여기에 들어가요."
+  },
+  {
+   "ko": "구분자",
+   "en": "Delimiter",
+   "say": "한 줄로 이어 붙인 입력에서 조각 사이를 끊어 주는 특별한 토큰",
+   "more": "GPT 미세조정은 두 문장을 [DELIM] 하나로 이어 붙여요."
+  },
+  {
+   "ko": "함의",
+   "en": "Entailment",
+   "say": "앞 문장이 참이면 뒤 문장도 참인지 판단하는 과제",
+   "more": "문장 쌍 과제의 대표예요. 답은 함의, 모순, 중립 셋 중 하나예요."
+  },
+  {
+   "ko": "인컨텍스트 러닝",
+   "en": "In-Context Learning",
+   "say": "시험지 맨 위에 예시 두세 개를 적어 주면 그대로 따라 푸는 것",
+   "more": "가중치는 전혀 바뀌지 않아요. 예시가 다음 토큰 분포를 기울일 뿐이에요."
+  },
+  {
+   "ko": "프롬프트",
+   "en": "Prompt",
+   "say": "모델에게 넣어 주는 입력 글 전체",
+   "more": "지시문과 예시와 진짜 질문이 한 덩어리로 들어가요."
+  },
+  {
+   "ko": "프롬프팅",
+   "en": "Prompting",
+   "say": "가중치를 건드리지 않고 입력 글만 바꿔서 과제를 시키는 방법",
+   "more": "미세조정의 반대쪽 선택지예요. 준비물은 좋은 프롬프트 하나뿐이에요."
+  },
+  {
+   "ko": "제로샷",
+   "en": "Zero-shot",
+   "say": "프롬프트 안에 예시를 하나도 주지 않는 방식",
+   "more": "지시문만 주고 바로 답을 시켜요."
+  },
+  {
+   "ko": "퓨샷",
+   "en": "Few-shot",
+   "say": "프롬프트 안에 예시를 몇 개 적어 주는 방식",
+   "more": "슬라이드 그림에서는 예시 두 개를 적어 줬어요. 아주 큰 모델에서만 잘 돼요."
+  },
+  {
+   "ko": "스팬 손상",
+   "en": "Span Corruption",
+   "say": "이어진 덩어리를 통째로 지우고 디코더가 그 덩어리만 다시 쓰게 하는 게임",
+   "more": "T5 의 사전 학습 목적 함수예요. 인코더와 디코더를 동시에 학습시켜요."
+  },
+  {
+   "ko": "센티널 토큰",
+   "en": "Sentinel Token",
+   "say": "지운 덩어리 자리에 대신 넣어 두는 번호표 토큰",
+   "more": "슬라이드에서는 <X>, <Y>, <Z> 로 적었어요. 어느 구멍인지 번호로 알려 줘요."
+  },
+  {
+   "ko": "잡음 제거",
+   "en": "Denoising",
+   "say": "일부러 망가뜨린 글을 원래대로 되돌리게 시키는 학습",
+   "more": "빈칸 채우기도 스팬 손상도 모두 이 큰 이름 아래에 들어가요."
+  },
+  {
+   "ko": "텍스트-투-텍스트",
+   "en": "Text-to-Text",
+   "say": "모든 과제의 입력도 글, 출력도 글로 맞추는 방식",
+   "more": "분류도 회귀도 생성도 전부 문자열을 쓰게 해요. 출력 층을 과제마다 만들지 않아요."
+  },
+  {
+   "ko": "과제 접두어",
+   "en": "Task Prefix",
+   "say": "입력 맨 앞에 붙여 무슨 과제인지 알려 주는 짧은 글",
+   "more": "translate English to German 처럼 적어 줘요. 같은 모델이 과제를 구분해요."
+  },
+  {
+   "ko": "크로스 어텐션",
+   "en": "Cross-Attention",
+   "say": "쿼리는 디코더에서, 키와 밸류는 인코더에서 오는 어텐션",
+   "more": "4주차에 배운 그 다리예요. 인코더 디코더 구조를 이어 주는 부품이에요."
+  },
+  {
+   "ko": "셀프 어텐션",
+   "en": "Self-Attention",
+   "say": "한 시퀀스가 자기 자신을 바라보는 어텐션",
+   "more": "인코더와 디코더 안쪽은 둘 다 이것으로 돌아가요. 차이는 마스크뿐이에요."
+  },
+  {
+   "ko": "트랜스포머",
+   "en": "Transformer",
+   "say": "어텐션만으로 만든 요즘 언어 모델의 기본 블록",
+   "more": "5주차의 세 구조는 전부 이 같은 블록을 쓰고, 마스크와 목적 함수만 달라요."
+  },
+  {
+   "ko": "파라미터",
+   "en": "Parameter",
+   "say": "학습하면서 바뀌는 숫자. 모델이 아는 것을 저장하는 자리",
+   "more": "GPT-1 은 1억 1700만 개, GPT-3 은 1750억 개예요."
+  },
+  {
+   "ko": "토큰",
+   "en": "Token",
+   "say": "글을 자른 레고 조각 하나",
+   "more": "2주차에 배운 그 토큰이에요. 사전 학습도 미세조정도 전부 토큰 줄로 해요."
+  },
+  {
+   "ko": "레이블",
+   "en": "Label",
+   "say": "사람이 달아 준 정답 표",
+   "more": "레이블은 비싸고 글은 공짜예요. 그래서 자기 지도 학습이 이겼어요."
+  },
+  {
+   "ko": "대규모 언어 모델",
+   "en": "Large Language Model (LLM)",
+   "say": "트랜스포머를 아주 크게 쌓은 언어 모델",
+   "more": "GPT-3 부터가 이 이름에 어울려요. 파라미터가 1750억 개예요."
+  },
+  {
+   "ko": "바이트 쌍 인코딩",
+   "en": "Byte Pair Encoding (BPE)",
+   "say": "자주 붙어 다니는 두 조각을 한 조각으로 접착하는 토큰화 방법",
+   "more": "2주차에 배웠어요. GPT-1 은 병합 규칙을 4만 개 썼어요."
+  },
+  {
+   "ko": "말뭉치",
+   "en": "Corpus",
+   "say": "학습에 쓰는 글 더미",
+   "more": "GPT-1 은 출간되지 않은 책 7천 권이 넘는 BooksCorpus 로 학습했어요."
+  },
+  {
+   "ko": "기계 번역",
+   "en": "Machine Translation (MT)",
+   "say": "한 언어의 글을 다른 언어의 글로 바꾸기",
+   "more": "입력도 글, 출력도 글이라 인코더 디코더가 가장 자연스러워요."
+  },
+  {
+   "ko": "분류",
+   "en": "Classification",
+   "say": "입력에 이름표 하나를 붙이는 과제",
+   "more": "감성 분석이 대표예요. 인코더에 분류 헤드를 얹으면 돼요."
+  },
+  {
+   "ko": "감성 분석",
+   "en": "Sentiment Analysis",
+   "say": "글이 긍정인지 부정인지 맞히기",
+   "more": "Lab 4 에서 한국어 리뷰로 직접 해 봐요."
+  },
+  {
+   "ko": "경사 하강법",
+   "en": "Gradient Descent",
+   "say": "안개 낀 산에서 발밑 기울기만 보고 한 걸음씩 내려가기",
+   "more": "사전 학습은 이 걸음을 어디서 시작할지 정해 주는 일이에요."
+  },
+  {
+   "ko": "기울기",
+   "en": "Gradient",
+   "say": "손실이 가장 빨리 커지는 방향과 그 가파름",
+   "more": "인컨텍스트 러닝은 기울기 걸음을 한 번도 밟지 않아요."
+  },
+  {
+   "ko": "문장 쌍",
+   "en": "Sentence Pair",
+   "say": "문장 두 개를 함께 넣고 관계를 묻는 과제 모양",
+   "more": "함의와 유사도가 여기에 들어가요."
+  },
+  {
+   "ko": "토큰 태깅",
+   "en": "Token Tagging",
+   "say": "토큰마다 이름표를 하나씩 붙이는 과제 모양",
+   "more": "개체명 인식과 품사 태깅이 여기에 들어가요."
+  },
+  {
+   "ko": "스팬 추출",
+   "en": "Span Extraction",
+   "say": "글에서 답이 되는 구간의 시작과 끝을 가리키는 과제 모양",
+   "more": "추출형 질의응답이 여기에 들어가요."
+  }
+ ],
+ "slides": [
+  {
+   "p": 26,
+   "title": "더 나은 BERT: RoBERTa 와 SpanBERT",
+   "terms": [
+    "RoBERTa",
+    "SpanBERT",
+    "BERT",
+    "Span",
+    "Next Sentence Prediction (NSP)",
+    "Masked Language Modelling (MLM)",
+    "[MASK]",
+    "Pre-training",
+    "Token",
+    "Corpus"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "**버트(BERT)** 다음에 나온 후속 연구 두 개를 보는 쪽이에요.",
+      "**로베르타(RoBERTa)** 는 레시피만 고쳤고, **스팬버트(SpanBERT)** 는 가리는 방법을 바꿨어요.",
+      "둘 다 구조(모델 생김새)는 그대로 두었어요. 바꾼 것은 학습 방법뿐이에요."
+     ]
+    },
+    {
+     "kind": "analogy",
+     "head": "빈칸 채우기 시험지를 더 어렵게",
+     "scene": "같은 시험지를 더 오래 풀게 하면 성적이 오르고, 한 글자 대신 한 구절을 통째로 비우면 훨씬 어려운 시험이 돼요.",
+     "map": [
+      [
+       "같은 시험지를 더 오래 풀기",
+       "**로베르타(RoBERTa)**"
+      ],
+      [
+       "한 구절을 통째로 비우기",
+       "**스팬버트(SpanBERT)**"
+      ],
+      [
+       "빈칸 채우기 시험지",
+       "**마스크 언어 모델(Masked Language Modelling (MLM))**"
+      ]
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "points",
+     "head": "슬라이드 영어와 우리말 뜻",
+     "items": [
+      "Better BERTs = 더 나은 BERT 들",
+      "the BERT recipe was under-trained = BERT 는 덜 학습된 상태였다",
+      "a harder masking game teaches more = 더 어려운 가리기 게임이 더 많이 가르친다",
+      "same architecture, better result = 구조는 같은데 결과는 더 좋다",
+      "mask whole spans, not single tokens = 토큰 하나가 아니라 스팬을 통째로 가려라"
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "두 후속 모델을 한 표로",
+     "cols": [
+      "보는 점",
+      "**로베르타(RoBERTa)**",
+      "**스팬버트(SpanBERT)**"
+     ],
+     "rows": [
+      [
+       "바꾼 것",
+       "학습 시간, 데이터 양, 목적 함수 구성",
+       "가리는 단위"
+      ],
+      [
+       "구조",
+       "그대로",
+       "그대로"
+      ],
+      [
+       "**다음 문장 예측(Next Sentence Prediction (NSP))**",
+       "빼 버림",
+       "슬라이드에 언급 없음"
+      ],
+      [
+       "가리는 단위",
+       "**토큰(Token)** 하나",
+       "이어진 **스팬(Span)** 통째로"
+      ],
+      [
+       "슬라이드 결론",
+       "같은 구조, 더 좋은 결과",
+       "더 어렵고 더 쓸모 있는 게임"
+      ]
+     ]
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드를 짚어 읽어요",
+     "boxes": [
+      {
+       "x": 0.055,
+       "y": 0.198,
+       "w": 0.79,
+       "h": 0.04,
+       "say": "부제: 두 후속 연구가 BERT 레시피는 덜 학습됐고, 더 어려운 가리기가 더 가르친다고 보였어요."
+      },
+      {
+       "x": 0.056,
+       "y": 0.334,
+       "w": 0.464,
+       "h": 0.402,
+       "say": "왼쪽 주황 상자가 **로베르타(RoBERTa)** 예요. 네 가지를 바꿨어요."
+      },
+      {
+       "x": 0.1,
+       "y": 0.415,
+       "w": 0.4,
+       "h": 0.18,
+       "say": "네 줄: 훨씬 오래 학습, 훨씬 많은 글, NSP 제거, 동적 마스킹."
+      },
+      {
+       "x": 0.536,
+       "y": 0.334,
+       "w": 0.4,
+       "h": 0.402,
+       "say": "오른쪽 보라 상자가 **스팬버트(SpanBERT)** 예요. 스팬을 통째로 가려요."
+      },
+      {
+       "x": 0.568,
+       "y": 0.496,
+       "w": 0.339,
+       "h": 0.052,
+       "say": "토큰 여섯 칸 중 가운데 세 칸이 [M] 이에요. 한 구절이 통째로 사라졌어요."
+      },
+      {
+       "x": 0.05,
+       "y": 0.762,
+       "w": 0.89,
+       "h": 0.1,
+       "say": "아래 파란 띠: 구조를 바꾸지 않아도 계산과 데이터가 늘면 사전 학습이 좋아져요."
+      }
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "**로베르타(RoBERTa)** 가 바꾼 네 가지",
+     "items": [
+      "train much longer = 훨씬 오래 학습해요. 계산을 더 씁니다",
+      "use much more text = 훨씬 많은 **말뭉치(Corpus)**를 씁니다",
+      "drop Next Sentence Prediction = **다음 문장 예측(Next Sentence Prediction (NSP))** 을 아예 뺐어요",
+      "use dynamic masking = 매번 새로 무작위 자리를 가려요",
+      "결과는 same architecture, better result 예요"
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "동적 마스킹이 무엇이 다른지 세어 봐요",
+     "given": "new random masks every time",
+     "steps": [
+      "원래 **버트(BERT)** 는 데이터를 만들 때 가릴 자리를 미리 정해 두었어요",
+      "그러면 같은 문장은 매번 같은 자리가 가려져요",
+      "**로베르타(RoBERTa)** 는 문장을 넣을 때마다 가릴 자리를 새로 뽑아요",
+      "같은 문장이라도 볼 때마다 다른 **마스크 토큰([MASK])** 자리가 생겨요",
+      "그래서 같은 글로도 더 많은 문제를 만들어 낼 수 있어요"
+     ],
+     "answer": "동적 마스킹은 같은 데이터에서 문제를 더 많이 뽑아 쓰는 방법이에요."
+    },
+    {
+     "kind": "figure",
+     "head": "두 갈래를 한 그림으로",
+     "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 480 270\"><text x=\"240\" y=\"20\" font-size=\"16\" text-anchor=\"middle\" class=\"tb\">BERT 레시피를 고친 두 갈래</text><rect x=\"14\" y=\"34\" width=\"218\" height=\"118\" rx=\"2\" class=\"box b1\"/><text x=\"123\" y=\"54\" font-size=\"15\" text-anchor=\"middle\" class=\"tb b1\">RoBERTa</text><text x=\"123\" y=\"76\" font-size=\"12\" text-anchor=\"middle\" class=\"t b1\">더 오래, 더 많은 글로</text><text x=\"123\" y=\"96\" font-size=\"12\" text-anchor=\"middle\" class=\"t b1\">NSP 빼기, 동적 마스킹</text><text x=\"123\" y=\"126\" font-size=\"12\" text-anchor=\"middle\" class=\"tm b2\">구조는 그대로, 결과는 더 좋게</text><rect x=\"248\" y=\"34\" width=\"218\" height=\"118\" rx=\"2\" class=\"box2 b1\"/><text x=\"357\" y=\"54\" font-size=\"15\" text-anchor=\"middle\" class=\"tb b1\">SpanBERT</text><text x=\"357\" y=\"76\" font-size=\"12\" text-anchor=\"middle\" class=\"t b1\">토큰 하나가 아니라</text><text x=\"357\" y=\"96\" font-size=\"12\" text-anchor=\"middle\" class=\"t b1\">이어진 스팬을 통째로 가리기</text><text x=\"357\" y=\"126\" font-size=\"12\" text-anchor=\"middle\" class=\"tm b3\">더 어렵고 더 쓸모 있는 게임</text><line x1=\"240\" y1=\"158\" x2=\"240.0\" y2=\"177.6\" class=\"e2 b4\"/><polygon points=\"240,184 244.0,176.0 236.0,176.0\" class=\"arrow b4\"/><rect x=\"14\" y=\"190\" width=\"452\" height=\"54\" rx=\"2\" class=\"box b4\"/><text x=\"240\" y=\"212\" font-size=\"13\" text-anchor=\"middle\" class=\"tb b4\">구조를 안 바꿔도 계산과 데이터가 늘면 좋아져요</text><text x=\"240\" y=\"232\" font-size=\"12\" text-anchor=\"middle\" class=\"tm b4\">이 한 줄이 곧 스케일링 법칙으로 이어져요</text></svg>",
+     "caption": "왼쪽은 레시피를 고친 쪽, 오른쪽은 문제를 어렵게 만든 쪽이에요.",
+     "builds": 4
+    },
+    {
+     "kind": "bg",
+     "src": "이 과목 안에서 이어 보기",
+     "lines": [
+      "가리는 단위 이야기는 N5 p.19-20 의 15 퍼센트 규칙에서 이어져요.",
+      "**스팬(Span)** 을 통째로 가리는 생각은 N5 p.37 의 **스팬 손상(Span Corruption)** 으로 다시 나와요.",
+      "아래 파란 띠가 말하는 스케일링 법칙은 N5 p.47 에서 다시 만나요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "**로베르타(RoBERTa)** 가 뺀 목적 함수는 무엇인가요",
+     "choices": [
+      "**다음 문장 예측(Next Sentence Prediction (NSP))**",
+      "**마스크 언어 모델(Masked Language Modelling (MLM))**",
+      "**다음 토큰 예측(Next Token Prediction)**",
+      "**스팬 손상(Span Corruption)**"
+     ],
+     "a": 0,
+     "why": "슬라이드 세 번째 줄에 drop Next Sentence Prediction (NSP) 라고 적혀 있어요."
+    },
+    {
+     "kind": "check",
+     "q": "**스팬버트(SpanBERT)** 가 **버트(BERT)** 와 다른 점은",
+     "choices": [
+      "이어진 스팬을 통째로 가려요",
+      "층을 두 배로 쌓아요",
+      "인과 마스킹을 써요",
+      "레이블을 사람이 달아 줘요"
+     ],
+     "a": 0,
+     "why": "mask whole spans, not single tokens 이에요. 구조는 그대로예요."
+    },
+    {
+     "kind": "english",
+     "head": "시험 답안 문장",
+     "en": "**로베르타(RoBERTa)** 는 구조를 그대로 두고 더 오래, 더 많은 글로 학습하고 **다음 문장 예측(Next Sentence Prediction (NSP))** 을 빼고 동적 마스킹을 써서 **버트(BERT)** 를 이겼다.",
+     "ko": "**스팬버트(SpanBERT)** 는 가리는 단위를 **토큰(Token)** 하나에서 이어진 **스팬(Span)** 으로 바꿔 더 어려운 문제를 냈어요.",
+     "tip": "로베르타는 레시피, 스팬버트는 문제. 이렇게 두 글자로 갈라 외워요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "둘 다 구조를 바꾼 것이 아니에요. 층 수도 은닉 차원도 그대로예요.",
+      "**로베르타(RoBERTa)** 가 **다음 문장 예측(Next Sentence Prediction (NSP))** 을 뺐다고 해서 NSP 가 언제나 해롭다는 뜻은 아니에요. 다른 것도 함께 바뀌었어요.",
+      "SpanBERT 의 [M] 은 그림에서 줄인 표기예요. 정식 이름은 [MASK] 예요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 27,
+   "title": "Check Yourself Part 1: 스스로 확인하기",
+   "terms": [
+    "Encoder",
+    "Next Token Prediction",
+    "Bidirectional Context",
+    "[MASK]",
+    "Masked Language Modelling (MLM)",
+    "Pre-training",
+    "Parameter Initialisation",
+    "Finetuning",
+    "Task Head",
+    "Body",
+    "Sentence Pair",
+    "Token Tagging",
+    "Span Extraction",
+    "Sentiment Analysis",
+    "RoBERTa",
+    "Next Sentence Prediction (NSP)",
+    "Gradient Descent",
+    "Entailment"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "전반부를 다 들었는지 확인하는 쪽이에요. 교수님이 직접 낸 문제 다섯 개예요.",
+      "5주차는 수업 녹음이 없어요. 그래서 답은 슬라이드 본문에서 근거를 찾아 정리했어요.",
+      "근거가 된 쪽 번호를 풀이마다 적어 두었으니 그 쪽으로 돌아가 확인해 보세요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "다섯 문제를 우리말로",
+     "items": [
+      "1. **인코더(Encoder)**는 왜 **다음 토큰 예측(Next Token Prediction)**으로 사전 학습할 수 없나",
+      "2. 고른 15 퍼센트의 80 / 10 / 10 조각에 각각 무슨 일이 일어나고 왜 그런가",
+      "3. 사전 학습은 파라미터 초기화다 라는 말이 실제로 무슨 뜻인가",
+      "4. 네 가지 미세조정 과제 모양과 각각의 과제 하나씩을 대라",
+      "5. **로베르타(RoBERTa)** 가 **다음 문장 예측(Next Sentence Prediction (NSP))** 을 빼고 더 좋아졌다. 어블레이션 표를 어떻게 읽어야 한다는 뜻인가"
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "compare",
+     "head": "슬라이드 영어와 우리말 뜻",
+     "cols": [
+      "영어 원문",
+      "뜻"
+     ],
+     "rows": [
+      [
+       "Why can an encoder not be pretrained with next-token prediction?",
+       "인코더는 왜 다음 토큰 예측으로 사전 학습할 수 없는가"
+      ],
+      [
+       "Of the 15% of tokens BERT selects, what happens to each 80 / 10 / 10 slice",
+       "BERT 가 고른 토큰 15 퍼센트의 80 / 10 / 10 조각에 각각 무슨 일이 생기는가"
+      ],
+      [
+       "What does pretraining is parameter initialisation actually mean?",
+       "사전 학습은 파라미터 초기화다 라는 말이 정확히 무슨 뜻인가"
+      ],
+      [
+       "Name the four finetuning shapes and one task for each.",
+       "네 가지 미세조정 모양과 각각의 과제 하나를 대라"
+      ],
+      [
+       "What does that tell you about how to read a paper's ablation table?",
+       "그것이 논문의 어블레이션 표를 읽는 법에 대해 무엇을 말해 주는가"
+      ]
+     ]
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "다섯 문제를 짚어 읽어요",
+     "boxes": [
+      {
+       "x": 0.06,
+       "y": 0.212,
+       "w": 0.52,
+       "h": 0.036,
+       "say": "1번: 인코더를 다음 토큰 예측으로 사전 학습할 수 없는 이유. 근거는 N5 p.18 이에요."
+      },
+      {
+       "x": 0.06,
+       "y": 0.279,
+       "w": 0.64,
+       "h": 0.036,
+       "say": "2번: 15 퍼센트의 80 / 10 / 10. 근거는 N5 p.19 와 p.20 이에요."
+      },
+      {
+       "x": 0.06,
+       "y": 0.347,
+       "w": 0.48,
+       "h": 0.036,
+       "say": "3번: 사전 학습은 파라미터 초기화다. 근거는 N5 p.13 이에요."
+      },
+      {
+       "x": 0.06,
+       "y": 0.415,
+       "w": 0.42,
+       "h": 0.036,
+       "say": "4번: 네 가지 과제 모양. 근거는 N5 p.23 이에요."
+      },
+      {
+       "x": 0.06,
+       "y": 0.482,
+       "w": 0.85,
+       "h": 0.036,
+       "say": "5번: RoBERTa 와 어블레이션 표 읽기. 근거는 N5 p.21 과 p.26 이에요."
+      }
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "2번을 숫자로 미리 풀어 봐요",
+     "given": "토큰 200개, 15 퍼센트 마스킹, 80/10/10",
+     "steps": [
+      "토큰 200개짜리 글을 넣었다고 해요",
+      "15 퍼센트를 고르면 200 x 0.15 = 30 자리예요",
+      "그중 80 퍼센트는 30 x 0.8 = 24 자리이고 [MASK] 로 바뀌어요",
+      "10 퍼센트는 30 x 0.1 = 3 자리이고 아무 토큰으로 바뀌어요",
+      "남은 3 자리는 그대로 두어요. 24 + 3 + 3 = 30 이에요",
+      "손실은 고른 30 자리에서만 세요. 나머지 170 자리는 세지 않아요"
+     ],
+     "answer": "24 / 3 / 3 이고, 세 경우 모두 원래 단어를 맞혀야 해요."
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "exam",
+     "src": "N5 Check Yourself",
+     "q": "1. Why can an encoder not be pretrained with next-token prediction?",
+     "qko": "**인코더(Encoder)**는 왜 **다음 토큰 예측(Next Token Prediction)**으로 사전 학습할 수 없나요?",
+     "solve": [
+      "근거 쪽은 N5 p.18 이에요. 제목이 Why an Encoder Cannot Be a Language Model 이에요",
+      "**인코더(Encoder)**는 마스크를 걸지 않아서 모든 토큰이 모든 토큰을 봐요. 이것이 **양방향 문맥(Bidirectional Context)**이에요",
+      "그러면 다음 단어가 이미 입력 안에 보여요. 슬라이드 빨간 상자: the answer is in the input",
+      "정답을 보고 정답을 쓰는 셈이라 슬라이드 표현대로 The model learns nothing 이에요",
+      "그래서 **인코더(Encoder)**에는 다른 게임이 필요해요. 입력 일부를 가리고 되살리는 **마스크 언어 모델(Masked Language Modelling (MLM))**이에요"
+     ],
+     "answer": "**양방향 문맥(Bidirectional Context)** 때문에 정답이 입력에 이미 보이기 때문이에요. 그래서 대신 **마스크 언어 모델(Masked Language Modelling (MLM))**을 써요."
+    },
+    {
+     "kind": "exam",
+     "src": "N5 Check Yourself",
+     "q": "2. Of the 15% of tokens BERT selects, what happens to each 80 / 10 / 10 slice, and why?",
+     "qko": "고른 15 퍼센트의 80 / 10 / 10 조각에 각각 무슨 일이 일어나고, 왜 그렇게 하나요?",
+     "solve": [
+      "근거 쪽은 N5 p.19 와 p.20 이에요",
+      "먼저 전체 **토큰(Token)**의 15 퍼센트를 무작위로 골라요. 200개면 30 자리예요",
+      "고른 자리의 80 퍼센트(24 자리)는 **마스크 토큰([MASK])** 으로 바꿔요",
+      "10 퍼센트(3 자리)는 아무 토큰으로 바꾸고, 10 퍼센트(3 자리)는 그대로 둬요",
+      "세 경우 모두 원래 단어를 맞혀야 해요. 손실은 고른 자리에서만 세요",
+      "왜냐고요? 슬라이드 아래 글대로 **미세조정(Finetuning)** 때는 [MASK] 가 하나도 없어요. 그 표시에 기대면 안 돼요"
+     ],
+     "answer": "24 / 3 / 3 으로 나누고 셋 다 원래 단어를 맞혀요. **마스크 토큰([MASK])** 이 보일 때만 일하는 버릇을 막으려는 장치예요."
+    },
+    {
+     "kind": "exam",
+     "src": "N5 Check Yourself",
+     "q": "3. What does pretraining is parameter initialisation actually mean?",
+     "qko": "**사전 학습(Pre-training)**은 **파라미터 초기화(Parameter Initialisation)**다 라는 말이 실제로 무슨 뜻인가요?",
+     "solve": [
+      "근거 쪽은 N5 p.13 이에요. 제목이 The Pretrain to Finetune Paradigm 이에요",
+      "슬라이드 첫 줄: **사전 학습(Pre-training)**은 과제가 아니라 **경사 하강법(Gradient Descent)**이 어디서 시작할지 고르는 방법이다",
+      "보통은 가중치를 무작위로 두고 시작해요. 그러면 언어를 하나도 모르는 곳에서 출발해요",
+      "사전 학습된 가중치를 내려받으면 이미 언어를 아는 곳에서 출발해요",
+      "그림 가운데 화살표에 the weights, parameter initialisation 이라고 적혀 있어요",
+      "비싼 앞 절반은 남이 한 번 해 두고, 우리는 뒤 절반만 여러 번 해요"
+     ],
+     "answer": "무작위 출발점 대신 이미 언어를 아는 출발점에서 **경사 하강법(Gradient Descent)**을 시작한다는 뜻이에요."
+    },
+    {
+     "kind": "exam",
+     "src": "N5 Check Yourself",
+     "q": "4. Name the four finetuning shapes and one task for each.",
+     "qko": "네 가지 미세조정 과제 모양과 각각의 과제 하나를 대세요.",
+     "solve": [
+      "근거 쪽은 N5 p.23 이에요. 제목이 One Encoder, Four Task Shapes 예요",
+      "모양 1 단일 문장: **감성 분석(Sentiment Analysis)** 이나 주제 분류. 답 하나를 내요",
+      "모양 2 **문장 쌍(Sentence Pair)**: **함의(Entailment)** 이나 유사도. 역시 답 하나를 내요",
+      "모양 3 **토큰 태깅(Token Tagging)**: 개체명 인식이나 품사 태깅. 토큰마다 답을 내요",
+      "모양 4 **스팬 추출(Span Extraction)**: 추출형 질의응답. 시작과 끝 두 자리를 가리켜요",
+      "슬라이드 아래 글: **몸통(Body)**은 언제나 같은 가중치이고 **과제 헤드(Task Head)**만 고르면 돼요"
+     ],
+     "answer": "단일 문장, **문장 쌍(Sentence Pair)**, **토큰 태깅(Token Tagging)**, **스팬 추출(Span Extraction)** 네 가지이고 **몸통(Body)**은 그대로예요."
+    },
+    {
+     "kind": "exam",
+     "src": "N5 Check Yourself",
+     "q": "5. RoBERTa removed NSP and got better results. What does that tell you about how to read a paper's ablation table?",
+     "qko": "**로베르타(RoBERTa)** 가 **다음 문장 예측(Next Sentence Prediction (NSP))** 을 빼고 더 좋아졌어요. 어블레이션 표를 어떻게 읽으라는 뜻일까요?",
+     "solve": [
+      "근거 쪽은 N5 p.21 과 p.26 이에요",
+      "**버트(BERT)** 논문은 **다음 문장 예측(Next Sentence Prediction (NSP))** 이 도움이 된다고 보고했어요 (N5 p.21)",
+      "**로베르타(RoBERTa)** 는 그것을 빼고, 동시에 더 오래, 더 많은 글로 학습했어요 (N5 p.26)",
+      "곧 한 번에 한 가지만 바뀐 것이 아니에요. 학습 시간과 데이터 양도 같이 바뀌었어요",
+      "어블레이션 표의 한 줄은 그 논문의 나머지 설정이 고정되어 있을 때만 그 부품의 값을 말해 줘요",
+      "N5 p.26 아래 파란 띠도 같은 말을 해요. 계산과 데이터만 늘려도 결과가 좋아져요"
+     ],
+     "answer": "어블레이션 결과는 그 설정 안에서만 참이에요. 다른 조건이 함께 바뀌면 원인을 한 가지로 못 잘라요."
+    },
+    {
+     "kind": "check",
+     "q": "**사전 학습(Pre-training)**이 **파라미터 초기화(Parameter Initialisation)**라는 말의 뜻으로 가장 가까운 것은",
+     "choices": [
+      "**경사 하강법(Gradient Descent)**의 출발점을 언어를 아는 곳으로 옮기는 것",
+      "학습률을 0 으로 두는 것",
+      "레이블을 사람이 달아 주는 것",
+      "모델 구조를 새로 설계하는 것"
+     ],
+     "a": 0,
+     "why": "N5 p.13 의 첫 줄 그대로예요. 사전 학습은 과제가 아니라 출발점을 고르는 일이에요."
+    },
+    {
+     "kind": "english",
+     "head": "시험 답안 문장",
+     "en": "**인코더(Encoder)**는 **양방향 문맥(Bidirectional Context)** 때문에 정답이 입력에 보이므로 **다음 토큰 예측(Next Token Prediction)**으로 학습할 수 없다.",
+     "ko": "그래서 대신 **마스크 언어 모델(Masked Language Modelling (MLM))**을 써요. 1번 답을 한 문장으로 만든 것이에요.",
+     "tip": "보인다 - 배울 게 없다 - 그래서 가린다. 세 박자로 외워요."
+    },
+    {
+     "kind": "warn",
+     "head": "이 쪽을 쓸 때 주의할 점",
+     "items": [
+      "Check Yourself 는 교수님이 직접 낸 문제라 시험 대비 1순위예요.",
+      "5주차는 녹음이 없어서 교수님이 답을 말해 준 기록이 없어요. 위 풀이는 슬라이드 근거로 세운 답이에요.",
+      "2번은 숫자를 물을 수 있어요. 80 / 10 / 10 과 손실을 세는 자리를 꼭 함께 외워요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 28,
+   "title": "10분 쉬는 시간",
+   "terms": [
+    "Pre-training",
+    "BERT",
+    "GPT",
+    "T5"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "쉬는 시간 쪽이에요. 10분 쉬어 갑니다.",
+      "작은 글씨는 half-time, 곧 지금까지가 절반이라는 뜻이에요. 왜 **사전 학습(Pre-training)**을 하는지와 **버트(BERT)** 가 그것을 어떻게 하는지를 봤어요.",
+      "아래 줄 Coming up 은 다음 차례 예고예요. 남은 두 구조 **지피티(GPT)** 와 **티파이브(T5)**, 그리고 그냥 아주 크게 만들면 무슨 일이 생기는지예요."
+     ]
+    }
+   ],
+   "pass2": [],
+   "pass3": [],
+   "pass4": []
+  },
+  {
+   "p": 29,
+   "title": "3부 표지: 디코더와 인코더 디코더",
+   "terms": [
+    "Decoder",
+    "Encoder",
+    "GPT",
+    "T5",
+    "In-Context Learning",
+    "Gradient"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "세 번째 부분 표지예요. 제목은 3 Decoders and Encoder-Decoders 예요.",
+      "작은 글씨는 GPT, T5, and learning without gradients 예요.",
+      "**지피티(GPT)** 와 **티파이브(T5)** 를 보고, **기울기(Gradient)** 걸음 없이 배우는 **인컨텍스트 러닝(In-Context Learning)** 까지 간다는 뜻이에요.",
+      "2부는 **인코더(Encoder)** 였어요. 이제 **디코더(Decoder)** 쪽 길을 봅니다."
+     ]
+    }
+   ],
+   "pass2": [],
+   "pass3": [],
+   "pass4": []
+  },
+  {
+   "p": 30,
+   "title": "디코더: 이미 아는 그 목적 함수",
+   "terms": [
+    "Decoder",
+    "Next Token Prediction",
+    "Language Model (LM)",
+    "Causal Masking",
+    "Transformer",
+    "Self-Supervision",
+    "Pre-training",
+    "Token",
+    "Autoregressive",
+    "Encoder",
+    "Masked Language Modelling (MLM)"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "**디코더(Decoder)**를 사전 학습하는 방법을 보는 쪽이에요. 놀랍게도 새 목적 함수가 없어요.",
+      "3주차에 RNN **언어 모델(Language Model (LM))**을 학습시킨 그 방법 그대로예요.",
+      "주문을 다시 외워요. 글을 토큰으로 자르고, 토큰을 벡터로 바꾸고, 벡터로 다음 토큰을 맞혀요."
+     ]
+    },
+    {
+     "kind": "analogy",
+     "head": "휴대폰 자판의 다음 단어 추천",
+     "scene": "자판이 지금까지 친 글자를 보고 다음 단어를 추천해요. 추천이 틀리면 조금씩 고쳐 가요. 디코더 사전 학습이 딱 이 일이에요.",
+     "map": [
+      [
+       "지금까지 친 글자",
+       "앞쪽 토큰들"
+      ],
+      [
+       "추천한 다음 단어",
+       "**다음 토큰 예측(Next Token Prediction)**"
+      ],
+      [
+       "추천이 틀린 정도",
+       "손실"
+      ]
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "points",
+     "head": "슬라이드 영어와 우리말 뜻",
+     "items": [
+      "Decoders: The Objective You Already Know = 디코더, 이미 아는 그 목적 함수",
+      "A decoder is pretrained exactly the way you trained your RNN language model in Week 3 = 디코더는 3주차 RNN 언어 모델과 똑같이 사전 학습된다",
+      "predict the next token, one position at a time = 한 자리씩 다음 토큰을 맞힌다",
+      "same loss as the RNN LM you built in W3 = 3주차에 만든 RNN **언어 모델(Language Model (LM))**과 손실이 같다",
+      "no new objective needed = 새 목적 함수가 필요 없다"
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "인코더와 디코더의 목적 함수",
+     "cols": [
+      "보는 점",
+      "**인코더(Encoder)**",
+      "**디코더(Decoder)**"
+     ],
+     "rows": [
+      [
+       "볼 수 있는 범위",
+       "앞뒤 전부",
+       "앞만 (인과 마스킹)"
+      ],
+      [
+       "목적 함수",
+       "**마스크 언어 모델(Masked Language Modelling (MLM))**",
+       "**다음 토큰 예측(Next Token Prediction)**"
+      ],
+      [
+       "학습할 때 쓰는 자리",
+       "가린 자리만",
+       "모든 자리"
+      ],
+      [
+       "잘하게 되는 일",
+       "이해, 분류, 태깅",
+       "이어 쓰기"
+      ]
+     ]
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드를 짚어 읽어요",
+     "boxes": [
+      {
+       "x": 0.06,
+       "y": 0.198,
+       "w": 0.87,
+       "h": 0.055,
+       "say": "부제: 디코더는 3주차 RNN 언어 모델과 똑같은 방식으로 사전 학습돼요."
+      },
+      {
+       "x": 0.146,
+       "y": 0.663,
+       "w": 0.629,
+       "h": 0.066,
+       "say": "아래 회색 줄이 입력이에요. Iroh goes to make tasty tea 여섯 칸이에요."
+      },
+      {
+       "x": 0.136,
+       "y": 0.54,
+       "w": 0.65,
+       "h": 0.068,
+       "say": "가운데 보라 띠: Transformer Decoder, causal mask. 인과 마스킹이 걸려 있어요."
+      },
+      {
+       "x": 0.146,
+       "y": 0.426,
+       "w": 0.629,
+       "h": 0.066,
+       "say": "위 보라 줄이 예측이에요. goes, to, make, tasty, tea, [END] 로 한 칸씩 밀려 있어요."
+      },
+      {
+       "x": 0.804,
+       "y": 0.47,
+       "w": 0.15,
+       "h": 0.145,
+       "say": "오른쪽 초록 상자: 3주차에 만든 RNN 언어 모델과 손실이 같아요."
+      },
+      {
+       "x": 0.13,
+       "y": 0.775,
+       "w": 0.73,
+       "h": 0.04,
+       "say": "아래 기울임 글: 새 목적 함수가 필요 없어요. 언어 모델 학습법 그대로예요."
+      }
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "한 칸씩 밀린 예측",
+     "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 480 270\"><text x=\"240\" y=\"20\" font-size=\"16\" text-anchor=\"middle\" class=\"tb\">디코더의 사전 학습 목적 함수</text><rect x=\"12\" y=\"190\" width=\"70\" height=\"26\" rx=\"2\" class=\"n b1\"/><text x=\"47.0\" y=\"207.2\" font-size=\"12\" text-anchor=\"middle\" class=\"tl b1\">Iroh</text><rect x=\"90\" y=\"190\" width=\"70\" height=\"26\" rx=\"2\" class=\"n b1\"/><text x=\"125.0\" y=\"207.2\" font-size=\"12\" text-anchor=\"middle\" class=\"tl b1\">goes</text><rect x=\"168\" y=\"190\" width=\"70\" height=\"26\" rx=\"2\" class=\"n b1\"/><text x=\"203.0\" y=\"207.2\" font-size=\"12\" text-anchor=\"middle\" class=\"tl b1\">to</text><rect x=\"246\" y=\"190\" width=\"70\" height=\"26\" rx=\"2\" class=\"n b1\"/><text x=\"281.0\" y=\"207.2\" font-size=\"12\" text-anchor=\"middle\" class=\"tl b1\">make</text><rect x=\"324\" y=\"190\" width=\"70\" height=\"26\" rx=\"2\" class=\"n b1\"/><text x=\"359.0\" y=\"207.2\" font-size=\"12\" text-anchor=\"middle\" class=\"tl b1\">tasty</text><rect x=\"402\" y=\"190\" width=\"70\" height=\"26\" rx=\"2\" class=\"n b1\"/><text x=\"437.0\" y=\"207.2\" font-size=\"12\" text-anchor=\"middle\" class=\"tl b1\">tea</text><line x1=\"47\" y1=\"188\" x2=\"47.0\" y2=\"168.4\" class=\"e2 b2\"/><polygon points=\"47,162 43.0,170.0 51.0,170.0\" class=\"arrow b2\"/><line x1=\"125\" y1=\"188\" x2=\"125.0\" y2=\"168.4\" class=\"e2 b2\"/><polygon points=\"125,162 121.0,170.0 129.0,170.0\" class=\"arrow b2\"/><line x1=\"203\" y1=\"188\" x2=\"203.0\" y2=\"168.4\" class=\"e2 b2\"/><polygon points=\"203,162 199.0,170.0 207.0,170.0\" class=\"arrow b2\"/><line x1=\"281\" y1=\"188\" x2=\"281.0\" y2=\"168.4\" class=\"e2 b2\"/><polygon points=\"281,162 277.0,170.0 285.0,170.0\" class=\"arrow b2\"/><line x1=\"359\" y1=\"188\" x2=\"359.0\" y2=\"168.4\" class=\"e2 b2\"/><polygon points=\"359,162 355.0,170.0 363.0,170.0\" class=\"arrow b2\"/><line x1=\"437\" y1=\"188\" x2=\"437.0\" y2=\"168.4\" class=\"e2 b2\"/><polygon points=\"437,162 433.0,170.0 441.0,170.0\" class=\"arrow b2\"/><rect x=\"12\" y=\"128\" width=\"448\" height=\"32\" rx=\"2\" class=\"box2 b2\"/><text x=\"236\" y=\"149\" font-size=\"14\" text-anchor=\"middle\" class=\"tb b2\">트랜스포머 디코더 + 인과 마스킹</text><line x1=\"47\" y1=\"126\" x2=\"47.0\" y2=\"106.4\" class=\"e2 b3\"/><polygon points=\"47,100 43.0,108.0 51.0,108.0\" class=\"arrow b3\"/><line x1=\"125\" y1=\"126\" x2=\"125.0\" y2=\"106.4\" class=\"e2 b3\"/><polygon points=\"125,100 121.0,108.0 129.0,108.0\" class=\"arrow b3\"/><line x1=\"203\" y1=\"126\" x2=\"203.0\" y2=\"106.4\" class=\"e2 b3\"/><polygon points=\"203,100 199.0,108.0 207.0,108.0\" class=\"arrow b3\"/><line x1=\"281\" y1=\"126\" x2=\"281.0\" y2=\"106.4\" class=\"e2 b3\"/><polygon points=\"281,100 277.0,108.0 285.0,108.0\" class=\"arrow b3\"/><line x1=\"359\" y1=\"126\" x2=\"359.0\" y2=\"106.4\" class=\"e2 b3\"/><polygon points=\"359,100 355.0,108.0 363.0,108.0\" class=\"arrow b3\"/><line x1=\"437\" y1=\"126\" x2=\"437.0\" y2=\"106.4\" class=\"e2 b3\"/><polygon points=\"437,100 433.0,108.0 441.0,108.0\" class=\"arrow b3\"/><rect x=\"12\" y=\"70\" width=\"70\" height=\"26\" rx=\"2\" class=\"box b3\"/><text x=\"47.0\" y=\"86.85\" font-size=\"11\" text-anchor=\"middle\" class=\"tb b3\">goes</text><rect x=\"90\" y=\"70\" width=\"70\" height=\"26\" rx=\"2\" class=\"box b3\"/><text x=\"125.0\" y=\"86.85\" font-size=\"11\" text-anchor=\"middle\" class=\"tb b3\">to</text><rect x=\"168\" y=\"70\" width=\"70\" height=\"26\" rx=\"2\" class=\"box b3\"/><text x=\"203.0\" y=\"86.85\" font-size=\"11\" text-anchor=\"middle\" class=\"tb b3\">make</text><rect x=\"246\" y=\"70\" width=\"70\" height=\"26\" rx=\"2\" class=\"box b3\"/><text x=\"281.0\" y=\"86.85\" font-size=\"11\" text-anchor=\"middle\" class=\"tb b3\">tasty</text><rect x=\"324\" y=\"70\" width=\"70\" height=\"26\" rx=\"2\" class=\"box b3\"/><text x=\"359.0\" y=\"86.85\" font-size=\"11\" text-anchor=\"middle\" class=\"tb b3\">tea</text><rect x=\"402\" y=\"70\" width=\"70\" height=\"26\" rx=\"2\" class=\"box b3\"/><text x=\"437.0\" y=\"86.85\" font-size=\"11\" text-anchor=\"middle\" class=\"tb b3\">[END]</text><text x=\"240\" y=\"250\" font-size=\"13\" text-anchor=\"middle\" class=\"tb b4\">3주차 RNN 언어 모델과 손실이 똑같아요</text></svg>",
+     "caption": "입력이 한 칸 밀려 정답이 돼요. 그래서 정답을 따로 만들 필요가 없어요.",
+     "builds": 4
+    },
+    {
+     "kind": "steps",
+     "head": "한 문장이 만드는 문제 수를 세어 봐요",
+     "given": "Iroh goes to make tasty tea",
+     "steps": [
+      "문장은 Iroh goes to make tasty tea 여섯 토큰이에요",
+      "1번 자리 Iroh 를 보고 goes 를 맞혀요",
+      "2번 자리까지 보고 to, 3번까지 보고 make, 4번까지 보고 tasty 를 맞혀요",
+      "5번까지 보고 tea, 6번까지 보고 [END] 를 맞혀요",
+      "한 문장에서 문제가 6개 나와요. 사람이 답을 달아 준 것이 하나도 없어요"
+     ],
+     "answer": "토큰 n 개짜리 문장은 문제 n 개를 공짜로 줘요. 이것이 **자기 지도 학습(Self-Supervision)**이에요."
+    },
+    {
+     "kind": "points",
+     "head": "4주차와 이어 붙이기",
+     "items": [
+      "N4 p.43 에서 배운 **인과 마스킹(Causal Masking)**이 이것을 가능하게 해요",
+      "미래 칸의 점수를 막지 않으면 정답이 입력에 보여서 문제가 안 돼요",
+      "N3 p.34-36 과 p.46-47 의 **다음 토큰 예측(Next Token Prediction)**이 여기서 그대로 다시 나와요",
+      "바뀐 것은 몸통이 RNN 에서 **트랜스포머(Transformer)** **디코더(Decoder)**로 바뀐 것뿐이에요",
+      "**디코더(Decoder)**는 이렇게 학습해서 **자기회귀(Autoregressive)**로 글을 이어 쓸 수 있게 돼요"
+     ]
+    },
+    {
+     "kind": "bg",
+     "src": "기초 다지기 6단원",
+     "lines": [
+      "손실은 정답 토큰의 확률에 로그를 씌우고 음수를 붙인 값이에요.",
+      "이것을 교차 엔트로피라고 불러요. N2 p.33 과 N3 p.41 에서 봤어요.",
+      "정답 확률이 1 에 가까우면 벌점이 0 에 가까워져요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "**디코더(Decoder)**의 사전 학습 목적 함수는 무엇인가요",
+     "choices": [
+      "**다음 토큰 예측(Next Token Prediction)**",
+      "**마스크 언어 모델(Masked Language Modelling (MLM))**",
+      "**다음 문장 예측(Next Sentence Prediction (NSP))**",
+      "**스팬 손상(Span Corruption)**"
+     ],
+     "a": 0,
+     "why": "슬라이드 그대로 predict the next token 이에요. 3주차 RNN 언어 모델과 같아요."
+    },
+    {
+     "kind": "check",
+     "q": "**디코더(Decoder)**가 미래 토큰을 못 보게 막는 장치는",
+     "choices": [
+      "**인과 마스킹(Causal Masking)**",
+      "위치 인코딩",
+      "층 정규화",
+      "잔차 연결"
+     ],
+     "a": 0,
+     "why": "N4 p.43 에서 배운 **인과 마스킹(Causal Masking)**이에요. 이것이 없으면 정답이 입력에 보여요."
+    },
+    {
+     "kind": "english",
+     "head": "시험 답안 문장",
+     "en": "**디코더(Decoder)**는 **인과 마스킹(Causal Masking)** 아래에서 한 자리씩 맞히는 **다음 토큰 예측(Next Token Prediction)**으로 사전 학습된다.",
+     "ko": "3주차 RNN **언어 모델(Language Model (LM))**의 목적 함수와 같아요. 새 목적 함수가 없다는 점, 인과 마스킹이 전제라는 점을 꼭 넣어요.",
+     "tip": "같은 손실, 다른 몸통. 이렇게 한 줄로 외워요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "**디코더(Decoder)**는 **마스크 토큰([MASK])** 을 쓰지 않아요. 가리는 것이 아니라 아예 보지 못하게 막는 거예요.",
+      "**마스크 언어 모델(Masked Language Modelling (MLM))**은 가린 자리에서만 손실을 세지만 **다음 토큰 예측(Next Token Prediction)**은 모든 자리에서 손실을 세요.",
+      "그림의 출력이 한 칸 밀려 있는 것이 핵심이에요. 같은 자리에 같은 단어를 쓰는 게 아니에요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 31,
+   "title": "GPT(2018): 디코더 쪽 길",
+   "terms": [
+    "GPT",
+    "BERT",
+    "Decoder",
+    "Encoder",
+    "Parameter",
+    "Byte Pair Encoding (BPE)",
+    "Corpus",
+    "Next Token Prediction",
+    "Bidirectional Context",
+    "Pre-training",
+    "Token"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "**지피티(GPT)** 의 첫 번째 모델 이야기예요. **버트(BERT)** 와 같은 2018년에 나왔어요.",
+      "같은 해에 정반대 방향으로 건 내기였어요.",
+      "**버트(BERT)** 는 전부 읽고 이해를 잘하기로, **지피티(GPT)** 는 왼쪽에서 오른쪽으로 읽고 쓰기를 잘하기로 했어요."
+     ]
+    },
+    {
+     "kind": "analogy",
+     "head": "같은 해, 반대 내기",
+     "scene": "한 팀은 시험 문제를 다 펼쳐 놓고 푸는 연습을 했고, 다른 팀은 다음 문장을 계속 이어 쓰는 연습을 했어요. 2018년에는 앞 팀이 이긴 듯했어요.",
+     "map": [
+      [
+       "문제를 다 펼쳐 놓고 풀기",
+       "**버트(BERT)**"
+      ],
+      [
+       "다음 문장을 이어 쓰기",
+       "**지피티(GPT)**"
+      ],
+      [
+       "펼쳐 놓고 보는 눈",
+       "**양방향 문맥(Bidirectional Context)**"
+      ]
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "points",
+     "head": "슬라이드 영어와 우리말 뜻",
+     "items": [
+      "The Decoder Route = 디코더 쪽 길",
+      "The same year as BERT, the opposite bet = BERT 와 같은 해, 반대 방향의 내기",
+      "read left to right = 왼쪽에서 오른쪽으로 읽는다",
+      "become good at writing rather than at understanding = 이해보다 쓰기를 잘하게 된다",
+      "in 2018 the encoder bet looked like the winner = 2018년에는 인코더 쪽 내기가 이긴 듯 보였다",
+      "that lasted about two years = 그것이 2년쯤 갔다"
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "두 내기를 한 표로",
+     "cols": [
+      "보는 점",
+      "**버트(BERT)** (**인코더(Encoder)**)",
+      "**지피티(GPT)** (**디코더(Decoder)**)"
+     ],
+     "rows": [
+      [
+       "읽는 방향",
+       "앞뒤 전부",
+       "왼쪽에서 오른쪽"
+      ],
+      [
+       "잘하게 되는 일",
+       "이해",
+       "쓰기"
+      ],
+      [
+       "학습 방법",
+       "**마스크 언어 모델(Masked Language Modelling (MLM))**",
+       "**다음 토큰 예측(Next Token Prediction)**"
+      ],
+      [
+       "나온 해",
+       "2018",
+       "2018"
+      ]
+     ]
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드를 짚어 읽어요",
+     "boxes": [
+      {
+       "x": 0.06,
+       "y": 0.198,
+       "w": 0.82,
+       "h": 0.04,
+       "say": "부제: BERT 와 같은 해, 반대 내기. 왼쪽에서 오른쪽으로 읽고 쓰기를 잘하게 되자."
+      },
+      {
+       "x": 0.131,
+       "y": 0.445,
+       "w": 0.464,
+       "h": 0.099,
+       "say": "보라 상자 네 개: 12 층, 1억 1700만 파라미터, 은닉 768, BPE 병합 4만 개."
+      },
+      {
+       "x": 0.13,
+       "y": 0.575,
+       "w": 0.5,
+       "h": 0.035,
+       "say": "trained on: BooksCorpus, 출간되지 않은 책 7천 권이 넘어요."
+      },
+      {
+       "x": 0.265,
+       "y": 0.61,
+       "w": 0.36,
+       "h": 0.03,
+       "say": "작은 글씨: 길고 이어진 산문이 먼 거리 구조를 가르쳐요."
+      },
+      {
+       "x": 0.632,
+       "y": 0.419,
+       "w": 0.279,
+       "h": 0.274,
+       "say": "오른쪽 회색 상자: 같은 해, 반대 내기. BERT 는 이해, GPT 는 쓰기."
+      },
+      {
+       "x": 0.24,
+       "y": 0.72,
+       "w": 0.52,
+       "h": 0.035,
+       "say": "아래 기울임 글: 2018년엔 인코더 쪽이 이긴 듯했지만 2년쯤 갔어요."
+      }
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "**지피티(GPT)** 와 **버트(BERT)** 의 숫자를 나란히 놓아 봐요",
+     "given": "GPT-1 117M, BERT-base 110M",
+     "steps": [
+      "GPT-1 은 층 12, 은닉 768, 파라미터 1억 1700만 개예요",
+      "BERT-base 는 층 12, 은닉 768, 파라미터 1억 1000만 개예요 (N5 p.22)",
+      "층과 은닉 차원은 완전히 같아요",
+      "파라미터는 117 - 110 = 7 로 700만 개 차이예요",
+      "곧 크기가 아니라 마스크와 목적 함수가 둘을 갈라요"
+     ],
+     "answer": "덩치는 거의 같고 보는 방향만 달라요. 그 차이가 잘하는 일을 갈랐어요."
+    },
+    {
+     "kind": "points",
+     "head": "**BPE(바이트 쌍 인코딩)** 와 **말뭉치(Corpus)** 이야기",
+     "items": [
+      "슬라이드의 40k BPE merges 는 병합 규칙 4만 개를 뜻해요. **BPE(바이트 쌍 인코딩)** 는 2주차에 배웠어요",
+      "자주 붙어 다니는 두 조각을 한 조각으로 붙이는 그 방법이에요",
+      "**말뭉치(Corpus)**는 BooksCorpus 예요. 출간되지 않은 책이 7천 권 넘게 들어 있어요",
+      "슬라이드가 이유를 적어 뒀어요. 길고 이어진 산문이 먼 거리 구조를 가르쳐 준다는 것이에요",
+      "짧은 글 조각만 모으면 긴 문맥을 배우기 어렵다는 뜻이에요"
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "같은 해 반대 내기",
+     "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 480 270\"><text x=\"240\" y=\"22\" font-size=\"16\" text-anchor=\"middle\" class=\"tb\">2018년, 같은 해 반대 내기</text><rect x=\"16\" y=\"44\" width=\"210\" height=\"100\" rx=\"2\" class=\"box b1\"/><text x=\"121\" y=\"66\" font-size=\"14\" text-anchor=\"middle\" class=\"tb b1\">BERT (인코더)</text><text x=\"121\" y=\"90\" font-size=\"12\" text-anchor=\"middle\" class=\"t b1\">글 전체를 한꺼번에 읽어요</text><text x=\"121\" y=\"112\" font-size=\"12\" text-anchor=\"middle\" class=\"tb b2\">이해를 잘하게 돼요</text><text x=\"121\" y=\"132\" font-size=\"11\" text-anchor=\"middle\" class=\"tm b2\">빈칸 채우기로 학습</text><rect x=\"254\" y=\"44\" width=\"210\" height=\"100\" rx=\"2\" class=\"box2 b1\"/><text x=\"359\" y=\"66\" font-size=\"14\" text-anchor=\"middle\" class=\"tb b1\">GPT (디코더)</text><text x=\"359\" y=\"90\" font-size=\"12\" text-anchor=\"middle\" class=\"t b1\">왼쪽에서 오른쪽으로 읽어요</text><text x=\"359\" y=\"112\" font-size=\"12\" text-anchor=\"middle\" class=\"tb b3\">쓰기를 잘하게 돼요</text><text x=\"359\" y=\"132\" font-size=\"11\" text-anchor=\"middle\" class=\"tm b3\">다음 토큰 예측으로 학습</text><text x=\"240\" y=\"176\" font-size=\"13\" text-anchor=\"middle\" class=\"tb b4\">12층, 768 은닉, 1억 1700만 파라미터</text><text x=\"240\" y=\"200\" font-size=\"13\" text-anchor=\"middle\" class=\"t b4\">BooksCorpus 7천 권 넘는 책으로 학습했어요</text><text x=\"240\" y=\"226\" font-size=\"12\" text-anchor=\"middle\" class=\"tm b4\">2018년엔 인코더가 이긴 듯했지만 2년쯤 갔어요</text></svg>",
+     "caption": "덩치는 비슷한데 보는 방향이 달라서 잘하는 일이 갈렸어요.",
+     "builds": 4
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "GPT-1 의 파라미터 수는",
+     "choices": [
+      "117M",
+      "110M",
+      "340M",
+      "175B"
+     ],
+     "a": 0,
+     "why": "슬라이드 두 번째 상자에 117M parameters 라고 적혀 있어요. BERT-base 는 110M 이에요."
+    },
+    {
+     "kind": "check",
+     "q": "**지피티(GPT)** 가 학습한 **말뭉치(Corpus)**는",
+     "choices": [
+      "BooksCorpus",
+      "English Wikipedia",
+      "GLUE",
+      "NSMC"
+     ],
+     "a": 0,
+     "why": "trained on BooksCorpus, over 7,000 unpublished books 라고 적혀 있어요."
+    },
+    {
+     "kind": "english",
+     "head": "시험 답안 문장",
+     "en": "**지피티(GPT)**(2018)는 12층 768 은닉 1억 1700만 **파라미터(Parameter)**의 **디코더(Decoder)** 모델이다.",
+     "ko": "BooksCorpus 로 **다음 토큰 예측(Next Token Prediction)** 학습했어요. **버트(BERT)** 는 앞뒤 전부, **지피티(GPT)** 는 왼쪽에서 오른쪽이에요.",
+     "tip": "12, 768, 117M, 그리고 BPE 병합 4만. 네 숫자를 묶어 외워요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "슬라이드 오른쪽 아래 번호는 29 / 48 이지만 우리 번호로는 N5 p.31 이에요.",
+      "**지피티(GPT)** 가 2018년에 졌다는 뜻이 아니에요. 그때는 인코더가 이긴 듯 보였을 뿐이에요.",
+      "**BPE(바이트 쌍 인코딩)** 병합 4만 개는 어휘 크기와 비슷한 말이지만 같은 수는 아니에요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 32,
+   "title": "디코더를 미세조정하기",
+   "terms": [
+    "Decoder",
+    "Finetuning",
+    "[CLS]",
+    "Delimiter",
+    "Entailment",
+    "Task Head",
+    "Body",
+    "Downstream Task",
+    "Token",
+    "Classification",
+    "GPT",
+    "BERT",
+    "Sentence Pair",
+    "Parameter Initialisation"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "**디코더(Decoder)**를 우리 과제에 맞추는 방법을 보는 쪽이에요.",
+      "**버트(BERT)** 에는 **분류 토큰([CLS])** 가 있었지만 **지피티(GPT)** 에는 없어요. 둘째 입력 줄도 없어요.",
+      "대신 과제를 한 줄로 쭉 펴서 넣고 마지막 자리에서 답을 읽어요."
+     ]
+    },
+    {
+     "kind": "analogy",
+     "head": "공구 날을 갈아 끼우는 대신 재료를 한 줄로 펴기",
+     "scene": "인코더는 몸통 위에 날만 갈아 끼웠어요. 디코더는 날을 바꾸는 대신 재료를 한 줄로 길게 펴서 기계에 밀어 넣어요.",
+     "map": [
+      [
+       "갈아 끼우는 공구 날",
+       "**과제 헤드(Task Head)**"
+      ],
+      [
+       "한 줄로 편 재료",
+       "구분자로 이어 붙인 토큰 줄"
+      ],
+      [
+       "기계 본체",
+       "**몸통(Body)**"
+      ]
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "points",
+     "head": "슬라이드 영어와 우리말 뜻",
+     "items": [
+      "Finetuning a Decoder = 디코더를 미세조정하기",
+      "There is no [CLS] token and no second stream = [CLS] 토큰도 없고 둘째 입력 줄도 없다",
+      "You flatten the task into one token sequence = 과제를 한 줄짜리 토큰 줄로 편다",
+      "with special delimiters = 특별한 구분자를 끼워서",
+      "read the answer off the last position = 마지막 자리에서 답을 읽는다",
+      "no new architecture = 새 구조는 없다"
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "같은 과제, 두 가지 미세조정 방법",
+     "cols": [
+      "보는 점",
+      "**버트(BERT)** 방식",
+      "**지피티(GPT)** 방식"
+     ],
+     "rows": [
+      [
+       "답을 읽는 자리",
+       "**분류 토큰([CLS])**",
+       "마지막 자리"
+      ],
+      [
+       "문장 두 개 넣는 법",
+       "**구분 토큰([SEP])** 로 나눠 두 줄처럼",
+       "**구분자(Delimiter)** 하나로 이어 한 줄로"
+      ],
+      [
+       "위에 얹는 것",
+       "**과제 헤드(Task Head)**",
+       "선형 분류기 한 층"
+      ],
+      [
+       "바뀌는 것",
+       "몸통 + 헤드",
+       "몸통 + 선형 층"
+      ]
+     ]
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드를 짚어 읽어요",
+     "boxes": [
+      {
+       "x": 0.06,
+       "y": 0.198,
+       "w": 0.88,
+       "h": 0.055,
+       "say": "부제: [CLS] 도 둘째 줄도 없어요. 한 줄로 펴서 마지막 자리에서 답을 읽어요."
+      },
+      {
+       "x": 0.1,
+       "y": 0.427,
+       "w": 0.45,
+       "h": 0.11,
+       "say": "과제는 natural language inference 예요. 전제와 가설 두 문장이 주어져요."
+      },
+      {
+       "x": 0.66,
+       "y": 0.47,
+       "w": 0.13,
+       "h": 0.06,
+       "say": "정답 후보는 함의, 모순, 중립 셋이에요. 여기서는 함의예요."
+      },
+      {
+       "x": 0.33,
+       "y": 0.575,
+       "w": 0.34,
+       "h": 0.035,
+       "say": "가운데 굵은 글: 디코더를 위한 한 줄짜리 토큰 줄."
+      },
+      {
+       "x": 0.093,
+       "y": 0.618,
+       "w": 0.771,
+       "h": 0.058,
+       "say": "[START], 전제, [DELIM], 가설, [EXTRACT] 다섯 칸으로 이어 붙였어요."
+      },
+      {
+       "x": 0.762,
+       "y": 0.676,
+       "w": 0.15,
+       "h": 0.06,
+       "say": "[EXTRACT] 자리 위에 선형 분류기를 얹어 답을 읽어요."
+      }
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "과제를 한 줄로 펴기",
+     "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 480 270\"><text x=\"240\" y=\"20\" font-size=\"16\" text-anchor=\"middle\" class=\"tb\">과제를 한 줄로 펴기</text><text x=\"16\" y=\"48\" font-size=\"12\" text-anchor=\"start\" class=\"t b1\">전제: The man is in the doorway</text><text x=\"16\" y=\"70\" font-size=\"12\" text-anchor=\"start\" class=\"t b1\">가설: The person is near the door</text><text x=\"360\" y=\"60\" font-size=\"13\" text-anchor=\"middle\" class=\"tb b1\">답: 함의</text><line x1=\"240\" y1=\"82\" x2=\"240.0\" y2=\"97.6\" class=\"e2 b2\"/><polygon points=\"240,104 244.0,96.0 236.0,96.0\" class=\"arrow b2\"/><rect x=\"8\" y=\"110\" width=\"66\" height=\"30\" rx=\"2\" class=\"n b2\"/><text x=\"41.0\" y=\"128.5\" font-size=\"10\" text-anchor=\"middle\" class=\"tl b2\">[START]</text><rect x=\"78\" y=\"110\" width=\"128\" height=\"30\" rx=\"2\" class=\"n b2\"/><text x=\"142.0\" y=\"128.85\" font-size=\"11\" text-anchor=\"middle\" class=\"tl b2\">The man is ...</text><rect x=\"210\" y=\"110\" width=\"62\" height=\"30\" rx=\"2\" class=\"box2 b3\"/><text x=\"241.0\" y=\"128.5\" font-size=\"10\" text-anchor=\"middle\" class=\"tb b3\">[DELIM]</text><rect x=\"276\" y=\"110\" width=\"122\" height=\"30\" rx=\"2\" class=\"n b2\"/><text x=\"337.0\" y=\"128.85\" font-size=\"11\" text-anchor=\"middle\" class=\"tl b2\">The person ...</text><rect x=\"402\" y=\"110\" width=\"70\" height=\"30\" rx=\"2\" class=\"box2 b3\"/><text x=\"437.0\" y=\"128.5\" font-size=\"10\" text-anchor=\"middle\" class=\"tb b3\">[EXTRACT]</text><line x1=\"437\" y1=\"142\" x2=\"437.0\" y2=\"159.6\" class=\"e2 b4\"/><polygon points=\"437,166 441.0,158.0 433.0,158.0\" class=\"arrow b4\"/><text x=\"437\" y=\"186\" font-size=\"12\" text-anchor=\"middle\" class=\"tb b4\">선형 분류기</text><text x=\"240\" y=\"216\" font-size=\"13\" text-anchor=\"middle\" class=\"tb b4\">새 구조는 없어요. 특별한 토큰과 선형 층 하나뿐이에요</text><text x=\"240\" y=\"240\" font-size=\"12\" text-anchor=\"middle\" class=\"tm b4\">답은 마지막 자리에서 읽어요</text></svg>",
+     "caption": "구분자를 끼워 한 줄로 만들고, 마지막 자리 위에 선형 층 하나만 올려요.",
+     "builds": 4
+    },
+    {
+     "kind": "points",
+     "head": "**함의(Entailment)** 과제가 무엇인지",
+     "items": [
+      "슬라이드의 natural language inference 는 두 문장의 관계를 묻는 과제예요",
+      "전제: The man is in the doorway (그 남자는 문간에 있다)",
+      "가설: The person is near the door (그 사람은 문 가까이에 있다)",
+      "전제가 참이면 가설도 참이므로 답은 **함의(Entailment)** 이에요",
+      "나머지 후보는 모순(contradiction)과 중립(neutral)이에요",
+      "이것은 N5 p.23 의 네 모양 중 **문장 쌍(Sentence Pair)** 자리에 들어가요"
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "특별한 토큰 세 개가 하는 일",
+     "given": "[START], [DELIM], [EXTRACT]",
+     "steps": [
+      "[START] 는 줄의 시작을 알려요",
+      "[DELIM] 은 전제와 가설 사이를 끊어요. 이것이 **구분자(Delimiter)** 이에요",
+      "[EXTRACT] 는 줄의 끝이자 답을 읽을 자리예요",
+      "**버트(BERT)** 의 **구분 토큰([SEP])** 와 역할이 비슷하지만 이름이 달라요",
+      "**몸통(Body)**은 사전 학습된 것을 그대로 쓰고, 선형 층 하나만 새로 얹어요. 이것이 **전이 학습(Transfer Learning)** 이에요"
+     ],
+     "answer": "새 구조는 없어요. 특별한 토큰 몇 개와 선형 층 하나면 끝이에요."
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "**지피티(GPT)** 미세조정에서 답을 읽는 자리는",
+     "choices": [
+      "마지막 자리 [EXTRACT]",
+      "**분류 토큰([CLS])**",
+      "첫 번째 자리",
+      "가운데 자리"
+     ],
+     "a": 0,
+     "why": "슬라이드 그대로 read the answer off the last position 이에요."
+    },
+    {
+     "kind": "check",
+     "q": "**지피티(GPT)** 에 **분류 토큰([CLS])** 가 없는 이유로 알맞은 것은",
+     "choices": [
+      "디코더는 앞만 보므로 마지막 자리가 문장 전체를 본 자리예요",
+      "디코더는 토큰을 쓰지 않아요",
+      "CLS 는 T5 전용이에요",
+      "파라미터를 아끼려고 뺐어요"
+     ],
+     "a": 0,
+     "why": "앞만 보는 구조에서는 마지막 자리가 앞의 모든 토큰을 본 유일한 자리예요."
+    },
+    {
+     "kind": "english",
+     "head": "시험 답안 문장",
+     "en": "**디코더(Decoder)** **미세조정(Finetuning)**은 과제를 **구분자(Delimiter)** 로 이어 붙인 한 줄 토큰 줄로 펴고, 마지막 자리 위에 선형 층 하나만 올려 답을 읽는다.",
+     "ko": "새 구조가 없다는 점이 핵심이에요. **몸통(Body)**은 그대로 두고 **파라미터 초기화(Parameter Initialisation)**만 이어받아요.",
+     "tip": "펴고, 끊고, 마지막에서 읽는다. 세 동사로 외워요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "**구분자(Delimiter)** 는 **구분 토큰([SEP])** 와 역할이 비슷하지만 이름과 구조가 달라요. 시험에서 바꿔 쓰지 마세요.",
+      "**다운스트림 과제(Downstream Task)**를 한 줄로 편다고 해서 **분류(Classification)** 가 생성으로 바뀌는 것은 아니에요. 답은 여전히 레이블 하나예요.",
+      "슬라이드 문장의 contradiction 과 neutral 사이 기호는 원본에 가운뎃점이 있어요. 우리는 쉼표로 적어요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 33,
+   "title": "그다음엔 그냥 크게 만들었어요",
+   "terms": [
+    "GPT",
+    "Parameter",
+    "Large Language Model (LLM)",
+    "In-Context Learning",
+    "Prompt",
+    "Finetuning",
+    "Downstream Task",
+    "Transformer",
+    "Pre-training",
+    "Autoregressive"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "GPT-1 에서 GPT-3 까지 무엇이 바뀌었는지 보는 쪽이에요.",
+      "답은 거의 아무것도 안 바뀌었다는 것이에요. 구조 이야기가 아니에요.",
+      "바뀐 것은 **파라미터(Parameter)** 수와 글의 양뿐이에요."
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "세 모델의 크기",
+     "items": [
+      "GPT-1 (2018): 1억 1700만 개, 그림에는 0.117B 로 적혀 있어요",
+      "GPT-2 (2019): 15억 개, 그림에는 1.5B 로 적혀 있어요",
+      "GPT-3 (2020): 1750억 개, 그림에는 175B 로 적혀 있어요",
+      "이쯤 되면 **대규모 언어 모델(Large Language Model (LLM))** 이라고 부를 만해요"
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "points",
+     "head": "슬라이드 영어와 우리말 뜻",
+     "items": [
+      "Then They Just Made It Bigger = 그다음엔 그냥 크게 만들었다",
+      "not a story about architecture = 구조에 대한 이야기가 아니다",
+      "Almost nothing changed except the number of parameters and the amount of text = 파라미터 수와 글의 양 말고는 거의 아무것도 안 바뀌었다",
+      "two years, 1500x more parameters = 2년 동안 파라미터 1500배",
+      "the model starts doing tasks it was never finetuned on = 미세조정한 적 없는 과제를 하기 시작한다",
+      "you describe the task in the prompt = 프롬프트에 과제를 설명한다"
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "무엇이 달라졌나",
+     "cols": [
+      "모델",
+      "**파라미터(Parameter)**",
+      "쓰는 방법"
+     ],
+     "rows": [
+      [
+       "GPT-1 (2018)",
+       "0.117B",
+       "**사전 학습(Pre-training)** 뒤 과제마다 **미세조정(Finetuning)**"
+      ],
+      [
+       "GPT-2 (2019)",
+       "1.5B",
+       "미세조정한 적 없는 과제도 해내기 시작"
+      ],
+      [
+       "GPT-3 (2020)",
+       "175B",
+       "**프롬프트(Prompt)** 에 과제를 설명, 기울기 걸음 0"
+      ]
+     ]
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드를 짚어 읽어요",
+     "boxes": [
+      {
+       "x": 0.06,
+       "y": 0.198,
+       "w": 0.88,
+       "h": 0.055,
+       "say": "부제: 구조 이야기가 아니에요. 파라미터 수와 글의 양만 바뀌었어요."
+      },
+      {
+       "x": 0.166,
+       "y": 0.38,
+       "w": 0.3,
+       "h": 0.038,
+       "say": "그림 제목: 2년 동안 파라미터 1500배."
+      },
+      {
+       "x": 0.068,
+       "y": 0.42,
+       "w": 0.41,
+       "h": 0.29,
+       "say": "막대 세 개. 세로축이 로그라서 175B 막대가 그나마 그려져요."
+      },
+      {
+       "x": 0.554,
+       "y": 0.4,
+       "w": 0.36,
+       "h": 0.038,
+       "say": "오른쪽 제목: 그동안 무엇이 바뀌었나."
+      },
+      {
+       "x": 0.554,
+       "y": 0.46,
+       "w": 0.4,
+       "h": 0.23,
+       "say": "GPT-1 은 과제마다 미세조정, GPT-2 는 안 배운 과제도 수행, GPT-3 은 프롬프트로 지시."
+      },
+      {
+       "x": 0.554,
+       "y": 0.705,
+       "w": 0.38,
+       "h": 0.035,
+       "say": "기울임 글: 구조는 아무것도 안 바뀌었고 크기만 바뀌었어요."
+      }
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "1500배를 직접 계산해 봐요",
+     "given": "0.117B, 1.5B, 175B",
+     "steps": [
+      "GPT-1 은 0.117B, GPT-3 은 175B 예요",
+      "175 / 0.117 을 계산해요",
+      "175 / 0.117 = 약 1495.7 이에요",
+      "반올림하면 약 1500 배예요. 슬라이드 제목의 1500x 와 같아요",
+      "중간 단계도 보면 1.5 / 0.117 = 약 12.8 배, 175 / 1.5 = 약 116.7 배예요"
+     ],
+     "answer": "2018년에서 2020년까지 2년 만에 약 1500배가 됐어요."
+    },
+    {
+     "kind": "figure",
+     "head": "2년 동안 약 1500배",
+     "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 480 270\"><text x=\"240\" y=\"20\" font-size=\"16\" text-anchor=\"middle\" class=\"tb\">2년 동안 약 1500배</text><line x1=\"60\" y1=\"200\" x2=\"440\" y2=\"200\" class=\"e b1\"/><rect x=\"80\" y=\"188\" width=\"66\" height=\"12\" rx=\"2\" class=\"n b1\"/><text x=\"113\" y=\"180\" font-size=\"12\" text-anchor=\"middle\" class=\"tb b1\">0.117B</text><text x=\"113\" y=\"218\" font-size=\"11\" text-anchor=\"middle\" class=\"tm b1\">GPT-1 2018</text><rect x=\"207\" y=\"146\" width=\"66\" height=\"54\" rx=\"2\" class=\"n3 b2\"/><text x=\"240\" y=\"138\" font-size=\"12\" text-anchor=\"middle\" class=\"tb b2\">1.5B</text><text x=\"240\" y=\"218\" font-size=\"11\" text-anchor=\"middle\" class=\"tm b2\">GPT-2 2019</text><rect x=\"334\" y=\"62\" width=\"66\" height=\"138\" rx=\"2\" class=\"n2 b3\"/><text x=\"367\" y=\"54\" font-size=\"12\" text-anchor=\"middle\" class=\"tb b3\">175B</text><text x=\"367\" y=\"218\" font-size=\"11\" text-anchor=\"middle\" class=\"tm b3\">GPT-3 2020</text><text x=\"240\" y=\"244\" font-size=\"13\" text-anchor=\"middle\" class=\"tb b4\">구조는 그대로, 파라미터와 글의 양만 늘렸어요</text></svg>",
+     "caption": "막대 높이는 로그 눈금이에요. 실제 차이는 그림보다 훨씬 커요.",
+     "builds": 4
+    },
+    {
+     "kind": "points",
+     "head": "로그 눈금이 무엇인지",
+     "items": [
+      "세로축에 10의 -1승, 10의 0승, 10의 1승, 10의 2승이 적혀 있어요",
+      "한 칸 올라갈 때마다 10배가 된다는 뜻이에요",
+      "0.117 과 175 를 같은 그림에 그리려면 이렇게 해야 해요",
+      "보통 눈금이면 GPT-1 막대는 보이지도 않아요",
+      "같은 로그 눈금이 N5 p.47 의 스케일링 법칙 그림에도 나와요"
+     ]
+    },
+    {
+     "kind": "bg",
+     "src": "기초 다지기 4단원",
+     "lines": [
+      "로그는 몇 배인지를 덧셈으로 바꿔 주는 도구예요.",
+      "10을 세 번 곱하면 1000 이고, 로그로는 3 이에요.",
+      "그래서 10배 차이가 그림에서는 같은 간격이 돼요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "GPT-1 에서 GPT-3 까지 파라미터는 약 몇 배가 됐나요",
+     "choices": [
+      "약 1500배",
+      "약 15배",
+      "약 150배",
+      "약 15000배"
+     ],
+     "a": 0,
+     "why": "175 / 0.117 = 약 1495.7 이고 슬라이드 제목은 1500x 라고 적었어요."
+    },
+    {
+     "kind": "check",
+     "q": "GPT-1 에서 GPT-3 사이에 바뀐 것으로 슬라이드가 든 것은",
+     "choices": [
+      "**파라미터(Parameter)** 수와 글의 양",
+      "어텐션 방식",
+      "토크나이저 종류",
+      "손실 함수"
+     ],
+     "a": 0,
+     "why": "Almost nothing changed except the number of parameters and the amount of text 예요."
+    },
+    {
+     "kind": "english",
+     "head": "시험 답안 문장",
+     "en": "GPT-1 에서 GPT-3 까지 **트랜스포머(Transformer)** 구조는 거의 그대로이고 **파라미터(Parameter)** 수와 학습 글의 양만 약 1500배로 커졌다.",
+     "ko": "크기만 키웠더니 **미세조정(Finetuning)** 없이 **다운스트림 과제(Downstream Task)**를 하기 시작했다는 것이 이 쪽의 핵심이에요.",
+     "tip": "0.117, 1.5, 175. 세 숫자를 묶어 외워요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "1500배는 파라미터 수 이야기예요. 성능이 1500배 좋아졌다는 뜻이 아니에요.",
+      "GPT-2 가 **미세조정(Finetuning)** 없이 과제를 한다는 말은 **자기회귀(Autoregressive)** 생성으로 답을 만들어 낸다는 뜻이에요.",
+      "그림의 세로축은 로그 눈금이에요. 막대 높이를 그대로 비율로 읽으면 안 돼요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 34,
+   "title": "인컨텍스트 러닝",
+   "terms": [
+    "In-Context Learning",
+    "Prompt",
+    "Zero-shot",
+    "Few-shot",
+    "Gradient",
+    "Parameter",
+    "Finetuning",
+    "Token",
+    "Large Language Model (LLM)",
+    "GPT"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "**인컨텍스트 러닝(In-Context Learning)** 을 보는 쪽이에요. 이름이 길지만 하는 일은 아주 단순해요.",
+      "**프롬프트(Prompt)** 안에 예시를 몇 개 적어 주면 모델이 그대로 따라 해요.",
+      "**기울기(Gradient)** 걸음도 없고 가중치 갱신도 전혀 없어요."
+     ]
+    },
+    {
+     "kind": "analogy",
+     "head": "시험지 맨 위에 예시 문제 두세 개",
+     "scene": "시험지 맨 위에 풀이가 적힌 예시 문제 두세 개를 붙여 줬어요. 학생은 그것을 보고 아래 문제를 풀어요. 하지만 머릿속이 바뀌지는 않아요.",
+     "map": [
+      [
+       "맨 위의 예시 문제",
+       "프롬프트 안 예시"
+      ],
+      [
+       "아래 진짜 문제",
+       "우리가 풀게 하려는 질문"
+      ],
+      [
+       "머릿속이 바뀌지 않음",
+       "가중치가 그대로"
+      ]
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "points",
+     "head": "슬라이드 영어와 우리말 뜻",
+     "items": [
+      "In-Context Learning = 문맥 안에서 배우기",
+      "Give the model a few examples inside the prompt = 프롬프트 안에 예시 몇 개를 준다",
+      "with no gradient steps and no weight updates at all = 기울기 걸음도 가중치 갱신도 전혀 없이",
+      "the weights never change = 가중치는 절대 바뀌지 않는다",
+      "the examples only condition the next-token distribution = 예시는 다음 토큰 분포를 기울일 뿐이다",
+      "this only starts working at very large scale = 아주 큰 규모에서만 되기 시작한다"
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "예시를 몇 개 주느냐",
+     "cols": [
+      "이름",
+      "프롬프트 안 예시 수",
+      "슬라이드 예"
+     ],
+     "rows": [
+      [
+       "**제로샷(Zero-shot)**",
+       "0개",
+       "Translate to Korean: cheese →"
+      ],
+      [
+       "원샷(one-shot)",
+       "1개",
+       "sea otter → 해달 을 보여 준 뒤 cheese →"
+      ],
+      [
+       "**퓨샷(Few-shot)**",
+       "2개",
+       "sea otter, plush giraffe 를 보여 준 뒤 cheese →"
+      ]
+     ]
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드를 짚어 읽어요",
+     "boxes": [
+      {
+       "x": 0.06,
+       "y": 0.198,
+       "w": 0.88,
+       "h": 0.04,
+       "say": "부제: 프롬프트 안에 예시 몇 개를 주면 과제를 해내요. 기울기 걸음이 없어요."
+      },
+      {
+       "x": 0.066,
+       "y": 0.381,
+       "w": 0.273,
+       "h": 0.305,
+       "say": "왼쪽 파란 상자 zero-shot: 지시문만 있고 예시는 0개예요."
+      },
+      {
+       "x": 0.363,
+       "y": 0.381,
+       "w": 0.264,
+       "h": 0.305,
+       "say": "가운데 초록 상자 one-shot: 예시가 1개예요."
+      },
+      {
+       "x": 0.654,
+       "y": 0.381,
+       "w": 0.269,
+       "h": 0.305,
+       "say": "오른쪽 보라 상자 few-shot: 예시가 2개예요."
+      },
+      {
+       "x": 0.14,
+       "y": 0.715,
+       "w": 0.72,
+       "h": 0.032,
+       "say": "굵은 글: 가중치는 절대 안 바뀌고 예시는 다음 토큰 분포를 기울일 뿐이에요."
+      },
+      {
+       "x": 0.22,
+       "y": 0.76,
+       "w": 0.56,
+       "h": 0.03,
+       "say": "기울임 글: 아주 큰 규모에서만 되기 시작하고 왜 그런지는 아무도 잘 몰라요."
+      }
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "가르치되 학습시키지는 않기",
+     "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 480 270\"><text x=\"240\" y=\"20\" font-size=\"16\" text-anchor=\"middle\" class=\"tb\">가르치되 학습시키지는 않기</text><rect x=\"10\" y=\"34\" width=\"148\" height=\"120\" rx=\"2\" class=\"box b1\"/><text x=\"84\" y=\"54\" font-size=\"14\" text-anchor=\"middle\" class=\"tb b1\">zero-shot</text><text x=\"84\" y=\"80\" font-size=\"11\" text-anchor=\"middle\" class=\"t b1\">Translate to Korean:</text><text x=\"84\" y=\"100\" font-size=\"12\" text-anchor=\"middle\" class=\"tb b1\">cheese →  ?</text><text x=\"84\" y=\"140\" font-size=\"11\" text-anchor=\"middle\" class=\"tm b1\">예시 0개</text><rect x=\"166\" y=\"34\" width=\"148\" height=\"120\" rx=\"2\" class=\"box b2\"/><text x=\"240\" y=\"54\" font-size=\"14\" text-anchor=\"middle\" class=\"tb b2\">one-shot</text><text x=\"240\" y=\"78\" font-size=\"11\" text-anchor=\"middle\" class=\"t b2\">sea otter → 해달</text><text x=\"240\" y=\"100\" font-size=\"12\" text-anchor=\"middle\" class=\"tb b2\">cheese →  ?</text><text x=\"240\" y=\"140\" font-size=\"11\" text-anchor=\"middle\" class=\"tm b2\">예시 1개</text><rect x=\"322\" y=\"34\" width=\"148\" height=\"120\" rx=\"2\" class=\"box2 b3\"/><text x=\"396\" y=\"54\" font-size=\"14\" text-anchor=\"middle\" class=\"tb b3\">few-shot</text><text x=\"396\" y=\"76\" font-size=\"11\" text-anchor=\"middle\" class=\"t b3\">sea otter → 해달</text><text x=\"396\" y=\"94\" font-size=\"10\" text-anchor=\"middle\" class=\"t b3\">plush giraffe → 봉제 기린</text><text x=\"396\" y=\"114\" font-size=\"12\" text-anchor=\"middle\" class=\"tb b3\">cheese →  ?</text><text x=\"396\" y=\"140\" font-size=\"11\" text-anchor=\"middle\" class=\"tm b3\">예시 2개</text><text x=\"240\" y=\"190\" font-size=\"14\" text-anchor=\"middle\" class=\"tb b4\">가중치는 한 번도 바뀌지 않아요</text><text x=\"240\" y=\"214\" font-size=\"13\" text-anchor=\"middle\" class=\"t b4\">예시는 다음 토큰 분포를 기울일 뿐이에요</text><text x=\"240\" y=\"238\" font-size=\"12\" text-anchor=\"middle\" class=\"tm b4\">아주 큰 모델에서만 되기 시작해요</text></svg>",
+     "caption": "예시 수만 다를 뿐 모델도 가중치도 그대로예요.",
+     "builds": 4
+    },
+    {
+     "kind": "steps",
+     "head": "무엇이 바뀌고 무엇이 안 바뀌는지 세어 봐요",
+     "given": "예시 0개, 1개, 2개",
+     "steps": [
+      "**제로샷(Zero-shot)** 은 예시 0개, 원샷은 1개, **퓨샷(Few-shot)** 은 2개예요. 합하면 3개",
+      "세 경우 모두 **기울기(Gradient)** 걸음 수는 0 이에요",
+      "세 경우 모두 바뀐 **파라미터(Parameter)** 개수도 0 이에요",
+      "바뀐 것은 **프롬프트(Prompt)** 에 들어간 **토큰(Token)**의 개수뿐이에요",
+      "그래서 슬라이드가 learning without gradients 라고 부르는 거예요"
+     ],
+     "answer": "바뀌는 것은 입력 글뿐이에요. 모델 안쪽은 하나도 안 움직여요."
+    },
+    {
+     "kind": "points",
+     "head": "왜 이 이름이 헷갈리는지",
+     "items": [
+      "**인컨텍스트 러닝(In-Context Learning)** 에는 learning 이 들어 있지만 학습(가중치 갱신)이 아니에요",
+      "슬라이드가 직접 말해요. the weights never change 예요",
+      "예시는 다음 토큰의 확률 분포를 한쪽으로 기울일 뿐이에요",
+      "**미세조정(Finetuning)**과 가장 크게 다른 점이 바로 이것이에요",
+      "그리고 작은 모델에서는 잘 안 돼요. 아주 큰 규모에서만 되기 시작해요"
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "**인컨텍스트 러닝(In-Context Learning)** 에서 바뀌는 것은",
+     "choices": [
+      "**프롬프트(Prompt)**",
+      "**파라미터(Parameter)**",
+      "학습률",
+      "층 수"
+     ],
+     "a": 0,
+     "why": "슬라이드 굵은 글: the weights never change. 바뀌는 것은 입력 글뿐이에요."
+    },
+    {
+     "kind": "check",
+     "q": "**퓨샷(Few-shot)** 의 뜻으로 알맞은 것은",
+     "choices": [
+      "프롬프트 안에 예시를 몇 개 적어 주는 방식",
+      "데이터를 몇 개만 써서 미세조정하는 방식",
+      "층을 몇 개만 학습하는 방식",
+      "에폭을 몇 번만 도는 방식"
+     ],
+     "a": 0,
+     "why": "예시가 프롬프트 안에 들어갈 뿐 학습은 하지 않아요."
+    },
+    {
+     "kind": "english",
+     "head": "시험 답안 문장",
+     "en": "**인컨텍스트 러닝(In-Context Learning)** 은 **프롬프트(Prompt)** 안에 예시를 넣어 과제를 시키는 것으로, **기울기(Gradient)** 걸음이나 가중치 갱신이 전혀 없고 예시는 다음 토큰 분포를 조건 지을 뿐이다.",
+     "ko": "학습이라는 말이 들어가지만 **파라미터(Parameter)**는 하나도 안 움직여요.",
+     "tip": "이름에 러닝이 있어도 러닝이 아니다. 이렇게 외워요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "**제로샷(Zero-shot)** 과 **퓨샷(Few-shot)** 은 데이터 양 이야기가 아니라 프롬프트 안 예시 수 이야기예요.",
+      "**인컨텍스트 러닝(In-Context Learning)** 은 **미세조정(Finetuning)**의 한 종류가 아니에요. 가중치를 건드리지 않아요.",
+      "작은 모델에서는 잘 안 돼요. 슬라이드가 **대규모 언어 모델(Large Language Model (LLM))** 규모에서만 시작된다고 적어 뒀어요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 35,
+   "title": "프롬프팅이냐 미세조정이냐",
+   "terms": [
+    "Prompting",
+    "Finetuning",
+    "Prompt",
+    "Label",
+    "Parameter",
+    "Pre-training",
+    "In-Context Learning",
+    "BERT",
+    "Sentiment Analysis",
+    "Downstream Task",
+    "Task Head",
+    "Body",
+    "Transfer Learning",
+    "Classification"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "사전 학습된 모델을 쓰는 두 가지 길을 나란히 놓고 보는 쪽이에요.",
+      "**미세조정(Finetuning)**과 **프롬프팅(Prompting)** 이에요. 둘 다 **사전 학습(Pre-training)** 모델을 써요.",
+      "다른 것은 무엇이 바뀌는지, 무엇이 필요한지, 끝나면 무엇이 내 손에 남는지예요."
+     ]
+    },
+    {
+     "kind": "analogy",
+     "head": "신입에게 일을 시키는 두 방법",
+     "scene": "아무 책이나 잔뜩 읽어 둔 신입이 있어요. 우리 회사 일만 며칠 따로 가르칠 수도 있고, 그냥 업무 지시서를 아주 잘 써서 건넬 수도 있어요.",
+     "map": [
+      [
+       "며칠 따로 가르치기",
+       "**미세조정(Finetuning)**"
+      ],
+      [
+       "업무 지시서를 잘 쓰기",
+       "**프롬프팅(Prompting)**"
+      ],
+      [
+       "책을 잔뜩 읽어 둔 신입",
+       "**사전 학습(Pre-training)**"
+      ]
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "points",
+     "head": "슬라이드 영어와 우리말 뜻",
+     "items": [
+      "Prompting or Finetuning? = 프롬프팅이냐 미세조정이냐",
+      "Both use a pretrained model = 둘 다 사전 학습된 모델을 쓴다",
+      "They differ in what changes, what you need, and what you end up owning = 무엇이 바뀌는지, 무엇이 필요한지, 무엇을 갖게 되는지가 다르다",
+      "you keep the weights = 가중치를 내가 갖는다",
+      "you keep a string = 문자열 하나를 갖는다",
+      "Lab 4 does the left-hand column = Lab 4 는 왼쪽 칸을 한다"
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "슬라이드 표 여섯 줄 그대로",
+     "cols": [
+      "보는 점",
+      "**미세조정(Finetuning)**",
+      "**프롬프팅(Prompting)**"
+     ],
+     "rows": [
+      [
+       "무엇이 바뀌나",
+       "가중치",
+       "입력 글만"
+      ],
+      [
+       "필요한 것",
+       "**레이블(Label)** 붙은 데이터 + GPU",
+       "좋은 **프롬프트(Prompt)**"
+      ],
+      [
+       "모델 크기",
+       "1억 개(100M)부터 됨",
+       "수십억 개가 필요함"
+      ],
+      [
+       "과제당 비용",
+       "학습 한 번",
+       "처음 드는 비용 없음"
+      ],
+      [
+       "누가 갖나",
+       "가중치를 내가 가짐",
+       "문자열 하나를 가짐"
+      ],
+      [
+       "더 나은 경우",
+       "데이터가 있고 과제가 고정일 때",
+       "데이터가 없거나 과제가 많을 때"
+      ]
+     ]
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드를 짚어 읽어요",
+     "boxes": [
+      {
+       "x": 0.06,
+       "y": 0.198,
+       "w": 0.72,
+       "h": 0.04,
+       "say": "부제: 둘 다 사전 학습 모델을 써요. 다른 것은 바뀌는 것과 필요한 것과 남는 것이에요."
+      },
+      {
+       "x": 0.109,
+       "y": 0.369,
+       "w": 0.792,
+       "h": 0.048,
+       "say": "표 머리: 왼쪽은 finetuning, 오른쪽은 prompting 이에요."
+      },
+      {
+       "x": 0.109,
+       "y": 0.435,
+       "w": 0.792,
+       "h": 0.06,
+       "say": "you need 줄: 레이블 붙은 데이터와 GPU 대 좋은 프롬프트."
+      },
+      {
+       "x": 0.109,
+       "y": 0.53,
+       "w": 0.792,
+       "h": 0.06,
+       "say": "model size 줄: 100M 부터 되는 쪽과 수십억 개가 필요한 쪽."
+      },
+      {
+       "x": 0.109,
+       "y": 0.63,
+       "w": 0.792,
+       "h": 0.095,
+       "say": "who owns it 과 usually better when 두 줄이 실전 선택 기준이에요."
+      },
+      {
+       "x": 0.22,
+       "y": 0.74,
+       "w": 0.56,
+       "h": 0.034,
+       "say": "아래 굵은 글: Lab 4 는 왼쪽 칸이에요. 한국어 BERT 를 직접 미세조정해요."
+      }
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "두 길을 한 그림으로",
+     "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 480 270\"><text x=\"240\" y=\"20\" font-size=\"16\" text-anchor=\"middle\" class=\"tb\">사전 학습 모델을 쓰는 두 길</text><rect x=\"14\" y=\"36\" width=\"214\" height=\"96\" rx=\"2\" class=\"box b1\"/><text x=\"121\" y=\"58\" font-size=\"15\" text-anchor=\"middle\" class=\"tb b1\">미세조정</text><text x=\"121\" y=\"82\" font-size=\"12\" text-anchor=\"middle\" class=\"t b1\">가중치가 바뀌어요</text><text x=\"121\" y=\"104\" font-size=\"12\" text-anchor=\"middle\" class=\"t b2\">레이블과 GPU 가 필요해요</text><text x=\"121\" y=\"124\" font-size=\"11\" text-anchor=\"middle\" class=\"tm b2\">끝나면 가중치를 내가 가져요</text><rect x=\"252\" y=\"36\" width=\"214\" height=\"96\" rx=\"2\" class=\"box2 b1\"/><text x=\"359\" y=\"58\" font-size=\"15\" text-anchor=\"middle\" class=\"tb b1\">프롬프팅</text><text x=\"359\" y=\"82\" font-size=\"12\" text-anchor=\"middle\" class=\"t b1\">입력 글만 바뀌어요</text><text x=\"359\" y=\"104\" font-size=\"12\" text-anchor=\"middle\" class=\"t b3\">좋은 프롬프트가 필요해요</text><text x=\"359\" y=\"124\" font-size=\"11\" text-anchor=\"middle\" class=\"tm b3\">끝나면 문자열 하나가 남아요</text><text x=\"240\" y=\"166\" font-size=\"13\" text-anchor=\"middle\" class=\"tb b4\">데이터가 있고 과제가 고정이면 미세조정</text><text x=\"240\" y=\"190\" font-size=\"13\" text-anchor=\"middle\" class=\"tb b4\">데이터가 없거나 과제가 많으면 프롬프팅</text><text x=\"240\" y=\"220\" font-size=\"12\" text-anchor=\"middle\" class=\"tm b4\">Lab 4 는 왼쪽 길이에요. 한국어 BERT 를 직접 미세조정해요</text></svg>",
+     "caption": "왼쪽은 가중치가 움직이고 오른쪽은 글만 움직여요.",
+     "builds": 4
+    },
+    {
+     "kind": "points",
+     "head": "표를 실전 기준으로 다시 읽기",
+     "items": [
+      "우리에게 **레이블(Label)** 데이터가 있으면 **미세조정(Finetuning)**이 유리해요",
+      "과제가 하나로 고정이면 **미세조정(Finetuning)**이 유리해요. 한 번 학습하고 계속 써요",
+      "데이터가 없거나 과제가 자주 바뀌면 **프롬프팅(Prompting)** 이 유리해요",
+      "다만 **프롬프팅(Prompting)** 은 모델이 아주 커야 잘 돼요. 이것이 **인컨텍스트 러닝(In-Context Learning)** 이야기와 이어져요",
+      "작은 **버트(BERT)** 로 **분류(Classification)** 하나만 잘하면 될 때는 **미세조정(Finetuning)**이 훨씬 싸요"
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "무엇을 갖게 되는지 따져 봐요",
+     "given": "who owns it 줄",
+     "steps": [
+      "**미세조정(Finetuning)**을 하면 학습이 끝난 가중치 파일이 남아요",
+      "그 파일은 내 컴퓨터에 두고 계속 쓸 수 있어요",
+      "**프롬프팅(Prompting)** 을 하면 잘 쓴 **프롬프트(Prompt)** 문자열 하나가 남아요",
+      "모델 자체는 남의 것이고, 모델이 바뀌면 프롬프트도 다시 맞춰야 해요",
+      "슬라이드가 you keep the weights 와 you keep a string 으로 대비했어요"
+     ],
+     "answer": "가중치를 갖느냐 문자열을 갖느냐. 이것이 소유의 차이예요."
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "데이터가 없고 과제가 여러 개일 때 슬라이드가 권하는 쪽은",
+     "choices": [
+      "**프롬프팅(Prompting)**",
+      "**미세조정(Finetuning)**",
+      "처음부터 학습",
+      "구조 변경"
+     ],
+     "a": 0,
+     "why": "표 마지막 줄 usually better when: you have no data, or many tasks 예요."
+    },
+    {
+     "kind": "check",
+     "q": "**미세조정(Finetuning)**이 필요로 하는 것으로 슬라이드가 적은 것은",
+     "choices": [
+      "**레이블(Label)** 붙은 데이터와 GPU",
+      "수십억 파라미터 모델",
+      "좋은 프롬프트",
+      "아무것도 필요 없음"
+     ],
+     "a": 0,
+     "why": "you need 줄에 labelled data + a GPU 라고 적혀 있어요."
+    },
+    {
+     "kind": "english",
+     "head": "시험 답안 문장",
+     "en": "**미세조정(Finetuning)**은 가중치를 바꾸고 **레이블(Label)** 데이터와 GPU 가 필요하다. **프롬프팅(Prompting)** 은 입력 글만 바꾼다.",
+     "ko": "둘 다 **사전 학습(Pre-training)** 모델을 쓰는 **전이 학습(Transfer Learning)** 이에요. 바뀌는 것, 필요한 것, 남는 것을 나눠 쓰면 좋아요.",
+     "tip": "바뀌는 것, 필요한 것, 남는 것. 세 칸으로 외워요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "**프롬프팅(Prompting)** 이 공짜라는 뜻이 아니에요. 처음 드는 비용이 없다는 뜻이고 부를 때마다 비용이 들어요.",
+      "**미세조정(Finetuning)**은 **몸통(Body)**만 건드리는 것이 아니라 **과제 헤드(Task Head)**도 함께 학습해요.",
+      "표의 100M 은 1억 개예요. BERT-base 가 딱 이 크기예요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 36,
+   "title": "인코더 디코더: 세 번째 선택지",
+   "terms": [
+    "Encoder",
+    "Decoder",
+    "Cross-Attention",
+    "Machine Translation (MT)",
+    "Span Corruption",
+    "Denoising",
+    "Causal Masking",
+    "Bidirectional Context",
+    "T5",
+    "BERT",
+    "GPT",
+    "Language Model (LM)",
+    "Self-Attention",
+    "Pre-training"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "세 번째 구조를 보는 쪽이에요. 인코더와 디코더를 둘 다 쓰는 구조예요.",
+      "이것은 새 구조가 아니에요. 여러분이 4주차에 이미 만들었어요.",
+      "4주차에서 인코더는 양쪽을 다 보고 디코더는 앞만 본다고 배웠죠. 그 구분이 여기서 값을 해요."
+     ]
+    },
+    {
+     "kind": "analogy",
+     "head": "읽는 사람과 쓰는 사람이 따로",
+     "scene": "한 사람이 원문을 처음부터 끝까지 꼼꼼히 읽고, 옆 사람이 그 사람에게 계속 물어보면서 번역문을 한 단어씩 써 내려가요.",
+     "map": [
+      [
+       "원문을 다 읽는 사람",
+       "**인코더(Encoder)**"
+      ],
+      [
+       "한 단어씩 쓰는 사람",
+       "**디코더(Decoder)**"
+      ],
+      [
+       "옆 사람에게 물어보기",
+       "**크로스 어텐션(Cross-Attention)**"
+      ]
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "points",
+     "head": "슬라이드 영어와 우리말 뜻",
+     "items": [
+      "Encoder-Decoders: The Third Option = 인코더 디코더, 세 번째 선택지",
+      "You built one of these in Week 4 = 여러분은 4주차에 이것을 하나 만들었다",
+      "The open question was never the architecture = 열려 있던 질문은 구조가 아니었다",
+      "it was what objective to pretrain it with = 무슨 목적 함수로 사전 학습하느냐였다",
+      "read like BERT, write like GPT = BERT 처럼 읽고 GPT 처럼 쓴다",
+      "plain language modelling wastes the encoder = 그냥 언어 모델로 학습하면 인코더가 아깝다"
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "세 구조를 한 표로 (N5 p.17 과 이어짐)",
+     "cols": [
+      "구조",
+      "볼 수 있는 범위",
+      "사전 학습 목적 함수",
+      "대표 모델"
+     ],
+     "rows": [
+      [
+       "**인코더(Encoder)**",
+       "앞뒤 전부",
+       "**마스크 언어 모델(Masked Language Modelling (MLM))**",
+       "**버트(BERT)**"
+      ],
+      [
+       "인코더 디코더",
+       "읽을 땐 앞뒤, 쓸 땐 앞만",
+       "**스팬 손상(Span Corruption)**",
+       "**티파이브(T5)**"
+      ],
+      [
+       "**디코더(Decoder)**",
+       "앞만",
+       "**다음 토큰 예측(Next Token Prediction)**",
+       "**지피티(GPT)**"
+      ]
+     ]
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드를 짚어 읽어요",
+     "boxes": [
+      {
+       "x": 0.06,
+       "y": 0.198,
+       "w": 0.86,
+       "h": 0.04,
+       "say": "부제: 4주차에 이미 만들었어요. 열린 질문은 구조가 아니라 목적 함수였어요."
+      },
+      {
+       "x": 0.131,
+       "y": 0.437,
+       "w": 0.232,
+       "h": 0.165,
+       "say": "왼쪽 파란 상자: 인코더, 양방향. 아래 글은 입력 전체를 읽는다는 뜻이에요."
+      },
+      {
+       "x": 0.368,
+       "y": 0.47,
+       "w": 0.071,
+       "h": 0.057,
+       "say": "가운데 초록 화살표에 cross-attention 이라고 적혀 있어요."
+      },
+      {
+       "x": 0.446,
+       "y": 0.437,
+       "w": 0.234,
+       "h": 0.165,
+       "say": "오른쪽 보라 상자: 디코더, 인과. 아래 글은 한 토큰씩 쓴다는 뜻이에요."
+      },
+      {
+       "x": 0.716,
+       "y": 0.426,
+       "w": 0.191,
+       "h": 0.216,
+       "say": "초록 상자 natural for: 번역, 요약, 입력도 글이고 출력도 글인 과제."
+      },
+      {
+       "x": 0.2,
+       "y": 0.675,
+       "w": 0.6,
+       "h": 0.07,
+       "say": "아래 두 줄: 4주차에 만들었다, 그냥 언어 모델로 학습하면 인코더가 아깝다."
+      }
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "읽기는 BERT 처럼, 쓰기는 GPT 처럼",
+     "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 480 270\"><text x=\"240\" y=\"20\" font-size=\"16\" text-anchor=\"middle\" class=\"tb\">읽기는 BERT 처럼, 쓰기는 GPT 처럼</text><rect x=\"20\" y=\"60\" width=\"170\" height=\"74\" rx=\"2\" class=\"box b1\"/><text x=\"105\" y=\"88\" font-size=\"15\" text-anchor=\"middle\" class=\"tb b1\">인코더</text><text x=\"105\" y=\"110\" font-size=\"12\" text-anchor=\"middle\" class=\"t b1\">양방향</text><text x=\"105\" y=\"150\" font-size=\"11\" text-anchor=\"middle\" class=\"tm b1\">입력 전체를 읽어요</text><line x1=\"196\" y1=\"96\" x2=\"241.6\" y2=\"96.0\" class=\"e2 b2\"/><polygon points=\"248,96 240.0,92.0 240.0,100.0\" class=\"arrow b2\"/><text x=\"222\" y=\"84\" font-size=\"11\" text-anchor=\"middle\" class=\"tb b2\">크로스 어텐션</text><rect x=\"254\" y=\"60\" width=\"170\" height=\"74\" rx=\"2\" class=\"box2 b3\"/><text x=\"339\" y=\"88\" font-size=\"15\" text-anchor=\"middle\" class=\"tb b3\">디코더</text><text x=\"339\" y=\"110\" font-size=\"12\" text-anchor=\"middle\" class=\"t b3\">인과 마스킹</text><text x=\"339\" y=\"150\" font-size=\"11\" text-anchor=\"middle\" class=\"tm b3\">한 토큰씩 써요</text><text x=\"240\" y=\"192\" font-size=\"13\" text-anchor=\"middle\" class=\"tb b4\">번역, 요약처럼 입력도 글이고 출력도 글일 때 자연스러워요</text><text x=\"240\" y=\"218\" font-size=\"12\" text-anchor=\"middle\" class=\"t b4\">4주차에 이미 만들었어요. 남은 질문은 어떻게 사전 학습하느냐였어요</text><text x=\"240\" y=\"242\" font-size=\"12\" text-anchor=\"middle\" class=\"tm b4\">그냥 언어 모델로 학습하면 인코더가 아까워요</text></svg>",
+     "caption": "왼쪽은 양방향으로 읽고 오른쪽은 인과 마스킹으로 한 토큰씩 써요.",
+     "builds": 4
+    },
+    {
+     "kind": "points",
+     "head": "4주차와 정확히 어디서 이어지는지",
+     "items": [
+      "N4 p.52-53 에서 **인코더(Encoder)**와 **디코더(Decoder)**를 나눠 배웠어요. 그 구분이 여기서 값을 해요",
+      "**인코더(Encoder)**는 마스크가 없어서 **양방향 문맥(Bidirectional Context)**을 봐요. 그래서 **버트(BERT)** 가 됐어요",
+      "**디코더(Decoder)**는 **인과 마스킹(Causal Masking)**이 걸려서 앞만 봐요. 그래서 **지피티(GPT)** 가 됐어요",
+      "둘을 이어 붙이면 이 쪽의 인코더 디코더가 되고 그것이 **티파이브(T5)** 예요",
+      "두 쪽을 잇는 다리가 **크로스 어텐션(Cross-Attention)**이에요. N4 p.21-23 의 어텐션 네 단계 그대로예요",
+      "인코더 디코더 스택의 원본 그림은 논문 덱 NP p.3 에서 원문으로 봐요"
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "왜 목적 함수가 문제였는지",
+     "items": [
+      "**인코더(Encoder)**와 **디코더(Decoder)**를 붙여 놓고 그냥 **언어 모델(Language Model (LM))**처럼 다음 토큰만 맞히게 하면",
+      "디코더만 열심히 일하고 인코더는 별로 배울 것이 없어요",
+      "슬라이드 표현이 plain language modelling wastes the encoder 예요",
+      "그래서 Raffel 등이 더 나은 게임을 찾았어요. 그것이 **스팬 손상(Span Corruption)**이에요",
+      "**스팬 손상(Span Corruption)**은 **잡음 제거(Denoising)** 계열이에요. 망가뜨린 글을 되돌리게 시켜요"
+     ]
+    },
+    {
+     "kind": "bg",
+     "src": "4주차 복습 카드",
+     "lines": [
+      "**셀프 어텐션(Self-Attention)**은 한 시퀀스가 자기 자신을 보는 어텐션이에요.",
+      "**크로스 어텐션(Cross-Attention)**은 쿼리가 디코더, 키와 밸류가 인코더에서 와요.",
+      "인코더와 디코더는 같은 블록을 쓰고 마스크만 달라요."
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "인코더 디코더가 가장 자연스러운 과제는",
+     "choices": [
+      "**기계 번역(Machine Translation (MT))** 과 요약",
+      "감성 분류",
+      "품사 태깅",
+      "다음 단어 추천"
+     ],
+     "a": 0,
+     "why": "슬라이드 초록 상자에 translation, summarisation 이 적혀 있어요. 입력도 글, 출력도 글이에요."
+    },
+    {
+     "kind": "check",
+     "q": "인코더 디코더에서 두 쪽을 이어 주는 부품은",
+     "choices": [
+      "**크로스 어텐션(Cross-Attention)**",
+      "**셀프 어텐션(Self-Attention)**",
+      "**인과 마스킹(Causal Masking)**",
+      "층 정규화"
+     ],
+     "a": 0,
+     "why": "슬라이드 가운데 화살표에 cross-attention 이라고 적혀 있어요. N4 에서 배운 그 다리예요."
+    },
+    {
+     "kind": "english",
+     "head": "시험 답안 문장",
+     "en": "인코더 디코더는 **인코더(Encoder)**가 **양방향 문맥(Bidirectional Context)**으로 읽고 **디코더(Decoder)**가 한 토큰씩 쓰며 둘을 **크로스 어텐션(Cross-Attention)**이 잇는다.",
+     "ko": "**스팬 손상(Span Corruption)**으로 사전 학습해요. 4주차의 구분이 **버트(BERT)** 와 **지피티(GPT)** 로 갈렸고 둘을 합친 것이 이 구조예요.",
+     "tip": "읽기는 BERT, 쓰기는 GPT. 이 한 줄로 외워요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "인코더 디코더는 새 구조가 아니에요. 4주차에 이미 만든 것이에요.",
+      "**크로스 어텐션(Cross-Attention)**과 **셀프 어텐션(Self-Attention)**을 섞지 마세요. 크로스는 두 시퀀스, 셀프는 한 시퀀스예요.",
+      "**인코더(Encoder)** 쪽에는 **인과 마스킹(Causal Masking)**이 없어요. 인과 마스킹은 **디코더(Decoder)** 쪽에만 걸려요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 37,
+   "title": "T5: 스팬 손상",
+   "terms": [
+    "T5",
+    "Span Corruption",
+    "Span",
+    "Sentinel Token",
+    "Denoising",
+    "Encoder",
+    "Decoder",
+    "Masked Language Modelling (MLM)",
+    "SpanBERT",
+    "Token",
+    "Self-Supervision",
+    "Pre-training"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "**티파이브(T5)** 가 쓰는 사전 학습 게임을 보는 쪽이에요. 이름이 **스팬 손상(Span Corruption)**이에요.",
+      "**토큰(Token)** 하나를 가리는 대신 이어진 덩어리를 통째로 지워요.",
+      "그리고 지운 자리마다 번호표를 붙여요. 그 번호표가 **센티널 토큰(Sentinel Token)** 이에요."
+     ]
+    },
+    {
+     "kind": "analogy",
+     "head": "빈칸 채우기 시험지를 통째 지우기로",
+     "scene": "한 글자씩 비운 시험지 대신 구절을 통째로 지우고 번호를 붙여요. 학생은 번호별로 빠진 구절만 다시 써 내면 돼요.",
+     "map": [
+      [
+       "구절을 통째로 지우기",
+       "**스팬 손상(Span Corruption)**"
+      ],
+      [
+       "지운 자리의 번호표",
+       "**센티널 토큰(Sentinel Token)**"
+      ],
+      [
+       "번호별로 빠진 구절만 쓰기",
+       "디코더가 하는 일"
+      ]
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "points",
+     "head": "슬라이드 영어와 우리말 뜻",
+     "items": [
+      "T5: Span Corruption = T5 의 스팬 손상",
+      "Delete whole spans = 스팬을 통째로 지운다",
+      "replace each with a unique sentinel = 지운 자리마다 서로 다른 번호표를 넣는다",
+      "make the decoder write the missing pieces back out = 디코더가 빠진 조각만 다시 쓰게 한다",
+      "harder than masking one token = 토큰 하나 가리기보다 어렵다",
+      "it trains the encoder and the decoder at the same time = 인코더와 디코더를 동시에 학습시킨다"
+     ]
+    },
+    {
+     "kind": "steps",
+     "head": "슬라이드 예를 한 단계씩 따라가요",
+     "given": "Thank you for inviting me to your party last week",
+     "steps": [
+      "원문은 Thank you for inviting me to your party last week 열 단어예요",
+      "for inviting 을 통째로 지우고 그 자리에 <X> 를 넣어요",
+      "last 를 지우고 그 자리에 <Y> 를 넣어요",
+      "인코더 입력은 Thank you <X> me to your party <Y> week 가 돼요",
+      "디코더 목표는 <X> for inviting <Y> last <Z> 예요",
+      "<Z> 는 끝을 알리는 번호표예요"
+     ],
+     "answer": "지운 것은 for, inviting, last 세 단어이고 디코더는 그것만 써요."
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드를 짚어 읽어요",
+     "boxes": [
+      {
+       "x": 0.06,
+       "y": 0.198,
+       "w": 0.79,
+       "h": 0.04,
+       "say": "부제: 스팬을 통째로 지우고 번호표로 바꾼 뒤 디코더가 빠진 조각을 씁니다."
+      },
+      {
+       "x": 0.212,
+       "y": 0.369,
+       "w": 0.654,
+       "h": 0.057,
+       "say": "첫 줄 original: 원문 열 단어가 그대로 있어요."
+      },
+      {
+       "x": 0.212,
+       "y": 0.471,
+       "w": 0.597,
+       "h": 0.056,
+       "say": "둘째 줄 encoder input: <X> 와 <Y> 두 개의 주황 칸이 보여요."
+      },
+      {
+       "x": 0.212,
+       "y": 0.582,
+       "w": 0.402,
+       "h": 0.056,
+       "say": "셋째 줄 decoder target: <X> for inviting <Y> last <Z> 예요."
+      },
+      {
+       "x": 0.654,
+       "y": 0.578,
+       "w": 0.135,
+       "h": 0.057,
+       "say": "오른쪽 글: 디코더는 빠진 스팬만 다시 써요."
+      },
+      {
+       "x": 0.19,
+       "y": 0.688,
+       "w": 0.62,
+       "h": 0.032,
+       "say": "아래 기울임 글: 한 토큰 가리기보다 어렵고 인코더와 디코더를 동시에 학습시켜요."
+      }
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "덩어리를 통째로 지우기",
+     "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 480 270\"><text x=\"240\" y=\"20\" font-size=\"16\" text-anchor=\"middle\" class=\"tb\">덩어리를 통째로 지우기</text><text x=\"12\" y=\"54\" font-size=\"12\" text-anchor=\"start\" class=\"tm b1\">원문</text><rect x=\"60\" y=\"38\" width=\"66\" height=\"24\" rx=\"2\" class=\"n b1\"/><text x=\"93.0\" y=\"53.5\" font-size=\"10\" text-anchor=\"middle\" class=\"tl b1\">Thank you</text><rect x=\"132\" y=\"38\" width=\"66\" height=\"24\" rx=\"2\" class=\"n b1\"/><text x=\"165.0\" y=\"53.5\" font-size=\"10\" text-anchor=\"middle\" class=\"tl b1\">for</text><rect x=\"204\" y=\"38\" width=\"66\" height=\"24\" rx=\"2\" class=\"n b1\"/><text x=\"237.0\" y=\"53.5\" font-size=\"10\" text-anchor=\"middle\" class=\"tl b1\">inviting</text><rect x=\"276\" y=\"38\" width=\"66\" height=\"24\" rx=\"2\" class=\"n b1\"/><text x=\"309.0\" y=\"53.5\" font-size=\"10\" text-anchor=\"middle\" class=\"tl b1\">me to your</text><rect x=\"348\" y=\"38\" width=\"66\" height=\"24\" rx=\"2\" class=\"n b1\"/><text x=\"381.0\" y=\"53.5\" font-size=\"10\" text-anchor=\"middle\" class=\"tl b1\">party last</text><rect x=\"420\" y=\"38\" width=\"66\" height=\"24\" rx=\"2\" class=\"n b1\"/><text x=\"453.0\" y=\"53.5\" font-size=\"10\" text-anchor=\"middle\" class=\"tl b1\">week</text><line x1=\"240\" y1=\"68\" x2=\"240.0\" y2=\"83.6\" class=\"e2 b2\"/><polygon points=\"240,90 244.0,82.0 236.0,82.0\" class=\"arrow b2\"/><text x=\"12\" y=\"116\" font-size=\"11\" text-anchor=\"start\" class=\"tm b2\">인코더 입력</text><rect x=\"96\" y=\"100\" width=\"66\" height=\"24\" rx=\"2\" class=\"n b2\"/><text x=\"129.0\" y=\"115.5\" font-size=\"10\" text-anchor=\"middle\" class=\"tl b2\">Thank you</text><rect x=\"168\" y=\"100\" width=\"66\" height=\"24\" rx=\"2\" class=\"n2 b2\"/><text x=\"201.0\" y=\"115.5\" font-size=\"10\" text-anchor=\"middle\" class=\"tl b2\">&lt;X&gt;</text><rect x=\"240\" y=\"100\" width=\"66\" height=\"24\" rx=\"2\" class=\"n b2\"/><text x=\"273.0\" y=\"115.5\" font-size=\"10\" text-anchor=\"middle\" class=\"tl b2\">me to your</text><rect x=\"312\" y=\"100\" width=\"66\" height=\"24\" rx=\"2\" class=\"n b2\"/><text x=\"345.0\" y=\"115.5\" font-size=\"10\" text-anchor=\"middle\" class=\"tl b2\">party</text><rect x=\"384\" y=\"100\" width=\"66\" height=\"24\" rx=\"2\" class=\"n2 b2\"/><text x=\"417.0\" y=\"115.5\" font-size=\"10\" text-anchor=\"middle\" class=\"tl b2\">&lt;Y&gt;</text><line x1=\"240\" y1=\"130\" x2=\"240.0\" y2=\"145.6\" class=\"e2 b3\"/><polygon points=\"240,152 244.0,144.0 236.0,144.0\" class=\"arrow b3\"/><text x=\"12\" y=\"178\" font-size=\"11\" text-anchor=\"start\" class=\"tm b3\">디코더 목표</text><rect x=\"96\" y=\"162\" width=\"66\" height=\"24\" rx=\"2\" class=\"box2 b3\"/><text x=\"129.0\" y=\"177.5\" font-size=\"10\" text-anchor=\"middle\" class=\"tl b3\">&lt;X&gt;</text><rect x=\"168\" y=\"162\" width=\"66\" height=\"24\" rx=\"2\" class=\"n b3\"/><text x=\"201.0\" y=\"177.5\" font-size=\"10\" text-anchor=\"middle\" class=\"tl b3\">for inviting</text><rect x=\"240\" y=\"162\" width=\"66\" height=\"24\" rx=\"2\" class=\"box2 b3\"/><text x=\"273.0\" y=\"177.5\" font-size=\"10\" text-anchor=\"middle\" class=\"tl b3\">&lt;Y&gt;</text><rect x=\"312\" y=\"162\" width=\"66\" height=\"24\" rx=\"2\" class=\"n b3\"/><text x=\"345.0\" y=\"177.5\" font-size=\"10\" text-anchor=\"middle\" class=\"tl b3\">last</text><rect x=\"384\" y=\"162\" width=\"66\" height=\"24\" rx=\"2\" class=\"box2 b3\"/><text x=\"417.0\" y=\"177.5\" font-size=\"10\" text-anchor=\"middle\" class=\"tl b3\">&lt;Z&gt;</text><text x=\"240\" y=\"216\" font-size=\"13\" text-anchor=\"middle\" class=\"tb b4\">디코더는 빠진 덩어리만 다시 써요</text><text x=\"240\" y=\"240\" font-size=\"12\" text-anchor=\"middle\" class=\"tm b4\">인코더와 디코더를 한 번에 학습시켜요</text></svg>",
+     "caption": "인코더는 구멍 뚫린 글을 읽고, 디코더는 구멍만 채워 써요.",
+     "builds": 4
+    },
+    {
+     "kind": "steps",
+     "head": "디코더가 쓰는 길이를 세어 봐요",
+     "given": "원문 10, 인코더 입력 9, 디코더 목표 6",
+     "steps": [
+      "원문은 10 단어예요",
+      "인코더 입력은 9 칸이에요. 세 단어가 빠지고 번호표 두 개가 들어갔어요",
+      "디코더 목표는 <X> for inviting <Y> last <Z> 로 6 칸이에요",
+      "디코더는 원문 전체를 다시 쓰지 않아요. 빠진 부분만 써요",
+      "그래서 같은 계산으로 더 많은 문장을 볼 수 있어요"
+     ],
+     "answer": "디코더는 10 칸이 아니라 6 칸만 써요. 빠진 조각만 쓰는 것이 핵심이에요."
+    },
+    {
+     "kind": "compare",
+     "head": "**마스크 언어 모델(Masked Language Modelling (MLM))** 과 **스팬 손상(Span Corruption)** 비교",
+     "cols": [
+      "보는 점",
+      "**마스크 언어 모델(Masked Language Modelling (MLM))** (**버트(BERT)**)",
+      "**스팬 손상(Span Corruption)** (**티파이브(T5)**)"
+     ],
+     "rows": [
+      [
+       "가리는 단위",
+       "**토큰(Token)** 하나",
+       "이어진 **스팬(Span)**"
+      ],
+      [
+       "누가 답을 쓰나",
+       "인코더 위의 출력 층",
+       "**디코더(Decoder)**"
+      ],
+      [
+       "답의 길이",
+       "가린 자리 수만큼",
+       "빠진 조각만"
+      ],
+      [
+       "학습되는 쪽",
+       "인코더만",
+       "인코더와 디코더 둘 다"
+      ]
+     ]
+    },
+    {
+     "kind": "points",
+     "head": "이름 정리",
+     "items": [
+      "**스팬 손상(Span Corruption)**은 **잡음 제거(Denoising)** 계열의 한 방법이에요",
+      "N5 p.17 슬라이드에도 span corruption (denoising) 이라고 함께 적혀 있어요",
+      "**스팬버트(SpanBERT)** 도 스팬을 가렸지만 그쪽은 **인코더(Encoder)** 하나짜리였어요",
+      "**티파이브(T5)** 는 **인코더(Encoder)**와 **디코더(Decoder)**를 둘 다 두고 스팬을 가려요",
+      "셋 다 사람이 답을 달지 않으니 모두 **자기 지도 학습(Self-Supervision)**이에요"
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "**센티널 토큰(Sentinel Token)** 의 역할은",
+     "choices": [
+      "지운 자리가 어디였는지 번호로 알려 줘요",
+      "문장의 끝을 알려 줘요",
+      "문장을 둘로 나눠 줘요",
+      "정답 레이블을 담아 둬요"
+     ],
+     "a": 0,
+     "why": "슬라이드 표현이 replace each with a unique sentinel 이에요. 구멍마다 서로 다른 번호표예요."
+    },
+    {
+     "kind": "check",
+     "q": "**스팬 손상(Span Corruption)**이 **마스크 언어 모델(Masked Language Modelling (MLM))** 보다 나은 점으로 슬라이드가 든 것은",
+     "choices": [
+      "**인코더(Encoder)**와 **디코더(Decoder)**를 동시에 학습시켜요",
+      "파라미터가 적어요",
+      "레이블이 필요 없어요",
+      "계산이 더 빨라요"
+     ],
+     "a": 0,
+     "why": "아래 기울임 글에 it trains the encoder and the decoder at the same time 이라고 적혀 있어요."
+    },
+    {
+     "kind": "english",
+     "head": "시험 답안 문장",
+     "en": "**스팬 손상(Span Corruption)**은 **스팬(Span)** 을 통째로 지워 **센티널 토큰(Sentinel Token)** 으로 바꾸고 디코더가 빠진 조각만 쓰게 하는 게임이다.",
+     "ko": "**잡음 제거(Denoising)** 계열이고, **마스크 언어 모델(Masked Language Modelling (MLM))** 과 달리 **인코더(Encoder)**와 **디코더(Decoder)**를 동시에 학습시켜요.",
+     "tip": "지우고, 번호 붙이고, 그것만 쓴다. 세 단계로 외워요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "**디코더(Decoder)**는 원문 전체를 다시 쓰지 않아요. 빠진 조각과 번호표만 써요.",
+      "**센티널 토큰(Sentinel Token)** 은 **마스크 토큰([MASK])** 과 달라요. 번호가 달려 있어서 어느 구멍인지 구별돼요.",
+      "**스팬버트(SpanBERT)** 도 스팬을 가리지만 그것은 **인코더(Encoder)** 만 있는 모델이에요. **티파이브(T5)** 와 섞지 마세요."
+     ]
+    }
+   ]
+  },
+  {
+   "p": 38,
+   "title": "모든 것이 텍스트-투-텍스트",
+   "terms": [
+    "T5",
+    "Text-to-Text",
+    "Task Prefix",
+    "Task Head",
+    "Body",
+    "Classification",
+    "Machine Translation (MT)",
+    "Downstream Task",
+    "Transfer Learning",
+    "BERT",
+    "Label",
+    "Span Corruption"
+   ],
+   "pass1": [
+    {
+     "kind": "say",
+     "lines": [
+      "**티파이브(T5)** 의 두 번째 아이디어를 보는 쪽이에요.",
+      "과제마다 출력 층을 따로 만드는 일을 그만두자는 것이에요.",
+      "대신 입력 맨 앞에 **과제 접두어(Task Prefix)** 를 붙이고 답을 문자열로 쓰게 해요."
+     ]
+    },
+    {
+     "kind": "analogy",
+     "head": "공구 날을 아예 없애기",
+     "scene": "지금까지는 과제마다 날을 갈아 끼웠어요. 이번에는 날을 없애고 기계에게 말로 지시해요. 번역해라, 점수를 매겨라, 요약해라.",
+     "map": [
+      [
+       "갈아 끼우던 공구 날",
+       "**과제 헤드(Task Head)**"
+      ],
+      [
+       "말로 하는 지시",
+       "**과제 접두어(Task Prefix)**"
+      ],
+      [
+       "기계가 말로 내놓는 답",
+       "**텍스트-투-텍스트(Text-to-Text)**"
+      ]
+     ]
+    }
+   ],
+   "pass2": [
+    {
+     "kind": "points",
+     "head": "슬라이드 영어와 우리말 뜻",
+     "items": [
+      "Everything Is Text-to-Text = 모든 것이 글 들어가고 글 나오기",
+      "stop having task-specific output layers = 과제 전용 출력 층을 그만 쓰자",
+      "Put a task prefix in the input = 입력에 과제 접두어를 넣어라",
+      "make the model write the answer as a string = 답을 문자열로 쓰게 하라",
+      "classification, regression and generation all become text-to-text = 분류도 회귀도 생성도 전부 글이 된다",
+      "T5 : Text-to-Text Transfer Transformer = T 다섯 개를 딴 이름이에요"
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "슬라이드의 네 가지 예",
+     "cols": [
+      "입력 앞에 붙인 과제 접두어",
+      "무슨 과제인가",
+      "모델이 쓴 답"
+     ],
+     "rows": [
+      [
+       "translate English to German:",
+       "**기계 번역(Machine Translation (MT))**",
+       "Das ist gut."
+      ],
+      [
+       "cola sentence:",
+       "문장이 문법에 맞는지 판정",
+       "not acceptable"
+      ],
+      [
+       "stsb sentence1: ... sentence2:",
+       "두 문장이 얼마나 비슷한지 점수",
+       "3.8"
+      ],
+      [
+       "summarize:",
+       "요약",
+       "six people hospitalized after a storm ..."
+      ]
+     ]
+    }
+   ],
+   "pass3": [
+    {
+     "kind": "look",
+     "head": "슬라이드를 짚어 읽어요",
+     "boxes": [
+      {
+       "x": 0.06,
+       "y": 0.198,
+       "w": 0.87,
+       "h": 0.055,
+       "say": "부제: 과제 전용 출력 층을 그만 쓰고, 접두어를 붙여 답을 문자열로 쓰게 해요."
+      },
+      {
+       "x": 0.189,
+       "y": 0.366,
+       "w": 0.215,
+       "h": 0.403,
+       "say": "왼쪽 네 상자가 입력이에요. 굵은 글자가 전부 과제 접두어예요."
+      },
+      {
+       "x": 0.454,
+       "y": 0.502,
+       "w": 0.067,
+       "h": 0.083,
+       "say": "가운데 T5 하나가 네 과제를 모두 받아요."
+      },
+      {
+       "x": 0.582,
+       "y": 0.366,
+       "w": 0.161,
+       "h": 0.377,
+       "say": "오른쪽 네 상자가 출력이에요. 넷 다 문자열이에요."
+      },
+      {
+       "x": 0.3,
+       "y": 0.805,
+       "w": 0.4,
+       "h": 0.03,
+       "say": "아래 굵은 글: 분류도 회귀도 생성도 전부 텍스트-투-텍스트가 돼요."
+      },
+      {
+       "x": 0.27,
+       "y": 0.865,
+       "w": 0.46,
+       "h": 0.045,
+       "say": "맨 아래: T5 는 Text-to-Text Transfer Transformer 의 T 다섯 개예요."
+      }
+     ]
+    },
+    {
+     "kind": "figure",
+     "head": "글 들어가고 글 나오기",
+     "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 480 270\"><text x=\"240\" y=\"20\" font-size=\"16\" text-anchor=\"middle\" class=\"tb\">모든 과제가 글 들어가고 글 나오기</text><rect x=\"8\" y=\"40\" width=\"168\" height=\"32\" rx=\"2\" class=\"box b1\"/><text x=\"92.0\" y=\"59.5\" font-size=\"10\" text-anchor=\"middle\" class=\"tl b1\">translate English to German:</text><rect x=\"8\" y=\"84\" width=\"168\" height=\"32\" rx=\"2\" class=\"box b1\"/><text x=\"92.0\" y=\"103.5\" font-size=\"10\" text-anchor=\"middle\" class=\"tl b1\">cola sentence:</text><rect x=\"8\" y=\"128\" width=\"168\" height=\"32\" rx=\"2\" class=\"box b1\"/><text x=\"92.0\" y=\"147.5\" font-size=\"10\" text-anchor=\"middle\" class=\"tl b1\">stsb sentence1: ... sentence2:</text><rect x=\"8\" y=\"172\" width=\"168\" height=\"32\" rx=\"2\" class=\"box b1\"/><text x=\"92.0\" y=\"191.5\" font-size=\"10\" text-anchor=\"middle\" class=\"tl b1\">summarize: ...</text><line x1=\"180\" y1=\"56\" x2=\"207.3\" y2=\"114.2\" class=\"e2 b2\"/><polygon points=\"210,120 210.2,111.1 203.0,114.5\" class=\"arrow b2\"/><line x1=\"180\" y1=\"100\" x2=\"204.7\" y2=\"116.4\" class=\"e2 b2\"/><polygon points=\"210,120 205.6,112.2 201.1,118.9\" class=\"arrow b2\"/><line x1=\"180\" y1=\"144\" x2=\"205.0\" y2=\"124.0\" class=\"e2 b2\"/><polygon points=\"210,120 201.3,121.9 206.3,128.1\" class=\"arrow b2\"/><line x1=\"180\" y1=\"188\" x2=\"207.4\" y2=\"125.9\" class=\"e2 b2\"/><polygon points=\"210,120 203.1,125.7 210.4,128.9\" class=\"arrow b2\"/><rect x=\"212\" y=\"104\" width=\"56\" height=\"32\" rx=\"2\" class=\"box2 b2\"/><text x=\"240.0\" y=\"125.6\" font-size=\"16\" text-anchor=\"middle\" class=\"tb b2\">T5</text><line x1=\"270\" y1=\"120\" x2=\"297.3\" y2=\"61.8\" class=\"e2 b3\"/><polygon points=\"300,56 293.0,61.5 300.2,64.9\" class=\"arrow b3\"/><line x1=\"270\" y1=\"120\" x2=\"294.7\" y2=\"103.6\" class=\"e2 b3\"/><polygon points=\"300,100 291.1,101.1 295.6,107.8\" class=\"arrow b3\"/><line x1=\"270\" y1=\"120\" x2=\"295.0\" y2=\"140.0\" class=\"e2 b3\"/><polygon points=\"300,144 296.3,135.9 291.3,142.1\" class=\"arrow b3\"/><line x1=\"270\" y1=\"120\" x2=\"297.4\" y2=\"182.1\" class=\"e2 b3\"/><polygon points=\"300,188 300.4,179.1 293.1,182.3\" class=\"arrow b3\"/><rect x=\"304\" y=\"40\" width=\"168\" height=\"32\" rx=\"2\" class=\"box b3\"/><text x=\"388.0\" y=\"59.5\" font-size=\"10\" text-anchor=\"middle\" class=\"tl b3\">Das ist gut.</text><rect x=\"304\" y=\"84\" width=\"168\" height=\"32\" rx=\"2\" class=\"box b3\"/><text x=\"388.0\" y=\"103.5\" font-size=\"10\" text-anchor=\"middle\" class=\"tl b3\">not acceptable</text><rect x=\"304\" y=\"128\" width=\"168\" height=\"32\" rx=\"2\" class=\"box b3\"/><text x=\"388.0\" y=\"147.5\" font-size=\"10\" text-anchor=\"middle\" class=\"tl b3\">3.8</text><rect x=\"304\" y=\"172\" width=\"168\" height=\"32\" rx=\"2\" class=\"box b3\"/><text x=\"388.0\" y=\"191.5\" font-size=\"10\" text-anchor=\"middle\" class=\"tl b3\">six people hospitalized ...</text><text x=\"240\" y=\"236\" font-size=\"13\" text-anchor=\"middle\" class=\"tb b4\">분류도 회귀도 생성도 전부 문자열이 돼요</text><text x=\"240\" y=\"258\" font-size=\"12\" text-anchor=\"middle\" class=\"tm b4\">과제마다 출력 층을 따로 만들지 않아요</text></svg>",
+     "caption": "가운데 모델은 하나뿐이고 과제는 접두어로 구별해요.",
+     "builds": 4
+    },
+    {
+     "kind": "points",
+     "head": "세 번째 예가 왜 놀라운지",
+     "items": [
+      "stsb 는 두 문장이 얼마나 비슷한지를 점수로 매기는 과제예요",
+      "보통은 숫자를 내놓는 회귀 문제라서 전용 출력 층이 필요해요",
+      "**티파이브(T5)** 는 그냥 3.8 이라는 문자열을 써요",
+      "곧 숫자도 글자로 적어 버리는 거예요",
+      "그래서 슬라이드가 분류도 회귀도 생성도 전부 **텍스트-투-텍스트(Text-to-Text)** 가 된다고 적었어요",
+      "어느 쪽이든 **사전 학습(Pre-training)** 가중치를 이어 쓰는 **전이 학습(Transfer Learning)** 이라는 점은 같아요"
+     ]
+    },
+    {
+     "kind": "compare",
+     "head": "**버트(BERT)** 방식과 **티파이브(T5)** 방식",
+     "cols": [
+      "보는 점",
+      "**버트(BERT)** (**과제 헤드(Task Head)** 방식)",
+      "**티파이브(T5)** (**텍스트-투-텍스트(Text-to-Text)** 방식)"
+     ],
+     "rows": [
+      [
+       "과제 구분",
+       "과제마다 다른 헤드",
+       "**과제 접두어(Task Prefix)**"
+      ],
+      [
+       "출력 모양",
+       "**레이블(Label)** 번호나 점수",
+       "문자열"
+      ],
+      [
+       "**몸통(Body)**",
+       "그대로 재사용",
+       "그대로 재사용"
+      ],
+      [
+       "새 과제를 더할 때",
+       "새 헤드를 만들어야 함",
+       "접두어만 새로 적으면 됨"
+      ]
+     ]
+    }
+   ],
+   "pass4": [
+    {
+     "kind": "check",
+     "q": "**과제 접두어(Task Prefix)** 가 하는 일은",
+     "choices": [
+      "입력 맨 앞에서 무슨 과제인지 알려 줘요",
+      "출력 길이를 정해 줘요",
+      "학습률을 정해 줘요",
+      "토큰을 가려 줘요"
+     ],
+     "a": 0,
+     "why": "Put a task prefix in the input 이에요. 같은 모델이 접두어로 과제를 구별해요."
+    },
+    {
+     "kind": "check",
+     "q": "**텍스트-투-텍스트(Text-to-Text)** 방식에서 두 문장 유사도 점수 3.8 은 어떻게 나오나요",
+     "choices": [
+      "문자열 3.8 을 그대로 써요",
+      "회귀 층이 숫자를 내요",
+      "분류 헤드가 레이블을 내요",
+      "점수를 반올림해서 레이블로 바꿔요"
+     ],
+     "a": 0,
+     "why": "슬라이드 세 번째 예의 출력이 3.8 이라는 문자열이에요. 회귀도 글로 바꿔 버려요."
+    },
+    {
+     "kind": "english",
+     "head": "시험 답안 문장",
+     "en": "**텍스트-투-텍스트(Text-to-Text)** 방식은 출력 층을 없애고 **과제 접두어(Task Prefix)** 를 붙여 모든 답을 문자열로 쓰게 한다.",
+     "ko": "**분류(Classification)** 와 회귀와 생성을 한 형식으로 통일해요. **과제 헤드(Task Head)** 를 바꿔 끼우던 **버트(BERT)** 방식과 대비해서 써요.",
+     "tip": "접두어 하나로 과제 구분, 답은 언제나 글자. 두 줄로 외워요."
+    },
+    {
+     "kind": "warn",
+     "head": "헷갈리기 쉬운 점",
+     "items": [
+      "**텍스트-투-텍스트(Text-to-Text)** 는 **스팬 손상(Span Corruption)**과 다른 이야기예요. 하나는 쓰는 방법, 하나는 사전 학습 게임이에요.",
+      "**과제 접두어(Task Prefix)** 는 **프롬프트(Prompt)** 와 비슷해 보이지만 **티파이브(T5)** 는 그 형식으로 실제 **미세조정(Finetuning)**을 해요.",
+      "cola 와 stsb 는 GLUE 안의 과제 이름이에요. 이 과목에서 따로 배우지는 않았어요."
+     ]
+    }
+   ]
+  }
+ ]
+}

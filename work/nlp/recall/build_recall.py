@@ -44,6 +44,7 @@ def main():
     # 영어 문장 한 줄을 통째로 외우는 연습이 되고, 11~12쪽 참고문헌 88칸은 아예 쓸모가 없다.
     # 표와 식(Table 1, 2, 3, 식 1, PE 식)만은 쓸 만해서, 필요하면 python build_recall.py NP 로 다시 만들면 된다.
     SKIP_DEFAULT = {"NP"}
+    OCR_DECKS = {"N5"}
     decks = [a for a in argv if a in PROF["decks"]] or [d for d in PROF["decks"] if d not in SKIP_DEFAULT]
     corpus = RB.Corpus(PROF["corpus"])
     gloss = []
@@ -58,6 +59,11 @@ def main():
             gloss += [g for g in d.get("glossary", []) if isinstance(g, dict)]
     print(f"가리고 설명하기: nlp, 문제 글 {len(corpus.text) / 1e3:.0f}천 자, 용어 {len(gloss)}")
     for deck in decks:
+        # N5 는 슬라이드 본문(표, 그림, 숫자)이 전부 이미지라 글자 층에 제목과 부제 한 줄밖에 없다.
+        # 글자 층만 쓰면 1단계 칸이 50쪽에 12개뿐이라 이 덱만 OCR 로 다시 읽는다(1단계 61, 4단계 965).
+        # 다른 덱은 글자 층이 충분해서 지금 그대로 둔다.
+        PROF["ocr_extra"] = (deck in OCR_DECKS)
+        PROF["force_ocr"] = (deck in OCR_DECKS)
         RB.build_deck(PROF, deck, args, corpus, list(gloss))
 
 
