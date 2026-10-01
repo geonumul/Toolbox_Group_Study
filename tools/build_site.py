@@ -353,6 +353,10 @@ def main(slug, skip, home=True):
                              "q": f"'{t['say']}' 을 뜻하는 용어는?", "c": names, "a": 0, "e": f"{t['say']} = {full(t)}"})
                 nterm += 1
             seen.update({base + "-a", base + "-b"})
+    if cfg.get("quizOnly"):
+        # 외우기만 하는 과목: 회독, 정리 슬라이드, 가리고 설명하기, 용어를 화면에서 감춘다.
+        # 자료 파일은 그대로 두니 subject.json 에서 깃발만 내리면 돌아온다.
+        meta["quizOnly"] = True
     write(SITE / "data" / "bank.js", js_assign("SDT_BANK", None, bank))
     write(SITE / "data" / "terms.js", js_assign("SDT_TERMS", None, terms))
     write(SITE / "data" / "meta.js", js_assign("SDT_META", None, meta))
@@ -399,7 +403,7 @@ def main(slug, skip, home=True):
         nav.append(f'<a class="tab" data-nav="drill" href="#/drill">{html.escape(meta["drill"]["label"])}</a>')
     nav += ['<a class="tab" data-nav="quiz" href="#/quiz">문제</a>',
             '<a class="tab" data-nav="wrong" href="#/wrong">오답노트 <span id="wrongBadge" class="badge"></span></a>']
-    if any(str(t.get("say") or "").strip() for lst in terms.values() for t in lst):
+    if not cfg.get("quizOnly") and any(str(t.get("say") or "").strip() for lst in terms.values() for t in lst):
         nav.append('<a class="tab" data-nav="game" href="#/game">용어 게임</a>')
     if "exams" in pages:
         nav.append(f'<a class="tab" data-nav="exams" href="#/exams">{html.escape(cfg.get("examsNav") or "기출 분석")}</a>')

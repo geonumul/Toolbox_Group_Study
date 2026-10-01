@@ -351,6 +351,15 @@ function weekSteps(week) {
     if (ex.length) steps.push({ t: '모의고사', d: '시험지처럼 섞어서 한 번에 풀어요.', done: !!store.mockDone[week], href: '#/mock?week=' + week, meta: '' });
     return steps;
   }
+  // 외우기만 하면 되는 과목(subject.json 의 quizOnly)은 읽는 단계를 빼고 문제만 남긴다.
+  // 자료는 그대로 두고 화면에서만 감춘다. 깃발을 내리면 그대로 돌아온다.
+  if (META.quizOnly) {
+    const sb = weekQuizStat(week, 'basic'), sh = weekQuizStat(week, 'hard');
+    if (sb.total) steps.push({ t: '기본 문제 풀기', d: '시험과 같은 난이도예요. 틀린 것은 오답노트에 쌓여요.', done: sb.seen >= sb.total, href: '#/quiz?week=' + week + '&level=basic&mode=unseen&n=0&start=1', meta: sb.seen + ' / ' + sb.total + '문제' });
+    if (sh.total) steps.push({ t: '심화 문제 풀기', d: '한 단계 어렵게 만든 문제예요.', done: sh.seen >= sh.total, href: '#/quiz?week=' + week + '&level=hard&mode=unseen&n=0&start=1', meta: sh.seen + ' / ' + sh.total + '문제' });
+    if (sb.total || sh.total) steps.push({ t: '오답 다시 풀고 모의고사', d: '틀린 것만 다시 풀고, 시험지처럼 섞어서 한 번.', done: !!store.mockDone[week], href: '#/mock?week=' + week, meta: '' });
+    return steps;
+  }
   // 길잡이는 그대로 둔다. 순서대로 가는 길을 흔들지 않으려고 여기서는 prereq 만 쓴다.
   // 주차마다 필요한 기초는 주차 페이지 위쪽 prereqBar 가 따로 알려 준다.
   const pre = (META.prereq[week] || []).map(unitMeta).filter(Boolean);
@@ -420,9 +429,9 @@ function pageHome() {
   h += '<h2 class="sec">도구</h2><div class="toolrow">'
     + (hasLazy('note') ? '<a class="tool" href="#/note"><b>정리노트</b><span>쉬운 설명과 원문, 읽음 ' + nAll.filter(noteRead).length + ' / ' + nAll.length + '</span></a>' : '')
     + (hasLazy('time') ? '<a class="tool" href="#/time"><b>연표</b><span>양식 흐름도와 사건별 연표</span></a>' : '')
-    + '<a class="tool" href="#/terms/all"><b>용어 카드</b><span>전 주차 용어 ' + Object.keys(TERM).length + '개' + (dueAll ? ', 오늘 복습 ' + dueAll + '개' : '') + '</span></a>'
-    + (termQuizStat('all').total ? '<a class="tool" href="' + ALL_TERM_QUIZ + '"><b>용어 퀴즈</b><span>전 주차 용어 문제 ' + termQuizStat('all').total + '개에서 섞어서</span></a>' : '')
-    + (gPool('all').length ? '<a class="tool" href="#/game"><b>용어 게임</b><span>짝 맞추기, 뜻 고르기, 60초 스피드 퀴즈</span></a>' : '')
+    + (META.quizOnly ? '' : '<a class="tool" href="#/terms/all"><b>용어 카드</b><span>전 주차 용어 ' + Object.keys(TERM).length + '개' + (dueAll ? ', 오늘 복습 ' + dueAll + '개' : '') + '</span></a>')
+    + (!META.quizOnly && termQuizStat('all').total ? '<a class="tool" href="' + ALL_TERM_QUIZ + '"><b>용어 퀴즈</b><span>전 주차 용어 문제 ' + termQuizStat('all').total + '개에서 섞어서</span></a>' : '')
+    + (!META.quizOnly && gPool('all').length ? '<a class="tool" href="#/game"><b>용어 게임</b><span>짝 맞추기, 뜻 고르기, 60초 스피드 퀴즈</span></a>' : '')
     + (drillInfo() ? '<a class="tool" href="#/drill"><b>' + esc(drillInfo().label) + '</b><span>강의자료에 Example, Homework 라고 적힌 쪽 ' + (drillInfo().n - Object.keys(drillInfo().outWeeks || {}).reduce((a, k) => a + drillInfo().outWeeks[k], 0)) + '곳</span></a>' : '')
     + '<a class="tool" href="#/mock"><b>모의고사</b><span>시험지처럼 섞어서</span></a>'
     + '<a class="tool" href="#/wrong"><b>오답노트</b><span>틀린 문제만 다시</span></a>'
@@ -471,8 +480,21 @@ function pageWeek(week) {
   if (!w) { location.hash = '#/'; return; }
   const d = w.deck ? META.decks[w.deck] : null;
   let h = '<a class="back" href="#/">홈</a><div class="whead"><div class="eyebrow">' + esc(w.short) + '</div><h1>' + esc(w.title) + '</h1><p>' + esc(w.topics) + '</p></div>';
-  h += prereqBar(week);          // 이 주차에 필요한 기초 단원만 (기초 다지기 전체는 주차 목록에 그대로 있다)
+  if (!META.quizOnly) h += prereqBar(week);   // 이 주차에 필요한 기초 단원만
   h += guideCard(week, true);
+  if (META.quizOnly) {
+    const sb = weekQuizStat(week, 'basic'), sh = weekQuizStat(week, 'hard');
+    if (sb.total || sh.total) {
+      h += '<h2 class="sec">문제 풀기</h2><div class="qbtns">'
+        + (sb.total ? '<a class="qbtn" href="#/quiz?week=' + week + '&level=basic&mode=unseen&n=0&start=1"><b>기본 문제</b><span class="num">' + sb.seen + ' / ' + sb.total + ' 풀이</span></a>' : '')
+        + (sh.total ? '<a class="qbtn hard" href="#/quiz?week=' + week + '&level=hard&mode=unseen&n=0&start=1"><b>심화 문제</b><span class="num">' + sh.seen + ' / ' + sh.total + ' 풀이</span></a>' : '')
+        + '<a class="qbtn" href="#/mock?week=' + week + '"><b>이 주차 모의고사</b><span>시험지처럼 섞어서</span></a>'
+        + '<a class="qbtn" href="#/wrong"><b>오답노트</b><span>틀린 문제만 다시</span></a></div>';
+    } else h += '<div class="soon">이 주차 문제는 만드는 중이에요.</div>';
+    APP().innerHTML = h;
+    renderMath(APP());
+    return;
+  }
   if (d) {
     h += '<h2 class="sec">강의 회독 <small>같은 강의를 ' + PASS_INFO.length + '번, 갈수록 깊게</small></h2>';
     if (d.have) {

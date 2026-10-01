@@ -42,12 +42,14 @@ const go = async h => { w.location.hash = h; await wait(60); };
       basicsWeeks.forEach(bw => { if (bw === wk) return; (meta.units[bw] || []).forEach(u => { const f = u['for']; if (f === 'all' || (Array.isArray(f) && f.indexOf(wk) >= 0)) out.push(u.id); }); });
       want[wk] = out;
     });
-    const withBar = weeks.filter(wk => want[wk].length), without = weeks.filter(wk => !want[wk].length);
+    // 문제만 남긴 과목(quizOnly)은 기초 줄과 용어 칸을 일부러 감춘다. 검사에서도 뺀다.
+    const withBar = meta.quizOnly ? [] : weeks.filter(wk => want[wk].length);
+    const without = meta.quizOnly ? weeks : weeks.filter(wk => !want[wk].length);
     console.log('prereq bar: 있어야 할 주차', withBar.join(',') || '없음', '/ 없어야 할 주차', without.join(',') || '없음');
     for (const wk of weeks) {
       await go('#/week/' + wk);
       const bar = $('.prebar');
-      if (!want[wk].length) { if (bar) errs.push('기초 줄이 없어야 할 주차(' + wk + ')에 나왔어요'); continue; }
+      if (meta.quizOnly || !want[wk].length) { if (bar) errs.push('기초 줄이 없어야 할 주차(' + wk + ')에 나왔어요'); continue; }
       if (!bar) { errs.push('기초 줄이 있어야 할 주차(' + wk + ')에 없어요: ' + want[wk].join(',')); continue; }
       const head = (bar.querySelector('b') || {}).textContent || '';
       if (head.indexOf('보려면 이 기초가 필요해요') < 0) errs.push('기초 줄 문구가 이상해요(' + wk + '): ' + head);
@@ -209,7 +211,7 @@ const go = async h => { w.location.hash = h; await wait(60); };
   await go('#/'); console.log('home again cards:', $$('.wcard').length, 'last:', ($('.intro .btn.primary') || {}).textContent);
   const allTermTool = $$('.toolrow .tool').find(a => (a.getAttribute('href') || '').indexOf('week=all&unit=%EC%9A%A9%EC%96%B4') >= 0);
   console.log('all term quiz tool:', allTermTool ? allTermTool.textContent : '없음');
-  if (!allTermTool && termAll) errs.push('홈 도구에 전 주차 용어 퀴즈가 없어요');
+  if (!allTermTool && termAll && !meta.quizOnly) errs.push('홈 도구에 전 주차 용어 퀴즈가 없어요');
   await go('#/week/' + qweek);
   const allTermBtn = $$('.termbar .btn').find(a => (a.getAttribute('href') || '').indexOf('week=all&unit=%EC%9A%A9%EC%96%B4') >= 0);
   console.log('week term bar all-quiz btn:', allTermBtn ? allTermBtn.textContent : '없음');
