@@ -591,3 +591,5 @@ body.pfull .hint{display:none}
 .dcard.done{border-color:var(--ok)}
 @media (hover:hover){ .dcard:hover{border-color:var(--accent-mid)} }
 @media (max-width:520px){ .dcard .dshot{flex-basis:96px} }
+.drillgrid .dsec{grid-column:1/-1;margin:16px 0 0;font-size:14.5px;color:var(--sub);font-weight:700}
+.drillgrid .dsec:first-child{margin-top:0}

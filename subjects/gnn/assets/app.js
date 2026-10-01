@@ -2428,16 +2428,25 @@ async function pageExamHub() {
   const ofWeek = w => E.items.filter(x => x.week === w);
   if (week && !ofWeek(week).length) week = '';
   const weeks = META.weeks.map(w => w.id).filter(id => ofWeek(id).length);
-  const list = week ? ofWeek(week) : E.items;
+  let list = week ? ofWeek(week) : E.items;
+  if (q.group) list = list.filter(x => x.group === q.group);
   const done = store.exam || (store.exam = {});
   let h = '<a class="back" href="' + (week ? '#/week/' + week : '#/') + '">' + (week ? esc(weekName(week)) : '홈') + '</a>'
     + '<div class="whead"><div class="eyebrow">시험 대비</div><h1>' + esc(E.title || '기출형 문제') + '</h1><p>' + fmt(E.intro || '') + '</p></div>';
   h += '<div class="pillrow"><a class="chip' + (week ? '' : ' on') + '" href="#/exam">전부 ' + E.items.length + '문제</a>'
     + weeks.map(id => '<a class="chip' + (week === id ? ' on' : '') + '" href="#/exam?week=' + encodeURIComponent(id) + '">' + esc(weekName(id)) + ' ' + ofWeek(id).length + '개</a>').join('')
+    + Object.keys(E.groups || {}).map(gk => '<a class="chip' + (q.group === gk ? ' on' : '') + '" href="#/exam?group=' + encodeURIComponent(gk) + '">'
+        + (gk === 'new' ? '새 모델 ' : '기출 ') + E.items.filter(x => x.group === gk).length + '개</a>').join('')
     + (E.pdf ? '<a class="chip" href="' + esc(E.pdf) + '" target="_blank" rel="noopener">시험지 PDF (인쇄해서 풀기)</a>' : '') + '</div>';
   h += '<div class="drillgrid">';
+  let lastG = null;
   list.forEach(it => {
     const r = done[it.id] || {};
+    if (it.group !== lastG) {
+      lastG = it.group;
+      const name = (E.groups || {})[it.group];
+      if (name) h += '<h3 class="dsec">' + esc(name) + '</h3>';
+    }
     h += '<a class="dcard' + (r.done ? ' done' : '') + '" href="#/exam/' + encodeURIComponent(it.id) + '">'
       + '<span class="dshot"><img src="' + esc(it.img) + '" alt="" loading="lazy" decoding="async"></span>'
       + '<span class="dbody"><span class="dtags"><span class="dtag ex">' + it.n + '. ' + esc(it.topic) + '</span>'
