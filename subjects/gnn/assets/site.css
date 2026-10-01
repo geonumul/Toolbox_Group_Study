@@ -597,3 +597,7 @@ body.pfull .hint{display:none}
 .dcard .dtag{white-space:nowrap}
 .dcard .dt .dmodel{display:block;font-style:normal;font-size:13px;font-weight:700;color:var(--accent-mid);margin-bottom:2px;word-break:keep-all}
 .dcard .dt{word-break:keep-all;overflow-wrap:anywhere}
+/* 캐시에 남은 옛 index.html 이 긴 이름을 알약에 넣어도 두 줄로 접히지 않게 막는다.
+   접히면 둥근 테두리 안 오른쪽이 텅 비어 깨져 보인다. */
+.dcard .dtags{align-items:flex-start}
+.dcard .dtag{white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}

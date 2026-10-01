@@ -2438,11 +2438,16 @@ async function pageExamHub() {
     + Object.keys(E.groups || {}).map(gk => '<a class="chip' + (q.group === gk ? ' on' : '') + '" href="#/exam?group=' + encodeURIComponent(gk) + '">'
         + (gk === 'new' ? '새 모델 ' : '기출 ') + E.items.filter(x => x.group === gk).length + '개</a>').join('')
     + (E.pdf ? '<a class="chip" href="' + esc(E.pdf) + '" target="_blank" rel="noopener">시험지 PDF</a>' : '') + '</div>';
+  if (E.plan) {
+    h += '<div class="qbtns" style="margin-top:12px"><a class="qbtn" href="' + esc(E.plan.href) + '" target="_blank" rel="noopener">'
+      + '<b>' + esc(E.plan.label) + '</b><span class="num">인쇄해서 체크하며 쓰는 플래너. 그래프신경망, 조직심리학, 자연어처리가 같이 들어 있어요</span></a></div>';
+  }
   if ((E.practice || []).length) {
     h += '<div class="qbtns" style="margin-top:12px">' + E.practice.map(x =>
       '<a class="qbtn" href="' + esc(x.href) + '" target="_blank" rel="noopener"><b>' + esc(x.label) + '</b>'
       + '<span class="num">' + esc(x.name) + '</span></a>').join('')
-      + '</div><p class="tipline" style="margin-top:8px">연습 시험지는 같은 틀에 숫자만 바꾼 것이에요. 한 파일에 여러 회차가 들어 있으니 인쇄해서 쭉 풀면 돼요. 이름과 학번 칸은 맨 앞에 한 번만 있어요.</p>';
+      + '</div><p class="tipline" style="margin-top:8px">연습 시험지는 같은 틀에 숫자만 바꾼 것이에요. 한 파일에 1회차부터 5회차까지 들어 있어요. '
+      + '처음에는 <b>ENG + KOR</b> 판으로 익히고, 익숙해지면 <b>ENG</b> 판으로 푸세요. 해설지는 문제 아래에 풀이가 바로 이어져요.</p>';
   }
   h += '<div class="drillgrid">';
   let lastG = null;
