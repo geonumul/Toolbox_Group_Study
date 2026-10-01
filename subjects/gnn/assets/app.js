@@ -2455,9 +2455,9 @@ async function pageExamHub() {
     }
     h += '<a class="dcard' + (r.done ? ' done' : '') + '" href="#/exam/' + encodeURIComponent(it.id) + '">'
       + '<span class="dshot"><img src="' + esc((it.imgs && it.imgs[0]) || it.img) + '" alt="" loading="lazy" decoding="async"></span>'
-      + '<span class="dbody"><span class="dtags"><span class="dtag ex">' + it.n + '. ' + esc(it.topic) + '</span>'
+      + '<span class="dbody"><span class="dtags"><span class="dtag ex">' + it.n + '번</span>'
       + '<span class="dtag wk">' + esc(it.examName || weekName(it.week)) + '</span></span>'
-      + '<span class="dt">' + fmt(it.title, false) + '</span>'
+      + '<span class="dt"><em class="dmodel">' + esc(it.topic || '') + '</em>' + fmt(it.title, false) + '</span>'
       + '<span class="dask">' + fmt(it.ask || '', false) + '</span>'
       + '<span class="dstate"><span>' + (it.group === 'real' ? '해설 ' + (it.sols || []).length + '장' : '기출형 ' + it.slides.length + '장 풀이') + '</span><span>' + (r.done ? '다 봤어요' : '') + '</span></span></span></a>';
   });
