@@ -2437,7 +2437,13 @@ async function pageExamHub() {
     + weeks.map(id => '<a class="chip' + (week === id ? ' on' : '') + '" href="#/exam?week=' + encodeURIComponent(id) + '">' + esc(weekName(id)) + ' ' + ofWeek(id).length + '개</a>').join('')
     + Object.keys(E.groups || {}).map(gk => '<a class="chip' + (q.group === gk ? ' on' : '') + '" href="#/exam?group=' + encodeURIComponent(gk) + '">'
         + (gk === 'new' ? '새 모델 ' : '기출 ') + E.items.filter(x => x.group === gk).length + '개</a>').join('')
-    + (E.pdf ? '<a class="chip" href="' + esc(E.pdf) + '" target="_blank" rel="noopener">시험지 PDF (인쇄해서 풀기)</a>' : '') + '</div>';
+    + (E.pdf ? '<a class="chip" href="' + esc(E.pdf) + '" target="_blank" rel="noopener">시험지 PDF</a>' : '') + '</div>';
+  if ((E.practice || []).length) {
+    h += '<div class="qbtns" style="margin-top:12px">' + E.practice.map(x =>
+      '<a class="qbtn" href="' + esc(x.href) + '" target="_blank" rel="noopener"><b>' + esc(x.label) + '</b>'
+      + '<span class="num">' + esc(x.name) + '</span></a>').join('')
+      + '</div><p class="tipline" style="margin-top:8px">연습 시험지는 같은 틀에 숫자만 바꾼 것이에요. 한 파일에 여러 회차가 들어 있으니 인쇄해서 쭉 풀면 돼요. 이름과 학번 칸은 맨 앞에 한 번만 있어요.</p>';
+  }
   h += '<div class="drillgrid">';
   let lastG = null;
   list.forEach(it => {
