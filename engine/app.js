@@ -491,6 +491,7 @@ function pageWeek(week) {
         + '<a class="qbtn" href="#/mock?week=' + week + '"><b>이 주차 모의고사</b><span>시험지처럼 섞어서</span></a>'
         + '<a class="qbtn" href="#/wrong"><b>오답노트</b><span>틀린 문제만 다시</span></a></div>';
     } else h += '<div class="soon">이 주차 문제는 만드는 중이에요.</div>';
+    h += drillCard(week);
     APP().innerHTML = h;
     renderMath(APP());
     return;
@@ -2165,9 +2166,14 @@ async function pageDrill(id, jump) {
   const frames = [];
   frames.push({ kind: 'title', eyebrow: '강의자료에 ' + (it.kind === '과제' ? 'Homework' : 'Example') + ' 라고 적힌 쪽', big: it.title, sub: it.ask || '' });
   if (it.out) frames.push({ kind: 'warn', head: '이 문제는 이번 시험 범위가 아니에요', items: [it.out, '방법을 익혀 두면 좋지만, 시간이 모자라면 범위 안의 문제부터 푸세요.'] });
-  it.pages.forEach((p, i) => frames.push({ kind: 'slideimg', src: 'img/' + it.deck + '/p' + pad3(p) + '.jpg', alt: it.deck + ' p.' + p,
-    cap: it.deck + ' p.' + p + '  ' + label + (it.pages.length > 1 ? ' (' + (i + 1) + ' / ' + it.pages.length + ')' : '') + ' - 강의자료 그대로예요', _p: p }));
+  // imgLast 면 슬라이드를 맨 뒤에 둔다. 외우는 문제는 물음을 먼저 보고 스스로 답한 다음
+  // 슬라이드로 확인해야 하는데, 슬라이드가 먼저 나오면 답이 보여 버린다.
+  const shots = it.pages.map((p, i) => ({ kind: 'slideimg', src: 'img/' + it.deck + '/p' + pad3(p) + '.jpg', alt: it.deck + ' p.' + p,
+    cap: it.deck + ' p.' + p + '  ' + label + (it.pages.length > 1 ? ' (' + (i + 1) + ' / ' + it.pages.length + ')' : '')
+      + (it.imgLast ? ' - 슬라이드로 확인해요' : ' - 강의자료 그대로예요'), _p: p }));
+  if (!it.imgLast) shots.forEach(f => frames.push(f));
   (it.slides || []).forEach((f, i) => frames.push(Object.assign({ _si: i }, f)));
+  if (it.imgLast) shots.forEach(f => frames.push(f));
   const links = [];
   if ((it.bank || []).length) links.push(['이 문제로 만든 문항 풀기', '#/quiz?week=' + encodeURIComponent(it.week) + '&src=' + encodeURIComponent(it.kind) + '&n=0&start=1']);
   if (nx) links.push(['다음: ' + nx.kind + (nx.no ? ' ' + nx.no : ''), '#/drill/' + encodeURIComponent(nx.id)]);
