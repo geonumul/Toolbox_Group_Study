@@ -175,7 +175,7 @@ const go = async h => { w.location.hash = h; await wait(60); };
     console.log('exam hub cards:', cards.length, '/', meta.exam.n);
     if (cards.length !== meta.exam.n) errs.push('시험 대비 목록이 ' + cards.length + '개만 나와요 (기대 ' + meta.exam.n + ')');
     $$('.dcard .dshot img').forEach(img => {
-      if (!/^exam\/q\d+\.png$/.test(img.getAttribute('src') || '')) errs.push('시험지 그림 경로가 이상해요: ' + img.getAttribute('src'));
+      if (!/^exam\/(q\d+\.png|\d{4}f\/q\d+_\d+\.png)$/.test(img.getAttribute('src') || '')) errs.push('시험지 그림 경로가 이상해요: ' + img.getAttribute('src'));
     });
     for (const id of meta.exam.ids) {
       await go('#/exam/' + encodeURIComponent(id)); await wait(60);

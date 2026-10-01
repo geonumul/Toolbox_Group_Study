@@ -2454,12 +2454,12 @@ async function pageExamHub() {
       if (name) h += '<h3 class="dsec">' + esc(name) + '</h3>';
     }
     h += '<a class="dcard' + (r.done ? ' done' : '') + '" href="#/exam/' + encodeURIComponent(it.id) + '">'
-      + '<span class="dshot"><img src="' + esc(it.img) + '" alt="" loading="lazy" decoding="async"></span>'
+      + '<span class="dshot"><img src="' + esc((it.imgs && it.imgs[0]) || it.img) + '" alt="" loading="lazy" decoding="async"></span>'
       + '<span class="dbody"><span class="dtags"><span class="dtag ex">' + it.n + '. ' + esc(it.topic) + '</span>'
-      + '<span class="dtag wk">' + esc(weekName(it.week)) + '</span></span>'
+      + '<span class="dtag wk">' + esc(it.examName || weekName(it.week)) + '</span></span>'
       + '<span class="dt">' + fmt(it.title, false) + '</span>'
       + '<span class="dask">' + fmt(it.ask || '', false) + '</span>'
-      + '<span class="dstate"><span>기출형 ' + it.slides.length + '장 풀이</span><span>' + (r.done ? '다 봤어요' : '') + '</span></span></span></a>';
+      + '<span class="dstate"><span>' + (it.group === 'real' ? '해설 ' + (it.sols || []).length + '장' : '기출형 ' + it.slides.length + '장 풀이') + '</span><span>' + (r.done ? '다 봤어요' : '') + '</span></span></span></a>';
   });
   h += '</div>';
   APP().innerHTML = h;
@@ -2477,8 +2477,14 @@ async function pageExam(id, jump) {
   const label = it.n + '. ' + it.topic;
   const frames = [];
   frames.push({ kind: 'title', eyebrow: '기출 모양 그대로 만든 문제', big: it.title, sub: it.ask || '' });
-  frames.push({ kind: 'slideimg', src: it.img, alt: label, cap: label + '  -  먼저 풀어 보고 넘기세요. 아래부터 풀이예요', _p: it.n });
+  const qimgs = (it.imgs && it.imgs.length) ? it.imgs : [it.img];
+  qimgs.forEach((src, i) => frames.push({ kind: 'slideimg', src: src, alt: label,
+    cap: label + (qimgs.length > 1 ? '  (' + (i + 1) + ' / ' + qimgs.length + ')' : '')
+      + '  -  먼저 풀어 보고 넘기세요', _p: it.n, _img: src }));
   (it.slides || []).forEach((f, i) => frames.push(Object.assign({ _si: i }, f)));
+  (it.sols || []).forEach((src, i) => frames.push({ kind: 'slideimg', src: src, alt: '해설',
+    cap: '교수님 해설' + ((it.sols.length > 1) ? '  (' + (i + 1) + ' / ' + it.sols.length + ')' : ''),
+    _p: it.n, _img: src, _sol: i }));
   const links = [];
   if (nx) links.push(['다음: ' + nx.n + '. ' + nx.topic, '#/exam/' + encodeURIComponent(nx.id)]);
   links.push(['문제 목록', '#/exam']);
@@ -2490,8 +2496,8 @@ async function pageExam(id, jump) {
     frames, groups: frames.map((f, i) => ({ start: i, end: i })), start: jump != null ? +jump : rec.i && rec.i < frames.length - 1 ? rec.i : 0,
     backHref: '#/exam?week=' + encodeURIComponent(it.week),
     chips: '',
-    imgOf: () => it.img,
-    inkKey: f => f._si == null ? (f._p ? 'exam/' + it.id + '/paper' : null) : 'exam/' + it.id + '/' + f._si,
+    imgOf: f => (f && f._img) || (it.imgs && it.imgs[0]) || it.img,
+    inkKey: f => f._si != null ? 'exam/' + it.id + '/' + f._si : f._img ? 'exam/' + it.id + '/' + f._img.replace(/[^\w]/g, '_') : null,
     title: () => esc(it.title) + ' <small>' + esc(label) + ', ' + esc(weekName(it.week)) + '</small>',
     onProgress: i => { rec.i = i; if (i === frames.length - 1) rec.done = true; store.last = { href: '#/exam/' + it.id, label: label }; save(); },
     onEnd: () => { location.hash = nx ? '#/exam/' + encodeURIComponent(nx.id) : '#/exam'; },
