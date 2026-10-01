@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """그래프 신경망(GNN) 사이트를 과목 하나로 가져오기
 원본: 03_사이트/Graph-Neural-Networks-Fall-2026, 이 저장소 옆 폴더 (GNN 빌드 결과, python build_site.py 로 만든 것)
-출력: subjects/gnn/ (index.html, assets, data, img, practice) + 홈 index.html 의 GNN 카드 숫자
+출력: subjects/gnn/ (index.html, assets, data, img, practice, exam, pdf) + 홈 index.html 의 GNN 카드 숫자
 사용: python tools/import_gnn.py
 """
 import json, pathlib, re, shutil, sys
@@ -23,7 +23,7 @@ def main():
     if not (SRC / "index.html").exists():
         raise SystemExit(f"GNN 빌드 결과가 없어요: {SRC}")
     DST.mkdir(parents=True, exist_ok=True)
-    for name in ("assets", "data", "img", "practice"):
+    for name in ("assets", "data", "img", "practice", "exam", "pdf"):
         s, d = SRC / name, DST / name
         if not s.exists():
             continue

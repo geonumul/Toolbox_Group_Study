@@ -168,6 +168,24 @@ const go = async h => { w.location.hash = h; await wait(60); };
       console.log('unit', u.id, $('#pcount') && $('#pcount').textContent);
     }
   }
+  // 시험 대비 (#/exam): 그래프신경망만 쓴다. 기출 모양 문제 그림 + 상세 풀이
+  if (meta.exam) {
+    await go('#/exam'); await wait(140);
+    const cards = $$('.dcard');
+    console.log('exam hub cards:', cards.length, '/', meta.exam.n);
+    if (cards.length !== meta.exam.n) errs.push('시험 대비 목록이 ' + cards.length + '개만 나와요 (기대 ' + meta.exam.n + ')');
+    $$('.dcard .dshot img').forEach(img => {
+      if (!/^exam\/q\d+\.png$/.test(img.getAttribute('src') || '')) errs.push('시험지 그림 경로가 이상해요: ' + img.getAttribute('src'));
+    });
+    for (const id of meta.exam.ids) {
+      await go('#/exam/' + encodeURIComponent(id)); await wait(60);
+      if (!$('#pslide')) { errs.push('시험 문제 ' + id + ' 를 열지 못했어요'); continue; }
+      let n = 0;
+      while (n++ < 2000) { const slide = $('#pslide'); if (!slide) break; const ch = slide.querySelector('.schoices button'); if (ch && !ch.disabled) ch.click(); const [a, b] = $('#pcount').textContent.split(' / ').map(Number); if (a === b && !slide.querySelector('[data-s].hide')) break; $('#pNext').click(); }
+      if (n >= 2000) errs.push('시험 문제 ' + id + ' 가 끝까지 넘어가지 않아요');
+    }
+    console.log('exam items played:', meta.exam.ids.length);
+  }
   // 예제와 과제만 (#/drill): 데이터가 있는 과목만 돈다
   if (meta.drill) {
     await go('#/drill'); await wait(120);

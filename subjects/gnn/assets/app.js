@@ -194,6 +194,8 @@ const routes = [
   [/^#\/exams$/, () => pageStatic('exams')],
   [/^#\/tips$/, () => pageStatic('tips')],
   [/^#\/recall\/([A-Za-z]+\d+)(?:\/([1-4])(?:\/(\d+))?)?$/, pageRecall],   // 가리고 설명하기
+  [/^#\/exam$/, pageExamHub],                        // 시험 대비 (기출 모양 문제 + 상세 풀이)
+  [/^#\/exam\/([\w.-]+)(?:\/(\d+))?$/, pageExam],
 ];
 let cleanup = null, qInk = null;
 function route() {
@@ -225,6 +227,7 @@ function setNav(h) {
   else if (/^#\/settings/.test(h)) key = 'set';
   else if (/^#\/game/.test(h)) key = 'game';
   else if (/^#\/exams/.test(h)) key = 'exams';
+  else if (/^#\/exam(\/|\?|$)/.test(h)) key = 'exam';
   else if (/^#\/tips/.test(h)) key = 'tips';
   $$('#nav .tab').forEach(t => t.classList.toggle('on', t.dataset.nav === key));
   const on = $('#nav .tab.on'); if (on && on.scrollIntoView) on.scrollIntoView({ block: 'nearest', inline: 'nearest' });
@@ -380,6 +383,7 @@ function pageHome() {
   h += '</div>';
   h += '<h2 class="sec">문제 진행</h2><div class="card"><div class="plangrid">' + planGrid() + '</div></div>';
   h += '<h2 class="sec">도구</h2><div class="toolrow">'
+    + (examInfo() ? '<a class="tool" href="#/exam"><b>' + esc(examInfo().label) + '</b><span>기출 모양 문제 ' + examInfo().n + '개, 시험지 그림으로 보고 상세 풀이</span></a>' : '')
     + '<a class="tool" href="#/week/c"><b>코딩 기초</b><span>파이썬, 클래스, 파이토치를 직접 쳐 보며</span></a>'
     + '<a class="tool" href="#/terms/all"><b>용어 카드</b><span>전 주차 용어 ' + Object.keys(TERM).length + '개</span></a>'
     + (termQuizStat('all').total ? '<a class="tool" href="' + ALL_TERM_QUIZ + '"><b>용어 퀴즈</b><span>전 주차 용어 문제 ' + termQuizStat('all').total + '개에서 섞어서</span></a>' : '')
@@ -476,6 +480,7 @@ function pageWeek(week) {
       + '<a class="qbtn" href="#/quiz?week=' + week + '&type=calc&start=1"><b>계산만</b><span>시험 계산 문제 연습</span></a>'
       + '<a class="qbtn" href="#/mock?week=' + week + '"><b>이 주차 모의고사</b><span>서술 + 계산 한 쌍씩</span></a></div>';
   }
+  h += examCard(week);      // 시험 대비
   h += recallTiles(week);   // 가리고 설명하기
   APP().innerHTML = h;
   renderMath(APP());
@@ -556,7 +561,7 @@ function startPlayer(opts) {
   window.addEventListener('resize', onResize);
   { const fc = $('#fullChip'); if (fc) { fc.addEventListener('click', e => { e.stopPropagation(); pFullSet(!document.body.classList.contains('pfull')); }); if (document.body.classList.contains('pfull')) { fc.classList.add('on'); fc.textContent = '전체 화면 끄기'; } } }
   cleanup = () => {
-    if (document.body.classList.contains('pfull') && !/^#\/(lesson|unit|recall)\//.test(location.hash)) pFullSet(false);
+    if (document.body.classList.contains('pfull') && !/^#\/(lesson|unit|recall|exam|practice)\//.test(location.hash)) pFullSet(false);
     document.removeEventListener('keydown', key); window.removeEventListener('resize', onResize);
     if (P) { clearTimeout(P.timer); if (P.ink) P.ink.destroy(); }
     P = null;
@@ -2393,6 +2398,91 @@ function recallStep(w, steps) {
   steps.push({ t: '가리고 설명하기', d: '기출까지 풀고 나서 해요. 슬라이드의 중요한 말을 가려 두고 혼자 설명해 봐요. 마지막에는 소단원 이름만 보고 설명해요.', done: got === 4, href: '#/recall/' + w.deck + '/' + recallNext(w.deck), meta: got + ' / 4단계' });
 }
 /* 주차 페이지의 단계 타일 */
+/* ---------- 시험 대비 ----------
+   수업은 이론을 가르치는데 시험은 손계산이 나온다. 기출 2023~2025 중간고사가 모두 같은 틀이라
+   그 틀 그대로 문제를 만들고, 문제는 "시험지 그림" 으로 먼저 보여 준다.
+   화면 글씨가 아니라 시험지로 보아야 시험장에서 같은 모양으로 읽힌다.
+   자료: data/exam.js (GNN_EXAM), 요약은 META.exam. 만드는 곳은 _작업/시험지/build_exam.py */
+const EXAM = () => window.GNN_EXAM || null;
+const examInfo = () => META.exam || null;
+async function examLoad() {
+  if (EXAM()) return true;
+  try { await loadScript('data/exam.js'); } catch (e) { return false; }
+  return !!EXAM();
+}
+function examCard(week) {
+  const info = examInfo(); if (!info) return '';
+  const n = (info.weeks || {})[week] || 0; if (!n) return '';
+  const done = store.exam || {};
+  const seen = (info.ids || []).filter(k => (done[k] || {}).done).length;
+  return '<div class="termbar"><div><b>' + esc(info.label || '시험 대비') + '</b><div class="muted">이 주차에서 나올 모양의 기출형 문제 ' + n + '개. 시험지 그림으로 보고 풀이는 개념부터 봐요'
+    + (seen ? ', 끝낸 것 ' + seen + '개' : '') + '</div></div><div class="btnrow" style="margin:0"><a class="btn primary" href="#/exam?week=' + encodeURIComponent(week) + '">문제 보기</a></div></div>';
+}
+async function pageExamHub() {
+  if (!examInfo()) { location.replace('#/'); return; }
+  APP().innerHTML = '<div class="empty"><b>시험지를 불러오는 중</b></div>';
+  if (!await examLoad()) { APP().innerHTML = '<a class="back" href="#/">홈</a><div class="empty"><b>아직 준비되지 않았어요</b></div>'; return; }
+  const E = EXAM();
+  const q = qs(location.hash.split('?')[1] || '');
+  let week = q.week || '';
+  const ofWeek = w => E.items.filter(x => x.week === w);
+  if (week && !ofWeek(week).length) week = '';
+  const weeks = META.weeks.map(w => w.id).filter(id => ofWeek(id).length);
+  const list = week ? ofWeek(week) : E.items;
+  const done = store.exam || (store.exam = {});
+  let h = '<a class="back" href="' + (week ? '#/week/' + week : '#/') + '">' + (week ? esc(weekName(week)) : '홈') + '</a>'
+    + '<div class="whead"><div class="eyebrow">시험 대비</div><h1>' + esc(E.title || '기출형 문제') + '</h1><p>' + fmt(E.intro || '') + '</p></div>';
+  h += '<div class="pillrow"><a class="chip' + (week ? '' : ' on') + '" href="#/exam">전부 ' + E.items.length + '문제</a>'
+    + weeks.map(id => '<a class="chip' + (week === id ? ' on' : '') + '" href="#/exam?week=' + encodeURIComponent(id) + '">' + esc(weekName(id)) + ' ' + ofWeek(id).length + '개</a>').join('')
+    + (E.pdf ? '<a class="chip" href="' + esc(E.pdf) + '" target="_blank" rel="noopener">시험지 PDF (인쇄해서 풀기)</a>' : '') + '</div>';
+  h += '<div class="drillgrid">';
+  list.forEach(it => {
+    const r = done[it.id] || {};
+    h += '<a class="dcard' + (r.done ? ' done' : '') + '" href="#/exam/' + encodeURIComponent(it.id) + '">'
+      + '<span class="dshot"><img src="' + esc(it.img) + '" alt="" loading="lazy" decoding="async"></span>'
+      + '<span class="dbody"><span class="dtags"><span class="dtag ex">' + it.n + '. ' + esc(it.topic) + '</span>'
+      + '<span class="dtag wk">' + esc(weekName(it.week)) + '</span></span>'
+      + '<span class="dt">' + fmt(it.title, false) + '</span>'
+      + '<span class="dask">' + fmt(it.ask || '', false) + '</span>'
+      + '<span class="dstate"><span>기출형 ' + it.slides.length + '장 풀이</span><span>' + (r.done ? '다 봤어요' : '') + '</span></span></span></a>';
+  });
+  h += '</div>';
+  APP().innerHTML = h;
+  renderMath(APP());
+  countTerms(APP());
+}
+async function pageExam(id, jump) {
+  if (!examInfo()) { location.replace('#/'); return; }
+  APP().innerHTML = '<div class="empty"><b>시험지를 불러오는 중</b></div>';
+  if (!await examLoad()) { location.replace('#/'); return; }
+  const E = EXAM();
+  const idx = E.items.findIndex(x => x.id === decodeURIComponent(id));
+  if (idx < 0) { location.replace('#/exam'); return; }
+  const it = E.items[idx], nx = E.items[idx + 1];
+  const label = it.n + '. ' + it.topic;
+  const frames = [];
+  frames.push({ kind: 'title', eyebrow: '기출 모양 그대로 만든 문제', big: it.title, sub: it.ask || '' });
+  frames.push({ kind: 'slideimg', src: it.img, alt: label, cap: label + '  -  먼저 풀어 보고 넘기세요. 아래부터 풀이예요', _p: it.n });
+  (it.slides || []).forEach((f, i) => frames.push(Object.assign({ _si: i }, f)));
+  const links = [];
+  if (nx) links.push(['다음: ' + nx.n + '. ' + nx.topic, '#/exam/' + encodeURIComponent(nx.id)]);
+  links.push(['문제 목록', '#/exam']);
+  if (E.pdf) links.push(['시험지 PDF', E.pdf]);
+  frames.push({ kind: 'end', big: label + ' 끝', sub: nx ? '다음은 "' + nx.title + '" 이에요.' : '아홉 문제를 다 봤어요. 이제 PDF 로 한 번에 풀어 보세요.', links });
+  const all = store.exam || (store.exam = {});
+  const rec = all[it.id] = all[it.id] || {};
+  startPlayer({
+    frames, groups: frames.map((f, i) => ({ start: i, end: i })), start: jump != null ? +jump : rec.i && rec.i < frames.length - 1 ? rec.i : 0,
+    backHref: '#/exam?week=' + encodeURIComponent(it.week),
+    chips: '',
+    imgOf: () => it.img,
+    inkKey: f => f._si == null ? (f._p ? 'exam/' + it.id + '/paper' : null) : 'exam/' + it.id + '/' + f._si,
+    title: () => esc(it.title) + ' <small>' + esc(label) + ', ' + esc(weekName(it.week)) + '</small>',
+    onProgress: i => { rec.i = i; if (i === frames.length - 1) rec.done = true; store.last = { href: '#/exam/' + it.id, label: label }; save(); },
+    onEnd: () => { location.hash = nx ? '#/exam/' + encodeURIComponent(nx.id) : '#/exam'; },
+  });
+}
+
 function recallTiles(week) {
   const w = weekOf(week), info = w && w.deck ? recallInfo(w.deck) : null; if (!info) return '';
   const r = (store.recall || {})[w.deck] || {};
