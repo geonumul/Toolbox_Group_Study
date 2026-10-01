@@ -168,6 +168,24 @@ const go = async h => { w.location.hash = h; await wait(60); };
       console.log('unit', u.id, $('#pcount') && $('#pcount').textContent);
     }
   }
+  // 예제와 과제만 (#/drill): 데이터가 있는 과목만 돈다
+  if (meta.drill) {
+    await go('#/drill'); await wait(120);
+    const cards = $$('.dcard');
+    console.log('drill hub cards:', cards.length, '/ 전체', meta.drill.n, '(시험 범위 밖', Object.values(meta.drill.outWeeks || {}).reduce((a, b) => a + b, 0), '개 숨김)');
+    if (!cards.length) errs.push('예제와 과제 목록이 비어 있어요');
+    $$('.dcard .dshot img').slice(0, 3).forEach(img => {
+      if (!/^img\/[A-Za-z]+\d+\/p\d{3}\.jpg$/.test(img.getAttribute('src') || '')) errs.push('예제 카드의 슬라이드 그림 경로가 이상해요: ' + img.getAttribute('src'));
+    });
+    for (const id of meta.drill.ids) {
+      await go('#/drill/' + encodeURIComponent(id)); await wait(60);
+      if (!$('#pslide')) { errs.push('예제 ' + id + ' 를 열지 못했어요'); continue; }
+      let n = 0;
+      while (n++ < 2000) { const slide = $('#pslide'); if (!slide) break; const ch = slide.querySelector('.schoices button'); if (ch && !ch.disabled) ch.click(); const [a, b] = $('#pcount').textContent.split(' / ').map(Number); if (a === b && !slide.querySelector('[data-s].hide')) break; $('#pNext').click(); }
+      if (n >= 2000) errs.push('예제 ' + id + ' 가 끝까지 넘어가지 않아요');
+    }
+    console.log('drill items played:', meta.drill.ids.length);
+  }
   await go('#/'); console.log('home again cards:', $$('.wcard').length, 'last:', ($('.intro .btn.primary') || {}).textContent);
   const allTermTool = $$('.toolrow .tool').find(a => (a.getAttribute('href') || '').indexOf('week=all&unit=%EC%9A%A9%EC%96%B4') >= 0);
   console.log('all term quiz tool:', allTermTool ? allTermTool.textContent : '없음');

@@ -644,3 +644,24 @@ body.pfull .sl-items li{font-size:clamp(21px,2.2vw,30px)}
 body.pfull .pbar2{margin-top:8px}
 body.pfull .hint{display:none}
 @media (max-width:720px){body.pfull #player.on{padding:6px 8px 8px}}
+
+/* 예제와 과제만 (#/drill): 슬라이드 그림을 먼저 보여 주어 강의자료에 정말 그렇게 적혀 있는지 눈으로 확인하게 한다 */
+.drillgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px;margin-top:14px}
+.dsec{grid-column:1/-1;margin:14px 0 0;font-size:15px;color:var(--sub);font-weight:700}
+.dsec:first-child{margin-top:0}
+.dcard{display:flex;gap:12px;text-decoration:none;color:inherit;border:1.5px solid var(--line);border-radius:var(--r-md);padding:10px;background:var(--surface)}
+.dcard .dshot{flex:0 0 112px;border:1px solid var(--line-2);border-radius:8px;overflow:hidden;background:#fff;align-self:flex-start}
+.dcard .dshot img{display:block;width:100%;height:auto}
+.dcard .dbody{display:flex;flex-direction:column;gap:5px;min-width:0;flex:1}
+.dcard .dtags{display:flex;gap:6px;flex-wrap:wrap}
+.dcard .dtag{align-self:flex-start;font-size:12px;font-weight:700;border-radius:999px;padding:2px 9px;border:1px solid var(--line-2);color:var(--sub)}
+.dcard .dtag.ex{color:var(--accent-mid);border-color:var(--accent-mid)}
+.dcard .dtag.hw{color:var(--coral);border-color:var(--coral)}
+.dcard .dtag.out{color:var(--sub);background:var(--surface-2)}
+.dcard.outside{opacity:.72}
+.dcard .dt{font-size:15.5px;font-weight:700;line-height:1.35}
+.dcard .dask{font-size:13px;color:var(--ink-2);line-height:1.5}
+.dcard .dstate{margin-top:auto;display:flex;justify-content:space-between;gap:8px;font-size:12.5px;color:var(--sub)}
+.dcard.done{border-color:var(--ok)}
+@media (hover:hover){ .dcard:hover{border-color:var(--accent-mid)} }
+@media (max-width:520px){ .dcard .dshot{flex-basis:88px} }

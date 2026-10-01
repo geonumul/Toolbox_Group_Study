@@ -227,6 +227,8 @@ const routes = [
   [/^#\/note(?:\/([\w-]+))?$/, pageNote],
   [/^#\/time$/, pageTime],
   [/^#\/recall\/([A-Za-z]+\d+)(?:\/([1-5])(?:\/(\d+))?)?$/, pageRecall],   // 가리고 설명하기 (4단계 데이터가 있으면 5가 마지막 단계)
+  [/^#\/drill$/, pageDrillHub],                       // 예제와 과제만 (강의자료에 Example, Homework 라고 적힌 쪽)
+  [/^#\/drill\/([\w.-]+)(?:\/(\d+))?$/, pageDrill],
 ];
 let cleanup = null, qInk = null;
 function route() {
@@ -254,6 +256,7 @@ function setNav(h) {
   const w = h.match(/^#\/(?:week|terms)\/(\w+)/) || (lm ? [0, META.deckWeek[lm[1]] || ''] : null) || h.match(/^#\/unit\/w(\w+?)-/);
   if (w) key = 'w' + w[1];
   else if (/^#\/(quiz|mock)/.test(h)) key = 'quiz';
+  else if (/^#\/drill/.test(h)) key = 'drill';
   else if (/^#\/wrong/.test(h)) key = 'wrong';
   else if (/^#\/notebook/.test(h)) key = 'note';
   else if (/^#\/settings/.test(h)) key = 'set';
@@ -420,6 +423,7 @@ function pageHome() {
     + '<a class="tool" href="#/terms/all"><b>용어 카드</b><span>전 주차 용어 ' + Object.keys(TERM).length + '개' + (dueAll ? ', 오늘 복습 ' + dueAll + '개' : '') + '</span></a>'
     + (termQuizStat('all').total ? '<a class="tool" href="' + ALL_TERM_QUIZ + '"><b>용어 퀴즈</b><span>전 주차 용어 문제 ' + termQuizStat('all').total + '개에서 섞어서</span></a>' : '')
     + (gPool('all').length ? '<a class="tool" href="#/game"><b>용어 게임</b><span>짝 맞추기, 뜻 고르기, 60초 스피드 퀴즈</span></a>' : '')
+    + (drillInfo() ? '<a class="tool" href="#/drill"><b>' + esc(drillInfo().label) + '</b><span>강의자료에 Example, Homework 라고 적힌 쪽 ' + (drillInfo().n - Object.keys(drillInfo().outWeeks || {}).reduce((a, k) => a + drillInfo().outWeeks[k], 0)) + '곳</span></a>' : '')
     + '<a class="tool" href="#/mock"><b>모의고사</b><span>시험지처럼 섞어서</span></a>'
     + '<a class="tool" href="#/wrong"><b>오답노트</b><span>틀린 문제만 다시</span></a>'
     + (PAGES.exams ? '<a class="tool" href="#/exams"><b>' + esc(META.examsNav || '기출 분석') + '</b><span>' + esc(META.examsDesc || '시험 모양과 자주 나온 주제') + '</span></a>' : '')
@@ -587,7 +591,7 @@ function startPlayer(opts) {
   window.addEventListener('resize', onResize);
   { const fc = $('#fullChip'); if (fc) { fc.addEventListener('click', e => { e.stopPropagation(); pFullSet(!document.body.classList.contains('pfull')); }); if (document.body.classList.contains('pfull')) { fc.classList.add('on'); fc.textContent = '전체 화면 끄기'; } } }
   cleanup = () => {
-    if (document.body.classList.contains('pfull') && !/^#\/(lesson|unit|recall)\//.test(location.hash)) pFullSet(false);
+    if (document.body.classList.contains('pfull') && !/^#\/(lesson|unit|recall|drill)\//.test(location.hash)) pFullSet(false);
     document.removeEventListener('keydown', key); window.removeEventListener('resize', onResize);
     if (P) { clearTimeout(P.timer); if (P.ink) P.ink.destroy(); }
     P = null;
@@ -2060,6 +2064,107 @@ function recallStep(w, steps) {
   steps.push({ t: '가리고 설명하기', d: F === 5 ? '문제까지 풀고 나서 해요. 슬라이드 글을 조금, 더, 많이, 다 가려 두고 혼자 설명해 봐요. 마지막에는 소단원 이름만 보고 설명해요.' : '기출까지 풀고 나서 해요. 슬라이드의 중요한 말을 가려 두고 혼자 설명해 봐요. 마지막에는 소단원 이름만 보고 설명해요.', done: got === F, href: '#/recall/' + w.deck + '/' + recallNext(w.deck), meta: got + ' / ' + F + '단계' });
 }
 /* 주차 페이지의 단계 타일 */
+/* ---------- 예제와 과제만 ----------
+   강의자료에서 "Example", "Homework" 라고 적힌 쪽만 모았다. 슬라이드 그림을 먼저 보여 주어
+   정말 그 쪽에 그렇게 적혀 있는지 눈으로 확인하고 풀 수 있게 한다.
+   데이터: data/drill.js (SDT_DRILL), 요약은 META.drill. 만드는 곳은 work/<과목>/drill/. */
+const DRILL = () => window.SDT_DRILL || null;
+const drillInfo = () => META.drill || null;
+const drillOf = week => { const D = DRILL(); return D ? D.items.filter(x => x.week === week) : []; };
+function drillCard(week) {
+  const info = drillInfo(); if (!info) return '';
+  const n = (info.weeks || {})[week] || 0; if (!n) return '';
+  const out = (info.outWeeks || {})[week] || 0;
+  const done = store.drill || {};
+  const seen = (info.ids || []).filter(k => (done[k] || {}).done).length;
+  return '<div class="termbar"><div><b>' + esc(info.label || '예제와 과제만') + '</b><div class="muted">이 주차 강의자료에 Example, Homework 라고 적힌 쪽 ' + (n - out) + '개' + (out ? ' (범위 밖 ' + out + '개는 따로 표시돼요)' : '') + '. 슬라이드를 그대로 보면서 풀어요'
+    + (seen ? ', 끝낸 것 ' + seen + '개' : '') + '</div></div><div class="btnrow" style="margin:0"><a class="btn primary" href="#/drill?week=' + encodeURIComponent(week) + '">모아 보기</a></div></div>';
+}
+async function drillLoad() {
+  if (DRILL()) return true;
+  try { await loadScript('data/drill.js'); } catch (e) { return false; }
+  return !!DRILL();
+}
+async function pageDrillHub() {
+  if (!drillInfo()) { location.replace('#/'); return; }
+  APP().innerHTML = '<div class="empty"><b>예제와 과제를 불러오는 중</b></div>';
+  if (!await drillLoad()) { APP().innerHTML = '<a class="back" href="#/">홈</a><div class="empty"><b>아직 준비되지 않았어요</b></div>'; return; }
+  const D = DRILL();
+  const q = qs(location.hash.split('?')[1] || '');
+  let week = q.week || '';
+  if (week && !drillOf(week).length) week = '';
+  const weeks = META.weeks.map(w => w.id).filter(id => drillOf(id).length);
+  const only = q.scope !== 'all';      // 기본은 이번 시험 범위 안만
+  const base = week ? drillOf(week) : D.items;
+  const nOut = base.filter(x => x.out).length;
+  const list = only ? base.filter(x => !x.out) : base;
+  const done = store.drill || (store.drill = {});
+  let h = '<a class="back" href="' + (week ? '#/week/' + week : '#/') + '">' + (week ? esc(weekName(week)) : '홈') + '</a>'
+    + '<div class="whead"><div class="eyebrow">예제와 과제만</div><h1>' + esc(D.title || '강의자료에 적힌 문제만') + '</h1><p>' + fmt(D.intro || '') + '</p></div>';
+  h += '<div class="pillrow"><a class="chip' + (week ? '' : ' on') + '" href="#/drill">전부 ' + D.items.length + '개</a>'
+    + weeks.map(id => '<a class="chip' + (week === id ? ' on' : '') + '" href="#/drill?week=' + encodeURIComponent(id) + '">' + esc(weekName(id)) + ' ' + drillOf(id).length + '개</a>').join('')
+    + (nOut ? '<a class="chip' + (only ? ' on' : '') + '" href="#/drill?' + (week ? 'week=' + encodeURIComponent(week) : 'scope=in') + '">시험 범위만</a>'
+      + '<a class="chip' + (only ? '' : ' on') + '" href="#/drill?' + (week ? 'week=' + encodeURIComponent(week) + '&' : '') + 'scope=all">범위 밖 ' + nOut + '개도 보기</a>' : '') + '</div>';
+  const nq = k => BANK.filter(x => srcKind(x) === k && (!week || x.part === week)).length;
+  h += '<div class="qbtns" style="margin-top:12px">'
+    + (nq('예제') ? '<a class="qbtn" href="#/quiz?week=' + (week || 'all') + '&src=' + encodeURIComponent('예제') + '&n=0&start=1"><b>예제 문항만 풀기</b><span class="num">' + nq('예제') + '문항</span></a>' : '')
+    + (nq('과제') ? '<a class="qbtn" href="#/quiz?week=' + (week || 'all') + '&src=' + encodeURIComponent('과제') + '&n=0&start=1"><b>과제 문항만 풀기</b><span class="num">' + nq('과제') + '문항</span></a>' : '')
+    + '</div>';
+  let lastDeck = null;
+  h += '<div class="drillgrid">';
+  list.forEach(it => {
+    if (it.deck !== lastDeck) {
+      lastDeck = it.deck;
+      h += '<h3 class="dsec">' + esc((META.decks[it.deck] || {}).title || it.deck) + '</h3>';
+    }
+    const r = done[it.id] || {};
+    h += '<a class="dcard' + (r.done ? ' done' : '') + '" href="#/drill/' + encodeURIComponent(it.id) + '">'
+      + '<span class="dshot"><img src="img/' + esc(it.deck) + '/p' + pad3(it.pages[0]) + '.jpg" alt="" loading="lazy" decoding="async"></span>'
+      + '<span class="dbody"><span class="dtags">' + (it.out ? '<span class="dtag out">시험 범위 밖</span>' : '') + '<span class="dtag ' + (it.kind === '과제' ? 'hw' : 'ex') + '">' + esc(it.kind) + (it.no ? ' ' + esc(it.no) : '') + '</span></span>'
+      + '<span class="dt">' + fmt(it.title, false) + '</span>'
+      + '<span class="dask">' + fmt(it.ask || '', false) + '</span>'
+      + '<span class="dstate"><span>' + esc(it.deck) + ' p.' + it.pages.join(', p.') + '</span><span>' + (r.done ? '다 봤어요' : (it.bank || []).length ? '문항 ' + it.bank.length + '개' : '') + '</span></span></span></a>';
+  });
+  h += '</div>';
+  APP().innerHTML = h;
+  renderMath(APP());
+  countTerms(APP());
+}
+async function pageDrill(id, jump) {
+  if (!drillInfo()) { location.replace('#/'); return; }
+  APP().innerHTML = '<div class="empty"><b>슬라이드를 불러오는 중</b></div>';
+  if (!await drillLoad()) { location.replace('#/'); return; }
+  const D = DRILL();
+  const want = decodeURIComponent(id);
+  const idx = D.items.findIndex(x => x.id === want);
+  if (idx < 0) { location.replace('#/drill'); return; }
+  const it = D.items[idx], nx = D.items[idx + 1];
+  const label = it.kind + (it.no ? ' ' + it.no : '');
+  const frames = [];
+  frames.push({ kind: 'title', eyebrow: '강의자료에 ' + (it.kind === '과제' ? 'Homework' : 'Example') + ' 라고 적힌 쪽', big: it.title, sub: it.ask || '' });
+  if (it.out) frames.push({ kind: 'warn', head: '이 문제는 이번 시험 범위가 아니에요', items: [it.out, '방법을 익혀 두면 좋지만, 시간이 모자라면 범위 안의 문제부터 푸세요.'] });
+  it.pages.forEach((p, i) => frames.push({ kind: 'slideimg', src: 'img/' + it.deck + '/p' + pad3(p) + '.jpg', alt: it.deck + ' p.' + p,
+    cap: it.deck + ' p.' + p + '  ' + label + (it.pages.length > 1 ? ' (' + (i + 1) + ' / ' + it.pages.length + ')' : '') + ' - 강의자료 그대로예요', _p: p }));
+  (it.slides || []).forEach((f, i) => frames.push(Object.assign({ _si: i }, f)));
+  const links = [];
+  if ((it.bank || []).length) links.push(['이 문제로 만든 문항 풀기', '#/quiz?week=' + encodeURIComponent(it.week) + '&src=' + encodeURIComponent(it.kind) + '&n=0&start=1']);
+  if (nx) links.push(['다음: ' + nx.kind + (nx.no ? ' ' + nx.no : ''), '#/drill/' + encodeURIComponent(nx.id)]);
+  links.push(['목록으로', '#/drill?week=' + encodeURIComponent(it.week)]);
+  frames.push({ kind: 'end', big: label + ' 끝', sub: nx ? '다음은 "' + nx.title + '" 이에요.' : '이 과목의 예제와 과제를 다 봤어요.', links });
+  const all = store.drill || (store.drill = {});
+  const rec = all[it.id] = all[it.id] || {};
+  startPlayer({
+    frames, groups: frames.map((f, i) => ({ start: i, end: i })), start: jump != null ? +jump : rec.i && rec.i < frames.length - 1 ? rec.i : 0,
+    backHref: '#/drill?week=' + encodeURIComponent(it.week),
+    chips: '',
+    imgOf: f => 'img/' + it.deck + '/p' + pad3(f._p || it.pages[0]) + '.jpg',
+    inkKey: f => f._si == null ? (f._p ? 'drill/' + it.id + '/slide' + pad3(f._p) : null) : 'drill/' + it.id + '/' + f._si,
+    title: () => esc(it.title) + ' <small>' + esc(label) + ', ' + esc(it.deck) + ' p.' + it.pages.join(', p.') + '</small>',
+    onProgress: i => { rec.i = i; if (i === frames.length - 1) rec.done = true; store.last = { href: '#/drill/' + it.id, label: label }; save(); },
+    onEnd: () => { location.hash = nx ? '#/drill/' + encodeURIComponent(nx.id) : '#/drill?week=' + encodeURIComponent(it.week); },
+  });
+}
+
 function recallTiles(week) {
   const w = weekOf(week), info = w && w.deck ? recallInfo(w.deck) : null; if (!info) return '';
   const r = (store.recall || {})[w.deck] || {}, F = rcFinal(w.deck), T = rcText(w.deck);

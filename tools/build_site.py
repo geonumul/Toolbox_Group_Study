@@ -281,6 +281,35 @@ def main(slug, skip, home=True):
             add_term(week, t)
         print(f"  용어집 {week}: {len(terms[week]) - before}개 추가")
 
+    # 2-2) 예제와 과제만 (선택): work/<slug>/drill/drill.json
+    #      강의자료에 Example, Homework 라고 적힌 쪽만 모은 것. 슬라이드 그림을 그대로 보여 주고 풀이를 붙인다.
+    #      {"title", "intro", "label", "items": [{"id", "week", "deck", "pages": [쪽], "kind": "예제"|"과제",
+    #        "no", "title", "ask", "bank": [문항 id], "slides": [장면]}]}
+    dfile, dout = W / "drill" / "drill.json", SITE / "data" / "drill.js"
+    if dfile.exists():
+        dd = load(dfile)
+        items = [x for x in dd.get("items", []) if x.get("week") in terms]
+        drop = len(dd.get("items", [])) - len(items)
+        for x in items:
+            x.setdefault("pages", [])
+            x.setdefault("slides", [])
+        dd["items"] = items
+        write(dout, js_assign("SDT_DRILL", None, dd))
+        wk = {}
+        for x in items:
+            wk[x["week"]] = wk.get(x["week"], 0) + 1
+        ow = {}
+        for x in items:
+            if x.get("out"):
+                ow[x["week"]] = ow.get(x["week"], 0) + 1
+        meta["drill"] = {"label": dd.get("label") or "예제와 과제만", "n": len(items), "weeks": wk,
+                         "outWeeks": ow, "ids": [x["id"] for x in items]}
+        nf = sum(len(x["slides"]) + len(x["pages"]) for x in items)
+        print(f"  예제와 과제: 문제 {len(items)}개, 슬라이드 {nf}장"
+              + (f", 시험 범위 밖 {sum(ow.values())}개" if ow else "") + (f", 모르는 주차라 뺀 것 {drop}개" if drop else ""))
+    elif dout.exists():
+        dout.unlink()
+
     # 3) 문제은행 + 용어 퀴즈
     bank, seen = [], set()
     for f in sorted((W / "bank").glob("*.json")):
@@ -366,6 +395,8 @@ def main(slug, skip, home=True):
         if name in lazy:
             nav.append(f'<a class="tab" data-nav="p{name}" href="#/{name}">{label}</a>')
     nav +=[f'<a class="tab" data-nav="w{w["id"]}" href="#/week/{w["id"]}">{html.escape(w["short"])}</a>' for w in weeks]
+    if meta.get("drill"):
+        nav.append(f'<a class="tab" data-nav="drill" href="#/drill">{html.escape(meta["drill"]["label"])}</a>')
     nav += ['<a class="tab" data-nav="quiz" href="#/quiz">문제</a>',
             '<a class="tab" data-nav="wrong" href="#/wrong">오답노트 <span id="wrongBadge" class="badge"></span></a>']
     if any(str(t.get("say") or "").strip() for lst in terms.values() for t in lst):
