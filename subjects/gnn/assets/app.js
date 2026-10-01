@@ -2449,22 +2449,49 @@ async function pageExamHub() {
       + '</div><p class="tipline" style="margin-top:8px">연습 시험지는 같은 틀에 숫자만 바꾼 것이에요. 한 파일에 1회차부터 5회차까지 들어 있어요. '
       + '처음에는 <b>ENG + KOR</b> 판으로 익히고, 익숙해지면 <b>ENG</b> 판으로 푸세요. 해설지는 문제 아래에 풀이가 바로 이어져요.</p>';
   }
+  // 연습 문제는 85개라 한꺼번에 깔면 못 읽는다. 접었다 펴는 묶음으로 보여 준다.
+  const drill = list.filter(x => x.group === 'drill');
+  const rest = list.filter(x => x.group !== 'drill');
+  const card = it => {
+    const r = done[it.id] || {};
+    return '<a class="dcard' + (r.done ? ' done' : '') + '" href="#/exam/' + encodeURIComponent(it.id) + '">'
+      + '<span class="dshot"><img src="' + esc((it.imgs && it.imgs[0]) || it.img) + '" alt="" loading="lazy" decoding="async"></span>'
+      + '<span class="dbody"><span class="dtags"><span class="dtag ex">' + (it.group === 'drill' ? it.round + '회차 ' + it.n + '번' : it.n + '번') + '</span>'
+      + '<span class="dtag wk">' + esc(it.examName || it.topic || weekName(it.week)) + '</span></span>'
+      + '<span class="dt">' + (it.group === 'drill' ? '' : '<em class="dmodel">' + esc(it.topic || '') + '</em>') + fmt(it.title, false) + '</span>'
+      + '<span class="dask">' + fmt(it.ask || '', false) + '</span>'
+      + '<span class="dstate"><span>' + (it.group === 'real' ? '해설 ' + (it.sols || []).length + '장' : it.group === 'drill' ? '풀이 ' + it.slides.length + '장' : '기출형 ' + it.slides.length + '장 풀이') + '</span><span>' + (r.done ? '다 봤어요' : '') + '</span></span></span></a>';
+  };
+  if (drill.length) {
+    const by = q.by === 'model' ? 'model' : 'round';
+    h += '<h3 class="dsec">' + esc((E.groups || {}).drill || '연습 문제') + '</h3>'
+      + '<p class="tipline">같은 틀에 숫자만 바꾼 문제예요. 묶음을 눌러 펴면 카드가 나와요. '
+      + '<b>회차별</b> 은 시험지 순서대로, <b>모델별</b> 은 한 모델을 몰아서 풀 때 좋아요.</p>'
+      + '<div class="pillrow"><a class="chip' + (by === 'round' ? ' on' : '') + '" href="#/exam?by=round">회차별</a>'
+      + '<a class="chip' + (by === 'model' ? ' on' : '') + '" href="#/exam?by=model">모델별</a></div>';
+    const keys = [];
+    drill.forEach(it => { const k = by === 'round' ? it.round : (it.topic || '기타'); if (keys.indexOf(k) < 0) keys.push(k); });
+    if (by === 'model') keys.sort((a, b) => {
+      const na = drill.find(x => x.topic === a), nb = drill.find(x => x.topic === b);
+      return (na ? na.n : 99) - (nb ? nb.n : 99);
+    });
+    keys.forEach(k => {
+      const got = drill.filter(it => (by === 'round' ? it.round : (it.topic || '기타')) === k);
+      const fin = got.filter(it => (done[it.id] || {}).done).length;
+      h += '<details class="dfold"><summary><b>' + esc(by === 'round' ? k + '회차' : k) + '</b>'
+        + '<span class="num">' + got.length + '문제' + (fin ? ', 끝낸 것 ' + fin + '개' : '') + '</span></summary>'
+        + '<div class="drillgrid">' + got.map(card).join('') + '</div></details>';
+    });
+  }
   h += '<div class="drillgrid">';
   let lastG = null;
-  list.forEach(it => {
-    const r = done[it.id] || {};
+  rest.forEach(it => {
     if (it.group !== lastG) {
       lastG = it.group;
       const name = (E.groups || {})[it.group];
-      if (name) h += '<h3 class="dsec">' + esc(name) + '</h3>';
+      if (name) h += '<h3 class="dsec" style="margin-top:22px">' + esc(name) + '</h3>';
     }
-    h += '<a class="dcard' + (r.done ? ' done' : '') + '" href="#/exam/' + encodeURIComponent(it.id) + '">'
-      + '<span class="dshot"><img src="' + esc((it.imgs && it.imgs[0]) || it.img) + '" alt="" loading="lazy" decoding="async"></span>'
-      + '<span class="dbody"><span class="dtags"><span class="dtag ex">' + it.n + '번</span>'
-      + '<span class="dtag wk">' + esc(it.examName || weekName(it.week)) + '</span></span>'
-      + '<span class="dt"><em class="dmodel">' + esc(it.topic || '') + '</em>' + fmt(it.title, false) + '</span>'
-      + '<span class="dask">' + fmt(it.ask || '', false) + '</span>'
-      + '<span class="dstate"><span>' + (it.group === 'real' ? '해설 ' + (it.sols || []).length + '장' : '기출형 ' + it.slides.length + '장 풀이') + '</span><span>' + (r.done ? '다 봤어요' : '') + '</span></span></span></a>';
+    h += card(it);
   });
   h += '</div>';
   APP().innerHTML = h;

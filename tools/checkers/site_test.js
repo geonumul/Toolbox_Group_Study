@@ -171,11 +171,13 @@ const go = async h => { w.location.hash = h; await wait(60); };
   // 시험 대비 (#/exam): 그래프신경망만 쓴다. 기출 모양 문제 그림 + 상세 풀이
   if (meta.exam) {
     await go('#/exam'); await wait(140);
+    // 연습 문제는 접힌 묶음 안에 있으니 모두 펴고 센다
+    $$('details.dfold').forEach(d => { d.open = true; });
     const cards = $$('.dcard');
-    console.log('exam hub cards:', cards.length, '/', meta.exam.n);
+    console.log('exam hub cards:', cards.length, '/', meta.exam.n, '(접는 묶음', $$('details.dfold').length, '개)');
     if (cards.length !== meta.exam.n) errs.push('시험 대비 목록이 ' + cards.length + '개만 나와요 (기대 ' + meta.exam.n + ')');
     $$('.dcard .dshot img').forEach(img => {
-      if (!/^exam\/(q\d+\.png|\d{4}f\/q\d+_\d+\.png)$/.test(img.getAttribute('src') || '')) errs.push('시험지 그림 경로가 이상해요: ' + img.getAttribute('src'));
+      if (!/^exam\/(q\d+\.png|\d{4}f\/q\d+_\d+\.png|practice\/r\d+_q\d+\.png)$/.test(img.getAttribute('src') || '')) errs.push('시험지 그림 경로가 이상해요: ' + img.getAttribute('src'));
     });
     for (const id of meta.exam.ids) {
       await go('#/exam/' + encodeURIComponent(id)); await wait(60);
