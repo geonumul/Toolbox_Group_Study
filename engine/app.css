@@ -429,3 +429,13 @@ h1,h2,h3{font-weight:600}
 nav{min-width:0}
 @media (min-width:901px){ #nav{flex-wrap:wrap;overflow:visible;row-gap:2px} .hwrap{flex-wrap:wrap} }
 @media (max-width:900px){ #nav{mask-image:linear-gradient(90deg,#000 0,#000 calc(100% - 28px),transparent);-webkit-mask-image:linear-gradient(90deg,#000 0,#000 calc(100% - 28px),transparent);padding-right:24px} }
+
+/* 서술형 한 문제 한 쪽. 물음만 보이다가 버튼 한 번에 답이 붙는다. */
+.qa-q{font-size:30px;line-height:1.35;letter-spacing:-.02em}
+.qa-ans{margin-top:26px;padding-top:22px;border-top:1px solid var(--line)}
+.qa-ans .sl-items{margin-top:10px}
+.qa-ans .sl-items li{white-space:pre-wrap}
+.qa-slide{margin-top:18px}
+.qa-slide summary{cursor:pointer;color:var(--dim);font-size:14px;padding:6px 0}
+.qa-slide img{display:block;width:100%;margin-top:10px;border:1px solid var(--line);border-radius:10px}
+@media(max-width:760px){.qa-q{font-size:24px}}

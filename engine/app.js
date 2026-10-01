@@ -866,6 +866,21 @@ function renderFrame(f, st) {
       return { html: '<div class="sk">오늘 알아낼 것</div>' + items(f.items, 'ok'), steps: (f.items || []).length };
     case 'points':
       return { html: head(f.head) + items(f.items), steps: (f.items || []).length };
+    // 한 쪽에 한 문제. 물음만 보이다가 버튼을 한 번 누르면 답이 밑에 붙는다.
+    // 외우기만 하면 되는 과목(조직심리학)에서 쓴다.
+    case 'qa': {
+      const body = '<div class="qa-ans"><div class="sk" style="color:var(--ok)">답</div>'
+        + '<ul class="sl-items">' + (f.answer || []).map(x => '<li>' + fmt(x) + '</li>').join('') + '</ul>'
+        + (f.prof ? '<div class="voice prof"><div class="vl">교수님 수업에서</div>'
+            + lines(f.prof).map(x => '<p>' + fmt(x) + '</p>').join('') + '</div>' : '')
+        + (f.tip ? '<div class="sk" style="color:var(--amber);margin-top:14px">이건 꼭</div>'
+            + '<ul class="sl-items swarn">' + f.tip.map(x => '<li>' + fmt(x) + '</li>').join('') + '</ul>' : '')
+        + (f.src ? '<details class="qa-slide"><summary>슬라이드로 확인하기</summary>'
+            + '<img src="' + esc(f.src) + '" alt="' + esc(f.alt || '') + '" loading="lazy" decoding="async"></details>' : '')
+        + '</div>';
+      return { html: '<div class="sk">' + esc(f.eyebrow || '서술형') + '</div><h1 class="sbig qa-q">' + fmt(f.ask) + '</h1>'
+        + S(1, body), steps: 1 };
+    }
     case 'warn':
       return { html: '<div class="sk" style="color:var(--amber)">헷갈리기 쉬운 점</div>' + head(f.head) + items(f.items, 'swarn'), steps: (f.items || []).length };
     case 'recap':
@@ -2163,6 +2178,26 @@ async function pageDrill(id, jump) {
   if (idx < 0) { location.replace('#/drill'); return; }
   const it = D.items[idx], nx = D.items[idx + 1];
   const label = it.kind + (it.no ? ' ' + it.no : '');
+  // qa 가 있으면 한 쪽에 한 문제. 물음만 띄우고 버튼 한 번에 답이 붙는다.
+  // 제목 쪽도 끝 쪽도 없이, 다음을 누르면 바로 다음 문제로 간다.
+  if (it.qa) {
+    const p = it.pages[0];
+    const f = Object.assign({ kind: 'qa', ask: it.ask || it.title,
+      eyebrow: it.deck + ' p.' + it.pages.join(', p.') + '  (' + (idx + 1) + ' / ' + D.items.length + ')',
+      src: p ? 'img/' + it.deck + '/p' + pad3(p) + '.jpg' : '', alt: it.deck + ' p.' + p, _p: p }, it.qa);
+    const all0 = store.drill || (store.drill = {});
+    const rec0 = all0[it.id] = all0[it.id] || {};
+    startPlayer({
+      frames: [f], groups: [{ start: 0, end: 0 }], start: 0,
+      backHref: '#/drill?week=' + encodeURIComponent(it.week), chips: '',
+      imgOf: () => (p ? 'img/' + it.deck + '/p' + pad3(p) + '.jpg' : ''),
+      inkKey: () => 'drill/' + it.id,
+      title: () => esc(it.title) + ' <small>' + esc(it.deck) + ' p.' + it.pages.join(', p.') + '</small>',
+      onProgress: () => { rec0.i = 0; rec0.done = true; store.last = { href: '#/drill/' + it.id, label: label }; save(); },
+      onEnd: () => { location.hash = nx ? '#/drill/' + encodeURIComponent(nx.id) : '#/drill?week=' + encodeURIComponent(it.week); },
+    });
+    return;
+  }
   const frames = [];
   frames.push({ kind: 'title', eyebrow: '강의자료에 ' + (it.kind === '과제' ? 'Homework' : 'Example') + ' 라고 적힌 쪽', big: it.title, sub: it.ask || '' });
   if (it.out) frames.push({ kind: 'warn', head: '이 문제는 이번 시험 범위가 아니에요', items: [it.out, '방법을 익혀 두면 좋지만, 시간이 모자라면 범위 안의 문제부터 푸세요.'] });
