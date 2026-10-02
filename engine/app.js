@@ -402,66 +402,22 @@ function overallNext() {
 
 /* ---------- 홈 ---------- */
 /* 외우기만 하면 되는 과목(quizOnly)의 홈.
-   할 일이 둘뿐이라 길게 늘어놓지 않는다. 시험까지 며칠인지, 어디까지 했는지,
-   남은 수업이 언제인지. 이 셋만 보이면 된다. */
+   어떤 과목이고 어떻게 쓰는지만 둔다. 진행률이나 남은 일수는 각 화면 안에서 보면 된다. */
 function pageHomeQuizOnly() {
-  const ws = rvDecks(), F = Math.max(...ws.map(x => rcFinal(x.deck)));
-  const ex = META.schedule || null;
-  let dday = null;
-  if (ex && ex.date) {
-    const t = new Date(ex.date + 'T00:00:00'), now = new Date();
-    dday = Math.round((t - new Date(now.getFullYear(), now.getMonth(), now.getDate())) / 864e5);
-  }
-  const rounds = [];
-  for (let n = 1; n <= F; n++) {
-    const av = ws.filter(x => rcFinal(x.deck) >= n);
-    rounds.push({ n: n, done: av.filter(x => recallDone(x.deck, n)).length, all: av.length });
-  }
-  const cur = rounds.find(r => r.done < r.all) || rounds[rounds.length - 1];
-  const qt = META.weeks.map(x => weekQuizStat(x.id)).reduce((a, b) => ({ seen: a.seen + b.seen, total: a.total + b.total }), { seen: 0, total: 0 });
-  const go = store.last ? store.last.href : '#/review';
-  const goLabel = store.last ? '이어서 하기' : '1회독 시작하기';
-
-  let h = '<section class="qhead"><div class="eyebrow">' + esc(META.eyebrow || META.name || '') + '</div>'
-    + '<h1>' + (dday != null ? (dday > 0 ? esc(ex.label || '시험') + '까지 <b>' + dday + '일</b>' : dday === 0 ? '오늘이 ' + esc(ex.label || '시험') + '예요' : esc(ex.label || '시험') + '는 끝났어요') : esc(META.name || '')) + '</h1>'
-    + (ex && ex.scope ? '<p class="qscope">범위 ' + esc(ex.scope) + '</p>' : '')
-    + '<div class="cta"><a class="btn primary" href="' + esc(go) + '">' + esc(goLabel) + '</a>'
-    + (store.last ? '<a class="btn" href="#/review">시험 대비</a>' : '') + '</div></section>';
-
-  h += '<div class="qtwo">'
-    + '<a class="qcard" href="#/review"><b>시험 대비</b><span class="qsub">슬라이드를 가리고 외우기</span>'
-    + '<span class="qnow">' + RV.name[cur.n] + ' ' + esc(RV.title[cur.n]) + '</span>'
-    + '<span class="qbar"><i style="width:' + Math.round(rounds.filter(r => r.done === r.all).length / F * 100) + '%"></i></span>'
-    + '<span class="qmeta num">' + rounds.filter(r => r.done === r.all).length + ' / ' + F + '회독</span></a>'
-    + '<a class="qcard" href="#/quiz"><b>문제</b><span class="qsub">외운 것을 풀어서 확인하기</span>'
-    + '<span class="qnow">' + (drillInfo() ? '객관식과 서술형 ' + (qt.total + drillInfo().n) + '문제' : '문제 ' + qt.total + '개') + '</span>'
-    + '<span class="qbar"><i style="width:' + (qt.total ? Math.round(qt.seen / qt.total * 100) : 0) + '%"></i></span>'
-    + '<span class="qmeta num">' + qt.seen + ' / ' + qt.total + ' 풀이</span></a></div>';
-
-  h += '<h2 class="sec">회독 진행</h2><div class="rvgrid" style="--c:' + ws.length + '">'
-    + '<i class="rg-h"></i>' + ws.map(x => '<i class="rg-h">' + esc(x.short.replace('주차', '주')) + '</i>').join('');
-  rounds.forEach(r => {
-    h += '<i class="rg-n">' + RV.name[r.n] + '</i>'
-      + ws.map(x => {
-        const dn = recallDone(x.deck, r.n);
-        return '<a class="rg-c' + (dn ? ' done' : '') + '" href="#/recall/' + x.deck + '/' + r.n + '" title="'
-          + esc(x.short + ' ' + RV.name[r.n]) + '">' + (dn ? '✓' : '') + '</a>';
-      }).join('');
-  });
-  h += '</div>';
-
-  if (ex && (ex.plan || []).length) {
-    h += '<h2 class="sec">남은 일정</h2><ul class="sched">'
-      + ex.plan.map(p => '<li' + (p.exam ? ' class="ex"' : p.off ? ' class="off"' : '') + '>'
-        + '<span class="sd num">' + esc(p.d) + '</span><span class="sw">' + esc(p.w || '') + '</span>'
-        + '<span class="st">' + esc(p.t) + '</span></li>').join('') + '</ul>';
-  }
-  h += '<div class="qlinks">'
+  const steps = (META.howto || []).map((x, i) => '<li><b>' + esc(x.t) + '</b> ' + esc(x.d) + '</li>').join('');
+  let h = '<section class="qhead"><div class="eyebrow">' + esc(META.eyebrow || '') + '</div>'
+    + '<h1>' + esc(META.name || '') + '</h1>'
+    + (META.intro ? '<p class="qlede">' + fmt(META.intro) + '</p>' : '')
+    + (steps ? '<ol class="qsteps">' + steps + '</ol>' : '')
+    + '<div class="cta">'
+    + (store.last ? '<a class="btn primary" href="' + esc(store.last.href) + '">이어서 하기</a>' : '')
+    + '<a class="btn' + (store.last ? '' : ' primary') + '" href="#/review">시험 대비</a>'
+    + '<a class="btn" href="#/quiz">문제</a></div></section>'
+    + '<div class="qlinks">'
     + '<a href="#/wrong">오답노트</a>' + (PAGES.exams ? '<a href="#/exams">' + esc(META.examsNav || '기출 분석') + '</a>' : '')
     + (PAGES.tips ? '<a href="#/tips">' + esc(META.tipsNav || '답안 팁') + '</a>' : '')
     + '<a href="#/mock">모의고사</a><a href="#/settings">설정</a><a href="../../index.html">다른 과목</a></div>';
   APP().innerHTML = h;
-  renderMath(APP());
 }
 function pageHome() {
   if (META.quizOnly && rvDecks().length) { pageHomeQuizOnly(); return; }

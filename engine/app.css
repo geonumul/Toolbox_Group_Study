@@ -465,39 +465,14 @@ nav{min-width:0}
   .rvw-t{grid-column:1/-1;white-space:normal}
 }
 
-/* 외우기만 하면 되는 과목의 홈. 시험까지 며칠, 어디까지 했는지, 남은 수업. 셋만 둔다. */
-.qhead{padding:40px 0 6px}
-.qhead h1{font-size:clamp(30px,5vw,46px);line-height:1.2;letter-spacing:-.035em;margin:6px 0 0;font-weight:650}
-.qhead h1 b{color:var(--accent-deep)}
-.qscope{margin:10px 0 0;color:var(--sub);font-size:15px}
-.qhead .cta{margin-top:22px}
-.qtwo{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-top:26px}
-.qcard{display:flex;flex-direction:column;gap:6px;padding:20px;border:1.5px solid var(--line);border-radius:var(--r-md);
-  background:var(--surface);text-decoration:none;color:inherit}
-.qcard:hover{border-color:var(--accent-deep)}
-.qcard b{font-size:20px}
-.qsub{color:var(--sub);font-size:14px}
-.qnow{margin-top:8px;font-size:15px;color:var(--ink)}
-.qbar{display:block;height:5px;border-radius:3px;background:var(--line);overflow:hidden;margin-top:8px}
-.qbar i{display:block;height:100%;background:var(--accent-deep)}
-.qmeta{font-size:13px;color:var(--sub)}
-.rvgrid{display:grid;grid-template-columns:auto repeat(var(--c,4),minmax(0,1fr));gap:6px;align-items:center;margin-top:10px}
-.rg-h{font-size:12px;color:var(--sub);text-align:center;font-style:normal}
-.rg-n{font-size:13px;color:var(--sub);font-style:normal;padding-right:8px;white-space:nowrap}
-.rg-c{display:flex;align-items:center;justify-content:center;height:34px;border:1.5px solid var(--line);border-radius:8px;
-  background:var(--surface);text-decoration:none;color:var(--sub);font-size:14px}
-.rg-c:hover{border-color:var(--accent-deep)}
-.rg-c.done{background:var(--ok);border-color:var(--ok);color:#fff}
-.sched{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-direction:column;gap:6px}
-.sched li{display:grid;grid-template-columns:62px 58px minmax(0,1fr);gap:12px;align-items:baseline;
-  padding:12px 14px;border:1.5px solid var(--line);border-radius:var(--r-md);background:var(--surface);font-size:15px}
-.sched .sd{color:var(--sub);font-size:14px}
-.sched .sw{color:var(--sub);font-size:14px}
-.sched li.off{opacity:.6}
-.sched li.off .st::after{content:" (수업 없음)";color:var(--sub);font-size:13px}
-.sched li.ex{border-color:var(--accent-deep)}
-.sched li.ex .st{font-weight:600;color:var(--accent-deep)}
-.qlinks{display:flex;flex-wrap:wrap;gap:6px 18px;margin:34px 0 10px;padding-top:18px;border-top:1px solid var(--line)}
+/* 외우기만 하면 되는 과목의 홈. 어떤 과목이고 어떻게 쓰는지만. */
+.qhead{padding:56px 0 0;max-width:620px}
+.qhead h1{font-size:clamp(32px,5vw,48px);line-height:1.15;letter-spacing:-.035em;margin:8px 0 0;font-weight:650}
+.qlede{margin:16px 0 0;color:var(--sub);font-size:17px;line-height:1.65}
+.qsteps{margin:22px 0 0;padding:0 0 0 22px;display:flex;flex-direction:column;gap:12px;color:var(--sub);font-size:16px;line-height:1.65}
+.qsteps li::marker{color:var(--sub);font-size:14px}
+.qsteps b{color:var(--ink);font-weight:600}
+.qhead .cta{margin-top:30px}
+.qlinks{display:flex;flex-wrap:wrap;gap:6px 18px;margin:56px 0 10px;padding-top:18px;border-top:1px solid var(--line)}
 .qlinks a{color:var(--sub);font-size:14px;text-decoration:none}
 .qlinks a:hover{color:var(--ink);text-decoration:underline}
-@media(max-width:620px){.sched li{grid-template-columns:58px minmax(0,1fr)}.sched .sw{display:none}}

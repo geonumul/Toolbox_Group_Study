@@ -208,13 +208,13 @@ const go = async h => { w.location.hash = h; await wait(60); };
     }
     console.log('drill items played:', meta.drill.ids.length);
   }
-  // quizOnly 과목 홈은 주차 카드 대신 큰 카드 둘(시험 대비, 문제)과 회독 격자를 쓴다
+  // quizOnly 과목 홈은 주차 카드를 두지 않는다. 어떤 과목이고 어떻게 쓰는지와 버튼만 있다
   await go('#/');
   if (meta.quizOnly) {
-    console.log('home cards:', $$('.qcard').length, 'rounds grid:', $$('.rg-c').length, 'schedule:', $$('.sched li').length,
-      'last:', ($('.qhead .btn.primary') || {}).textContent);
-    if ($$('.qcard').length !== 2) errs.push('홈에 시험 대비와 문제 카드가 둘 다 있어야 해요');
-    if (!$$('.rg-c').length) errs.push('홈 회독 격자가 비어 있어요');
+    const links = $$('.qhead .cta a').map(a => a.getAttribute('href'));
+    console.log('home steps:', $$('.qsteps li').length, 'cta:', links.join(' '));
+    if (!$$('.qsteps li').length) errs.push('홈에 과목 쓰는 법이 없어요');
+    ['#/review', '#/quiz'].forEach(x => { if (!links.includes(x)) errs.push('홈에 ' + x + ' 버튼이 없어요'); });
   } else {
     console.log('home again cards:', $$('.wcard').length, 'last:', ($('.intro .btn.primary') || {}).textContent);
   }

@@ -44,7 +44,7 @@ DEFAULT_LOGO = _logo('<path d="M4 5.5h6.5a2 2 0 012 2V20a2 2 0 00-2-2H4z"/><path
 
 LAZY_PAGES = {"note": "정리노트", "time": "연표"}   # pages/<이름>.html -> data/page_<이름>.js, 메뉴 이름
 META_KEYS = ("name", "brand", "key", "eyebrow", "intro", "pathLabel", "examLabel", "examsDesc", "tipsDesc", "mockDesc", "bgLabel", "sentLabel", "mock", "pet",
-             "examsNav", "tipsNav", "schedule")   # schedule: 시험 이름과 날짜, 남은 수업 일정 (홈에 보여 준다).
+             "examsNav", "tipsNav", "howto")   # howto: 홈에 적는 "이 과목 쓰는 법" [{"t": 이름, "d": 설명}]
              # examsNav, tipsNav: pages/exams.html, tips.html 메뉴 이름 (없으면 "기출 분석", "답안 팁". 페이지 파일이 없으면 메뉴도 없음)
 
 
