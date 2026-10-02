@@ -401,7 +401,70 @@ function overallNext() {
 }
 
 /* ---------- 홈 ---------- */
+/* 외우기만 하면 되는 과목(quizOnly)의 홈.
+   할 일이 둘뿐이라 길게 늘어놓지 않는다. 시험까지 며칠인지, 어디까지 했는지,
+   남은 수업이 언제인지. 이 셋만 보이면 된다. */
+function pageHomeQuizOnly() {
+  const ws = rvDecks(), F = Math.max(...ws.map(x => rcFinal(x.deck)));
+  const ex = META.schedule || null;
+  let dday = null;
+  if (ex && ex.date) {
+    const t = new Date(ex.date + 'T00:00:00'), now = new Date();
+    dday = Math.round((t - new Date(now.getFullYear(), now.getMonth(), now.getDate())) / 864e5);
+  }
+  const rounds = [];
+  for (let n = 1; n <= F; n++) {
+    const av = ws.filter(x => rcFinal(x.deck) >= n);
+    rounds.push({ n: n, done: av.filter(x => recallDone(x.deck, n)).length, all: av.length });
+  }
+  const cur = rounds.find(r => r.done < r.all) || rounds[rounds.length - 1];
+  const qt = META.weeks.map(x => weekQuizStat(x.id)).reduce((a, b) => ({ seen: a.seen + b.seen, total: a.total + b.total }), { seen: 0, total: 0 });
+  const go = store.last ? store.last.href : '#/review';
+  const goLabel = store.last ? '이어서 하기' : '1회독 시작하기';
+
+  let h = '<section class="qhead"><div class="eyebrow">' + esc(META.eyebrow || META.name || '') + '</div>'
+    + '<h1>' + (dday != null ? (dday > 0 ? esc(ex.label || '시험') + '까지 <b>' + dday + '일</b>' : dday === 0 ? '오늘이 ' + esc(ex.label || '시험') + '예요' : esc(ex.label || '시험') + '는 끝났어요') : esc(META.name || '')) + '</h1>'
+    + (ex && ex.scope ? '<p class="qscope">범위 ' + esc(ex.scope) + '</p>' : '')
+    + '<div class="cta"><a class="btn primary" href="' + esc(go) + '">' + esc(goLabel) + '</a>'
+    + (store.last ? '<a class="btn" href="#/review">시험 대비</a>' : '') + '</div></section>';
+
+  h += '<div class="qtwo">'
+    + '<a class="qcard" href="#/review"><b>시험 대비</b><span class="qsub">슬라이드를 가리고 외우기</span>'
+    + '<span class="qnow">' + RV.name[cur.n] + ' ' + esc(RV.title[cur.n]) + '</span>'
+    + '<span class="qbar"><i style="width:' + Math.round(rounds.filter(r => r.done === r.all).length / F * 100) + '%"></i></span>'
+    + '<span class="qmeta num">' + rounds.filter(r => r.done === r.all).length + ' / ' + F + '회독</span></a>'
+    + '<a class="qcard" href="#/quiz"><b>문제</b><span class="qsub">외운 것을 풀어서 확인하기</span>'
+    + '<span class="qnow">' + (drillInfo() ? '객관식과 서술형 ' + (qt.total + drillInfo().n) + '문제' : '문제 ' + qt.total + '개') + '</span>'
+    + '<span class="qbar"><i style="width:' + (qt.total ? Math.round(qt.seen / qt.total * 100) : 0) + '%"></i></span>'
+    + '<span class="qmeta num">' + qt.seen + ' / ' + qt.total + ' 풀이</span></a></div>';
+
+  h += '<h2 class="sec">회독 진행</h2><div class="rvgrid" style="--c:' + ws.length + '">'
+    + '<i class="rg-h"></i>' + ws.map(x => '<i class="rg-h">' + esc(x.short.replace('주차', '주')) + '</i>').join('');
+  rounds.forEach(r => {
+    h += '<i class="rg-n">' + RV.name[r.n] + '</i>'
+      + ws.map(x => {
+        const dn = recallDone(x.deck, r.n);
+        return '<a class="rg-c' + (dn ? ' done' : '') + '" href="#/recall/' + x.deck + '/' + r.n + '" title="'
+          + esc(x.short + ' ' + RV.name[r.n]) + '">' + (dn ? '✓' : '') + '</a>';
+      }).join('');
+  });
+  h += '</div>';
+
+  if (ex && (ex.plan || []).length) {
+    h += '<h2 class="sec">남은 일정</h2><ul class="sched">'
+      + ex.plan.map(p => '<li' + (p.exam ? ' class="ex"' : p.off ? ' class="off"' : '') + '>'
+        + '<span class="sd num">' + esc(p.d) + '</span><span class="sw">' + esc(p.w || '') + '</span>'
+        + '<span class="st">' + esc(p.t) + '</span></li>').join('') + '</ul>';
+  }
+  h += '<div class="qlinks">'
+    + '<a href="#/wrong">오답노트</a>' + (PAGES.exams ? '<a href="#/exams">' + esc(META.examsNav || '기출 분석') + '</a>' : '')
+    + (PAGES.tips ? '<a href="#/tips">' + esc(META.tipsNav || '답안 팁') + '</a>' : '')
+    + '<a href="#/mock">모의고사</a><a href="#/settings">설정</a><a href="../../index.html">다른 과목</a></div>';
+  APP().innerHTML = h;
+  renderMath(APP());
+}
 function pageHome() {
+  if (META.quizOnly && rvDecks().length) { pageHomeQuizOnly(); return; }
   const nx = overallNext();
   const dueAll = Object.keys(TERM).filter(k => termDue(TERM[k])).length;
   let h = '<section class="intro"><div><div class="eyebrow">' + esc(META.eyebrow || META.name || '') + '</div>'
@@ -414,27 +477,7 @@ function pageHome() {
     + (nx && store.last && nx.step.href !== store.last.href ? '<a class="btn" href="' + esc(nx.step.href) + '">순서대로: ' + esc(weekName(nx.week)) + ' ' + esc(nx.step.t) + '</a>' : '')
     + (dueAll ? '<a class="btn" href="#/terms/all">오늘의 용어 복습 ' + dueAll + '개</a>' : '') + '</div></div>'
     + '<div class="pathcard"><div class="pc-h"><span>' + esc(META.pathLabel || '공부 순서') + '</span><span class="num">' + overallPct() + '% 진행</span></div>' + weekPathSvg() + '</div></section>';
-  // quizOnly 과목은 주차 쪽을 두지 않는다. 시험 대비(회독)와 문제, 둘로만 간다.
-  if (META.quizOnly && rvDecks().length) {
-    const ws = rvDecks(), F = Math.max(...ws.map(x => rcFinal(x.deck)));
-    const rounds = [];
-    for (let n = 1; n <= F; n++) {
-      const av = ws.filter(x => rcFinal(x.deck) >= n);
-      rounds.push({ n: n, done: av.filter(x => recallDone(x.deck, n)).length, all: av.length });
-    }
-    const cur = rounds.find(r => r.done < r.all) || rounds[rounds.length - 1];
-    const qs2 = META.weeks.map(x => weekQuizStat(x.id)).reduce((a, b) => ({ seen: a.seen + b.seen, total: a.total + b.total }), { seen: 0, total: 0 });
-    h += '<h2 class="sec">이 과목은 두 가지만 하면 돼요</h2><div class="weekcards">'
-      + '<a class="wcard" href="#/review"><div class="wk">시험 대비</div><div class="wt">슬라이드를 가리고 외우기</div>'
-      + '<div class="wtopics">' + RV.name[cur.n] + ' ' + RV.title[cur.n] + '. 회독을 올릴수록 더 많이 가려요. 마지막에는 목차만 보고 말해요.</div>'
-      + '<div class="wfoot"><div class="stepbar" aria-label="회독 진행">'
-      + rounds.map(r => '<i class="' + (r.done === r.all ? 'on' : '') + '"></i>').join('')
-      + '</div><span class="num">' + RV.name[cur.n] + ' ' + cur.done + ' / ' + cur.all + '주차</span></div></a>'
-      + '<a class="wcard" href="#/quiz"><div class="wk">문제</div><div class="wt">외운 것을 풀어서 확인하기</div>'
-      + '<div class="wtopics">주차를 골라 풀어요. 서술형도 여기에 있어요. 틀린 것은 오답노트에 쌓여요.</div>'
-      + '<div class="wfoot">' + (qs2.total ? '<span class="num">문제 ' + qs2.seen + ' / ' + qs2.total + ' 풀이</span>' : '')
-      + (drillInfo() ? '<span class="num">서술형 ' + drillInfo().n + '문제</span>' : '') + '</div></a></div>';
-  } else {
+  {
     h += '<h2 class="sec">주차별로 공부하기</h2><div class="weekcards">';
     META.weeks.forEach(w => {
       const d = w.deck ? META.decks[w.deck] : null;

@@ -208,7 +208,16 @@ const go = async h => { w.location.hash = h; await wait(60); };
     }
     console.log('drill items played:', meta.drill.ids.length);
   }
-  await go('#/'); console.log('home again cards:', $$('.wcard').length, 'last:', ($('.intro .btn.primary') || {}).textContent);
+  // quizOnly 과목 홈은 주차 카드 대신 큰 카드 둘(시험 대비, 문제)과 회독 격자를 쓴다
+  await go('#/');
+  if (meta.quizOnly) {
+    console.log('home cards:', $$('.qcard').length, 'rounds grid:', $$('.rg-c').length, 'schedule:', $$('.sched li').length,
+      'last:', ($('.qhead .btn.primary') || {}).textContent);
+    if ($$('.qcard').length !== 2) errs.push('홈에 시험 대비와 문제 카드가 둘 다 있어야 해요');
+    if (!$$('.rg-c').length) errs.push('홈 회독 격자가 비어 있어요');
+  } else {
+    console.log('home again cards:', $$('.wcard').length, 'last:', ($('.intro .btn.primary') || {}).textContent);
+  }
   const allTermTool = $$('.toolrow .tool').find(a => (a.getAttribute('href') || '').indexOf('week=all&unit=%EC%9A%A9%EC%96%B4') >= 0);
   console.log('all term quiz tool:', allTermTool ? allTermTool.textContent : '없음');
   if (!allTermTool && termAll && !meta.quizOnly) errs.push('홈 도구에 전 주차 용어 퀴즈가 없어요');
