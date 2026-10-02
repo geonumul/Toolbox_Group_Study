@@ -617,10 +617,10 @@ def build_deck(prof, deck, args, corpus, gloss_entries):
         for key, lv in level.items():
             for li, a, b in occ[key]:
                 ln = pg[li]
-                if ln["zone"] == "title" and kinds[key] == "g":
-                    use = 3                        # 제목 안의 용어는 3단계에서만 가린다
-                elif ln["zone"] == "body":
-                    use = lv
+                # 고른 용어는 모두 1단계에서 가린다. 조금씩 늘리면 1회독이 너무 헐거워서
+                # 정작 다 가렸을 때 말이 안 나온다. 1회독부터 중요한 말은 다 가려 둔다.
+                if ln["zone"] in ("title", "body"):
+                    use = 1
                 else:
                     continue
                 cs = ln["cs"][a:b]
@@ -682,7 +682,13 @@ def ocr_line_ok(t):
 
 
 def line_masks(lines, ocr_lines=None, ar=1.414):
-    """쪽의 글 줄(머리글 제외)을 같은 높이, 가까운 것끼리 이어 한 칸씩 4단계 칸으로 만든다.
+    """쪽의 글 줄(머리글 제외)을 같은 높이, 가까운 것끼리 이어 한 칸씩 칸으로 만들고 단계를 매긴다.
+
+    단계는 "먼저 가릴수록 작은 수". 외울 때 실마리로 남겨 둘 것을 뒤로 민다.
+      1 그림 속 글자와 작은 글씨   용어 칸과 함께 1회독에서 바로 가린다
+      2 들여 쓴 설명 줄           윗줄(불릿 제목)은 남겨 두고 설명만 가린다
+      3 맨 왼쪽 불릿 줄           이제 실마리도 가린다
+      4 쪽 제목                   마지막에 제목까지 가린다
     ocr_lines: 그림 속 글자 OCR 줄. 글자 층 줄과 겹치지 않는 것만 더한다. ar: 쪽 가로/세로 비"""
     rows = []
     for ln in lines:
@@ -691,7 +697,7 @@ def line_masks(lines, ocr_lines=None, ar=1.414):
         b = _bbox(ln["cs"])
         if not b or not re.search(r"[0-9A-Za-z가-힣]", ln["text"]):
             continue
-        rows.append([b, clean(ln["text"]).strip()])
+        rows.append([b, clean(ln["text"]).strip(), ln["zone"]])
     pdf_boxes = [r[0] for r in rows]
 
     def covered(b):
@@ -712,10 +718,10 @@ def line_masks(lines, ocr_lines=None, ar=1.414):
             continue
         if b[3] - b[1] < 0.012 or b[3] - b[1] > 0.05:
             continue
-        rows.append([b, t])
+        rows.append([b, t, "fig"])
     rows.sort(key=lambda r: ((r[0][1] + r[0][3]) / 2, r[0][0]))
     merged = []
-    for b, t in rows:
+    for b, t, zone in rows:
         for m in merged:
             mb = m[0]
             hmin = min(b[3] - b[1], mb[3] - mb[1])
@@ -727,16 +733,47 @@ def line_masks(lines, ocr_lines=None, ar=1.414):
                 else:
                     m[1] = m[1] + " " + t
                 m[0] = [min(b[0], mb[0]), min(b[1], mb[1]), max(b[2], mb[2]), max(b[3], mb[3])]
+                m[2] = m[2] if m[2] == zone else ("fig" if "fig" in (m[2], zone) else m[2])
                 break
         else:
-            merged.append([list(b), t])
+            merged.append([list(b), t, zone])
+    # 먼저 "작은 글씨"를 가른다. 그림 밑 설명처럼 본문보다 작은 글씨다.
+    # 본문 글자 높이는 중앙값 대신 위쪽 70% 값을 쓴다. 작은 글씨가 많은 쪽에서는
+    # 중앙값이 그 작은 글씨 쪽으로 끌려 내려가 아무것도 작다고 보지 않게 되기 때문.
+    hs = sorted(m[0][3] - m[0][1] for m in merged if m[2] == "body")
+    ref_h = hs[int(len(hs) * 0.7)] if hs else 0.0
+    small = lambda m: m[2] == "fig" or (ref_h and m[0][3] - m[0][1] < 0.8 * ref_h)
+    # 남은 본문 줄을 들여쓰기 칸(왼쪽 끝이 비슷한 것끼리)으로 묶는다.
+    # 깊이 들여 쓴 줄일수록 먼저 가리고, 맨 왼쪽 불릿 줄은 실마리라서 마지막까지 남긴다.
+    cols = []
+    for x in sorted(m[0][0] for m in merged if m[2] == "body" and not small(m)):
+        if not cols or x - cols[-1] > 0.022:
+            cols.append(x)
+
+    def body_level(x0):
+        """맨 왼쪽 칸은 4단계(마지막까지 남김), 깊이 들어갈수록 2단계(먼저 가림)."""
+        i = 0
+        for j, c in enumerate(cols):
+            if x0 >= c - 0.001:
+                i = j
+        if i == 0:
+            return 4
+        return 3 if i / max(1, len(cols) - 1) < 0.6 else 2
+
     out = []
-    for (x0, y0, x1, y1), t in merged:
+    for m in merged:
+        (x0, y0, x1, y1), t, zone = m
         if y1 - y0 < 0.008:
             continue
+        if small(m):
+            lv = 1                                 # 그림 속 글자, 작은 글씨
+        elif zone == "title":
+            lv = 4                                 # 쪽 제목
+        else:
+            lv = body_level(x0)
         x0, y0 = max(0, x0 - 0.004), max(0, y0 - 0.003)
         x1, y1 = min(1, x1 + 0.004), min(1, y1 + 0.003)
-        out.append([round(x0, 4), round(y0, 4), round(x1 - x0, 4), round(y1 - y0, 4), 4, re.sub(r"\s+", " ", t)[:200]])
+        out.append([round(x0, 4), round(y0, 4), round(x1 - x0, 4), round(y1 - y0, 4), lv, re.sub(r"\s+", " ", t)[:200]])
     return out
 # ---- 4단계(다 가리기) 블록 끝 ----
 
