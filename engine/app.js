@@ -227,7 +227,7 @@ const routes = [
   [/^#\/note(?:\/([\w-]+))?$/, pageNote],
   [/^#\/time$/, pageTime],
   [/^#\/review$/, pageReview],                        // 시험 대비: 회독 > 주차 (가리고 설명하기를 회독으로 묶은 것)
-  [/^#\/recall\/([A-Za-z]+\d+)(?:\/([1-5])(?:\/(\d+))?)?$/, pageRecall],   // 가리고 설명하기 (4단계 데이터가 있으면 5가 마지막 단계)
+  [/^#\/recall\/([A-Za-z]+\d+)(?:\/([1-9])(?:\/(\d+))?)?$/, pageRecall],   // 가리고 설명하기 (가린 칸 단계 수 + 1 이 마지막 "소단원 이름만" 단계)
   [/^#\/drill$/, pageDrillHub],                       // 예제와 과제만 (강의자료에 Example, Homework 라고 적힌 쪽)
   [/^#\/drill\/([\w.-]+)(?:\/(\d+))?$/, pageDrill],
 ];
@@ -2114,9 +2114,14 @@ const RC4 = { name: ['', '1단계', '2단계', '3단계', '4단계', '마지막 
   desc: ['', '핵심 말만 쪽마다 몇 개씩 가렸어요.', '1단계의 두 배쯤 가렸어요.', '세 배쯤 가렸어요. 제목 속 말도 가려요.', '작은 글씨와 그림 속 글까지 모든 글 줄을 가렸어요. 슬라이드 하나를 통째로 떠올려요.', '소단원 이름만 보고 흐름 전체를 설명해요.'] };
 const recallInfo = deck => ((META.decks || {})[deck] || {}).recall || null;
 const recallData = deck => (window.SDT_RECALL || window.GNN_RECALL || {})[deck] || null;
-const rcLevels = deck => { const i = recallInfo(deck); return i && i.n && i.n.length >= 4 ? 4 : 3; };   // 가린 칸 단계 수
+const rcLevels = deck => { const i = recallInfo(deck); return i && i.n ? Math.max(3, i.n.length) : 3; };   // 가린 칸 단계 수 (데이터가 정한다)
 const rcFinal = deck => rcLevels(deck) + 1;                                                        // 소단원 이름만 단계 번호
-const rcText = deck => rcLevels(deck) === 4 ? RC4 : RC3;
+const RC6 = { name: ['', '1단계', '2단계', '3단계', '4단계', '5단계', '6단계', '마지막 단계'],
+  title: ['', '중요한 말과 그림 글 가리기', '깊이 들여 쓴 줄 가리기', '그 윗줄까지 가리기', '설명 줄 거의 다 가리기', '불릿 제목까지 가리기', '쪽 제목까지 다 가리기', '소단원 이름만'],
+  desc: ['', '외워야 할 말과 그림 밑 작은 글씨를 가렸어요.', '가장 깊이 들여 쓴 설명 줄까지 가렸어요.', '한 칸 덜 들여 쓴 줄까지 가렸어요.',
+    '설명 줄을 거의 다 가렸어요. 맨 왼쪽 불릿 제목만 남아요.', '불릿 제목까지 가렸어요. 쪽 제목만 남아요.',
+    '쪽 제목까지 모두 가렸어요. 빈 슬라이드를 보고 통째로 떠올려요.', '소단원 이름만 보고 흐름 전체를 설명해요.'] };
+const rcText = deck => { const L = rcLevels(deck); return L >= 6 ? RC6 : L === 4 ? RC4 : RC3; };
 const rcStages = deck => Array.from({ length: rcFinal(deck) }, (_, i) => i + 1);
 /* 4단계(다 가리기) 블록 끝 */
 function recallRec(deck) { store.recall = store.recall || {}; return (store.recall[deck] = store.recall[deck] || {}); }
@@ -2130,7 +2135,7 @@ function recallNext(deck) { return rcStages(deck).find(n => !recallDone(deck, n)
 function recallStep(w, steps) {
   const info = w && w.deck ? recallInfo(w.deck) : null; if (!info) return;
   const F = rcFinal(w.deck), got = rcStages(w.deck).filter(n => recallDone(w.deck, n)).length;
-  steps.push({ t: '가리고 설명하기', d: F === 5 ? '문제까지 풀고 나서 해요. 슬라이드 글을 조금, 더, 많이, 다 가려 두고 혼자 설명해 봐요. 마지막에는 소단원 이름만 보고 설명해요.' : '기출까지 풀고 나서 해요. 슬라이드의 중요한 말을 가려 두고 혼자 설명해 봐요. 마지막에는 소단원 이름만 보고 설명해요.', done: got === F, href: '#/recall/' + w.deck + '/' + recallNext(w.deck), meta: got + ' / ' + F + '단계' });
+  steps.push({ t: '가리고 설명하기', d: F >= 5 ? '문제까지 풀고 나서 해요. 슬라이드 글을 조금, 더, 많이, 다 가려 두고 혼자 설명해 봐요. 마지막에는 소단원 이름만 보고 설명해요.' : '기출까지 풀고 나서 해요. 슬라이드의 중요한 말을 가려 두고 혼자 설명해 봐요. 마지막에는 소단원 이름만 보고 설명해요.', done: got === F, href: '#/recall/' + w.deck + '/' + recallNext(w.deck), meta: got + ' / ' + F + '단계' });
 }
 /* 주차 페이지의 단계 타일 */
 /* ---------- 예제와 과제만 ----------
@@ -2262,12 +2267,15 @@ async function pageDrill(id, jump) {
 /* ---------- 시험 대비: 회독 > 주차 ----------
    가리고 설명하기의 단계를 회독으로 바꿔 부르고, 회독 하나를 펴면 그 안에 주차가 들어 있다.
    1회독은 핵심 말만, 올라갈수록 더 가리고, 마지막은 소단원 이름만 보고 흐름을 말한다. */
-const RV = { name: ['', '1회독', '2회독', '3회독', '4회독', '마무리'],
-  title: ['', '중요한 말과 그림 글 가리기', '설명 줄까지 가리기', '본문 거의 다 가리기', '다 가리기', '목차만 보고 말하기'],
+const RV = { name: ['', '1회독', '2회독', '3회독', '4회독', '5회독', '6회독', '7회독'],
+  title: ['', '중요한 말과 그림 글 가리기', '깊이 들여 쓴 줄 가리기', '그 윗줄까지 가리기',
+    '설명 줄 거의 다 가리기', '불릿 제목까지 가리기', '쪽 제목까지 다 가리기', '목차만 보고 말하기'],
   desc: ['', '외워야 할 말과 그림 밑 작은 글씨를 가렸어요. 남은 문장을 실마리 삼아 빈칸을 말해 봐요.',
     '가장 깊이 들여 쓴 설명 줄까지 가렸어요. 윗줄만 보고 그 밑에 무슨 말이 있었는지 말해요.',
-    '설명 줄을 거의 다 가렸어요. 맨 왼쪽 불릿 제목만 남아요.',
-    '불릿 제목과 쪽 제목까지 모두 가렸어요. 빈 슬라이드를 보고 통째로 떠올려요.',
+    '한 칸 덜 들여 쓴 줄까지 가렸어요. 남은 줄이 점점 줄어요.',
+    '설명 줄을 거의 다 가렸어요. 이제 맨 왼쪽 불릿 제목만 남아요.',
+    '불릿 제목까지 가렸어요. 쪽 제목 하나만 보고 그 밑을 다 말해요.',
+    '쪽 제목까지 모두 가렸어요. 빈 슬라이드를 보고 통째로 떠올려요.',
     '슬라이드를 아예 보지 않고, 소단원 이름만 보며 무엇이 나오는지 말해요.'] };
 const rvDecks = () => (META.weeks || []).filter(w => w.deck && recallInfo(w.deck));
 function pageReview() {
@@ -2305,9 +2313,9 @@ function pageReview() {
 function recallTiles(week) {
   const w = weekOf(week), info = w && w.deck ? recallInfo(w.deck) : null; if (!info) return '';
   const r = (store.recall || {})[w.deck] || {}, F = rcFinal(w.deck), T = rcText(w.deck);
-  return '<h2 class="sec">가리고 설명하기 <small>' + (F === 5 ? '문제까지 풀고 나서 해요' : '기출까지 풀고 나서 해요') + '</small></h2><div class="ptiles rctiles">' + rcStages(w.deck).map(n => {
+  return '<h2 class="sec">가리고 설명하기 <small>' + (F >= 5 ? '문제까지 풀고 나서 해요' : '기출까지 풀고 나서 해요') + '</small></h2><div class="ptiles rctiles">' + rcStages(w.deck).map(n => {
     const dn = recallDone(w.deck, n), s = r['s' + n] || {}, said = Object.keys(r.secs || {}).length;
-    const state = dn ? '다 했어요' : n < F ? (s.max ? s.max + '쪽까지 봤어요' : (n === 4 ? '가린 줄 ' : '가린 말 ') + info.n[n - 1] + '개') : (said ? said + ' / ' + info.secs + ' 설명했어요' : '소단원 ' + info.secs + '개');
+    const state = dn ? '다 했어요' : n < F ? (s.max ? s.max + '쪽까지 봤어요' : (n >= 2 ? '가린 줄 ' : '가린 말 ') + info.n[n - 1] + '개') : (said ? said + ' / ' + info.secs + ' 설명했어요' : '소단원 ' + info.secs + '개');
     return '<a class="ptile' + (dn ? ' done' : '') + '" href="#/recall/' + w.deck + '/' + n + '"><span class="pn">' + T.name[n] + '</span><span class="pt">' + T.title[n] + '</span><span class="pd">' + T.desc[n] + '</span><span class="pf"><span class="num">' + esc(state) + '</span></span></a>';
   }).join('') + '</div>';
 }
@@ -2409,7 +2417,7 @@ function recallFrame(f) {
   const pct = x => (Math.round(x * 100000) / 1000) + '%';
   const html = '<div class="rcwrap" style="--ar:' + (+f.ar || 1.414) + '"><div class="rcimg"><img src="img/' + esc(f.deck) + '/p' + pad3(f._p) + '.jpg" alt="p.' + f._p + ' 슬라이드" decoding="async" draggable="false">'
     + ms.map(m => '<button type="button" class="rcm' + (m[4] >= 4 ? ' l4' : '') + '" style="left:' + pct(m[0]) + ';top:' + pct(m[1]) + ';width:' + pct(m[2]) + ';height:' + pct(m[3]) + '" aria-pressed="false" aria-label="가린 말, 누르면 보여요" data-t="' + esc(m[5] || '') + '"></button>').join('')
-    + '</div><div class="rcbar"><span class="rccap num">p.' + f._p + (f.lv ? (ms.length ? ', 가린 ' + (f.lv >= 4 ? '줄 ' : '말 ') + ms.length + '개 중 <b class="rcopen">0</b>개 봤어요' : ', 이 쪽은 가린 말이 없어요') : '') + '</span>'
+    + '</div><div class="rcbar"><span class="rccap num">p.' + f._p + (f.lv ? (ms.length ? ', 가린 ' + (f.lv >= 2 ? '줄 ' : '말 ') + ms.length + '개 중 <b class="rcopen">0</b>개 봤어요' : ', 이 쪽은 가린 말이 없어요') : '') + '</span>'
     + (ms.length ? '<button type="button" class="btn sm rcall">전부 보기</button>' : '') + '</div></div>';
   return {
     html, steps: 0,

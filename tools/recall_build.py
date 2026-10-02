@@ -575,6 +575,7 @@ def build_deck(prof, deck, args, corpus, gloss_entries):
     for occ, _ in cands:
         df.update(occ.keys())
     out_pages, stats = [], Counter()
+    LEVELS = 6   # 1 용어와 그림 글, 2~4 들여 쓴 줄, 5 맨 왼쪽 불릿 줄, 6 쪽 제목
     for i, pg in enumerate(pages):
         p = i + 1
         occ, kinds = cands[i]
@@ -640,7 +641,7 @@ def build_deck(prof, deck, args, corpus, gloss_entries):
             masks += line_masks(pg, (ocr_extra[i] if ocr_extra else None), r0.width / r0.height)
         masks.sort(key=lambda m: (m[4], round(m[1], 2), m[0]))
         for m in masks:
-            for lv in (1, 2, 3, 4):
+            for lv in range(1, LEVELS + 1):
                 if m[4] <= lv:
                     stats[lv] += 1
         out_pages.append({"p": p, "m": masks})
@@ -652,7 +653,9 @@ def build_deck(prof, deck, args, corpus, gloss_entries):
     (prof["out"] / f"{deck}.json").write_text(json.dumps(res, ensure_ascii=False, indent=0), encoding="utf-8")
     content = sum(1 for pg in out_pages if pg["m"])
     nsub = sum(len(c["items"]) for c in sections)
-    print(f"  {deck}: {N}쪽 (가린 칸 있는 쪽 {content}), 칸 1단계 {stats[1]}, 2단계 {stats[2]}, 3단계 {stats[3]}" + (f", 4단계(다 가리기) {stats[4]}" if prof.get("all_lines") else "") + f", 큰 단원 {len(sections)}, 소단원 {nsub}"
+    top = max([3] + [m[4] for pg in out_pages for m in pg["m"]])
+    bars = ", ".join(f"{lv}단계 {stats[lv]}" + ("(다 가리기)" if lv == top and prof.get("all_lines") else "") for lv in range(1, top + 1))
+    print(f"  {deck}: {N}쪽 (가린 칸 있는 쪽 {content}), 칸 {bars}, 큰 단원 {len(sections)}, 소단원 {nsub}"
           + ("" if has_text else " (OCR)"))
     if args.get("png"):
         draw_check(prof, deck, res, args["png"], args.get("png_dir"))
@@ -751,14 +754,16 @@ def line_masks(lines, ocr_lines=None, ar=1.414):
             cols.append(x)
 
     def body_level(x0):
-        """맨 왼쪽 칸은 4단계(마지막까지 남김), 깊이 들어갈수록 2단계(먼저 가림)."""
+        """맨 왼쪽 칸은 5단계(실마리라서 마지막까지 남김), 깊이 들어갈수록 먼저 가린다.
+        쪽마다 들여쓰기 칸 수가 1칸부터 15칸까지 제각각이라 깊이를 비율로 보고 2~4단계에 나눈다."""
         i = 0
         for j, c in enumerate(cols):
             if x0 >= c - 0.001:
                 i = j
         if i == 0:
-            return 4
-        return 3 if i / max(1, len(cols) - 1) < 0.6 else 2
+            return 5
+        frac = i / max(1, len(cols) - 1)           # 1 에 가까울수록 깊이 들여 쓴 줄
+        return 2 if frac >= 0.75 else 3 if frac >= 0.5 else 4
 
     out = []
     for m in merged:
@@ -768,7 +773,7 @@ def line_masks(lines, ocr_lines=None, ar=1.414):
         if small(m):
             lv = 1                                 # 그림 속 글자, 작은 글씨
         elif zone == "title":
-            lv = 4                                 # 쪽 제목
+            lv = 6                                 # 쪽 제목
         else:
             lv = body_level(x0)
         x0, y0 = max(0, x0 - 0.004), max(0, y0 - 0.003)
