@@ -230,6 +230,8 @@ def main(slug, skip, home=True):
         rinfo = pack_recall(W / "recall" / f"{deck}.json", SITE / "data" / f"recall_{deck}.js", "SDT_RECALL", deck)
         if rinfo:
             meta["decks"][deck]["recall"] = rinfo
+            # 시험 대비(회독 > 주차) 탭을 띄울지 정하는 값
+            meta["recallWeeks"] = meta.get("recallWeeks", 0) + 1
 
     # 2) 정리 슬라이드, 기초 다지기
     for f in sorted((W / "notes").glob("slides_w*.json")):
@@ -398,8 +400,14 @@ def main(slug, skip, home=True):
     for name, label in LAZY_PAGES.items():
         if name in lazy:
             nav.append(f'<a class="tab" data-nav="p{name}" href="#/{name}">{label}</a>')
-    nav +=[f'<a class="tab" data-nav="w{w["id"]}" href="#/week/{w["id"]}">{html.escape(w["short"])}</a>' for w in weeks]
-    if meta.get("drill"):
+    # quizOnly 과목은 주차 탭을 두지 않는다. 외우기만 하면 되는 과목이라 화면이 둘이면 된다.
+    #   시험 대비(#/review): 회독 > 주차로 들어가 슬라이드를 가리고 외운다
+    #   문제(#/quiz): 외운 것을 풀어서 확인한다. 주차 고르기는 문제 쪽 안에 있다
+    if not cfg.get("quizOnly"):
+        nav += [f'<a class="tab" data-nav="w{w["id"]}" href="#/week/{w["id"]}">{html.escape(w["short"])}</a>' for w in weeks]
+    if meta.get("recallWeeks"):
+        nav.append('<a class="tab" data-nav="review" href="#/review">시험 대비</a>')
+    if meta.get("drill") and not cfg.get("quizOnly"):
         nav.append(f'<a class="tab" data-nav="drill" href="#/drill">{html.escape(meta["drill"]["label"])}</a>')
     nav += ['<a class="tab" data-nav="quiz" href="#/quiz">문제</a>',
             '<a class="tab" data-nav="wrong" href="#/wrong">오답노트 <span id="wrongBadge" class="badge"></span></a>']

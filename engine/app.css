@@ -439,3 +439,28 @@ nav{min-width:0}
 .qa-slide summary{cursor:pointer;color:var(--dim);font-size:14px;padding:6px 0}
 .qa-slide img{display:block;width:100%;margin-top:10px;border:1px solid var(--line);border-radius:10px}
 @media(max-width:760px){.qa-q{font-size:24px}}
+
+/* 시험 대비: 회독 > 주차 */
+.rvround{border:1.5px solid var(--line);border-radius:var(--r-md);background:var(--surface);margin-top:12px;overflow:hidden}
+.rvround[open]{border-color:var(--accent-deep)}
+.rvround>summary{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;cursor:pointer;padding:16px 18px;list-style:none;font-weight:600}
+.rvround>summary::-webkit-details-marker{display:none}
+.rvround>summary::before{content:"\25B8";color:var(--sub);font-weight:400;transition:transform .15s}
+.rvround[open]>summary::before{transform:rotate(90deg)}
+.rvn{font-size:19px}
+.rvt{font-size:15px;color:var(--sub);font-weight:450}
+.rvp{margin-left:auto;font-size:14px;color:var(--sub)}
+.rvd{margin:0 18px 12px;color:var(--sub);font-size:15px;line-height:1.6}
+.rvweeks{display:flex;flex-direction:column;gap:8px;padding:0 14px 14px}
+.rvweek{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:6px 14px;
+  padding:13px 15px;border:1.5px solid var(--line);border-radius:var(--r-md);background:var(--bg);text-decoration:none;color:inherit}
+.rvweek:hover{border-color:var(--accent-deep)}
+.rvweek.done{border-color:var(--ok)}
+.rvweek b{font-size:16px;white-space:nowrap}
+.rvw-t{color:var(--sub);font-size:14px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rvw-s{font-size:13px;color:var(--sub);white-space:nowrap}
+.rvweek.done .rvw-s{color:var(--ok)}
+@media(max-width:620px){
+  .rvweek{grid-template-columns:minmax(0,1fr) auto}
+  .rvw-t{grid-column:1/-1;white-space:normal}
+}

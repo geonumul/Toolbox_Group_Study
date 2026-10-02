@@ -39,7 +39,7 @@ def write(path, title, intro):
         assert x["id"] not in seen, x["id"]
         seen.add(x["id"])
     with open(path, "w", encoding="utf-8") as f:
-        json.dump({"title": title, "intro": intro, "label": "시험 대비 (서술형)", "items": ITEMS},
+        json.dump({"title": title, "intro": intro, "label": "서술형", "items": ITEMS},
                   f, ensure_ascii=False, indent=1)
     byw = {}
     for x in ITEMS:

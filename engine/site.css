@@ -643,6 +643,15 @@ body.pfull .sh{font-size:clamp(28px,3.2vw,44px)}
 body.pfull .sl-items li{font-size:clamp(21px,2.2vw,30px)}
 body.pfull .pbar2{margin-top:8px}
 body.pfull .hint{display:none}
+/* 전체 화면에서는 머리글과 꼬리가 사라져 세로가 훨씬 넓어진다.
+   슬라이드 그림도 그만큼 키워야 "전체로 보면 오히려 안 보이는" 일이 없다. */
+body.pfull #player.on{padding:6px 10px 8px}
+body.pfull #pslide:has(.rcwrap){padding:4px 6px}
+body.pfull .slide:has(.rcwrap),body.pfull .slide:has(.simg){padding:0}
+body.pfull .rcimg,body.pfull .rcbar{max-width:min(100%,calc(86vh * var(--ar,1.414)))}
+body.pfull .simg img,body.pfull .lookwrap img{max-height:86vh}
+body.pfull .simg{gap:6px}
+body.pfull .qa-slide img{max-height:78vh;width:auto;margin-inline:auto}
 @media (max-width:720px){body.pfull #player.on{padding:6px 8px 8px}}
 
 /* 예제와 과제만 (#/drill): 슬라이드 그림을 먼저 보여 주어 강의자료에 정말 그렇게 적혀 있는지 눈으로 확인하게 한다 */

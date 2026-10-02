@@ -226,6 +226,7 @@ const routes = [
   [/^#\/tips$/, () => pageStatic('tips')],
   [/^#\/note(?:\/([\w-]+))?$/, pageNote],
   [/^#\/time$/, pageTime],
+  [/^#\/review$/, pageReview],                        // 시험 대비: 회독 > 주차 (가리고 설명하기를 회독으로 묶은 것)
   [/^#\/recall\/([A-Za-z]+\d+)(?:\/([1-5])(?:\/(\d+))?)?$/, pageRecall],   // 가리고 설명하기 (4단계 데이터가 있으면 5가 마지막 단계)
   [/^#\/drill$/, pageDrillHub],                       // 예제와 과제만 (강의자료에 Example, Homework 라고 적힌 쪽)
   [/^#\/drill\/([\w.-]+)(?:\/(\d+))?$/, pageDrill],
@@ -413,17 +414,39 @@ function pageHome() {
     + (nx && store.last && nx.step.href !== store.last.href ? '<a class="btn" href="' + esc(nx.step.href) + '">순서대로: ' + esc(weekName(nx.week)) + ' ' + esc(nx.step.t) + '</a>' : '')
     + (dueAll ? '<a class="btn" href="#/terms/all">오늘의 용어 복습 ' + dueAll + '개</a>' : '') + '</div></div>'
     + '<div class="pathcard"><div class="pc-h"><span>' + esc(META.pathLabel || '공부 순서') + '</span><span class="num">' + overallPct() + '% 진행</span></div>' + weekPathSvg() + '</div></section>';
-  h += '<h2 class="sec">주차별로 공부하기</h2><div class="weekcards">';
-  META.weeks.forEach(w => {
-    const d = w.deck ? META.decks[w.deck] : null;
-    const steps = weekSteps(w.id), done = steps.filter(s => s.done).length;
-    const st2 = weekQuizStat(w.id);
-    h += '<a class="wcard' + (w.id === 'b' ? ' basics' : '') + '" href="#/week/' + w.id + '"><div class="wk">' + esc(w.short) + '</div><div class="wt">' + esc(w.title) + '</div>'
-      + '<div class="wtopics">' + esc(w.topics) + '</div><div class="wfoot">'
-      + (steps.length ? '<div class="stepbar" aria-label="길잡이 진행">' + steps.map(s => '<i class="' + (s.done ? 'on' : '') + '"></i>').join('') + '</div><span class="num">길잡이 ' + done + ' / ' + steps.length + '</span>' : '')
-      + (d && st2.total ? '<span class="num">문제 ' + st2.seen + ' / ' + st2.total + ' 풀이</span>' : '') + '</div></a>';
-  });
-  h += '</div>';
+  // quizOnly 과목은 주차 쪽을 두지 않는다. 시험 대비(회독)와 문제, 둘로만 간다.
+  if (META.quizOnly && rvDecks().length) {
+    const ws = rvDecks(), F = Math.max(...ws.map(x => rcFinal(x.deck)));
+    const rounds = [];
+    for (let n = 1; n <= F; n++) {
+      const av = ws.filter(x => rcFinal(x.deck) >= n);
+      rounds.push({ n: n, done: av.filter(x => recallDone(x.deck, n)).length, all: av.length });
+    }
+    const cur = rounds.find(r => r.done < r.all) || rounds[rounds.length - 1];
+    const qs2 = META.weeks.map(x => weekQuizStat(x.id)).reduce((a, b) => ({ seen: a.seen + b.seen, total: a.total + b.total }), { seen: 0, total: 0 });
+    h += '<h2 class="sec">이 과목은 두 가지만 하면 돼요</h2><div class="weekcards">'
+      + '<a class="wcard" href="#/review"><div class="wk">시험 대비</div><div class="wt">슬라이드를 가리고 외우기</div>'
+      + '<div class="wtopics">' + RV.name[cur.n] + ' ' + RV.title[cur.n] + '. 회독을 올릴수록 더 많이 가려요. 마지막에는 목차만 보고 말해요.</div>'
+      + '<div class="wfoot"><div class="stepbar" aria-label="회독 진행">'
+      + rounds.map(r => '<i class="' + (r.done === r.all ? 'on' : '') + '"></i>').join('')
+      + '</div><span class="num">' + RV.name[cur.n] + ' ' + cur.done + ' / ' + cur.all + '주차</span></div></a>'
+      + '<a class="wcard" href="#/quiz"><div class="wk">문제</div><div class="wt">외운 것을 풀어서 확인하기</div>'
+      + '<div class="wtopics">주차를 골라 풀어요. 서술형도 여기에 있어요. 틀린 것은 오답노트에 쌓여요.</div>'
+      + '<div class="wfoot">' + (qs2.total ? '<span class="num">문제 ' + qs2.seen + ' / ' + qs2.total + ' 풀이</span>' : '')
+      + (drillInfo() ? '<span class="num">서술형 ' + drillInfo().n + '문제</span>' : '') + '</div></a></div>';
+  } else {
+    h += '<h2 class="sec">주차별로 공부하기</h2><div class="weekcards">';
+    META.weeks.forEach(w => {
+      const d = w.deck ? META.decks[w.deck] : null;
+      const steps = weekSteps(w.id), done = steps.filter(s => s.done).length;
+      const st2 = weekQuizStat(w.id);
+      h += '<a class="wcard' + (w.id === 'b' ? ' basics' : '') + '" href="#/week/' + w.id + '"><div class="wk">' + esc(w.short) + '</div><div class="wt">' + esc(w.title) + '</div>'
+        + '<div class="wtopics">' + esc(w.topics) + '</div><div class="wfoot">'
+        + (steps.length ? '<div class="stepbar" aria-label="길잡이 진행">' + steps.map(s => '<i class="' + (s.done ? 'on' : '') + '"></i>').join('') + '</div><span class="num">길잡이 ' + done + ' / ' + steps.length + '</span>' : '')
+        + (d && st2.total ? '<span class="num">문제 ' + st2.seen + ' / ' + st2.total + ' 풀이</span>' : '') + '</div></a>';
+    });
+    h += '</div>';
+  }
   h += '<h2 class="sec">문제 진행</h2><div class="card"><div class="plangrid">' + planGrid() + '</div></div>';
   const nAll = Object.keys(META.noteTitles || {});
   h += '<h2 class="sec">도구</h2><div class="toolrow">'
@@ -1750,7 +1773,15 @@ function pageQuiz(query) {
     + (srcOpts.length > 1 ? chipRow('출처', 'src', srcOpts, st.src) : '')
     + (st.unit ? '<div class="row"><span class="cap">단원</span><button class="chip on" id="unitChip" type="button">' + esc(st.unit) + ' (누르면 해제)</button></div>' : '')
     + '<div class="btnrow" style="margin-top:16px"><button class="btn primary" id="startBtn" type="button">시작하기</button><a class="btn" href="#/mock' + (st.scope !== 'all' ? '?week=' + st.scope : '') + '">모의고사</a><button class="btn" id="resetBtn" type="button">푼 기록 초기화</button></div>'
-    + '<div class="stat" id="setupStat"></div></div><div id="qstage"></div>';
+    + '<div class="stat" id="setupStat"></div></div>'
+    // 주차 탭이 없는 과목은 서술형도 이 쪽에 모은다. 탭은 시험 대비와 문제 둘만 둔다.
+    + (META.quizOnly && drillInfo()
+        ? '<div class="termbar" style="margin-top:14px"><div><b>' + esc(drillInfo().label || '서술형') + '</b>'
+          + '<div class="muted">슬라이드 한 쪽에 서술형 한 문제. 물음을 보고 입으로 답한 뒤 버튼을 눌러 맞춰 봐요. 모두 '
+          + drillInfo().n + '문제</div></div>'
+          + '<div class="btnrow" style="margin:0"><a class="btn" href="#/drill">서술형 풀기</a></div></div>'
+        : '')
+    + '<div id="qstage"></div>';
   APP().innerHTML = h;
   const bind = (attr, key, num) => $$('[data-' + attr + ']').forEach(b => b.addEventListener('click', () => {
     $$('[data-' + attr + ']').forEach(x => x.classList.remove('on')); b.classList.add('on');
@@ -2228,6 +2259,49 @@ async function pageDrill(id, jump) {
   });
 }
 
+/* ---------- 시험 대비: 회독 > 주차 ----------
+   가리고 설명하기의 단계를 회독으로 바꿔 부르고, 회독 하나를 펴면 그 안에 주차가 들어 있다.
+   1회독은 핵심 말만, 올라갈수록 더 가리고, 마지막은 소단원 이름만 보고 흐름을 말한다. */
+const RV = { name: ['', '1회독', '2회독', '3회독', '4회독', '마무리'],
+  title: ['', '핵심 말만 가리기', '더 가리기', '세부까지 가리기', '다 가리기', '목차만 보고 말하기'],
+  desc: ['', '쪽마다 중요한 말 몇 개만 가렸어요. 가린 칸을 누르면 하나씩 보여요.',
+    '1회독의 두 배쯤 가렸어요. 이제 문장이 군데군데 비어요.',
+    '세 배쯤 가렸어요. 제목 속 말까지 가려요.',
+    '작은 글씨와 그림 속 글까지 모든 글 줄을 가렸어요. 슬라이드 하나를 통째로 떠올려요.',
+    '슬라이드를 아예 보지 않고, 소단원 이름만 보며 무엇이 나오는지 말해요.'] };
+const rvDecks = () => (META.weeks || []).filter(w => w.deck && recallInfo(w.deck));
+function pageReview() {
+  const ws = rvDecks();
+  if (!ws.length) { location.replace('#/'); return; }
+  const F = Math.max(...ws.map(w => rcFinal(w.deck)));
+  let h = '<a class="back" href="#/">홈</a><h1 class="h1">시험 대비</h1>'
+    + '<p class="lede">슬라이드를 띄워 놓고 <b>가린 칸을 눌러 가며</b> 외워요. 회독을 올릴수록 더 많이 가려요. '
+    + '한 회독을 열면 그 안에 주차가 있어요.</p>';
+  for (let n = 1; n <= F; n++) {
+    const avail = ws.filter(w => rcFinal(w.deck) >= n);
+    if (!avail.length) continue;
+    const dn = avail.filter(w => recallDone(w.deck, n)).length;
+    h += '<details class="rvround"' + (dn < avail.length && avail.every(w => n === 1 || recallDone(w.deck, n - 1)) ? ' open' : '') + '>'
+      + '<summary><span class="rvn">' + RV.name[n] + '</span><span class="rvt">' + RV.title[n] + '</span>'
+      + '<span class="rvp num">' + dn + ' / ' + avail.length + '주차</span></summary>'
+      + '<p class="rvd">' + RV.desc[n] + '</p><div class="rvweeks">';
+    avail.forEach(w => {
+      const info = recallInfo(w.deck), r = (store.recall || {})[w.deck] || {};
+      const done = recallDone(w.deck, n), s = r['s' + n] || {}, said = Object.keys(r.secs || {}).length;
+      const state = done ? '다 했어요'
+        : n === rcFinal(w.deck) ? (said ? said + ' / ' + info.secs + ' 설명했어요' : '소단원 ' + info.secs + '개')
+        : s.max ? s.max + ' / ' + info.total + '쪽까지 봤어요'
+        : (n >= 4 ? '가린 줄 ' : '가린 말 ') + (info.n[n - 1] || 0) + '개';
+      h += '<a class="rvweek' + (done ? ' done' : '') + '" href="#/recall/' + w.deck + '/' + n + '">'
+        + '<b>' + esc(w.short) + '</b><span class="rvw-t">' + esc(w.title) + '</span>'
+        + '<span class="rvw-s num">' + esc(state) + '</span></a>';
+    });
+    h += '</div></details>';
+  }
+  h += '<div class="termbar"><div><b>다 외웠으면</b><div class="muted">문제를 풀어서 확인해요. 틀린 것은 오답노트에 쌓여요.</div></div>'
+    + '<div class="btnrow" style="margin:0"><a class="btn primary" href="#/quiz">문제 풀러 가기</a></div></div>';
+  APP().innerHTML = h;
+}
 function recallTiles(week) {
   const w = weekOf(week), info = w && w.deck ? recallInfo(w.deck) : null; if (!info) return '';
   const r = (store.recall || {})[w.deck] || {}, F = rcFinal(w.deck), T = rcText(w.deck);
@@ -2239,7 +2313,8 @@ function recallTiles(week) {
 }
 async function pageRecall(deck, stageStr, subStr) {
   const w = META.weeks.find(x => x.deck === deck), week = w ? w.id : '';
-  const back = week ? '#/week/' + week : '#/';
+  // 주차 탭이 없는 과목(quizOnly)은 주차 쪽이 아니라 시험 대비 회독 목록으로 돌아간다
+  const back = META.quizOnly ? '#/review' : week ? '#/week/' + week : '#/';
   const d = META.decks[deck];
   if (!d || !recallInfo(deck)) { location.replace(back); return; }
   if (!stageStr) { location.replace('#/recall/' + deck + '/' + recallNext(deck)); return; }
