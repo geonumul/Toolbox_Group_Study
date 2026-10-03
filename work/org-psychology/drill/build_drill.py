@@ -19,6 +19,7 @@ import w01
 import w02
 import w03
 import w05
+import w05_prof   # noqa: F401  (import 만으로 PROF 가 채워진다)
 
 for m in (w01, w02, w03, w05):
     m.build()

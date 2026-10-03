@@ -12,6 +12,9 @@ import json
 import os
 
 ITEMS = []
+# 녹음이 뒤늦게 들어온 주차는 쪽마다 교수님 말을 따로 모아 두고 card() 가 꺼내 쓴다.
+# {(덱, 쪽): [줄, ...]}
+PROF = {}
 
 
 def card(deck, week, page, q, answer, prof=None, tip=None, title=None):
@@ -23,6 +26,7 @@ def card(deck, week, page, q, answer, prof=None, tip=None, title=None):
     tip     외우는 요령이나 헷갈리는 짝.
     """
     qa = {"answer": list(answer)}
+    prof = prof or PROF.get((deck, page))
     if prof:
         qa["prof"] = list(prof)
     if tip:
