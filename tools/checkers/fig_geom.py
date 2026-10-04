@@ -27,7 +27,8 @@ for it in sorted(D["items"], key=lambda x: x["n"]):
         s, name = f["svg"], "%d번 '%s'" % (it["n"], f["head"])
         W, H = (int(x) for x in VB.search(s).groups())
         cir = [(c, int(x), int(y), int(r)) for c, x, y, r in CIR.findall(s)]
-        txt = [(c, int(x), int(y), int(fs), t) for c, x, y, fs, t in TXT.findall(s)]
+        import html as _hh
+        txt = [(c, int(x), int(y), int(fs), _hh.unescape(t)) for c, x, y, fs, t in TXT.findall(s)]
         # 1) 노드 겹침
         for i in range(len(cir)):
             for j in range(i + 1, len(cir)):
@@ -35,7 +36,10 @@ for it in sorted(D["items"], key=lambda x: x["n"]):
                 _, x2, y2, r2 = cir[j]
                 if (x1, y1) == (x2, y2):
                     continue          # 단계마다 색을 바꾸려고 같은 자리에 덧그린 것
-                if ((x1 - x2) ** 2 + (y1 - y2) ** 2) ** 0.5 < r1 + r2 + 6:
+                # 반지름이 작은 것은 "여럿" 을 보여 주려고 일부러 붙여 그린 점이다.
+                # 그런 것은 정말 포개졌을 때만 잡는다.
+                gap = -2 if max(r1, r2) <= 14 else 6
+                if ((x1 - x2) ** 2 + (y1 - y2) ** 2) ** 0.5 < r1 + r2 + gap:
                     bad.append("%s: 노드가 겹침 (%d,%d)-(%d,%d)" % (name, x1, y1, x2, y2))
         # 2) 그림 밖
         for c, x, y, r in cir:
