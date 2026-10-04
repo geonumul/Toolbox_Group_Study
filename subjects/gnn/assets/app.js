@@ -2427,6 +2427,8 @@ async function pageExamHub() {
   let week = q.week || '';
   const ofWeek = w => E.items.filter(x => x.week === w);
   if (week && !ofWeek(week).length) week = '';
+  // 묶음 칩에 쓸 짧은 이름. 예전에는 new 말고는 전부 '기출' 이라 연습 카드도 기출로 보였다.
+  const GNAME = { drill: '연습 카드 ', past: '기출에 나온 모델 ', new: '새 모델 ', real: '기출 원본 ' };
   const weeks = META.weeks.map(w => w.id).filter(id => ofWeek(id).length);
   let list = week ? ofWeek(week) : E.items;
   if (q.group) list = list.filter(x => x.group === q.group);
@@ -2436,7 +2438,7 @@ async function pageExamHub() {
   h += '<div class="pillrow"><a class="chip' + (week ? '' : ' on') + '" href="#/exam">전부 ' + E.items.length + '문제</a>'
     + weeks.map(id => '<a class="chip' + (week === id ? ' on' : '') + '" href="#/exam?week=' + encodeURIComponent(id) + '">' + esc(weekName(id)) + ' ' + ofWeek(id).length + '개</a>').join('')
     + Object.keys(E.groups || {}).map(gk => '<a class="chip' + (q.group === gk ? ' on' : '') + '" href="#/exam?group=' + encodeURIComponent(gk) + '">'
-        + (gk === 'new' ? '새 모델 ' : '기출 ') + E.items.filter(x => x.group === gk).length + '개</a>').join('')
+        + (GNAME[gk] || '문제 ') + E.items.filter(x => x.group === gk).length + '개</a>').join('')
     + (E.pdf ? '<a class="chip" href="' + esc(E.pdf) + '" target="_blank" rel="noopener">시험지 PDF</a>' : '') + '</div>';
   if (E.plan) {
     h += '<div class="qbtns" style="margin-top:12px"><a class="qbtn" href="' + esc(E.plan.href) + '" target="_blank" rel="noopener">'
