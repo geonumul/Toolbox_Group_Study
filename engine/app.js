@@ -2305,8 +2305,16 @@ function pageReview() {
     });
     h += '</div></details>';
   }
-  h += '<div class="termbar"><div><b>다 외웠으면</b><div class="muted">문제를 풀어서 확인해요. 틀린 것은 오답노트에 쌓여요.</div></div>'
-    + '<div class="btnrow" style="margin:0"><a class="btn primary" href="#/quiz">문제 풀러 가기</a></div></div>';
+  // 예제와 과제가 있는 과목(신호및시스템)은 그쪽을 먼저 권한다. 시험에 그대로 나오는 것이라서.
+  const hasDrill = !!DRILL();
+  h += '<div class="termbar"><div><b>다 외웠으면</b><div class="muted">'
+    + (hasDrill ? '강의자료에 적힌 예제와 과제를 손으로 풀어요. 그다음 문제로 확인해요.'
+               : '문제를 풀어서 확인해요. 틀린 것은 오답노트에 쌓여요.')
+    + '</div></div><div class="btnrow" style="margin:0">'
+    + (hasDrill ? '<a class="btn primary" href="#/drill">예제와 과제 풀기</a>'
+                + '<a class="btn" href="#/quiz">문제 풀러 가기</a>'
+                : '<a class="btn primary" href="#/quiz">문제 풀러 가기</a>')
+    + '</div></div>';
   APP().innerHTML = h;
 }
 function recallTiles(week) {

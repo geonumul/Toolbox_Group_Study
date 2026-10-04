@@ -765,6 +765,21 @@ def line_masks(lines, ocr_lines=None, ar=1.414):
         frac = i / max(1, len(cols) - 1)           # 1 에 가까울수록 깊이 들여 쓴 줄
         return 2 if frac >= 0.75 else 3 if frac >= 0.5 else 4
 
+    # 들여쓰기가 한 칸뿐인 쪽은 위 규칙으로 보면 모든 줄이 5단계가 되어 2~4회독이 할 일이 없어진다.
+    # 그런 쪽은 깊이 대신 "위에서 몇째 줄인가" 로 본다. 아래쪽 줄이 곁가지라서 먼저 가리고,
+    # 맨 윗줄은 실마리로 남긴다.
+    flat = len(cols) <= 1
+    if flat:
+        rank = {}
+        rows_f = sorted((m for m in merged if m[2] == "body" and not small(m)),
+                        key=lambda m: m[0][1])
+        for i, m in enumerate(rows_f):
+            if i == 0 or len(rows_f) < 3:
+                rank[id(m)] = 5
+            else:
+                f = i / float(len(rows_f) - 1)     # 1 에 가까울수록 아래쪽 줄
+                rank[id(m)] = 2 if f >= 0.75 else 3 if f >= 0.5 else 4
+
     out = []
     for m in merged:
         (x0, y0, x1, y1), t, zone = m
@@ -774,6 +789,8 @@ def line_masks(lines, ocr_lines=None, ar=1.414):
             lv = 1                                 # 그림 속 글자, 작은 글씨
         elif zone == "title":
             lv = 6                                 # 쪽 제목
+        elif flat:
+            lv = rank.get(id(m), 5)
         else:
             lv = body_level(x0)
         x0, y0 = max(0, x0 - 0.004), max(0, y0 - 0.003)
