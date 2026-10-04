@@ -2378,7 +2378,7 @@ async function pageRecall(deck, stageStr, subStr) {
   });
   const ac = $('#autoChip'); if (ac) ac.hidden = true;
   const hint = $('#phint');
-  if (hint) hint.textContent = stage < F ? (stage === 4 ? '슬라이드의 모든 글 줄을 가렸어요. 제목부터 작은 글씨까지 소리 내어 떠올린 다음 칸을 눌러 한 줄씩 맞춰 봐요. ' : '') + '가린 칸을 누르면 말이 보이고, 한 번 더 누르면 다시 가려요. 쪽은 아래 버튼, 옆으로 밀기, 방향키로 넘겨요. 가운데 쪽 번호를 누르면 원하는 쪽으로 가요.' : '가리지 않은 원래 슬라이드예요. 내가 설명한 흐름과 맞는지 확인해요.';
+  if (hint) hint.textContent = stage < F ? (stage === 4 ? '슬라이드의 모든 글 줄을 가렸어요. 제목부터 작은 글씨까지 소리 내어 떠올린 다음 칸을 눌러 한 줄씩 맞춰 봐요. ' : '') + '화면을 누르거나 오른쪽 방향키를 누르면 가린 말이 순서대로 하나씩 보여요. 왼쪽 방향키는 되돌리기예요. 칸을 직접 눌러 그 자리까지 한 번에 열 수도 있어요. 한 쪽을 다 열면 다음 쪽으로 넘어가요.' : '가리지 않은 원래 슬라이드예요. 내가 설명한 흐름과 맞는지 확인해요.';
   if (start > 0) toast('지난번 본 곳(p.' + frames[start]._p + ')부터 이어서 봐요');
 }
 /* 마지막 단계: 소단원 이름만 */
@@ -2420,23 +2420,56 @@ function rcMasks(list, stage) {
 }
 /* 플레이어 장면: 슬라이드 그림 위에 가린 칸 */
 function recallFrame(f) {
-  const ms = f.masks || [];
+  // 읽는 순서(위에서 아래로, 같은 줄이면 왼쪽부터)로 세운다. 이 차례대로 한 칸씩 열린다.
+  const ms = (f.masks || []).slice().sort((m, n) => {
+    const h = Math.min(m[3], n[3]);
+    return Math.abs(m[1] - n[1]) > h * 0.6 ? m[1] - n[1] : m[0] - n[0];
+  });
   const pct = x => (Math.round(x * 100000) / 1000) + '%';
   const html = '<div class="rcwrap" style="--ar:' + (+f.ar || 1.414) + '"><div class="rcimg"><img src="img/' + esc(f.deck) + '/p' + pad3(f._p) + '.jpg" alt="p.' + f._p + ' 슬라이드" decoding="async" draggable="false">'
-    + ms.map(m => '<button type="button" class="rcm' + (m[4] >= 4 ? ' l4' : '') + '" style="left:' + pct(m[0]) + ';top:' + pct(m[1]) + ';width:' + pct(m[2]) + ';height:' + pct(m[3]) + '" aria-pressed="false" aria-label="가린 말, 누르면 보여요" data-t="' + esc(m[5] || '') + '"></button>').join('')
+    + ms.map((m, i) => '<button type="button" class="rcm' + (m[4] >= 4 ? ' l4' : '') + '" style="left:' + pct(m[0]) + ';top:' + pct(m[1]) + ';width:' + pct(m[2]) + ';height:' + pct(m[3]) + '" aria-pressed="false" aria-label="가린 말 ' + (i + 1) + '번, 누르면 보여요" data-i="' + i + '" data-t="' + esc(m[5] || '') + '"></button>').join('')
     + '</div><div class="rcbar"><span class="rccap num">p.' + f._p + (f.lv ? (ms.length ? ', 가린 ' + (f.lv >= 2 ? '줄 ' : '말 ') + ms.length + '개 중 <b class="rcopen">0</b>개 봤어요' : ', 이 쪽은 가린 말이 없어요') : '') + '</span>'
     + (ms.length ? '<button type="button" class="btn sm rcall">전부 보기</button>' : '') + '</div></div>';
   return {
-    html, steps: 0,
+    html,
+    // 가린 칸 하나가 한 단계. 그래서 화살표 키와 화면 누르기로 차례대로 열린다.
+    steps: ms.length,
+    // 플레이어가 단계를 바꿀 때마다 불린다. 앞에서부터 step 개를 연다.
+    onStep: (step, el) => {
+      const btns = $$('.rcm', el);
+      btns.forEach((b, i) => {
+        const on = i < step;
+        b.classList.toggle('open', on);
+        b.setAttribute('aria-pressed', on ? 'true' : 'false');
+        b.setAttribute('aria-label', on ? b.dataset.t + ', 이미 봤어요' : '가린 말 ' + (i + 1) + '번, 누르면 보여요');
+      });
+      const cnt = $('.rcopen', el); if (cnt) cnt.textContent = step;
+      const all = $('.rcall', el); if (all) all.textContent = step >= btns.length ? '다시 가리기' : '전부 보기';
+      // 막 열린 칸이 화면 밖이면 그만큼만 스크롤
+      if (step > 0 && btns[step - 1]) keepVisible(btns[step - 1]);
+    },
     after: el => {
       const box = $('.rcimg', el); if (!box) return;
-      const btns = $$('.rcm', box), all = $('.rcall', el), cnt = $('.rcopen', el);
-      const set = (b, on) => { b.classList.toggle('open', on); b.setAttribute('aria-pressed', on ? 'true' : 'false'); b.setAttribute('aria-label', on ? b.dataset.t + ', 누르면 다시 가려요' : '가린 말, 누르면 보여요'); };
-      const sync = () => { const n = btns.filter(b => b.classList.contains('open')).length; if (cnt) cnt.textContent = n; if (all) all.textContent = n === btns.length ? '다시 가리기' : '전부 보기'; };
-      box.addEventListener('click', e => { e.stopPropagation(); const b = e.target.closest('.rcm'); if (!b) return; set(b, !b.classList.contains('open')); sync(); });
-      btns.forEach(b => b.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') e.stopPropagation(); }));
+      const n = $$('.rcm', box).length;
+      // 칸을 직접 눌렀을 때: 그 칸까지 한 번에 연다 (이미 열린 칸을 누르면 그 앞까지만 남긴다)
+      box.addEventListener('click', e => {
+        const b = e.target.closest('.rcm');
+        if (!b) return;                       // 칸이 아닌 곳은 그냥 두어 화면 누르기(앞뒤로 넘기기)가 되게 한다
+        e.stopPropagation();
+        if (!P) return;
+        const i = +b.dataset.i;
+        P.step = b.classList.contains('open') ? i : i + 1;
+        pApply(true);
+      });
+      $$('.rcm', box).forEach(b => b.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') e.stopPropagation(); }));
       const bar = $('.rcbar', el); if (bar) bar.addEventListener('click', e => e.stopPropagation());
-      if (all) all.addEventListener('click', e => { e.stopPropagation(); const open = btns.some(b => !b.classList.contains('open')); btns.forEach(b => set(b, open)); sync(); });
+      const all = $('.rcall', el);
+      if (all) all.addEventListener('click', e => {
+        e.stopPropagation();
+        if (!P) return;
+        P.step = P.step >= n ? 0 : n;
+        pApply(true);
+      });
     },
   };
 }
