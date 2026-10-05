@@ -57,6 +57,15 @@ for name in ("exam.json", "past.json", "practice_cards.json"):
                     bad.append((tag, "수식 안에 한글: %s" % inner[:40], s[:90]))
                 elif not re.search(r"[A-Za-z0-9\\]", inner):
                     bad.append((tag, "수식이 부호뿐: %r" % inner[:20], s[:90]))
+                # begin/end 짝과 중괄호 짝. 어긋나면 KaTeX 가 통째로 못 그려서
+                # 화면에 날것 글자가 그대로 나온다.
+                begs = re.findall(r"\\begin\{(\w+)\}", inner)
+                ends = re.findall(r"\\end\{(\w+)\}", inner)
+                if begs != ends:
+                    bad.append((tag, "begin/end 짝이 안 맞음: %s vs %s" % (begs, ends), s[:90]))
+                if inner.count("{") != inner.count("}"):
+                    bad.append((tag, "중괄호 짝이 안 맞음 (%d vs %d)"
+                                % (inner.count("{"), inner.count("}")), s[:90]))
 
 print("어긋난 자리 %d곳" % len(bad))
 seen = set()
