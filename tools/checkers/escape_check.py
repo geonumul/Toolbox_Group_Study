@@ -14,10 +14,10 @@ import sys
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
 BASE = pathlib.Path(r"D:/GRAPH_LECTURE_OJLEE/02_작업/그래프신경망/최종정리/_작업/시험지")
 
-# 파이썬이 다른 뜻으로 읽어 버리는 글자들
-DANGER = "abfnrtv0123456789xNuU"
-# 한 겹 역슬래시 + 위험 글자 (앞에 역슬래시가 더 없을 때)
-PAT = re.compile(r"(?<!\\)\\([%s])" % DANGER)
+# 한 겹 역슬래시 + 글자 셋 이상. TeX 명령은 늘 \tilde, \times, \frac 처럼 길다.
+# 한 글자만 보면 "\n".join 처럼 진짜 줄바꿈을 TeX 로 잘못 알고 고쳐 버린다.
+# 2026-10-05 에 그 사고로 build_exam.py 의 기호 찾기가 두 번 망가져서 조건을 좁혔다.
+PAT = re.compile(r"(?<![\\\w])\\([a-zA-Z]{3,})")
 
 total = 0
 for p in sorted(BASE.glob("*.py")):
