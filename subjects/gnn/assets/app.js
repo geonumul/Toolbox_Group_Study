@@ -2440,6 +2440,41 @@ async function pageExamHub() {
     + Object.keys(E.groups || {}).map(gk => '<a class="chip' + (q.group === gk ? ' on' : '') + '" href="#/exam?group=' + encodeURIComponent(gk) + '">'
         + (GNAME[gk] || '문제 ') + E.items.filter(x => x.group === gk).length + '개</a>').join('')
     + (E.pdf ? '<a class="chip" href="' + esc(E.pdf) + '" target="_blank" rel="noopener">시험지 PDF</a>' : '') + '</div>';
+  // 출제 배분표. 교수님이 알려 준 "한 주차에 두 문항씩 12문항" 을 그대로 보여 준다.
+  if (E.blueprint && E.blueprint.length) {
+    const x = E.exam || {};
+    h += '<div class="termbar" style="display:block"><b>출제 배분 (교수님이 알려 주신 것)</b>'
+      + '<div class="muted" style="margin-top:4px">' + esc(x.when || '') + ' &middot; ' + esc(x.n || '')
+      + ' &middot; 범위 ' + esc(x.range || '') + '</div>'
+      + (x.todo ? '<div class="muted" style="margin-top:2px">' + esc(x.todo) + '</div>' : '')
+      + '<div class="pillrow" style="margin-top:10px">'
+      + E.blueprint.map(b => {
+          const got = b.have || 0, need = b.n || 0;
+          const state = b.out ? '범위 밖' : (got >= need && need ? '준비됨 ' + got + '개' : got ? '모자람 ' + got + '/' + need : '아직 없음');
+          return '<a class="chip' + (week === b.week ? ' on' : '') + '" href="#/exam?week=' + encodeURIComponent(b.week) + '">'
+            + esc(weekName(b.week)) + ' <b>' + (b.out ? '0' : need) + '문항</b> &middot; ' + state + '</a>';
+        }).join('')
+      + '</div>'
+      + '<ul class="muted" style="margin:10px 0 0 18px;padding:0">'
+      + E.blueprint.map(b => '<li>' + esc(weekName(b.week)) + ': ' + fmt(b.note || '', false) + '</li>').join('')
+      + '</ul></div>';
+    // 주차를 고른 상태면 그 주차에서 가장 나올 만한 둘을 맨 위에 세운다.
+    const bp = E.blueprint.filter(b => b.week === week)[0];
+    if (bp && (bp.pick || []).length) {
+      h += '<h3 class="dsec" style="margin-top:22px">이 주차에서 가장 나올 만한 ' + bp.pick.length + '개</h3>'
+        + '<p class="tipline">고른 근거는 <b>기출 빈도</b>와 <b>교수님이 직접 짚은 것</b> 둘뿐이에요. '
+        + '7주차에 실제 문제를 알려 주시면 다시 걸러요.</p>'
+        + '<div class="drillgrid">' + bp.pick.map((pk, pi) => {
+            const r = (store.exam || {})[pk.id] || {};
+            return '<a class="dcard' + (r.done ? ' done' : '') + '" href="#/exam/' + encodeURIComponent(pk.id) + '">'
+              + '<span class="dshot"><img src="' + esc(pk.img) + '" alt="" loading="lazy" decoding="async"></span>'
+              + '<span class="dbody"><span class="dtags"><span class="dtag ex">' + (pi + 1) + '순위</span>'
+              + '<span class="dtag wk">' + esc(pk.topic) + '</span></span>'
+              + '<span class="dt">' + fmt(pk.title, false) + '</span>'
+              + '<span class="dask">' + fmt(pk.why || '', false) + '</span></span></a>';
+          }).join('') + '</div>';
+    }
+  }
   if (E.plan) {
     h += '<div class="qbtns" style="margin-top:12px"><a class="qbtn" href="' + esc(E.plan.href) + '" target="_blank" rel="noopener">'
       + '<b>' + esc(E.plan.label) + '</b><span class="num">인쇄해서 체크하며 쓰는 플래너. 그래프신경망, 조직심리학, 자연어처리가 같이 들어 있어요</span></a></div>';
@@ -2459,7 +2494,8 @@ async function pageExamHub() {
     return '<a class="dcard' + (r.done ? ' done' : '') + '" href="#/exam/' + encodeURIComponent(it.id) + '">'
       + '<span class="dshot"><img src="' + esc((it.imgs && it.imgs[0]) || it.img) + '" alt="" loading="lazy" decoding="async"></span>'
       + '<span class="dbody"><span class="dtags"><span class="dtag ex">' + (it.group === 'drill' ? it.round + '회차 ' + it.n + '번' : it.n + '번') + '</span>'
-      + '<span class="dtag wk">' + esc(it.examName || it.topic || weekName(it.week)) + '</span></span>'
+      + '<span class="dtag wk">' + esc(it.examName || it.topic || weekName(it.week)) + '</span>'
+      + (it.scope === 'out' ? '<span class="dtag">시험 범위 밖</span>' : '') + '</span>'
       + '<span class="dt">' + (it.group === 'drill' ? '' : '<em class="dmodel">' + esc(it.topic || '') + '</em>') + fmt(it.title, false) + '</span>'
       + '<span class="dask">' + fmt(it.ask || '', false) + '</span>'
       + '<span class="dstate"><span>' + (it.group === 'real' ? '해설 ' + (it.sols || []).length + '장' : it.group === 'drill' ? '풀이 ' + it.slides.length + '장' : '기출형 ' + it.slides.length + '장 풀이') + '</span><span>' + (r.done ? '다 봤어요' : '') + '</span></span></span></a>';
