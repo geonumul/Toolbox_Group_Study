@@ -729,6 +729,8 @@ item("s3-hw2_31", "3", "S3", [92], "과제", "2.31", "차분방정식 재귀로 
 
 # 3장 (S5) 예제는 ch3.py 에 있다. 불러오기만 하면 ITEMS 에 붙는다.
 import ch3   # noqa: E402,F401
+# 3장 HOMEWORK (p.44~46) 는 ch3_hw.py 에 있다 (2026-10-06 에 보류를 풀고 넣었다).
+import ch3_hw   # noqa: E402,F401
 
 write(os.path.join(HERE, "drill.json"),
       "강의자료에 적힌 예제와 과제만",

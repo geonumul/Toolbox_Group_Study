@@ -171,7 +171,8 @@ const weekOf = id => META.weeks.find(x => x.id === id);
 const weekName = id => { const w = weekOf(id); return w ? w.short : id + '주차'; };
 function updateBadges() {
   const wn = Object.keys(store.wrong).filter(k => !store.wrong[k].resolved && BY_ID[k]).length;
-  $('#wrongBadge').textContent = wn ? wn : '';
+  // 시험 대비만 쓸 때는 오답노트 탭이 없어서 이 자리가 비어 있다
+  if ($('#wrongBadge')) $('#wrongBadge').textContent = wn ? wn : '';
   const ks = Object.keys(store.seen); let ok = 0, att = 0;
   ks.forEach(k => { ok += store.seen[k].ok; att += store.seen[k].n; });
   $('#hstat').textContent = ks.length ? '푼 문제 ' + ks.length + '개, 정답률 ' + Math.round(ok / att * 100) + '%' : '';
@@ -358,7 +359,11 @@ function overallNext() {
 }
 
 /* ---------- 홈 ---------- */
-function pageHome() {
+// 2026-10-06 사용자 요청: 이 사이트는 시험 대비 칸만 쓴다.
+// 홈으로 들어오면 바로 시험 대비로 보낸다. 나머지 길(#/week, #/lesson ...)은
+// 데이터를 안 내보내서 비어 있지만, 되살릴 때를 위해 코드는 남겨 두었다.
+function pageHome() { pageExamHub(); }
+function pageHomeFull() {
   const nx = overallNext();
   let h = '<section class="intro"><div><div class="eyebrow">그래프 신경망 2026 가을, 이오준 교수님</div>'
     // 큰 버튼은 "마지막으로 본 곳" 이 먼저다. 순서대로 가는 길은 그 옆에 둔다.
@@ -2419,7 +2424,7 @@ function examCard(week) {
     + (seen ? ', 끝낸 것 ' + seen + '개' : '') + '</div></div><div class="btnrow" style="margin:0"><a class="btn primary" href="#/exam?week=' + encodeURIComponent(week) + '">문제 보기</a></div></div>';
 }
 async function pageExamHub() {
-  if (!examInfo()) { location.replace('#/'); return; }
+  if (!examInfo()) { APP().innerHTML = '<div class="empty"><b>시험 대비 자료가 없어요</b></div>'; return; }
   APP().innerHTML = '<div class="empty"><b>시험지를 불러오는 중</b></div>';
   if (!await examLoad()) { APP().innerHTML = '<a class="back" href="#/">홈</a><div class="empty"><b>아직 준비되지 않았어요</b></div>'; return; }
   const E = EXAM();
@@ -2433,13 +2438,14 @@ async function pageExamHub() {
   let list = week ? ofWeek(week) : E.items;
   if (q.group) list = list.filter(x => x.group === q.group);
   const done = store.exam || (store.exam = {});
-  let h = '<a class="back" href="' + (week ? '#/week/' + week : '#/') + '">' + (week ? esc(weekName(week)) : '홈') + '</a>'
+  let h = (week ? '<a class="back" href="#/exam">시험 대비 전체</a>' : '')
     + '<div class="whead"><div class="eyebrow">시험 대비</div><h1>' + esc(E.title || '기출형 문제') + '</h1><p>' + fmt(E.intro || '') + '</p></div>';
   h += '<div class="pillrow"><a class="chip' + (week ? '' : ' on') + '" href="#/exam">전부 ' + E.items.length + '문제</a>'
     + weeks.map(id => '<a class="chip' + (week === id ? ' on' : '') + '" href="#/exam?week=' + encodeURIComponent(id) + '">' + esc(weekName(id)) + ' ' + ofWeek(id).length + '개</a>').join('')
     + Object.keys(E.groups || {}).map(gk => '<a class="chip' + (q.group === gk ? ' on' : '') + '" href="#/exam?group=' + encodeURIComponent(gk) + '">'
         + (GNAME[gk] || '문제 ') + E.items.filter(x => x.group === gk).length + '개</a>').join('')
-    + (E.pdf ? '<a class="chip" href="' + esc(E.pdf) + '" target="_blank" rel="noopener">시험지 PDF</a>' : '') + '</div>';
+    + (E.mock ? '<a class="chip" href="' + esc(E.mock.href) + '" target="_blank" rel="noopener">예상 시험지 PDF</a>' : '')
+    + (E.pdf ? '<a class="chip" href="' + esc(E.pdf) + '" target="_blank" rel="noopener">전체 시험지 PDF</a>' : '') + '</div>';
   // 출제 배분표. 교수님이 알려 준 "한 주차에 두 문항씩 12문항" 을 그대로 보여 준다.
   if (E.blueprint && E.blueprint.length) {
     const x = E.exam || {};
@@ -2474,6 +2480,11 @@ async function pageExamHub() {
               + '<span class="dask">' + fmt(pk.why || '', false) + '</span></span></a>';
           }).join('') + '</div>';
     }
+  }
+  if (E.mock) {
+    h += '<div class="qbtns" style="margin-top:12px"><a class="qbtn" href="' + esc(E.mock.href) + '" target="_blank" rel="noopener">'
+      + '<b>' + esc(E.mock.label) + '</b><span class="num">교수님이 알려 준 배분 그대로 주차 차례로 다시 매긴 시험지예요. '
+      + '7주차 두 문항은 자료가 나오면 채워요</span></a></div>';
   }
   if (E.plan) {
     h += '<div class="qbtns" style="margin-top:12px"><a class="qbtn" href="' + esc(E.plan.href) + '" target="_blank" rel="noopener">'
@@ -2519,21 +2530,27 @@ async function pageExamHub() {
   sect(rest.filter(x => x.group !== 'real'));
 
   if (drill.length) {
-    const by = q.by === 'model' ? 'model' : 'round';
+    const by = (q.by === 'model' || q.by === 'week') ? q.by : 'week';
     h += '<h3 class="dsec">' + esc((E.groups || {}).drill || '연습 문제') + '</h3>'
       + '<p class="tipline">같은 틀에 숫자만 바꾼 문제예요. <b>그 모델을 위에서 배운 다음</b> 푸는 것이 가장 남아요. '
       + '묶음을 눌러 펴면 카드가 나와요. '
-      + '<b>회차별</b> 은 시험지 순서대로, <b>모델별</b> 은 한 모델을 몰아서 풀 때 좋아요.</p>'
-      + '<div class="pillrow"><a class="chip' + (by === 'round' ? ' on' : '') + '" href="#/exam?by=round">회차별</a>'
-      + '<a class="chip' + (by === 'model' ? ' on' : '') + '" href="#/exam?by=model">모델별</a></div>';
+      + '<b>주차별</b> 은 교수님이 알려 준 배분대로, <b>모델별</b> 은 한 모델을 몰아서, '
+      + '<b>회차별</b> 은 시험지 순서대로 볼 때 좋아요. 1주차는 올해 시험 범위가 아니라 맨 뒤로 뺐어요.</p>'
+      + '<div class="pillrow"><a class="chip' + (by === 'week' ? ' on' : '') + '" href="#/exam?by=week">주차별</a>'
+      + '<a class="chip' + (by === 'model' ? ' on' : '') + '" href="#/exam?by=model">모델별</a>'
+      + '<a class="chip' + (by === 'round' ? ' on' : '') + '" href="#/exam?by=round">회차별</a></div>';
     const keys = [];
-    drill.forEach(it => { const k = by === 'round' ? it.round : (it.topic || '기타'); if (keys.indexOf(k) < 0) keys.push(k); });
+    const keyOf = it => by === 'round' ? it.round
+      : by === 'week' ? (weekName(it.week) + (it.scope === 'out' ? ' (시험 범위 밖)' : ''))
+      : (it.topic || '기타');
+    drill.forEach(it => { const k = keyOf(it); if (keys.indexOf(k) < 0) keys.push(k); });
+    if (by === 'week') keys.sort((a, b) => (a.indexOf('범위 밖') >= 0 ? 1 : 0) - (b.indexOf('범위 밖') >= 0 ? 1 : 0) || a.localeCompare(b, 'ko'));
     if (by === 'model') keys.sort((a, b) => {
       const na = drill.find(x => x.topic === a), nb = drill.find(x => x.topic === b);
       return (na ? na.n : 99) - (nb ? nb.n : 99);
     });
     keys.forEach(k => {
-      const got = drill.filter(it => (by === 'round' ? it.round : (it.topic || '기타')) === k);
+      const got = drill.filter(it => keyOf(it) === k);
       const fin = got.filter(it => (done[it.id] || {}).done).length;
       h += '<details class="dfold"><summary><b>' + esc(by === 'round' ? k + '회차' : k) + '</b>'
         + '<span class="num">' + got.length + '문제' + (fin ? ', 끝낸 것 ' + fin + '개' : '') + '</span></summary>'
@@ -2546,9 +2563,9 @@ async function pageExamHub() {
   countTerms(APP());
 }
 async function pageExam(id, jump) {
-  if (!examInfo()) { location.replace('#/'); return; }
+  if (!examInfo()) { APP().innerHTML = '<div class="empty"><b>시험 대비 자료가 없어요</b></div>'; return; }
   APP().innerHTML = '<div class="empty"><b>시험지를 불러오는 중</b></div>';
-  if (!await examLoad()) { location.replace('#/'); return; }
+  if (!await examLoad()) { APP().innerHTML = '<div class="empty"><b>시험지를 못 불러왔어요</b></div>'; return; }
   const E = EXAM();
   const idx = E.items.findIndex(x => x.id === decodeURIComponent(id));
   if (idx < 0) { location.replace('#/exam'); return; }

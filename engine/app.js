@@ -203,7 +203,8 @@ const weekOf = id => META.weeks.find(x => x.id === id);
 const weekName = id => { const w = weekOf(id); return w ? w.short : id + '주차'; };
 function updateBadges() {
   const wn = Object.keys(store.wrong).filter(k => !store.wrong[k].resolved && BY_ID[k]).length;
-  $('#wrongBadge').textContent = wn ? wn : '';
+  // drillOnly 과목은 오답노트 탭이 없어서 이 자리가 비어 있다
+  if ($('#wrongBadge')) $('#wrongBadge').textContent = wn ? wn : '';
   const ks = Object.keys(store.seen); let ok = 0, att = 0;
   ks.forEach(k => { ok += store.seen[k].ok; att += store.seen[k].n; });
   $('#hstat').textContent = ks.length ? '푼 문제 ' + ks.length + '개, 정답률 ' + Math.round(ok / att * 100) + '%' : '';
@@ -420,6 +421,8 @@ function pageHomeQuizOnly() {
   APP().innerHTML = h;
 }
 function pageHome() {
+  // drillOnly 과목(신호및시스템)은 '예제와 과제만' 칸 하나만 쓴다. 홈이 곧 그 칸이다.
+  if (META.drillOnly) { pageDrillHub(); return; }
   if (META.quizOnly && rvDecks().length) { pageHomeQuizOnly(); return; }
   const nx = overallNext();
   const dueAll = Object.keys(TERM).filter(k => termDue(TERM[k])).length;
@@ -2178,6 +2181,13 @@ async function pageDrillHub() {
     + weeks.map(id => '<a class="chip' + (week === id ? ' on' : '') + '" href="#/drill?week=' + encodeURIComponent(id) + '">' + esc(weekName(id)) + ' ' + drillOf(id).length + '개</a>').join('')
     + (nOut ? '<a class="chip' + (only ? ' on' : '') + '" href="#/drill?' + (week ? 'week=' + encodeURIComponent(week) : 'scope=in') + '">시험 범위만</a>'
       + '<a class="chip' + (only ? '' : ' on') + '" href="#/drill?' + (week ? 'week=' + encodeURIComponent(week) + '&' : '') + 'scope=all">범위 밖 ' + nOut + '개도 보기</a>' : '') + '</div>';
+  // 인쇄해서 풀 시험지와 해설지 (build_site.py 가 02_작업/<과목>/시험지 에서 가져온다)
+  if ((META.papers || []).length) {
+    h += '<div class="qbtns" style="margin-top:12px">' + META.papers.map(x =>
+      '<a class="qbtn" href="' + esc(x.href) + '" target="_blank" rel="noopener"><b>' + esc(x.label) + '</b>'
+      + '<span class="num">' + (x.label.indexOf('해설') >= 0 ? '문제 아래에 풀이가 바로 이어져요' : '인쇄해서 풀어 보세요') + '</span></a>').join('')
+      + '</div>';
+  }
   const nq = k => BANK.filter(x => srcKind(x) === k && (!week || x.part === week)).length;
   h += '<div class="qbtns" style="margin-top:12px">'
     + (nq('예제') ? '<a class="qbtn" href="#/quiz?week=' + (week || 'all') + '&src=' + encodeURIComponent('예제') + '&n=0&start=1"><b>예제 문항만 풀기</b><span class="num">' + nq('예제') + '문항</span></a>' : '')

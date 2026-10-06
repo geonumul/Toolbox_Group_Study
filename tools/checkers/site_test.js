@@ -8,6 +8,7 @@ let html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8')
 const dom = new JSDOM(html, { runScripts: 'dangerously', pretendToBeVisual: true, url: 'https://example.test/' });
 const w = dom.window, d = w.document; w.scrollTo = () => {}; w.HTMLElement.prototype.scrollIntoView = () => {}; w.confirm = () => true;
 const errs = []; w.addEventListener('error', e => errs.push(e.message));
+process.on('unhandledRejection', r => errs.push('rejected: ' + (r && r.message || r)));
 // 동적 스크립트(lesson, notes)를 파일에서 읽어 실행
 const origAppend = d.head.appendChild.bind(d.head);
 d.head.appendChild = el => {
@@ -27,6 +28,34 @@ const go = async h => { w.location.hash = h; await wait(60); };
   console.log('home cards:', $$('.wcard').length, 'plan cells:', $$('.pcell').length, 'tools:', $$('.tool').length);
   const meta = w.GNN_META || w.SDT_META;   // GNN 저장소는 GNN_META, 과목 사이트는 SDT_META
   const weeks = (meta.weeks || []).map(x => String(x.id));
+  // 시험 대비만 쓰는 GNN 저장소는 주차 칸과 문제 칸이 없다. 시험 대비만 본다.
+  if (meta.exam && !(meta.decks && Object.keys(meta.decks).length)) {
+    await go('#/exam'); await wait(600);
+    const n = $$('.dcard').length;
+    console.log('시험 대비만: 문항 카드', n, '개');
+    if (!n) errs.push('시험 대비 카드가 안 나와요');
+    const shot = $('.dcard .dshot img');
+    console.log('  카드 그림', shot ? shot.getAttribute('src') : '없음');
+    if (shot && !fs.existsSync(path.join(ROOT, shot.getAttribute('src')))) errs.push('카드 그림 파일이 없어요: ' + shot.getAttribute('src'));
+    console.log('errors:', errs.length ? errs.slice(0, 10) : '없음');
+    process.exit(0);
+  }
+  // '예제와 과제만' 쓰는 과목(drillOnly)은 문제 칸과 용어 칸이 없다. 그 검사는 건너뛴다.
+  if (meta.drillOnly) {
+    await go('#/drill'); await wait(1500);   // 예제와 과제 데이터는 그때 읽어 온다
+    const n = $$('.dcard').length;
+    console.log('drillOnly: 홈이 예제와 과제, 카드', n, '개');
+    if (!n) errs.push('예제와 과제 카드가 홈에 안 나와요');
+    const shot = $('.dcard .dshot img');
+    console.log('  카드 그림', shot ? shot.getAttribute('src') : '없음');
+    if (!shot) errs.push('카드에 문제 그림이 안 나와요');
+    else if (!fs.existsSync(path.join(ROOT, shot.getAttribute('src')))) errs.push('카드 그림 파일이 없어요: ' + shot.getAttribute('src'));
+    const first = $('.dcard');
+    if (first) { await go(first.getAttribute('href')); await wait(200);
+      console.log('  첫 문제 열림:', (($('#app') || {}).innerHTML || '').indexOf('pstage') >= 0 || !!$('#pslide')); }
+    console.log('errors:', errs.length ? errs.slice(0, 10) : '없음');
+    process.exit(0);
+  }
   for (const wk of weeks) { await go('#/week/' + wk); console.log('week', wk, 'ptiles', $$('.ptile').length, 'units', $$('.ucard').length, 'qbtns', $$('.qbtn').length); }
   // ---------- 주차마다 "이 주차를 보려면 이 기초가 필요해요" 줄 (.prebar) ----------
   // 기초 단원의 for (그 단원의 "어디에 나오나" 슬라이드에서 나온 주차 목록) 나 meta.prereq 에서 온다.

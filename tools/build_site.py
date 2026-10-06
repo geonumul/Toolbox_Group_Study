@@ -22,7 +22,7 @@
   저장소 루트 index.html 의 과목 카드 숫자
 화면 코드는 engine/ (모든 과목 공통), 로그인은 assets/sync.js.
 """
-import datetime, hashlib, html, json, pathlib, re, sys
+import datetime, hashlib, html, json, pathlib, re, shutil, sys
 
 sys.stdout.reconfigure(encoding="utf-8")
 ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -187,8 +187,14 @@ def main(slug, skip, home=True):
             item["more"] = t["more"].strip()
         terms[week].append(item)
 
+    # drillOnly 과목은 '예제와 과제만' 칸 하나만 쓴다. 나머지 자료는 안 내보낸다.
+    # 만드는 코드는 그대로 두었으니 subject.json 에서 drillOnly 를 빼면 되살아난다.
+    DRILL_ONLY = bool(cfg.get("drillOnly"))
+    if DRILL_ONLY:
+        meta["drillOnly"] = True
+
     # 1) 회독 레슨
-    for deck, d in cfg.get("decks", {}).items():
+    for deck, d in ({} if DRILL_ONLY else cfg.get("decks", {})).items():
         week = d["week"]
         meta["deckWeek"][deck] = week
         total = d.get("total") or len(list((SITE / "img" / deck).glob("p*.jpg")))
@@ -404,15 +410,16 @@ def main(slug, skip, home=True):
     # quizOnly 과목은 주차 탭을 두지 않는다. 외우기만 하면 되는 과목이라 화면이 둘이면 된다.
     #   시험 대비(#/review): 회독 > 주차로 들어가 슬라이드를 가리고 외운다
     #   문제(#/quiz): 외운 것을 풀어서 확인한다. 주차 고르기는 문제 쪽 안에 있다
-    if not cfg.get("quizOnly"):
+    if not cfg.get("quizOnly") and not DRILL_ONLY:
         nav += [f'<a class="tab" data-nav="w{w["id"]}" href="#/week/{w["id"]}">{html.escape(w["short"])}</a>' for w in weeks]
-    if meta.get("recallWeeks"):
+    if meta.get("recallWeeks") and not DRILL_ONLY:
         nav.append('<a class="tab" data-nav="review" href="#/review">시험 대비</a>')
     if meta.get("drill") and not cfg.get("quizOnly"):
         nav.append(f'<a class="tab" data-nav="drill" href="#/drill">{html.escape(meta["drill"]["label"])}</a>')
-    nav += ['<a class="tab" data-nav="quiz" href="#/quiz">문제</a>',
+    if not DRILL_ONLY:
+        nav += ['<a class="tab" data-nav="quiz" href="#/quiz">문제</a>',
             '<a class="tab" data-nav="wrong" href="#/wrong">오답노트 <span id="wrongBadge" class="badge"></span></a>']
-    if not cfg.get("quizOnly") and any(str(t.get("say") or "").strip() for lst in terms.values() for t in lst):
+    if not cfg.get("quizOnly") and not DRILL_ONLY and any(str(t.get("say") or "").strip() for lst in terms.values() for t in lst):
         nav.append('<a class="tab" data-nav="game" href="#/game">용어 게임</a>')
     if "exams" in pages:
         nav.append(f'<a class="tab" data-nav="exams" href="#/exams">{html.escape(cfg.get("examsNav") or "기출 분석")}</a>')
@@ -426,8 +433,55 @@ def main(slug, skip, home=True):
             .replace("__LOGO__", "" if slug in ("eco-architecture", "modern-space-design") else LOGOS.get(slug, DEFAULT_LOGO))
             .replace("__DESC__", html.escape(name + ": 강의 회독, 정리 슬라이드, 용어 카드, 문제은행"))
             .replace("__NAV__", "\n".join("      " + x for x in nav))
-            .replace("__VIZ__", viz_tags(W, ver)))
+            .replace("__VIZ__", viz_tags(W, ver))
+            # drillOnly 과목은 "예제와 과제" 가 홈이라 그 데이터를 지연 로딩하지 않고 바로 싣는다
+            .replace("__DRILL__", f'<script src="data/drill.js?v={ver}" defer></script>' if DRILL_ONLY else ""))
     write(SITE / "index.html", page)
+
+    # 5-0) 인쇄용 시험지와 해설지 (있으면 '예제와 과제' 화면에서 링크한다).
+    #      만드는 곳은 02_작업/<과목>/시험지/build_paper.py
+    paper_src = ROOT.parents[1] / "02_작업" / cfg["name"] / "시험지"   # 03_사이트/<저장소> 에서 두 칸 위
+    papers = []
+    if paper_src.exists():
+        (SITE / "pdf").mkdir(parents=True, exist_ok=True)
+        for f in sorted(paper_src.glob("*_2026_중간.pdf")):
+            shutil.copyfile(f, SITE / "pdf" / f.name)
+            papers.append({"name": f.name,
+                           "label": "해설지 PDF" if f.name.startswith("해설") else "시험지 PDF",
+                           "href": f"pdf/{f.name}"})
+        if papers:
+            meta["papers"] = papers
+            write(SITE / "data" / "meta.js", js_assign("SDT_META", None, meta))
+            print(f"  인쇄용 PDF {len(papers)}개")
+
+    # 5-1) drillOnly 과목은 안 쓰는 데이터와 슬라이드 그림을 치운다 (수십 MB 가 된다).
+    if DRILL_ONLY:
+        # 엔진과 검사기가 늘 찾는 파일은 **빈 것으로** 남긴다. 지우면 화면이 깨진다.
+        keep = {"meta.js", "drill.js", "pages.js", "bank.js", "terms.js"}
+        gone = 0
+        for f in (SITE / "data").glob("*.js"):
+            if f.name not in keep:
+                f.unlink(); gone += 1
+        write(SITE / "data" / "bank.js", js_assign("SDT_BANK", None, []))
+        write(SITE / "data" / "terms.js", js_assign("SDT_TERMS", None, {w["id"]: [] for w in weeks}))
+        # 슬라이드 그림은 '예제와 과제' 가 쓰는 쪽만 남긴다 (문제 그림이라 꼭 있어야 한다).
+        used = set()
+        for x in (meta.get("drill") or {}).get("ids", []):
+            pass
+        dd2 = json.loads((W / "drill" / "drill.json").read_text(encoding="utf-8")) if dfile.exists() else {"items": []}
+        for x in dd2.get("items", []):
+            for pg in x.get("pages", []):
+                used.add("%s/p%03d.jpg" % (x["deck"], pg))
+        if (SITE / "img").exists():
+            for f in (SITE / "img").rglob("p*.jpg"):
+                if f"{f.parent.name}/{f.name}" not in used:
+                    f.unlink(); gone += 1
+            for d2 in list((SITE / "img").iterdir()):
+                if d2.is_dir() and not any(d2.iterdir()):
+                    d2.rmdir()
+        print(f"  슬라이드 그림은 문제에 쓰는 {len(used)}장만 남겼어요")
+        if gone:
+            print(f"  '예제와 과제만' 으로 줄였어요 (안 쓰는 데이터 {gone}개 치움)")
 
     # 6) 검사
     for p in list((SITE / "data").glob("*.js")) + [SITE / "index.html"]:

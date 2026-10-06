@@ -15,8 +15,8 @@
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
-<link rel="stylesheet" href="assets/app.css?v=202610061345">
-<link rel="stylesheet" href="assets/site.css?v=202610061345">
+<link rel="stylesheet" href="assets/app.css?v=202610061459">
+<link rel="stylesheet" href="assets/site.css?v=202610061459">
 <link rel="stylesheet" href="../../assets/pet/pet.css">
 </head>
 <body>
@@ -28,18 +28,8 @@
       <span>GNN 회독 스터디</span>
     </a>
     <nav id="nav" aria-label="주요 메뉴">
-      <a class="tab" data-nav="home" href="#/">홈</a>
-      <a class="tab" data-nav="wb" href="#/week/b">기초</a>
-      <a class="tab" data-nav="wc" href="#/week/c">코딩</a>
-      <a class="tab" data-nav="w1" href="#/week/1">1주차</a>
-      <a class="tab" data-nav="w2" href="#/week/2">2주차</a>
-      <a class="tab" data-nav="w3" href="#/week/3">3주차</a>
-      <a class="tab" data-nav="w4" href="#/week/4">4주차</a>
-      <a class="tab" data-nav="w5" href="#/week/5">5주차</a>
+      <!-- 2026-10-06 사용자 요청: 시험 대비 칸만 쓴다. 나머지 칸은 데이터를 안 내보내서 비워 뒀다. -->
       <a class="tab" data-nav="exam" href="#/exam">시험 대비</a>
-      <a class="tab" data-nav="quiz" href="#/quiz">문제</a>
-      <a class="tab" data-nav="wrong" href="#/wrong">오답노트 <span id="wrongBadge" class="badge"></span></a>
-      <a class="tab" data-nav="game" href="#/game">용어 게임</a>
       <a class="tab" data-nav="exams" href="#/exams">기출 분석</a>
       <a class="tab" data-nav="tips" href="#/tips">답안 팁</a>
       <a class="tab" data-nav="set" href="#/settings">설정</a>
@@ -52,14 +42,16 @@
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" defer></script>
-<script src="data/meta.js?v=202610061345" defer></script>
-<script src="data/terms.js?v=202610061345" defer></script>
-<script src="data/bank.js?v=202610061345" defer></script>
-<script src="data/pages.js?v=202610061345" defer></script>
-<script src="assets/ink.js?v=202610061345" defer></script>
-<script src="assets/viz/viz.js?v=202610061345" defer></script>
-<script src="assets/viz/gnn.js?v=202610061345" defer></script>
-<script src="assets/app.js?v=202610061345" defer></script>
+<script src="data/meta.js?v=202610061459" defer></script>
+<script src="data/terms.js?v=202610061459" defer></script>
+<script src="data/bank.js?v=202610061459" defer></script>
+<script src="data/pages.js?v=202610061459" defer></script>
+<!-- 시험 대비가 홈이라 그 데이터는 지연 로딩하지 않고 바로 싣는다 -->
+<script src="data/exam.js?v=202610061459" defer></script>
+<script src="assets/ink.js?v=202610061459" defer></script>
+<script src="assets/viz/viz.js?v=202610061459" defer></script>
+<script src="assets/viz/gnn.js?v=202610061459" defer></script>
+<script src="assets/app.js?v=202610061459" defer></script>
 <script src="../../assets/firebase-config.js"></script>
 <script src="../../assets/sync.js"></script>
 <script src="../../assets/access-config.js"></script>

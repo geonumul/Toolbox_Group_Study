@@ -26,6 +26,10 @@ def main():
     for name in ("assets", "data", "img", "practice", "exam", "pdf"):
         s, d = SRC / name, DST / name
         if not s.exists():
+            # 원본에 없어진 칸은 여기서도 지운다 (안 지우면 옛 파일이 그대로 남는다)
+            if d.exists():
+                shutil.rmtree(d)
+                print(f"  {name}/ 은 원본에 없어서 지웠어요")
             continue
         if d.exists():
             shutil.rmtree(d)
