@@ -2433,7 +2433,7 @@ async function pageExamHub() {
   const ofWeek = w => E.items.filter(x => x.week === w);
   if (week && !ofWeek(week).length) week = '';
   // 묶음 칩에 쓸 짧은 이름. 예전에는 new 말고는 전부 '기출' 이라 연습 카드도 기출로 보였다.
-  const GNAME = { drill: '연습 카드 ', past: '기출에 나온 모델 ', new: '새 모델 ', het: '6주차 이질성 ', real: '기출 원본 ' };
+  const GNAME = { learn: '이해 카드 ', drill: '연습 카드 ', past: '기출에 나온 모델 ', new: '새 모델 ', het: '6주차 이질성 ', real: '기출 원본 ' };
   const weeks = META.weeks.map(w => w.id).filter(id => ofWeek(id).length);
   let list = week ? ofWeek(week) : E.items;
   if (q.group) list = list.filter(x => x.group === q.group);
@@ -2499,17 +2499,18 @@ async function pageExamHub() {
   }
   // 연습 문제는 85개라 한꺼번에 깔면 못 읽는다. 접었다 펴는 묶음으로 보여 준다.
   const drill = list.filter(x => x.group === 'drill');
-  const rest = list.filter(x => x.group !== 'drill');
+  const learn = list.filter(x => x.group === 'learn');
+  const rest = list.filter(x => x.group !== 'drill' && x.group !== 'learn');
   const card = it => {
     const r = done[it.id] || {};
     return '<a class="dcard' + (r.done ? ' done' : '') + '" href="#/exam/' + encodeURIComponent(it.id) + '">'
       + '<span class="dshot"><img src="' + esc((it.imgs && it.imgs[0]) || it.img) + '" alt="" loading="lazy" decoding="async"></span>'
-      + '<span class="dbody"><span class="dtags"><span class="dtag ex">' + (it.group === 'drill' ? it.round + '회차 ' + it.n + '번' : it.n + '번') + '</span>'
+      + '<span class="dbody"><span class="dtags"><span class="dtag ex">' + (it.group === 'learn' ? (it.n ? '슬라이드 p.' + it.page : '큰 그림') : it.group === 'drill' ? it.round + '회차 ' + it.n + '번' : it.n + '번') + '</span>'
       + '<span class="dtag wk">' + esc(it.examName || it.topic || weekName(it.week)) + '</span>'
       + (it.scope === 'out' ? '<span class="dtag">시험 범위 밖</span>' : '') + '</span>'
       + '<span class="dt">' + (it.group === 'drill' ? '' : '<em class="dmodel">' + esc(it.topic || '') + '</em>') + fmt(it.title, false) + '</span>'
       + '<span class="dask">' + fmt(it.ask || '', false) + '</span>'
-      + '<span class="dstate"><span>' + (it.group === 'real' ? '해설 ' + (it.sols || []).length + '장' : it.group === 'drill' ? '풀이 ' + it.slides.length + '장' : '기출형 ' + it.slides.length + '장 풀이') + '</span><span>' + (r.done ? '다 봤어요' : '') + '</span></span></span></a>';
+      + '<span class="dstate"><span>' + (it.group === 'real' ? '해설 ' + (it.sols || []).length + '장' : it.group === 'learn' ? '설명 ' + it.slides.length + '장' : it.group === 'drill' ? '풀이 ' + it.slides.length + '장' : '기출형 ' + it.slides.length + '장 풀이') + '</span><span>' + (r.done ? '다 봤어요' : '') + '</span></span></span></a>';
   };
   // 차례: 기출에 나온 모델 -> 새 모델 -> 연습 카드 -> 기출 원본.
   // 연습 카드 칸이 가운데 끼므로 모델 칸과 기출 원본 칸을 따로 그린다.
@@ -2527,6 +2528,20 @@ async function pageExamHub() {
     });
     h += '</div>';
   };
+  if (learn.length) {
+    h += '<h3 class="dsec">' + esc((E.groups || {}).learn || '이해 카드') + '</h3>'
+      + '<p class="tipline">답 판 칸마다 하나씩, <b>쉬운 말과 비유</b>, <b>작은 예</b>, <b>답 문장 한 줄씩 풀이</b> 순서예요. '
+      + '주차를 눌러 펴고, 맨 앞 <b>큰 그림</b> 카드부터 보세요. 인쇄용은 이해용 PDF 와 내용이 같아요.</p>';
+    const lw = [];
+    learn.forEach(it => { if (lw.indexOf(it.week) < 0) lw.push(it.week); });
+    lw.forEach(wk => {
+      const got = learn.filter(it => it.week === wk);
+      const fin = got.filter(it => (done[it.id] || {}).done).length;
+      h += '<details class="dfold"' + (week === wk ? ' open' : '') + '><summary><b>' + esc(weekName(wk)) + '</b>'
+        + '<span class="num">' + got.length + '장' + (fin ? ', 다 본 것 ' + fin + '개' : '') + '</span></summary>'
+        + '<div class="drillgrid">' + got.map(card).join('') + '</div></details>';
+    });
+  }
   sect(rest.filter(x => x.group !== 'real'));
 
   if (drill.length) {
@@ -2570,22 +2585,23 @@ async function pageExam(id, jump) {
   const idx = E.items.findIndex(x => x.id === decodeURIComponent(id));
   if (idx < 0) { location.replace('#/exam'); return; }
   const it = E.items[idx], nx = E.items[idx + 1];
-  const label = it.n + '. ' + it.topic;
+  const isL = it.group === 'learn';
+  const label = isL ? (it.n ? 'p.' + it.page + ' ' + it.topic : it.topic) : it.n + '. ' + it.topic;
   const frames = [];
-  frames.push({ kind: 'title', eyebrow: '기출 모양 그대로 만든 문제', big: it.title, sub: it.ask || '' });
+  frames.push({ kind: 'title', eyebrow: isL ? '이해 카드, ' + weekName(it.week) : '기출 모양 그대로 만든 문제', big: it.title, sub: it.ask || '' });
   const qimgs = (it.imgs && it.imgs.length) ? it.imgs : [it.img];
   qimgs.forEach((src, i) => frames.push({ kind: 'slideimg', src: src, alt: label,
     cap: label + (qimgs.length > 1 ? '  (' + (i + 1) + ' / ' + qimgs.length + ')' : '')
-      + '  -  먼저 풀어 보고 넘기세요', _p: it.n, _img: src }));
+      + (isL ? '  -  강의 슬라이드' : '  -  먼저 풀어 보고 넘기세요'), _p: it.n, _img: src }));
   (it.slides || []).forEach((f, i) => frames.push(Object.assign({ _si: i }, f)));
   (it.sols || []).forEach((src, i) => frames.push({ kind: 'slideimg', src: src, alt: '해설',
     cap: '교수님 해설' + ((it.sols.length > 1) ? '  (' + (i + 1) + ' / ' + it.sols.length + ')' : ''),
     _p: it.n, _img: src, _sol: i }));
   const links = [];
-  if (nx) links.push(['다음: ' + nx.n + '. ' + nx.topic, '#/exam/' + encodeURIComponent(nx.id)]);
+  if (nx) links.push(['다음: ' + (nx.group === 'learn' ? (nx.n ? 'p.' + nx.page + ' ' : '') : nx.n + '. ') + nx.topic, '#/exam/' + encodeURIComponent(nx.id)]);
   links.push(['문제 목록', '#/exam']);
   if (E.pdf) links.push(['시험지 PDF', E.pdf]);
-  frames.push({ kind: 'end', big: label + ' 끝', sub: nx ? '다음은 "' + nx.title + '" 이에요.' : '아홉 문제를 다 봤어요. 이제 PDF 로 한 번에 풀어 보세요.', links });
+  frames.push({ kind: 'end', big: label + ' 끝', sub: nx ? '다음은 "' + nx.title + '" 이에요.' : (isL ? '이해 카드를 다 봤어요.' : '아홉 문제를 다 봤어요. 이제 PDF 로 한 번에 풀어 보세요.'), links });
   const all = store.exam || (store.exam = {});
   const rec = all[it.id] = all[it.id] || {};
   startPlayer({
