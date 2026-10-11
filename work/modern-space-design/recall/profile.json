@@ -3,6 +3,6 @@
  "gap_spaces": true,
  "all_lines": true,
  "glossary": [],
- "glossary_units": ["terms/1.json", "terms/2.json", "terms/3.json", "terms/4.json", "terms/5.json", "terms/6.json"],
+ "glossary_units": ["terms/1.json", "terms/2.json", "terms/3.json", "terms/4.json", "terms/5.json", "terms/6.json", "terms/7.json", "terms/8.json", "terms/9.json"],
  "corpus": ["bank/*.json"]
 }

@@ -25,7 +25,7 @@ DECK_WEEK = {"U1": "1", "U2": "2", "U3": "3", "U4": "4", "U5": "5", "U6": "6"}
 
 # 주차별 용어 사전을 한 번에 읽어 둔다 (ko 표기 -> 항목). 앞 단원 용어도 부를 수 있다.
 DICT = {}
-for _w in ("1", "2", "3", "4", "5", "6"):
+for _w in ("1", "2", "3", "4", "5", "6", "7", "8", "9"):
     for _t in json.load(open(os.path.join(TERMS_DIR, _w + ".json"), encoding="utf-8")):
         _ko, _en = (_t.get("ko") or "").strip(), (_t.get("en") or "").strip()
         for key in (_ko, _en, (_ko + "(" + _en + ")") if (_ko and _en) else ""):

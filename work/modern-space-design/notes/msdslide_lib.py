@@ -30,7 +30,7 @@ sys.stdout.reconfigure(encoding="utf-8")
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 WORK = os.path.dirname(HERE)
-WEEKS = ("1", "2", "3", "4", "5", "6")
+WEEKS = ("1", "2", "3", "4", "5", "6", "7", "8", "9")
 
 # 이 과목을 관통하는 주문. 단원마다 한 번은 불러 준다.
 MANTRA = "기계 시대에 건축은 어떻게 생겨야 하나? 싫어 -> 새 장식 -> 정리 -> 없애."
