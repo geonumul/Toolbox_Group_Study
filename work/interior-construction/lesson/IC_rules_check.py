@@ -11,12 +11,12 @@ import json, pathlib, re, sys
 
 sys.stdout.reconfigure(encoding="utf-8")
 L = pathlib.Path(__file__).resolve().parent
-TOTAL = {"L2": 104, "L3": 63}
+TOTAL = {"L2": 104, "L3": 63, "L4": 93, "L5": 53}
 BAD = {"—": "em dash", "–": "en dash", "·": "가운뎃점",
        "•": "불릿 가운뎃점", "・": "가운뎃점"}   # 찾는 글자는 escape 로 적는다
 
 errs = []
-seen = {"L2": set(), "L3": set()}
+seen = {"L2": set(), "L3": set(), "L4": set(), "L5": set()}
 for f in sorted(L.glob("L*_*.json")):
     raw = f.read_text(encoding="utf-8")
     for ch, name in BAD.items():

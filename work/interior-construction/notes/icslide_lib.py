@@ -30,7 +30,7 @@ sys.stdout.reconfigure(encoding="utf-8")
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 WORK = os.path.dirname(HERE)
-WEEKS = ("2", "3")
+WEEKS = ("2", "3", "4", "5")
 
 # 과목 전체에서 되풀이하는 주문
 MANTRA1 = "사람 → 방식 → 입찰 → 계획 → 관리 → 준공"
