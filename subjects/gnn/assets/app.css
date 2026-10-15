@@ -446,3 +446,9 @@ nav{min-width:0}
 .mx-p{font-size:13px;color:var(--sub);white-space:nowrap}
 .mx-pdf{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:24px;font-size:14.5px}
 .mx-pdf a{color:var(--accent);text-decoration:none}
+/* 시험지 풀이 카드: 시험지 캡처 (왼쪽) + 설명 (오른쪽), 폰에선 위아래 */
+.sidegrid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:20px;align-items:start}
+.sideimg{display:block;position:sticky;top:0}
+.sideimg img{display:block;width:100%;height:auto;background:#fff;border:1px solid var(--line);border-radius:var(--r-md)}
+.sidebody{min-width:0}
+@media (max-width:760px){.sidegrid{grid-template-columns:1fr;gap:12px}}

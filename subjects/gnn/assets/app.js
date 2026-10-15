@@ -619,6 +619,7 @@ function pShow(i, dir) {
   P.i = i;
   const f = P.frames[i], el = $('#pslide');
   const r = renderFrame(f, P);
+  if (f.side_img) r.html = '<div class="sidegrid"><div class="sideimg"><img src="' + esc(f.side_img) + '" alt="시험지"></div><div class="sidebody">' + r.html + '</div></div>';   // 시험지 풀이: 시험지 캡처를 옆에 띄운 채 설명
   P.r = r; P.steps = r.steps || 0; P.answered = f.kind !== 'check';
   el.className = 'slide noanim';
   el.innerHTML = r.html;
@@ -2434,8 +2435,8 @@ function pageExamMin(E) {
       const n = (it.slides || []).length + 2;
       const pr = r.done ? '다 봤어요' : (r.i ? Math.min(99, Math.round(100 * r.i / n)) + '%' : '');
       return '<li><a href="#/exam/' + encodeURIComponent(it.id) + '"><span class="mx-n">' + String(it.n).padStart(2, '0') + '</span>'
-        + '<span class="mx-b"><span class="mx-tt">' + fmt(it.title, false) + '</span><span class="mx-a">' + esc(weekName(it.week)) + ', ' + esc(it.day || '') + '요일'
-        + ((it.past || []).length ? ', 기출 ' + it.past.length + '개' : ', 기출 없음') + '</span></span><span class="mx-p">' + pr + '</span></a></li>';
+        + '<span class="mx-b"><span class="mx-tt">' + fmt(it.title, false) + '</span><span class="mx-a">' + (it.meta ? esc(it.meta) : esc(weekName(it.week)) + ', ' + esc(it.day || '') + '요일'
+        + ((it.past || []).length ? ', 기출 ' + it.past.length + '개' : ', 기출 없음')) + '</span></span><span class="mx-p">' + pr + '</span></a></li>';
     }).join('') + '</ol>'
     + ((E.pdfs || []).length ? '<div class="mx-pdf">' + E.pdfs.map(p => '<a href="' + esc(p.href) + '" target="_blank" rel="noopener">' + esc(p.label) + ' PDF</a>').join('') + '</div>' : '')
     + '</div>';
@@ -2608,7 +2609,7 @@ async function pageExam(id, jump) {
   const isL = it.group === 'learn';
   const label = isL ? (it.n ? 'p.' + it.page + ' ' + it.topic : it.topic) : it.n + '. ' + it.topic;
   const frames = [];
-  frames.push({ kind: 'title', eyebrow: E.minimal ? '문제 ' + it.n + ', ' + weekName(it.week) : isL ? '이해 카드, ' + weekName(it.week) : '기출 모양 그대로 만든 문제', big: it.title, sub: it.ask || '' });
+  frames.push({ kind: 'title', eyebrow: E.minimal ? (it.eyebrow || '문제 ' + it.n + ', ' + weekName(it.week)) : isL ? '이해 카드, ' + weekName(it.week) : '기출 모양 그대로 만든 문제', big: it.title, sub: it.ask || '' });
   const qimgs = ((it.imgs && it.imgs.length) ? it.imgs : [it.img]).filter(Boolean);
   qimgs.forEach((src, i) => frames.push({ kind: 'slideimg', src: src, alt: label,
     cap: label + (qimgs.length > 1 ? '  (' + (i + 1) + ' / ' + qimgs.length + ')' : '')
@@ -2621,7 +2622,7 @@ async function pageExam(id, jump) {
   if (nx) links.push(['다음: ' + (nx.group === 'learn' ? (nx.n ? 'p.' + nx.page + ' ' : '') : nx.n + '. ') + nx.topic, '#/exam/' + encodeURIComponent(nx.id)]);
   links.push(['문제 목록', '#/exam']);
   if (E.pdf) links.push(['시험지 PDF', E.pdf]);
-  frames.push({ kind: 'end', big: label + ' 끝', sub: nx ? '다음은 "' + nx.title + '" 이에요.' : (E.minimal ? '11문제를 다 봤어요. 월요일에는 처음부터 다시 훑어요.' : isL ? '이해 카드를 다 봤어요.' : '아홉 문제를 다 봤어요. 이제 PDF 로 한 번에 풀어 보세요.'), links });
+  frames.push({ kind: 'end', big: label + ' 끝', sub: nx ? '다음은 "' + nx.title + '" 이에요.' : (E.minimal ? '11문제와 시험지 풀이까지 다 봤어요. 월요일에는 처음부터 다시 훑어요.' : isL ? '이해 카드를 다 봤어요.' : '아홉 문제를 다 봤어요. 이제 PDF 로 한 번에 풀어 보세요.'), links });
   const all = store.exam || (store.exam = {});
   const rec = all[it.id] = all[it.id] || {};
   startPlayer({
@@ -2630,7 +2631,7 @@ async function pageExam(id, jump) {
     chips: '',
     imgOf: f => (f && f._img) || (it.imgs && it.imgs[0]) || it.img,
     inkKey: f => f._si != null ? 'exam/' + it.id + '/' + f._si : f._img ? 'exam/' + it.id + '/' + f._img.replace(/[^\w]/g, '_') : null,
-    title: () => esc(it.title) + ' <small>' + esc(label) + ', ' + esc(weekName(it.week)) + '</small>',
+    title: () => esc(it.title) + ' <small>' + esc(it.eyebrow || label + ', ' + weekName(it.week)) + '</small>',
     onProgress: i => { rec.i = i; if (i === frames.length - 1) rec.done = true; store.last = { href: '#/exam/' + it.id, label: label }; save(); },
     onEnd: () => { location.hash = nx ? '#/exam/' + encodeURIComponent(nx.id) : '#/exam'; },
   });
