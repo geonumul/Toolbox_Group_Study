@@ -429,3 +429,20 @@ h1,h2,h3{font-weight:600}
 nav{min-width:0}
 @media (min-width:901px){ #nav{flex-wrap:wrap;overflow:visible;row-gap:2px} .hwrap{flex-wrap:wrap} }
 @media (max-width:900px){ #nav{mask-image:linear-gradient(90deg,#000 0,#000 calc(100% - 28px),transparent);-webkit-mask-image:linear-gradient(90deg,#000 0,#000 calc(100% - 28px),transparent);padding-right:24px} }
+
+/* 11문제 목록 (2026-10-15, 최대한 미니멀) */
+.mx{max-width:760px;margin:0 auto;padding:28px 2px 64px;min-width:0}
+.mx-t{font-size:28px;font-weight:650;margin:0 0 6px;letter-spacing:-.3px}
+.mx-s{color:var(--sub);margin:0 0 16px;font-size:15px}
+.mx-plan{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:14px;color:var(--sub);margin:0 0 26px}
+.mx-plan b{color:var(--ink);font-weight:600;margin-right:6px}
+.mx-list{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+.mx-list li a{display:flex;align-items:center;gap:14px;padding:16px 6px;min-width:0;white-space:normal;border-bottom:1px solid var(--line);color:var(--ink);text-decoration:none}
+.mx-list li a:hover{background:var(--surface-2)}
+.mx-n{font-variant-numeric:tabular-nums;color:var(--accent);font-size:15px;min-width:24px}
+.mx-b{flex:1;display:flex;flex-direction:column;gap:3px;min-width:0}
+.mx-tt{font-size:17px;font-weight:550;line-height:1.4;white-space:normal;word-break:keep-all;overflow-wrap:anywhere}
+.mx-a{font-size:13.5px;color:var(--sub)}
+.mx-p{font-size:13px;color:var(--sub);white-space:nowrap}
+.mx-pdf{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:24px;font-size:14.5px}
+.mx-pdf a{color:var(--accent);text-decoration:none}

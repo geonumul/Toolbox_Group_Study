@@ -75,10 +75,11 @@ def main():
     ent.update({
         "name": "그래프 신경망 (GNN)",
         "sub": "Graph Neural Networks, 2026 가을",
-        "desc": "기초 다지기와 코딩 기초부터, 슬라이드를 보며 1~4회독, 정리 슬라이드, 직접 짜 보는 코딩 실습, 기출 스타일 문제까지.",
+        # 2026-10-15: 10/15 수업에서 교수님이 알려 준 중간고사 11문제만 남겼다 (옛 칸은 다 없앰)
+        "desc": "10/15 에 교수님이 알려 준 중간고사 11문제. 문제마다 개념 설명, 손계산, 영어 답안, 기출 원본과 해설.",
         "key": "gnn2026_site_v1",
         "count": count, "types": types, "units": unit_total,
-        "features": ["회독 레슨", "정리 슬라이드", f"코딩 실습 {practice}개", "필기"],
+        "features": ["중간고사 11문제 카드", "기출문제집 PDF", "필기"],
         "ready": True, "passTotal": pass_total, "unitTotal": unit_total, "engine": 2,
     })
     for i, s in enumerate(subs, 1):

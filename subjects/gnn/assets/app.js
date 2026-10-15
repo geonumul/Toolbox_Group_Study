@@ -2423,11 +2423,31 @@ function examCard(week) {
   return '<div class="termbar"><div><b>' + esc(info.label || '시험 대비') + '</b><div class="muted">이 주차에서 나올 모양의 기출형 문제 ' + n + '개. 시험지 그림으로 보고 풀이는 개념부터 봐요'
     + (seen ? ', 끝낸 것 ' + seen + '개' : '') + '</div></div><div class="btnrow" style="margin:0"><a class="btn primary" href="#/exam?week=' + encodeURIComponent(week) + '">문제 보기</a></div></div>';
 }
+/* 2026-10-15 사용자: "기존 칸 다 없애 줘, 보기 힘들어서 안 들어가게 돼", "UI 최대한 미니멀".
+   E.minimal 이면 10/15 에 교수님이 알려 준 11문제 목록 하나만 (만드는 곳: _작업/시험11/site_data.py). */
+function pageExamMin(E) {
+  const done = store.exam || (store.exam = {});
+  let h = '<div class="mx"><h1 class="mx-t">' + esc(E.title) + '</h1><p class="mx-s">' + esc(E.when || '') + '</p>'
+    + '<div class="mx-plan">' + (E.plan || []).map(p => '<span><b>' + esc(p[0]) + '</b>' + esc(p[1]) + '</span>').join('') + '</div>'
+    + '<ol class="mx-list">' + E.items.map(it => {
+      const r = done[it.id] || {};
+      const n = (it.slides || []).length + 2;
+      const pr = r.done ? '다 봤어요' : (r.i ? Math.min(99, Math.round(100 * r.i / n)) + '%' : '');
+      return '<li><a href="#/exam/' + encodeURIComponent(it.id) + '"><span class="mx-n">' + String(it.n).padStart(2, '0') + '</span>'
+        + '<span class="mx-b"><span class="mx-tt">' + fmt(it.title, false) + '</span><span class="mx-a">' + esc(weekName(it.week)) + ', ' + esc(it.day || '') + '요일'
+        + ((it.past || []).length ? ', 기출 ' + it.past.length + '개' : ', 기출 없음') + '</span></span><span class="mx-p">' + pr + '</span></a></li>';
+    }).join('') + '</ol>'
+    + ((E.pdfs || []).length ? '<div class="mx-pdf">' + E.pdfs.map(p => '<a href="' + esc(p.href) + '" target="_blank" rel="noopener">' + esc(p.label) + ' PDF</a>').join('') + '</div>' : '')
+    + '</div>';
+  APP().innerHTML = h;
+  renderMath(APP());
+}
 async function pageExamHub() {
   if (!examInfo()) { APP().innerHTML = '<div class="empty"><b>시험 대비 자료가 없어요</b></div>'; return; }
   APP().innerHTML = '<div class="empty"><b>시험지를 불러오는 중</b></div>';
   if (!await examLoad()) { APP().innerHTML = '<a class="back" href="#/">홈</a><div class="empty"><b>아직 준비되지 않았어요</b></div>'; return; }
   const E = EXAM();
+  if (E.minimal) { pageExamMin(E); return; }
   const q = qs(location.hash.split('?')[1] || '');
   let week = q.week || '';
   const ofWeek = w => E.items.filter(x => x.week === w);
@@ -2588,8 +2608,8 @@ async function pageExam(id, jump) {
   const isL = it.group === 'learn';
   const label = isL ? (it.n ? 'p.' + it.page + ' ' + it.topic : it.topic) : it.n + '. ' + it.topic;
   const frames = [];
-  frames.push({ kind: 'title', eyebrow: isL ? '이해 카드, ' + weekName(it.week) : '기출 모양 그대로 만든 문제', big: it.title, sub: it.ask || '' });
-  const qimgs = (it.imgs && it.imgs.length) ? it.imgs : [it.img];
+  frames.push({ kind: 'title', eyebrow: E.minimal ? '문제 ' + it.n + ', ' + weekName(it.week) : isL ? '이해 카드, ' + weekName(it.week) : '기출 모양 그대로 만든 문제', big: it.title, sub: it.ask || '' });
+  const qimgs = ((it.imgs && it.imgs.length) ? it.imgs : [it.img]).filter(Boolean);
   qimgs.forEach((src, i) => frames.push({ kind: 'slideimg', src: src, alt: label,
     cap: label + (qimgs.length > 1 ? '  (' + (i + 1) + ' / ' + qimgs.length + ')' : '')
       + (isL ? '  -  강의 슬라이드' : '  -  먼저 풀어 보고 넘기세요'), _p: it.n, _img: src }));
@@ -2601,12 +2621,12 @@ async function pageExam(id, jump) {
   if (nx) links.push(['다음: ' + (nx.group === 'learn' ? (nx.n ? 'p.' + nx.page + ' ' : '') : nx.n + '. ') + nx.topic, '#/exam/' + encodeURIComponent(nx.id)]);
   links.push(['문제 목록', '#/exam']);
   if (E.pdf) links.push(['시험지 PDF', E.pdf]);
-  frames.push({ kind: 'end', big: label + ' 끝', sub: nx ? '다음은 "' + nx.title + '" 이에요.' : (isL ? '이해 카드를 다 봤어요.' : '아홉 문제를 다 봤어요. 이제 PDF 로 한 번에 풀어 보세요.'), links });
+  frames.push({ kind: 'end', big: label + ' 끝', sub: nx ? '다음은 "' + nx.title + '" 이에요.' : (E.minimal ? '11문제를 다 봤어요. 월요일에는 처음부터 다시 훑어요.' : isL ? '이해 카드를 다 봤어요.' : '아홉 문제를 다 봤어요. 이제 PDF 로 한 번에 풀어 보세요.'), links });
   const all = store.exam || (store.exam = {});
   const rec = all[it.id] = all[it.id] || {};
   startPlayer({
     frames, groups: frames.map((f, i) => ({ start: i, end: i })), start: jump != null ? +jump : rec.i && rec.i < frames.length - 1 ? rec.i : 0,
-    backHref: '#/exam?week=' + encodeURIComponent(it.week),
+    backHref: E.minimal ? '#/exam' : '#/exam?week=' + encodeURIComponent(it.week),
     chips: '',
     imgOf: f => (f && f._img) || (it.imgs && it.imgs[0]) || it.img,
     inkKey: f => f._si != null ? 'exam/' + it.id + '/' + f._si : f._img ? 'exam/' + it.id + '/' + f._img.replace(/[^\w]/g, '_') : null,

@@ -4,19 +4,19 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>GNN 회독 스터디</title>
-<meta name="description" content="그래프 신경망 2026 가을: 기초부터 강의 회독, 정리 슬라이드, 용어 카드, 필기, 기출 스타일 문제까지 개인 공부 사이트">
+<title>GNN 중간고사</title>
+<meta name="description" content="그래프 신경망 2026 가을 중간고사: 교수님이 알려 준 11문제의 개념 설명, 손계산, 영어 답안, 기출 원본과 해설">
 <meta name="theme-color" content="#F7F7FB" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#101120" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="GNN 회독">
+<meta name="apple-mobile-web-app-title" content="GNN 중간고사">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%234E3FE5'/%3E%3Cline x1='10' y1='21' x2='22' y2='11' stroke='white' stroke-width='3'/%3E%3Ccircle cx='10' cy='21' r='4.5' fill='white'/%3E%3Ccircle cx='22' cy='11' r='4.5' fill='white'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
-<link rel="stylesheet" href="assets/app.css?v=202610111813">
-<link rel="stylesheet" href="assets/site.css?v=202610111813">
+<link rel="stylesheet" href="assets/app.css?v=202610151402">
+<link rel="stylesheet" href="assets/site.css?v=202610151402">
 <link rel="stylesheet" href="../../assets/pet/pet.css">
 </head>
 <body>
@@ -25,13 +25,11 @@
     <a class="hubback" href="../../index.html#subjects" aria-label="전체 과목으로">전체 과목</a>
     <a class="brand" href="#/" aria-label="홈으로">
       <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="17" r="2.5"/><circle cx="18" cy="6.5" r="2.5"/><circle cx="18" cy="17.5" r="2"/><path d="M8 15.3l8-7.1M8.5 17.2h7.5M18 9v6.5"/></svg>
-      <span>GNN 회독 스터디</span>
+      <span>GNN 중간고사</span>
     </a>
     <nav id="nav" aria-label="주요 메뉴">
       <!-- 2026-10-06 사용자 요청: 시험 대비 칸만 쓴다. 나머지 칸은 데이터를 안 내보내서 비워 뒀다. -->
-      <a class="tab" data-nav="exam" href="#/exam">시험 대비</a>
-      <a class="tab" data-nav="exams" href="#/exams">기출 분석</a>
-      <a class="tab" data-nav="tips" href="#/tips">답안 팁</a>
+      <a class="tab" data-nav="exam" href="#/exam">11문제</a>
       <a class="tab" data-nav="set" href="#/settings">설정</a>
     </nav>
     <div class="hright"><span id="hstat"></span></div>
@@ -42,16 +40,16 @@
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" defer></script>
-<script src="data/meta.js?v=202610111813" defer></script>
-<script src="data/terms.js?v=202610111813" defer></script>
-<script src="data/bank.js?v=202610111813" defer></script>
-<script src="data/pages.js?v=202610111813" defer></script>
+<script src="data/meta.js?v=202610151402" defer></script>
+<script src="data/terms.js?v=202610151402" defer></script>
+<script src="data/bank.js?v=202610151402" defer></script>
+<script src="data/pages.js?v=202610151402" defer></script>
 <!-- 시험 대비가 홈이라 그 데이터는 지연 로딩하지 않고 바로 싣는다 -->
-<script src="data/exam.js?v=202610111813" defer></script>
-<script src="assets/ink.js?v=202610111813" defer></script>
-<script src="assets/viz/viz.js?v=202610111813" defer></script>
-<script src="assets/viz/gnn.js?v=202610111813" defer></script>
-<script src="assets/app.js?v=202610111813" defer></script>
+<script src="data/exam.js?v=202610151402" defer></script>
+<script src="assets/ink.js?v=202610151402" defer></script>
+<script src="assets/viz/viz.js?v=202610151402" defer></script>
+<script src="assets/viz/gnn.js?v=202610151402" defer></script>
+<script src="assets/app.js?v=202610151402" defer></script>
 <script src="../../assets/firebase-config.js"></script>
 <script src="../../assets/sync.js"></script>
 <script src="../../assets/access-config.js"></script>
