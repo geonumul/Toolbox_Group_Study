@@ -833,7 +833,9 @@ function renderFrame(f, st) {
     case 'steps': {
       const n = (f.steps || []).length;
       return { html: head(f.head) + (f.given ? '<div class="sgiven">' + fmt(f.given) + '</div>' : '') + '<ol class="sl-steps">'
-        + (f.steps || []).map((x, i) => S(i + 1, fmt(x), 'li')).join('') + '</ol>' + S(n + 1, '답: ' + fmt(f.answer), 'div', 'sanswer'), steps: n + 1 };
+        // 단계 하나가 [설명, 요약] 이면 쉬운 설명 다음에 요약 상자 (2026-10-17 사용자: "설명 - 요약 이렇게 갈 수 있게")
+        + (f.steps || []).map((x, i) => S(i + 1, Array.isArray(x) ? '<div class="sx">' + fmt(x[0]) + '</div><div class="ssum"><b>요약</b> ' + fmt(x[1]) + '</div>' : fmt(x), 'li')).join('')
+        + '</ol>' + S(n + 1, '답: ' + fmt(f.answer), 'div', 'sanswer'), steps: n + 1 };
     }
     case 'figure':
       return { html: head(f.head) + '<div class="sfig">' + (f.svg || '') + '<div class="cap">' + fmt(f.caption) + '</div></div>', steps: f.builds > 1 ? f.builds : (/\bb1\b/.test(f.svg || '') ? 1 : 0), after: prepSvg };
