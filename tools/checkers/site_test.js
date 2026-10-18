@@ -174,6 +174,21 @@ const go = async h => { w.location.hash = h; await wait(60); };
   await go('#/terms/all'); console.log('all terms card:', !!$('#fcard'));
   await go('#/exams'); console.log('exams cards:', $$('#exams .card').length);
   await go('#/tips'); console.log('tips cards:', $$('#tips .card').length);
+  // 과목별 추가 페이지 (meta.extraPages): 탭이 있고, 열리고, 그 탭이 켜지고, 속 그림 파일이 다 있는지
+  for (const x of (meta.extraPages || [])) {
+    await go('#/' + x.name); await wait(200);
+    const root = d.getElementById(x.name), tab = $('#nav .tab[data-nav="x' + x.name + '"]');
+    const imgs = root ? [...root.querySelectorAll('img')].map(i => i.getAttribute('src') || '') : [];
+    console.log('extra page', x.name, x.label, 'open:', !!root, 'details:', root ? root.querySelectorAll('details').length : 0, 'imgs:', imgs.length, 'tab on:', !!(tab && tab.classList.contains('on')));
+    if (!tab) errs.push('추가 페이지 탭이 메뉴에 없어요: ' + x.name);
+    else if (!tab.classList.contains('on')) errs.push('추가 페이지를 열었는데 탭이 안 켜져요: ' + x.name);
+    if (!root || !root.textContent.trim()) errs.push('추가 페이지가 안 열려요: ' + x.name);
+    imgs.filter(s => !/^(data:|https?:)/.test(s)).forEach(s => { if (!fs.existsSync(path.join(ROOT, s.split('?')[0]))) errs.push('추가 페이지 그림 파일이 없어요: ' + s); });
+  }
+  if ((meta.extraPages || []).length && !meta.quizOnly) {   // 홈 도구 칸에도 하나씩 있어야 한다
+    await go('#/');
+    meta.extraPages.forEach(x => { if (!$$('.toolrow .tool').some(a => a.getAttribute('href') === '#/' + x.name)) errs.push('홈 도구 칸에 추가 페이지가 없어요: ' + x.name); });
+  }
   for (const deck of Object.keys(meta.decks)) {
     if (!meta.decks[deck].have) continue;
     for (const pass of [1, 2, 3, 4]) {

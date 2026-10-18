@@ -15,6 +15,8 @@
   pages/tips.html, exams.html  답안 팁, 기출 분석 (선택)
   pages/note.html, time.html   정리노트, 연표 (선택, 큰 페이지라 data/page_<이름>.js 로 따로 두고 열 때 읽음.
                                정리노트 항목과 주차 짝은 subject.json 의 noteSections)
+  pages/<이름>.html             과목별 추가 페이지 (선택). subject.json 의 "extraPages": [{"name", "label", "desc"}] 에 적은 것만.
+                               data/page_<이름>.js 로 따로 두고 열 때 읽는다. 메뉴 탭 이름은 label, 주소는 #/<이름>, 홈 도구 칸 설명은 desc
   subjects/<slug>/img/<덱>/pNNN.jpg   tools/render_slides.py 가 만든 슬라이드 그림
   subjects/<slug>/pdf/<덱>_강의안.pdf  tools/compose_pdf.py 가 만든 강의안 PDF (있으면 링크)
 출력
@@ -43,6 +45,9 @@ LOGOS = {
 DEFAULT_LOGO = _logo('<path d="M4 5.5h6.5a2 2 0 012 2V20a2 2 0 00-2-2H4z"/><path d="M20 5.5h-5.5a2 2 0 00-2 2V20a2 2 0 012-2H20z"/>')
 
 LAZY_PAGES = {"note": "정리노트", "time": "연표"}   # pages/<이름>.html -> data/page_<이름>.js, 메뉴 이름
+# extraPages 이름으로 못 쓰는 것: 엔진이 이미 쓰는 주소 (#/quiz 같은 것) 와 겹치면 안 된다
+RESERVED_PAGES = set(LAZY_PAGES) | {"exams", "tips", "quiz", "mock", "wrong", "settings", "week", "lesson", "unit", "terms",
+                                    "game", "review", "recall", "drill", "notebook", "exam", "home", "set"}
 META_KEYS = ("name", "brand", "key", "eyebrow", "intro", "pathLabel", "examLabel", "examsDesc", "tipsDesc", "mockDesc", "bgLabel", "sentLabel", "mock", "pet",
              "examsNav", "tipsNav", "howto")   # howto: 홈에 적는 "이 과목 쓰는 법" [{"t": 이름, "d": 설명}]
              # examsNav, tipsNav: pages/exams.html, tips.html 메뉴 이름 (없으면 "기출 분석", "답안 팁". 페이지 파일이 없으면 메뉴도 없음)
@@ -400,10 +405,34 @@ def main(slug, skip, home=True):
             out.unlink()
     if lazy:
         meta["lazyPages"] = lazy
+    # 4-2) 과목별 추가 페이지 (subject.json "extraPages"): 정리노트처럼 열 때 읽고, 메뉴 탭과 홈 도구 칸이 하나씩 생긴다
+    extra = []
+    for ep in cfg.get("extraPages") or []:
+        nm = str(ep.get("name") or "")
+        if not re.fullmatch(r"[a-z][a-z0-9_]*", nm) or nm in RESERVED_PAGES:
+            raise SystemExit(f"extraPages 이름이 이상해요: {nm!r} (영어 소문자, 숫자, _ 만. 엔진 주소와 겹치면 안 됨)")
+        p = W / "pages" / f"{nm}.html"
+        if not p.exists():
+            print(f"  [건너뜀] extraPages {nm}: pages/{nm}.html 이 없어요")
+            continue
+        text = viz_page(W, nm, p.read_text(encoding="utf-8"))
+        write(SITE / "data" / f"page_{nm}.js", js_assign("SDT_PAGES_LAZY", nm, text))
+        extra.append({"name": nm, "label": ep.get("label") or nm, "desc": ep.get("desc") or ""})
+        print(f"  추가 페이지 {nm} ({extra[-1]['label']}): {len(text) / 1e3:.0f} KB")
+    if extra:
+        meta["extraPages"] = extra
+    # extraPages 에서 뺀 페이지의 묵은 data/page_<이름>.js 는 치운다
+    keep_pages = set(LAZY_PAGES) | {x["name"] for x in extra}
+    for f in (SITE / "data").glob("page_*.js"):
+        if f.stem[len("page_"):] not in keep_pages:
+            f.unlink()
+            print(f"  묵은 추가 페이지 파일을 치웠어요: {f.name}")
     write(SITE / "data" / "meta.js", js_assign("SDT_META", None, meta))
 
     # 5) 껍데기
     nav = ['<a class="tab" data-nav="home" href="#/">홈</a>']
+    for x in extra:   # 과목별 추가 페이지는 홈 바로 옆 (새 소식이라 먼저 보이게)
+        nav.append(f'<a class="tab" data-nav="x{x["name"]}" href="#/{x["name"]}">{html.escape(x["label"])}</a>')
     for name, label in LAZY_PAGES.items():
         if name in lazy:
             nav.append(f'<a class="tab" data-nav="p{name}" href="#/{name}">{label}</a>')

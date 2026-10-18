@@ -232,6 +232,9 @@ const routes = [
   [/^#\/drill$/, pageDrillHub],                       // 예제와 과제만 (강의자료에 Example, Homework 라고 적힌 쪽)
   [/^#\/drill\/([\w.-]+)(?:\/(\d+))?$/, pageDrill],
 ];
+/* 과목별 추가 페이지: subject.json "extraPages" -> meta.extraPages [{name, label, desc}], 내용은 data/page_<name>.js (열 때 읽음). 주소는 #/<name> */
+const EXTRA = (META.extraPages || []).filter(x => x && /^[a-z][a-z0-9_]*$/.test(x.name || ''));
+EXTRA.forEach(x => routes.push([new RegExp('^#\\/' + x.name + '$'), () => pageExtra(x.name)]));
 let cleanup = null, qInk = null;
 function route() {
   if (cleanup) { cleanup(); cleanup = null; }
@@ -267,6 +270,7 @@ function setNav(h) {
   else if (/^#\/tips/.test(h)) key = 'tips';
   else if (/^#\/note(\/|$)/.test(h)) key = 'pnote';
   else if (/^#\/time$/.test(h)) key = 'ptime';
+  else { const ex = EXTRA.find(x => h === '#/' + x.name); if (ex) key = 'x' + ex.name; }
   $$('#nav .tab').forEach(t => t.classList.toggle('on', t.dataset.nav === key));
   const on = $('#nav .tab.on'); if (on && on.scrollIntoView) on.scrollIntoView({ block: 'nearest', inline: 'nearest' });
 }
@@ -452,6 +456,7 @@ function pageHome() {
   h += '<h2 class="sec">문제 진행</h2><div class="card"><div class="plangrid">' + planGrid() + '</div></div>';
   const nAll = Object.keys(META.noteTitles || {});
   h += '<h2 class="sec">도구</h2><div class="toolrow">'
+    + EXTRA.map(x => '<a class="tool" href="#/' + x.name + '"><b>' + esc(x.label || x.name) + '</b><span>' + esc(x.desc || '') + '</span></a>').join('')
     + (hasLazy('note') ? '<a class="tool" href="#/note"><b>정리노트</b><span>쉬운 설명과 원문, 읽음 ' + nAll.filter(noteRead).length + ' / ' + nAll.length + '</span></a>' : '')
     + (hasLazy('time') ? '<a class="tool" href="#/time"><b>연표</b><span>양식 흐름도와 사건별 연표</span></a>' : '')
     + (META.quizOnly ? '' : '<a class="tool" href="#/terms/all"><b>용어 카드</b><span>전 주차 용어 ' + Object.keys(TERM).length + '개' + (dueAll ? ', 오늘 복습 ' + dueAll + '개' : '') + '</span></a>')
@@ -2660,6 +2665,16 @@ async function pageNote(sid) {
   window.addEventListener('scroll', onScroll, { passive: true });
   if (cleanup) cleanup();
   cleanup = () => { window.removeEventListener('scroll', onScroll); clearTimeout(tick); };
+}
+/* 과목별 추가 페이지 (EXTRA): 정리노트, 연표와 같은 지연 로딩. 그림 경로는 과목 폴더 기준 (img/<덱>/pNNN.jpg) */
+async function pageExtra(name) {
+  const x = EXTRA.find(e => e.name === name) || { label: name };
+  if ((window.SDT_PAGES_LAZY || {})[name] == null) APP().innerHTML = '<div class="empty"><b>' + esc(x.label) + ' 불러오는 중</b>잠시만요.</div>';
+  const html = await lazyPage(name);
+  if ((location.hash || '') !== '#/' + name) return;
+  if (html == null) { APP().innerHTML = lazyMissing(); return; }
+  APP().innerHTML = '<div class="wrap extrawrap" id="' + esc(name) + '">' + html + '</div>';
+  renderMath(APP());
 }
 async function pageTime() {
   if (!(window.SDT_PAGES_LAZY || {}).time) APP().innerHTML = '<div class="empty"><b>연표 불러오는 중</b>잠시만요.</div>';
