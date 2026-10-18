@@ -21,6 +21,7 @@ import build as B          # noqa: E402  (QS 번호 매기기, 그림 자르기,
 import questions as QD     # noqa: E402
 
 OUT = B.PDF_DIR / "근현대_예상시험지_채점.html"
+SHARE = B.REPO / "share" / "msd-mock-1018.html"
 
 
 def strip(s):
@@ -257,7 +258,12 @@ def main():
     if bad:
         raise SystemExit("금지 문자: %r" % bad)
     OUT.write_text(doc, encoding="utf-8")
+    # 카톡 안에서 링크로 열리게 사이트 저장소에도 둔다 (2026-10-18 사용자: "모바일에서 안 열려, 카톡 내부에서 열릴 수 있게")
+    # https://geonumul.github.io/Toolbox_Group_Study/share/msd-mock-1018.html  (로그인 없이 열린다)
+    SHARE.parent.mkdir(exist_ok=True)
+    SHARE.write_text(doc, encoding="utf-8")
     print(f"{OUT}  {len(data)}문항, 실전 20 = {pick}, {OUT.stat().st_size / 1e6:.1f} MB")
+    print(f"{SHARE}")
 
 
 if __name__ == "__main__":
